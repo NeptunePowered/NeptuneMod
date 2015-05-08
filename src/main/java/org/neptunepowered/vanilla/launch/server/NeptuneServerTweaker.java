@@ -31,6 +31,7 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.neptunepowered.common.Neptune;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
@@ -104,7 +105,7 @@ public class NeptuneServerTweaker implements ITweaker {
 
     @Override
     public String getLaunchTarget() {
-        return "net.minecraft.server.MinecraftServer";
+        return "org.neptunepowered.vanilla.launch.NeptuneLaunch";
     }
 
     @Override
