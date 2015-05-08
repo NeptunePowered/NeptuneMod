@@ -1,5 +1,5 @@
 /*
- * This file is part of Neptune, licensed under the MIT License (MIT).
+ * This file is part of NeptuneVanilla, licensed under the MIT License (MIT).
  *
  * Copyright (c) Jamie Mansfield <https://github.com/jamierocks>
  *
@@ -23,7 +23,10 @@
  */
 package org.neptunepowered.vanilla.launch.server;
 
+import static com.google.common.io.Resources.getResource;
+
 import net.minecraft.launchwrapper.ITweaker;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +35,8 @@ import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 public class NeptuneServerTweaker implements ITweaker {
@@ -39,6 +44,10 @@ public class NeptuneServerTweaker implements ITweaker {
     private static final Logger logger = LogManager.getLogger("Neptune");
 
     private String[] args = ArrayUtils.EMPTY_STRING_ARRAY;
+
+    public static Logger getLogger() {
+        return logger;
+    }
 
     @Override
     public void acceptOptions(List<String> args, File file, File file1, String s) {
@@ -66,7 +75,31 @@ public class NeptuneServerTweaker implements ITweaker {
                 .addConfiguration("mixins.common.json");
         env.setSide(MixinEnvironment.Side.SERVER);
 
+        // Check if we're running in de-obfuscated environment already
+        logger.debug("Applying runtime de-obfuscation...");
+        if (isObfuscated()) {
+            logger.info("De-obfuscation mappings are provided by MCP (http://www.modcoderpack.com)");
+            Launch.blackboard.put("vanilla.mappings", getResource("mappings.srg"));
+            loader.registerTransformer("org.neptunepowered.vanilla.launch.transformers.DeobfuscationTransformer");
+            logger.debug("Runtime de-obfuscation is applied.");
+        } else {
+            logger.debug(
+                    "Runtime de-obfuscation was not applied. Neptune is being loaded in a de-obfuscated environment.");
+        }
+
+        logger.debug("Applying access transformer...");
+        Launch.blackboard.put("vanilla.at", new URL[]{getResource("common_at.cfg")});
+        loader.registerTransformer("org.neptunepowered.vanilla.launch.transformers.AccessTransformer");
+
         logger.info("Initialization finished. Starting Minecraft server...");
+    }
+
+    private static boolean isObfuscated() {
+        try {
+            return Launch.classLoader.getClassBytes("net.minecraft.world.World") == null;
+        } catch (IOException ignored) {
+            return true;
+        }
     }
 
     @Override

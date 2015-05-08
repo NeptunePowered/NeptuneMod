@@ -1,5 +1,5 @@
 /*
- * This file is part of Neptune, licensed under the MIT License (MIT).
+ * This file is part of NeptuneVanilla, licensed under the MIT License (MIT).
  *
  * Copyright (c) Jamie Mansfield <https://github.com/jamierocks>
  *
