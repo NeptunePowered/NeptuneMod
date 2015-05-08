@@ -48,6 +48,6 @@ public class NeptuneServerTweaker implements ITweaker {
 
     @Override
     public String[] getLaunchArguments() {
-        return new String[]{"nogui"};
+        return new String[]{};
     }
 }
