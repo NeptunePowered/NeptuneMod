@@ -134,3 +134,6 @@ Temporary Items
 *.un~
 Session.vim
 .netrwhist
+
+# Neptune
+run

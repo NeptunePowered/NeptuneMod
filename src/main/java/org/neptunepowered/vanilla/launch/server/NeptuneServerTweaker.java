@@ -25,11 +25,17 @@ package org.neptunepowered.vanilla.launch.server;
 
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.MixinEnvironment;
 
 import java.io.File;
 import java.util.List;
 
 public class NeptuneServerTweaker implements ITweaker {
+
+    private static final Logger logger = LogManager.getLogger("Neptune");
 
     @Override
     public void acceptOptions(List<String> list, File file, File file1, String s) {
@@ -37,8 +43,25 @@ public class NeptuneServerTweaker implements ITweaker {
     }
 
     @Override
-    public void injectIntoClassLoader(LaunchClassLoader launchClassLoader) {
+    public void injectIntoClassLoader(LaunchClassLoader loader) {
+        logger.info("Initializing Neptune...");
 
+        // Minecraft Server libraries
+        loader.addTransformerExclusion("com.google.gson.");
+        loader.addTransformerExclusion("org.apache.commons.codec.");
+        loader.addTransformerExclusion("org.apache.commons.io.");
+        loader.addTransformerExclusion("org.apache.commons.lang3.");
+
+        // The server GUI won't work if we don't exclude this: log4j2 wants to have this in the same classloader
+        loader.addClassLoaderExclusion("com.mojang.util.QueueLogAppender");
+
+        logger.debug("Initializing Mixin environment...");
+        MixinBootstrap.init();
+        MixinEnvironment env = MixinEnvironment.getDefaultEnvironment()
+                .addConfiguration("mixins.common.json");
+        env.setSide(MixinEnvironment.Side.SERVER);
+
+        logger.info("Initialization finished. Starting Minecraft server...");
     }
 
     @Override
