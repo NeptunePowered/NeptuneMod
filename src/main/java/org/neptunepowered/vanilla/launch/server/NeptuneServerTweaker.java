@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.launch.server;
 
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.launch.MixinBootstrap;
@@ -37,9 +38,13 @@ public class NeptuneServerTweaker implements ITweaker {
 
     private static final Logger logger = LogManager.getLogger("Neptune");
 
-    @Override
-    public void acceptOptions(List<String> list, File file, File file1, String s) {
+    private String[] args = ArrayUtils.EMPTY_STRING_ARRAY;
 
+    @Override
+    public void acceptOptions(List<String> args, File file, File file1, String s) {
+        if (args != null && !args.isEmpty()) {
+            this.args = args.toArray(new String[args.size()]);
+        }
     }
 
     @Override
@@ -71,6 +76,6 @@ public class NeptuneServerTweaker implements ITweaker {
 
     @Override
     public String[] getLaunchArguments() {
-        return new String[]{};
+        return args;
     }
 }
