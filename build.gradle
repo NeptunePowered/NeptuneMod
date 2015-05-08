@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
         maven {
             name = 'forge'
             url = 'http://files.minecraftforge.net/maven'
@@ -11,38 +12,25 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecrell:VanillaGradle:1.0-SNAPSHOT'
+        classpath 'net.minecrell:VanillaGradle:1.0.1-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
     }
 }
 apply plugin: 'net.minecrell.vanilla'
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'eclipse'
 
-group = 'uk.jamierocks'
-archivesBaseName = 'neptune'
+ext.forgeVersion = '11.14.1.1334'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+apply from: project(':Common').file('gradle/implementation.gradle')
 
 minecraft {
-    version = '1.8'
-    mappings = 'snapshot_20150326'
-    serverTweaker = 'uk.jamierocks.neptune.launch.server.NeptuneServerTweaker'
+    serverTweaker = 'uk.jamierocks.neptune.launch.server.VanillaServerTweaker'
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        url 'http://repo.visualillusionsent.net/repository/public'
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'uk.jamierocks.neptune.launch.server.NeptuneServerMain',
+                'Class-Path': 'minecraft_server.1.8.jar lib/launchwrapper-1.11.jar'
+        )
     }
 }
-
-dependencies {
-    compile 'net.canarymod:CanaryLib:1.2.1-SNAPSHOT'
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
-}
-
