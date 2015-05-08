@@ -29,9 +29,6 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import java.io.File;
 import java.util.List;
 
-/**
- * Created by jamie on 18/04/15.
- */
 public class NeptuneServerTweaker implements ITweaker {
 
     @Override

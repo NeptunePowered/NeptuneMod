@@ -37,9 +37,6 @@ import java.nio.file.StandardOpenOption;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 
-/**
- * Created by jamie on 18/04/15.
- */
 public class NeptuneServerMain {
 
     private static final String MINECRAFT_SERVER_LOCAL = "minecraft_server.1.8.jar";

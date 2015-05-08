@@ -23,9 +23,6 @@
  */
 package uk.jamierocks.neptune.launch;
 
-/**
- * Created by jamie on 18/04/15.
- */
 public class NeptuneLaunch {
 
 }
