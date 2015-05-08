@@ -18,18 +18,16 @@ buildscript {
 }
 apply plugin: 'net.minecrell.vanilla'
 
-ext.forgeVersion = '11.14.1.1334'
-
 apply from: project(':Common').file('gradle/implementation.gradle')
 
 minecraft {
-    serverTweaker = 'uk.jamierocks.neptune.launch.server.VanillaServerTweaker'
+    serverTweaker = 'org.neptunepowered.vanilla.launch.server.NeptuneServerTweaker'
 }
 
 jar {
     manifest {
         attributes(
-                'Main-Class': 'uk.jamierocks.neptune.launch.server.NeptuneServerMain',
+                'Main-Class': 'org.neptunepowered.vanilla.launch.server.NeptuneServerMain',
                 'Class-Path': 'minecraft_server.1.8.jar lib/launchwrapper-1.11.jar'
         )
     }

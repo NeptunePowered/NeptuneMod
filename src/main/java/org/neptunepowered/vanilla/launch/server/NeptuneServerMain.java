@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package uk.jamierocks.neptune.launch.server;
+package org.neptunepowered.vanilla.launch.server;
 
 import net.minecraft.launchwrapper.Launch;
 

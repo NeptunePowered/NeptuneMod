@@ -21,8 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package uk.jamierocks.neptune.launch;
+package org.neptunepowered.vanilla.launch.server;
 
-public class NeptuneLaunch {
+import net.minecraft.launchwrapper.ITweaker;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 
+import java.io.File;
+import java.util.List;
+
+public class NeptuneServerTweaker implements ITweaker {
+
+    @Override
+    public void acceptOptions(List<String> list, File file, File file1, String s) {
+
+    }
+
+    @Override
+    public void injectIntoClassLoader(LaunchClassLoader launchClassLoader) {
+
+    }
+
+    @Override
+    public String getLaunchTarget() {
+        return "net.minecraft.server.MinecraftServer";
+    }
+
+    @Override
+    public String[] getLaunchArguments() {
+        return new String[]{"nogui"};
+    }
 }
