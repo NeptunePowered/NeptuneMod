@@ -67,6 +67,10 @@ public class NeptuneServerTweaker implements ITweaker {
         loader.addTransformerExclusion("org.apache.commons.io.");
         loader.addTransformerExclusion("org.apache.commons.lang3.");
 
+        // CanaryLib libraries
+        loader.addTransformerExclusion("net.canarymod");
+        loader.addTransformerExclusion("net.visualillusionsent.utils");
+
         // The server GUI won't work if we don't exclude this: log4j2 wants to have this in the same classloader
         loader.addClassLoaderExclusion("com.mojang.util.QueueLogAppender");
 
