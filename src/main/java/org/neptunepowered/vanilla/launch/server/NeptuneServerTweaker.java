@@ -31,7 +31,6 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.neptunepowered.common.Neptune;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
 
@@ -77,7 +76,8 @@ public class NeptuneServerTweaker implements ITweaker {
         logger.debug("Initializing Mixin environment...");
         MixinBootstrap.init();
         MixinEnvironment env = MixinEnvironment.getDefaultEnvironment()
-                .addConfiguration("mixins.common.json");
+                .addConfiguration("mixins.common.json")
+                .addConfiguration("mixins.vanilla.json");
         env.setSide(MixinEnvironment.Side.SERVER);
 
         // Check if we're running in de-obfuscated environment already

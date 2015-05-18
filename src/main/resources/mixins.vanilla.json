@@ -1,0 +1,6 @@
+{
+    "package": "org.neptunepowered.vanilla.mixin",
+    "mixins": [
+        "server.MixinMinecraftServer"
+    ]
+}
