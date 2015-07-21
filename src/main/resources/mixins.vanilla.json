@@ -1,5 +1,6 @@
 {
     "package": "org.neptunepowered.vanilla.mixin",
+    "refmap": "mixins.vanilla.refmap.json",
     "mixins": [
         "server.MixinMinecraftServer"
     ]

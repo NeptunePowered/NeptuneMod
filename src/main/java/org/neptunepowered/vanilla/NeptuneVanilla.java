@@ -21,14 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.launch;
+package org.neptunepowered.vanilla;
 
 import net.canarymod.Canary;
 import net.canarymod.api.Server;
 import net.minecraft.server.MinecraftServer;
 import org.neptunepowered.common.Neptune;
 
-public class NeptuneLaunch {
+public class NeptuneVanilla {
 
     public static void main(String[] args) {
         MinecraftServer.main(args);

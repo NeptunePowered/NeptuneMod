@@ -345,12 +345,6 @@ public class DeobfuscationTransformer extends Remapper implements IClassTransfor
 
     private enum MappingType {
         PACKAGE("PK"), CLASS("CL"), FIELD("FD"), METHOD("MD");
-        private final String identifier;
-
-        private MappingType(String identifier) {
-            this.identifier = identifier;
-        }
-
         private static final ImmutableMap<String, MappingType> LOOKUP;
 
         static {
@@ -361,6 +355,11 @@ public class DeobfuscationTransformer extends Remapper implements IClassTransfor
             LOOKUP = builder.build();
         }
 
+        private final String identifier;
+
+        private MappingType(String identifier) {
+            this.identifier = identifier;
+        }
 
         public static MappingType of(String identifier) {
             return LOOKUP.get(identifier);

@@ -49,6 +49,14 @@ public class NeptuneServerTweaker implements ITweaker {
         return logger;
     }
 
+    private static boolean isObfuscated() {
+        try {
+            return Launch.classLoader.getClassBytes("net.minecraft.world.World") == null;
+        } catch (IOException ignored) {
+            return true;
+        }
+    }
+
     @Override
     public void acceptOptions(List<String> args, File file, File file1, String s) {
         if (args != null && !args.isEmpty()) {
@@ -69,6 +77,9 @@ public class NeptuneServerTweaker implements ITweaker {
         // CanaryLib libraries
         loader.addTransformerExclusion("net.canarymod");
         loader.addTransformerExclusion("net.visualillusionsent.utils");
+
+        // Neptune launch
+        loader.addClassLoaderExclusion("org.neptunepowered.vanilla.launch.");
 
         // The server GUI won't work if we don't exclude this: log4j2 wants to have this in the same classloader
         loader.addClassLoaderExclusion("com.mojang.util.QueueLogAppender");
@@ -99,17 +110,9 @@ public class NeptuneServerTweaker implements ITweaker {
         logger.info("Initialization finished. Starting Minecraft server...");
     }
 
-    private static boolean isObfuscated() {
-        try {
-            return Launch.classLoader.getClassBytes("net.minecraft.world.World") == null;
-        } catch (IOException ignored) {
-            return true;
-        }
-    }
-
     @Override
     public String getLaunchTarget() {
-        return "org.neptunepowered.vanilla.launch.NeptuneLaunch";
+        return "org.neptunepowered.vanilla.NeptuneVanilla";
     }
 
     @Override

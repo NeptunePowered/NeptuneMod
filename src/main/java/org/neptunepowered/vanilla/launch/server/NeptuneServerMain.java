@@ -47,6 +47,8 @@ public class NeptuneServerMain {
     private static final String LAUNCHWRAPPER_LOCAL = "launchwrapper-1.11.jar";
     private static final String LAUNCHWRAPPER_REMOTE =
             "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.11/launchwrapper-1.11.jar";
+    // From http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
+    private static final char[] hexArray = "0123456789abcdef".toCharArray();
 
     private NeptuneServerMain() {
     }
@@ -85,7 +87,6 @@ public class NeptuneServerMain {
         file = new File(lib, LAUNCHWRAPPER_LOCAL);
         return file.isFile() || downloadVerified(LAUNCHWRAPPER_REMOTE, file);
     }
-
 
     private static boolean downloadVerified(String remote, File file) throws Exception {
         String name = file.getName();
@@ -154,9 +155,6 @@ public class NeptuneServerMain {
             }
         }
     }
-
-    // From http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
-    private static final char[] hexArray = "0123456789abcdef".toCharArray();
 
     public static String toHexString(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];

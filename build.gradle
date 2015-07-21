@@ -17,7 +17,7 @@ buildscript {
     }
 }
 apply plugin: 'net.minecrell.vanilla'
-
+ext.minecraftPlugin = plugins.getPlugin('net.minecrell.vanilla')
 apply from: project(':Common').file('gradle/implementation.gradle')
 
 minecraft {
@@ -32,3 +32,28 @@ jar {
         )
     }
 }
+
+configurations {
+    // While we could set this to 'runtime', Eclipse doesn't support runtime dependencies
+    // properly so this was always going before 'compile' in Eclipse
+    shadow
+}
+
+dependencies {
+    compile 'org.ow2.asm:asm-debug-all:5.0.4'
+
+    shadow 'org.ow2.asm:asm-all:5.0.4'
+}
+
+shadowJar {
+    configurations += [project.configurations.shadow]
+
+    from minecraftPlugin.delayedFile('{SRG_DIR}/notch-srg.srg')
+    rename 'notch-srg.srg', 'mappings.srg'
+
+    dependencies {
+        include dependency('net.sf.jopt-simple:jopt-simple')
+        include dependency('org.ow2.asm:asm-all')
+    }
+}
+assemble.dependsOn shadowJar
