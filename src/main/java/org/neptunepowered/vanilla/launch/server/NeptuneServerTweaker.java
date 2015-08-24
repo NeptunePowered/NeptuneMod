@@ -68,6 +68,9 @@ public class NeptuneServerTweaker implements ITweaker {
     public void injectIntoClassLoader(LaunchClassLoader loader) {
         logger.info("Initializing Neptune...");
 
+        // Don't allow libraries to be transformed
+        loader.addTransformerExclusion("joptsimple.");
+
         // Minecraft Server libraries
         loader.addTransformerExclusion("com.google.gson.");
         loader.addTransformerExclusion("org.apache.commons.codec.");
@@ -75,8 +78,7 @@ public class NeptuneServerTweaker implements ITweaker {
         loader.addTransformerExclusion("org.apache.commons.lang3.");
 
         // CanaryLib libraries
-        loader.addTransformerExclusion("net.canarymod");
-        loader.addTransformerExclusion("net.visualillusionsent.utils");
+        loader.addTransformerExclusion("net.visualillusionsent.utils.");
 
         // Neptune launch
         loader.addClassLoaderExclusion("org.neptunepowered.vanilla.launch.");
