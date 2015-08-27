@@ -30,7 +30,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -57,6 +59,11 @@ public class NeptuneServerMain {
         if (!checkMinecraft()) {
             return;
         }
+        
+        Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+        addURL.setAccessible(true);
+        addURL.invoke(NeptuneServerMain.class.getClassLoader(), new File("lib", LAUNCHWRAPPER_LOCAL).toURI().toURL());
+        addURL.invoke(NeptuneServerMain.class.getClassLoader(), new File(MINECRAFT_SERVER_LOCAL).toURI().toURL());
 
         Launch.main(join(args,
                 "--tweakClass", "org.neptunepowered.vanilla.launch.server.NeptuneServerTweaker"
