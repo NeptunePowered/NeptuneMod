@@ -37,6 +37,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
+import java.util.Arrays;
 
 public class NeptuneServerMain {
 
@@ -56,6 +57,10 @@ public class NeptuneServerMain {
     public static void main(String[] args) throws Exception {
         if (!checkMinecraft()) {
             return;
+        }
+
+        if (!Arrays.asList(args).contains("--gui")) {
+            args = join(args, "--nogui");
         }
 
         Launch.main(join(args,
