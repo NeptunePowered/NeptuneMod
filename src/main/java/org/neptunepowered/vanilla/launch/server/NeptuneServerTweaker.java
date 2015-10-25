@@ -89,7 +89,8 @@ public class NeptuneServerTweaker implements ITweaker {
         logger.debug("Initializing Mixin environment...");
         MixinBootstrap.init();
         MixinEnvironment env = MixinEnvironment.getDefaultEnvironment()
-                .addConfiguration("mixins.common.json")
+                .addConfiguration("mixins.common.canary.json")
+                .addConfiguration("mixins.common.minecraft.json")
                 .addConfiguration("mixins.vanilla.json");
         env.setSide(MixinEnvironment.Side.SERVER);
 
