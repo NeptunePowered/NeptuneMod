@@ -91,7 +91,8 @@ public class NeptuneServerTweaker implements ITweaker {
         MixinEnvironment env = MixinEnvironment.getDefaultEnvironment()
                 .addConfiguration("mixins.common.canary.json")
                 .addConfiguration("mixins.common.minecraft.json")
-                .addConfiguration("mixins.vanilla.json");
+                .addConfiguration("mixins.vanilla.canary.json")
+                .addConfiguration("mixins.vanilla.minecraft.json");
         env.setSide(MixinEnvironment.Side.SERVER);
 
         // Check if we're running in de-obfuscated environment already

@@ -21,17 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.server;
+package org.neptunepowered.vanilla.mixin.minecraft.server.gui;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.gui.MinecraftServerGui;
+import org.neptunepowered.vanilla.util.helper.MinecraftServerGuiHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@Mixin(MinecraftServer.class)
-public class MixinMinecraftServer {
+import javax.swing.JFrame;
+
+@Mixin(MinecraftServerGui.class)
+public class MixinMinecraftServerGui {
+
+    private static JFrame minecraftServerFrame;
 
     @Overwrite
-    public String getServerModName() {
-        return "Neptune";
+    public static void createServerGui(final DedicatedServer serverIn) {
+        minecraftServerFrame = MinecraftServerGuiHelper.createServerGui(serverIn);
     }
 }
