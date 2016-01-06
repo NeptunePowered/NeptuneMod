@@ -32,6 +32,6 @@ public class MixinMinecraftServer {
 
     @Overwrite
     public String getServerModName() {
-        return "Neptune";
+        return "NeptuneVanilla";
     }
 }
