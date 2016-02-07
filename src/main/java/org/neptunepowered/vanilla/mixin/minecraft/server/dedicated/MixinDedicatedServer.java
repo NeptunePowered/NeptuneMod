@@ -26,7 +26,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.server.dedicated;
 import net.canarymod.Canary;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
-import org.neptunepowered.common.Neptune;
+import org.neptunepowered.vanilla.Neptune;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
