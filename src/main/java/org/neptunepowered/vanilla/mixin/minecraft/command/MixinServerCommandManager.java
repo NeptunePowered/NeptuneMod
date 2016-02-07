@@ -34,7 +34,7 @@ import net.minecraft.command.ServerCommandManager;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
-import org.neptunepowered.common.Neptune;
+import org.neptunepowered.vanilla.Neptune;
 import org.neptunepowered.vanilla.interfaces.minecraft.command.IMixinServerCommandManager;
 import org.neptunepowered.vanilla.wrapper.commandsys.NeptuneCommand;
 import org.spongepowered.asm.mixin.Mixin;

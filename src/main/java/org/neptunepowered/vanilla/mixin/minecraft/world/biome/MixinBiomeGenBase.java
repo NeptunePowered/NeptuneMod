@@ -41,28 +41,17 @@ public abstract class MixinBiomeGenBase implements Biome {
     @Shadow protected boolean enableSnow;
     @Shadow protected boolean enableRain;
 
-    @Shadow
-    public abstract void decorate(net.minecraft.world.World worldIn, Random p_180624_2_, BlockPos p_180624_3_);
+    @Shadow public abstract void decorate(net.minecraft.world.World worldIn, Random p_180624_2_, BlockPos p_180624_3_);
+    //@Shadow public abstract boolean canSpawnLightningBolt(); TODO: Removed in 1.8.9?
+    @Shadow public abstract float getSpawningChance();
+    @Shadow public abstract int getIntRainfall();
+    @Shadow public abstract BiomeGenBase setTemperatureRainfall(float p_76732_1_, float p_76732_2_);
+    @Shadow public abstract BiomeGenBase setColor(int p_76739_1_);
 
-    @Shadow
-    public abstract boolean canSpawnLightningBolt();
-
-    @Shadow
-    public abstract float getSpawningChance();
-
-    @Shadow
-    public abstract int getIntRainfall();
-
-    @Shadow
-    public abstract BiomeGenBase setTemperatureRainfall(float p_76732_1_, float p_76732_2_);
-
-    @Shadow
-    public abstract BiomeGenBase setColor(int p_76739_1_);
-
-    @Override
+    /*@Override
     public boolean canSpawnLightning() {
         return canSpawnLightningBolt();
-    }
+    }*/
 
     @Override
     public boolean isTropic() {

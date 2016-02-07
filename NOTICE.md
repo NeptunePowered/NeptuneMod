@@ -5,7 +5,7 @@ the MIT license. The license to redistribute them is not transitive, third-party
 
 - Some classes are adapted from [SpongeVanilla](https://github.com/SpongePowered/SpongeVanilla).
 
-- The ASM transformers in the package `org.neptunepowered.vanilla.launch.transformers` are based on parts of the
+- The ASM transformers in the package `org.neptunepowered.vanilla.launch.transformer` are based on parts of the
 [Forge Mod Loader](https://github.com/MinecraftForge/FML) licensed under the
 [GNU Lesser General Public License v2.1](http://www.gnu.org/licenses/lgpl-2.1.html), but can be redistributed under [any alternative open source 
 license as classified by the OSI](http://opensource.org/licenses):

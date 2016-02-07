@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.wrapper.scoreboard;
 
 import net.canarymod.api.scoreboard.ScoreObjectiveCriteria;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
 import org.neptunepowered.vanilla.util.Wrapper;
 
@@ -41,8 +42,9 @@ public class NeptuneScoreObjectiveCriteria extends Wrapper<IScoreObjectiveCriter
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public int getScore(List<?> list) {
-        return this.getHandle().func_96635_a(list);
+        return this.getHandle().setScore((List<EntityPlayer>) list);
     }
 
     @Override

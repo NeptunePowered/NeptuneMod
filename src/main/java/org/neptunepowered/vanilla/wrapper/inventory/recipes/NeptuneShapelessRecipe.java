@@ -36,8 +36,9 @@ public class NeptuneShapelessRecipe extends NeptuneRecipe implements ShapelessRe
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<Item> getRecipeItems() {
-        return this.getHandle().recipeItems;
+        return (List) this.getHandle().recipeItems;
     }
 
     @Override

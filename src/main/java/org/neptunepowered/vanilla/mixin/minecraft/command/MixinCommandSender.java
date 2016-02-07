@@ -35,14 +35,18 @@ import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.util.ChatComponentText;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin({EntityPlayerMP.class, CommandBlockLogic.class, RConConsoleSource.class})
-public abstract class MixinCommandSender implements MessageReceiver, ICommandSender {
+@Implements(@Interface(iface = MessageReceiver.class, prefix = "messagereceiver$"))
+public abstract class MixinCommandSender implements ICommandSender, MessageReceiver {
 
-    @Override
-    public String getName() {
-        return getCommandSenderName();
+    @Intrinsic
+    public String messagereceiver$getName() {
+        return getName();
     }
 
     @Override

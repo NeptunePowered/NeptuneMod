@@ -21,33 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.launch.server;
+package org.neptunepowered.vanilla.launch;
 
 import net.minecraft.launchwrapper.Launch;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.util.Arrays;
+import java.security.NoSuchAlgorithmException;
 
 public class NeptuneServerMain {
 
-    private static final String MINECRAFT_SERVER_LOCAL = "minecraft_server.1.8.jar";
-    private static final String MINECRAFT_SERVER_REMOTE =
-            "https://s3.amazonaws.com/Minecraft.Download/versions/1.8/minecraft_server.1.8.jar";
+    private static final String LIBRARIES_DIR = "libraries";
 
-    private static final String LAUNCHWRAPPER_LOCAL = "launchwrapper-1.11.jar";
-    private static final String LAUNCHWRAPPER_REMOTE =
-            "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.11/launchwrapper-1.11.jar";
+    private static final String MINECRAFT_SERVER_LOCAL = "minecraft_server.1.8.9.jar";
+    private static final String MINECRAFT_SERVER_REMOTE = "https://s3.amazonaws.com/Minecraft.Download/versions/1.8.9/minecraft_server.1.8.9.jar";
+
+    private static final String LAUNCHWRAPPER_PATH = "/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar";
+    private static final String LAUNCHWRAPPER_LOCAL = LIBRARIES_DIR + LAUNCHWRAPPER_PATH;
+    private static final String LAUNCHWRAPPER_REMOTE = "https://libraries.minecraft.net" + LAUNCHWRAPPER_PATH;
+
     // From http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
     private static final char[] hexArray = "0123456789abcdef".toCharArray();
 
@@ -55,12 +57,11 @@ public class NeptuneServerMain {
     }
 
     public static void main(String[] args) throws Exception {
-        if (!checkMinecraft()) {
-            return;
-        }
+        // Get the location of our jar
+        Path base = Paths.get(NeptuneServerMain.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
 
-        if (!Arrays.asList(args).contains("--gui")) {
-            args = join(args, "--nogui");
+        if (!checkMinecraft(base)) {
+            return;
         }
 
         Launch.main(join(args,
@@ -75,26 +76,22 @@ public class NeptuneServerMain {
         return result;
     }
 
-    private static boolean checkMinecraft() throws Exception {
-        File lib = new File("lib");
-        if (!lib.isDirectory() && !lib.mkdirs()) {
-            throw new IOException("Failed to create folder at " + lib);
-        }
-
-        // First check if Minecraft is already downloaded :D
-        File file = new File(MINECRAFT_SERVER_LOCAL);
-
-        // Download the server first
-        if (!file.isFile() && !downloadVerified(MINECRAFT_SERVER_REMOTE, file)) {
+    private static boolean checkMinecraft(Path base) throws Exception {
+        // Make sure the Minecraft server is available, or download it otherwise
+        Path path = base.resolve(MINECRAFT_SERVER_LOCAL);
+        if (Files.notExists(path) && !downloadVerified(MINECRAFT_SERVER_REMOTE, path)) {
             return false;
         }
 
-        file = new File(lib, LAUNCHWRAPPER_LOCAL);
-        return file.isFile() || downloadVerified(LAUNCHWRAPPER_REMOTE, file);
+        // Make sure Launchwrapper is available, or download it otherwise
+        path = base.resolve(LAUNCHWRAPPER_LOCAL);
+        return Files.exists(path) || downloadVerified(LAUNCHWRAPPER_REMOTE, path);
     }
 
-    private static boolean downloadVerified(String remote, File file) throws Exception {
-        String name = file.getName();
+    private static boolean downloadVerified(String remote, Path path) throws IOException, NoSuchAlgorithmException {
+        Files.createDirectories(path.getParent());
+
+        String name = path.getFileName().toString();
         URL url = new URL(remote);
 
         System.out.println("Downloading " + name + "... This can take a while.");
@@ -102,19 +99,9 @@ public class NeptuneServerMain {
         URLConnection con = url.openConnection();
         MessageDigest md5 = MessageDigest.getInstance("MD5");
 
-        InputStream in = null;
-        FileOutputStream out = null;
-        ReadableByteChannel source = null;
-        FileChannel target = null;
-        try {
-            in = con.getInputStream();
-            out = new FileOutputStream(file);
-            source = Channels.newChannel(new DigestInputStream(in, md5));
-            target = out.getChannel();
-
-            target.transferFrom(source, 0, Long.MAX_VALUE);
-        } finally {
-            close(in, out, source, target);
+        try (ReadableByteChannel source = Channels.newChannel(new DigestInputStream(con.getInputStream(), md5));
+                FileChannel out = FileChannel.open(path, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)) {
+            out.transferFrom(source, 0, Long.MAX_VALUE);
         }
 
         String expected = getETag(con);
@@ -123,13 +110,8 @@ public class NeptuneServerMain {
             if (hash.equals(expected)) {
                 System.out.println("Successfully downloaded " + name + " and verified checksum!");
             } else {
-                if (!file.delete()) {
-                    throw new IOException("Failed to delete " + file);
-                }
-
-                System.err.println("Failed to download " + name + " (failed checksum verification).");
-                System.err.println("Please try again later.");
-                return false;
+                Files.delete(path);
+                throw new IOException("Checksum verification failed: Expected " + expected + ", got " + hash);
             }
         }
 
@@ -147,18 +129,6 @@ public class NeptuneServerMain {
         }
 
         return hash;
-    }
-
-    private static void close(Closeable... closeables) {
-        for (Closeable closeable : closeables) {
-            if (closeable != null) {
-                try {
-                    closeable.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     public static String toHexString(byte[] bytes) {

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.launch.transformers;
+package org.neptunepowered.vanilla.launch.transformer;
 
 import static com.google.common.io.Resources.readLines;
 
@@ -39,7 +39,7 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.neptunepowered.vanilla.launch.server.NeptuneServerTweaker;
+import org.neptunepowered.vanilla.launch.NeptuneServerTweaker;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -179,20 +179,43 @@ public class DeobfuscationTransformer extends Remapper implements IClassTransfor
     }
 
     @Override
-    public String map(String typeName) {
+    public String map(String className) {
         if (this.classes == null) {
-            return typeName;
+            return className;
         }
-        String name = this.classes.get(typeName);
-        return name != null ? name : typeName;
+
+        String name = this.classes.get(className);
+
+        if (name != null) {
+            return name;
+        }
+
+        // We may have no name for the inner class directly, but it should be still part of the outer class
+        int innerClassPos = className.lastIndexOf('$');
+        if (innerClassPos >= 0) {
+            return map(className.substring(0, innerClassPos)) + className.substring(innerClassPos);
+        }
+
+        return className; // Unknown class
     }
 
-    public String unmap(String typeName) {
+    public String unmap(String className) {
         if (this.classes == null) {
-            return typeName;
+            return className;
         }
-        String name = this.classes.inverse().get(typeName);
-        return name != null ? name : typeName;
+
+        String name = this.classes.inverse().get(className);
+        if (name != null) {
+            return name;
+        }
+
+        // We may have no name for the inner class directly, but it should be still part of the outer class
+        int innerClassPos = className.lastIndexOf('$');
+        if (innerClassPos >= 0) {
+            return unmap(className.substring(0, innerClassPos)) + className.substring(innerClassPos);
+        }
+
+        return className; // Unknown class
     }
 
     @Override
@@ -200,6 +223,7 @@ public class DeobfuscationTransformer extends Remapper implements IClassTransfor
         if (this.classes == null) {
             return fieldName;
         }
+
         Map<String, String> fields = getFieldMap(owner);
         if (fields != null) {
             String name = fields.get(fieldName + ':' + desc);
@@ -232,6 +256,7 @@ public class DeobfuscationTransformer extends Remapper implements IClassTransfor
         if (this.classes == null) {
             return methodName;
         }
+
         Map<String, String> methods = getMethodMap(owner);
         if (methods != null) {
             String name = methods.get(methodName + desc);

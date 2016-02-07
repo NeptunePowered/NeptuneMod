@@ -63,7 +63,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Override
     public String getDisplayName() {
-        return shadow$getDisplayName().getFormattedText();
+        return shadow$getDisplayName().getUnformattedText(); // .getFormattedText(); Doesn't exist on the server!!
     }
 
     @Override

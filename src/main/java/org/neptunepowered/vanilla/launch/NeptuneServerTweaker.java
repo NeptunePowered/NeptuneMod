@@ -21,9 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.launch.server;
+package org.neptunepowered.vanilla.launch;
 
 import static com.google.common.io.Resources.getResource;
+import static org.spongepowered.asm.mixin.MixinEnvironment.CompatibilityLevel.JAVA_8;
+import static org.spongepowered.asm.mixin.MixinEnvironment.Side.SERVER;
 
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
@@ -43,24 +45,19 @@ public class NeptuneServerTweaker implements ITweaker {
 
     private static final Logger logger = LogManager.getLogger("Neptune");
 
-    private String[] args = ArrayUtils.EMPTY_STRING_ARRAY;
+    private String[] args;
 
     public static Logger getLogger() {
         return logger;
     }
 
-    private static boolean isObfuscated() {
-        try {
-            return Launch.classLoader.getClassBytes("net.minecraft.world.World") == null;
-        } catch (IOException ignored) {
-            return true;
-        }
-    }
-
     @Override
     public void acceptOptions(List<String> args, File file, File file1, String s) {
-        if (args != null && !args.isEmpty()) {
+        if (args.contains("--gui")) {
             this.args = args.toArray(new String[args.size()]);
+        } else {
+            this.args = args.toArray(new String[args.size() + 1]);
+            this.args[this.args.length - 1] = "--nogui";
         }
     }
 
@@ -68,17 +65,8 @@ public class NeptuneServerTweaker implements ITweaker {
     public void injectIntoClassLoader(LaunchClassLoader loader) {
         logger.info("Initializing Neptune...");
 
-        // Don't allow libraries to be transformed
-        loader.addTransformerExclusion("joptsimple.");
-
-        // Minecraft Server libraries
-        loader.addTransformerExclusion("com.google.gson.");
-        loader.addTransformerExclusion("org.apache.commons.codec.");
-        loader.addTransformerExclusion("org.apache.commons.io.");
-        loader.addTransformerExclusion("org.apache.commons.lang3.");
-
-        // CanaryLib libraries
-        loader.addTransformerExclusion("net.visualillusionsent.utils.");
+        // We shouldn't load these through Launchwrapper as they use native dependencies
+        loader.addClassLoaderExclusion("io.netty.");
 
         // Neptune launch
         loader.addClassLoaderExclusion("org.neptunepowered.vanilla.launch.");
@@ -86,19 +74,23 @@ public class NeptuneServerTweaker implements ITweaker {
         // The server GUI won't work if we don't exclude this: log4j2 wants to have this in the same classloader
         loader.addClassLoaderExclusion("com.mojang.util.QueueLogAppender");
 
-        logger.debug("Initializing Mixin environment...");
-        MixinBootstrap.init();
-        MixinEnvironment env = MixinEnvironment.getDefaultEnvironment()
-                .addConfiguration("mixins.vanilla.canary.json")
-                .addConfiguration("mixins.vanilla.minecraft.json");
-        env.setSide(MixinEnvironment.Side.SERVER);
+        // Don't allow libraries to be transformed
+        loader.addTransformerExclusion("com.google.");
+        loader.addTransformerExclusion("org.apache.");
+        loader.addTransformerExclusion("joptsimple.");
+
+        // CanaryLib libraries
+        loader.addTransformerExclusion("net.visualillusionsent.utils.");
+
+        // Add a transformer exclusion for translator so we can get the JAR path from it
+        loader.addTransformerExclusion("net.canarymod.Translator");
 
         // Check if we're running in de-obfuscated environment already
         logger.debug("Applying runtime de-obfuscation...");
         if (isObfuscated()) {
             logger.info("De-obfuscation mappings are provided by MCP (http://www.modcoderpack.com)");
             Launch.blackboard.put("vanilla.mappings", getResource("mappings.srg"));
-            loader.registerTransformer("org.neptunepowered.vanilla.launch.transformers.DeobfuscationTransformer");
+            loader.registerTransformer("org.neptunepowered.vanilla.launch.transformer.DeobfuscationTransformer");
             logger.debug("Runtime de-obfuscation is applied.");
         } else {
             logger.debug(
@@ -107,9 +99,28 @@ public class NeptuneServerTweaker implements ITweaker {
 
         logger.debug("Applying access transformer...");
         Launch.blackboard.put("vanilla.at", new URL[]{getResource("vanilla_at.cfg")});
-        loader.registerTransformer("org.neptunepowered.vanilla.launch.transformers.AccessTransformer");
+        loader.registerTransformer("org.neptunepowered.vanilla.launch.transformer.AccessTransformer");
+
+        logger.debug("Initializing Mixin environment...");
+        MixinBootstrap.init();
+        MixinEnvironment.setCompatibilityLevel(JAVA_8);
+
+        MixinEnvironment env = MixinEnvironment.getDefaultEnvironment()
+                .addConfiguration("mixins.vanilla.canary.json")
+                .addConfiguration("mixins.vanilla.minecraft.json")
+                .setSide(SERVER);
 
         logger.info("Initialization finished. Starting Minecraft server...");
+    }
+
+
+    private static boolean isObfuscated() {
+        try {
+            // If the dedicated server class exists in the de-obfuscated name, we're likely in dev env
+            return Launch.classLoader.getClassBytes("net.minecraft.server.dedicated.DedicatedServer") == null;
+        } catch (IOException ignored) {
+            return true;
+        }
     }
 
     @Override
@@ -121,4 +132,5 @@ public class NeptuneServerTweaker implements ITweaker {
     public String[] getLaunchArguments() {
         return args;
     }
+
 }

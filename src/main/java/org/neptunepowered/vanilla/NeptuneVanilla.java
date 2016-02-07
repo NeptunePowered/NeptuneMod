@@ -27,10 +27,14 @@ import net.canarymod.Canary;
 import net.canarymod.api.Server;
 import net.minecraft.server.MinecraftServer;
 
+import java.io.File;
+import java.io.IOException;
+
 public class NeptuneVanilla {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         MinecraftServer.main(args);
+        new File("config").mkdirs(); // TODO: Please fix this properly
         initNeptune();
         Canary.setServer((Server) MinecraftServer.getServer());
     }

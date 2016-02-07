@@ -24,14 +24,14 @@
 package org.neptunepowered.vanilla.mixin.canary;
 
 import net.canarymod.Canary;
+import net.canarymod.Translator;
 import net.visualillusionsent.utils.JarUtils;
-import org.spongepowered.asm.launch.MixinTweaker;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Canary.class)
-public class MixinCanary {
+public abstract class MixinCanary {
 
     @Shadow(remap = false) private static String jarPath;
 
@@ -54,7 +54,7 @@ public class MixinCanary {
     @Overwrite
     public static String getCanaryJarPath() {
         if (jarPath == null) {
-            jarPath = JarUtils.getJarPath(MixinTweaker.class);
+            jarPath = JarUtils.getJarPath(Translator.class);
         }
         return jarPath;
     }

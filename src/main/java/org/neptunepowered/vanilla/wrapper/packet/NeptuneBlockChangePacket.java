@@ -39,7 +39,7 @@ public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChan
 
     @Override
     public int getX() {
-        return getHandle().getBlockPosition().getX();
+        return getHandle().blockPosition.getX();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChan
 
     @Override
     public int getY() {
-        return getHandle().getBlockPosition().getY();
+        return getHandle().blockPosition.getY();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChan
 
     @Override
     public int getZ() {
-        return getHandle().getBlockPosition().getZ();
+        return getHandle().blockPosition.getZ();
     }
 
     @Override
@@ -90,7 +90,7 @@ public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChan
 
     @Override
     public int getTypeId() {
-        return net.minecraft.block.Block.getIdFromBlock(this.getHandle().getBlockState().getBlock());
+        return net.minecraft.block.Block.getIdFromBlock(this.getHandle().blockState.getBlock());
     }
 
     @Override
@@ -110,7 +110,7 @@ public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChan
 
     @Override
     public Block getBlock() {
-        return (Block) this.getHandle().getBlockState().getBlock();
+        return (Block) this.getHandle().blockState.getBlock();
     }
 
     @Override

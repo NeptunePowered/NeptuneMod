@@ -162,7 +162,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         }
 
         ServerConfigurationManager.logger
-                .info(playerIn.getCommandSenderName() + "[" + s1 + "] logged in with entity id " + playerIn
+                .info(playerIn.getName() + "[" + s1 + "] logged in with entity id " + playerIn
                         .getEntityId() + " at (" + playerIn.posX + ", " + playerIn.posY + ", " + playerIn.posZ + ")");
         WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
         WorldInfo worldinfo = worldserver.getWorldInfo();
@@ -173,7 +173,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
                 new S01PacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(),
                         worldinfo.isHardcoreModeEnabled(), worldserver.provider.getDimensionId(),
                         worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(),
-                        worldserver.getGameRules().getGameRuleBooleanValue("reducedDebugInfo")));
+                        worldserver.getGameRules().getBoolean("reducedDebugInfo")));
         nethandlerplayserver
                 .sendPacket(new S3FPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(
                         this.mcServer.getServerModName())));
@@ -188,7 +188,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         this.mcServer.refreshStatusNextTick();
         ChatComponentTranslation chatcomponenttranslation;
 
-        if (!playerIn.getCommandSenderName().equalsIgnoreCase(s)) {
+        if (!playerIn.getName().equalsIgnoreCase(s)) {
             chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.joined.renamed",
                     new Object[]{playerIn.getDisplayName(), s});
         } else {

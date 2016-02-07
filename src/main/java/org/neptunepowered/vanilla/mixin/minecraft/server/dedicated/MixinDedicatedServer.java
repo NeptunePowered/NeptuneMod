@@ -39,8 +39,8 @@ import java.net.Proxy;
 @Mixin(DedicatedServer.class)
 public abstract class MixinDedicatedServer extends MinecraftServer {
 
-    public MixinDedicatedServer(Proxy proxy, File workDir) {
-        super(proxy, workDir);
+    MixinDedicatedServer(File workDir, Proxy proxy, File profileCacheDir) {
+        super(workDir, proxy, profileCacheDir);
     }
 
     @Inject(method = "startServer", at = @At(value = "INVOKE",
