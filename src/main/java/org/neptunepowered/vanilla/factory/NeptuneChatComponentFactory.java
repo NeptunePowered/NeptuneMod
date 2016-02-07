@@ -47,7 +47,7 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ChatComponent compileChatComponent(String text) {
-        return null;
+        return this.newChatComponent(text);
     }
 
     @Override
