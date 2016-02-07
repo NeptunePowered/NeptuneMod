@@ -21,18 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.monster;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
 
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.living.monster.Witch;
 import net.minecraft.entity.monster.EntityWitch;
-import org.neptunepowered.common.mixin.minecraft.entity.monster.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityWitch.class)
-public abstract class MixinEntityWitch extends org.neptunepowered.common.mixin.minecraft.entity.monster.MixinEntityMob
-        implements Witch {
+public abstract class MixinEntityWitch extends MixinEntityMob implements Witch {
 
     @Shadow
     public abstract boolean getAggressive();

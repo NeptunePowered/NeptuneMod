@@ -21,17 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.monster;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
 
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.living.monster.MagmaCube;
 import net.minecraft.entity.monster.EntityMagmaCube;
-import org.neptunepowered.common.mixin.minecraft.entity.monster.*;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(EntityMagmaCube.class)
-public abstract class MixinEntityMagmaCube extends org.neptunepowered.common.mixin.minecraft.entity.monster.MixinEntitySlime
-        implements MagmaCube {
+public abstract class MixinEntityMagmaCube extends MixinEntitySlime implements MagmaCube {
 
     @Override
     public String getFqName() {

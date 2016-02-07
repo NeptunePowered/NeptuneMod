@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity;
+package org.neptunepowered.vanilla.mixin.minecraft.entity;
 
 import net.canarymod.api.DamageType;
 import net.canarymod.api.attributes.AttributeMap;
@@ -35,15 +35,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import org.neptunepowered.common.mixin.minecraft.entity.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
 @Mixin(EntityLivingBase.class)
-public abstract class MixinEntityLivingBase extends org.neptunepowered.common.mixin.minecraft.entity.MixinEntity
-        implements LivingBase {
+public abstract class MixinEntityLivingBase extends MixinEntity implements LivingBase {
 
     @Shadow public int deathTime;
     @Shadow protected int entityAge;

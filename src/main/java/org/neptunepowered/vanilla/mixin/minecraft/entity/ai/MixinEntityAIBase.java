@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.ai;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.ai;
 
 import net.canarymod.api.ai.AIBase;
 import net.minecraft.entity.ai.EntityAIBase;

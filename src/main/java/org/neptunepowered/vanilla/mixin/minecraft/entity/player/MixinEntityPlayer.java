@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.player;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
 import net.canarymod.api.entity.EntityItem;
 import net.canarymod.api.entity.living.humanoid.Human;
@@ -34,7 +34,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IChatComponent;
-import org.neptunepowered.common.mixin.minecraft.entity.MixinEntityLivingBase;
+import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

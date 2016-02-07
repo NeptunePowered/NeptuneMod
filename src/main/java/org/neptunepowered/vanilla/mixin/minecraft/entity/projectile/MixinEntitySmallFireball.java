@@ -21,17 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.projectile;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.projectile;
 
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.SmallFireball;
 import net.minecraft.entity.projectile.EntitySmallFireball;
-import org.neptunepowered.common.mixin.minecraft.entity.projectile.*;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(EntitySmallFireball.class)
-public abstract class MixinEntitySmallFireball extends org.neptunepowered.common.mixin.minecraft.entity.projectile.MixinEntityFireball
-        implements SmallFireball {
+public abstract class MixinEntitySmallFireball extends MixinEntityFireball implements SmallFireball {
 
     @Override
     public String getFqName() {

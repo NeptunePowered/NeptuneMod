@@ -27,12 +27,11 @@ import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.hanging.HangingEntity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.util.EnumFacing;
-import org.neptunepowered.vanilla.mixin.minecraft.entity.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityHanging.class)
-public abstract class MixinEntityHanging extends org.neptunepowered.common.mixin.minecraft.entity.MixinEntity implements HangingEntity {
+public abstract class MixinEntityHanging extends MixinEntity implements HangingEntity {
 
     @Shadow private int tickCounter1;
     @Shadow public EnumFacing facingDirection;

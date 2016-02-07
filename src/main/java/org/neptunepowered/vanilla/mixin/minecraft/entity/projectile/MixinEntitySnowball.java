@@ -21,12 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.projectile;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.projectile;
 
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.throwable.Snowball;
 import net.minecraft.entity.projectile.EntitySnowball;
-import org.neptunepowered.common.mixin.minecraft.entity.projectile.MixinEntityThrowable;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(EntitySnowball.class)

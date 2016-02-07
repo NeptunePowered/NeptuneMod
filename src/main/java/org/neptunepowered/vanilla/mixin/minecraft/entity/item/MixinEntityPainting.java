@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.item;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.item;
 
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.hanging.Painting;
 import net.minecraft.entity.item.EntityPainting;
-import org.neptunepowered.common.mixin.minecraft.entity.MixinEntityHanging;
+import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityHanging;
 import org.neptunepowered.vanilla.util.converter.ArtConverter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.projectile;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.projectile;
 
 import net.canarymod.api.entity.Arrow;
 import net.canarymod.api.entity.Entity;
 import net.canarymod.api.entity.EntityType;
 import net.minecraft.entity.projectile.EntityArrow;
-import org.neptunepowered.common.mixin.minecraft.entity.MixinEntity;
+import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

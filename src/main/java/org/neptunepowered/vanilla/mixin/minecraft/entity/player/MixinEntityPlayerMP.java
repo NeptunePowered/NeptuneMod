@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.player;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
 import com.mojang.authlib.GameProfile;
 import net.canarymod.api.GameMode;
@@ -47,13 +47,11 @@ import net.canarymod.user.Group;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
-import org.neptunepowered.common.mixin.minecraft.entity.player.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityPlayerMP.class)
-public abstract class MixinEntityPlayerMP extends org.neptunepowered.common.mixin.minecraft.entity.player.MixinEntityPlayer
-        implements Player {
+public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements Player {
 
     @Shadow public int ping;
     @Shadow private StatisticsFile statsFile;

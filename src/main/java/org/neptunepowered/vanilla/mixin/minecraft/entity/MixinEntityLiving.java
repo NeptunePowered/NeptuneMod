@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity;
+package org.neptunepowered.vanilla.mixin.minecraft.entity;
 
 import net.canarymod.api.PathFinder;
 import net.canarymod.api.ai.AIManager;
@@ -34,7 +34,6 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNavigate;
-import org.neptunepowered.common.mixin.minecraft.entity.MixinEntityLivingBase;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 

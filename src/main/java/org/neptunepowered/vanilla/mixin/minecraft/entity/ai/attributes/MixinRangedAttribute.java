@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.ai.attributes;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.ai.attributes;
 
 import net.canarymod.api.attributes.RangedAttribute;
 import net.minecraft.entity.ai.attributes.BaseAttribute;

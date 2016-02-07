@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity;
+package org.neptunepowered.vanilla.mixin.minecraft.entity;
 
 import net.canarymod.api.entity.Projectile;
 import net.minecraft.entity.IProjectile;

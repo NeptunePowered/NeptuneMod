@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.effect;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.effect;
 
 import net.canarymod.api.entity.effect.WeatherEffect;
 import net.minecraft.entity.effect.EntityWeatherEffect;
-import org.neptunepowered.common.mixin.minecraft.entity.MixinEntity;
+import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntity;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(EntityWeatherEffect.class)

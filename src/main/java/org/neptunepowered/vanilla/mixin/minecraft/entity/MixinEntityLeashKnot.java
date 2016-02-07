@@ -21,17 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity;
+package org.neptunepowered.vanilla.mixin.minecraft.entity;
 
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.hanging.LeashKnot;
 import net.minecraft.entity.EntityLeashKnot;
-import org.neptunepowered.common.mixin.minecraft.entity.*;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(EntityLeashKnot.class)
-public abstract class MixinEntityLeashKnot extends org.neptunepowered.common.mixin.minecraft.entity.MixinEntityHanging
-        implements LeashKnot {
+public abstract class MixinEntityLeashKnot extends MixinEntityHanging implements LeashKnot {
 
     @Override
     public String getFqName() {

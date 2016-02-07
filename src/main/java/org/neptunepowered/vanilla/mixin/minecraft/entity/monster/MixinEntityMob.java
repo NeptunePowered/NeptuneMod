@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.monster;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
 
 import net.minecraft.entity.monster.EntityMob;
-import org.neptunepowered.common.mixin.minecraft.entity.MixinEntityLiving;
+import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLiving;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(EntityMob.class)

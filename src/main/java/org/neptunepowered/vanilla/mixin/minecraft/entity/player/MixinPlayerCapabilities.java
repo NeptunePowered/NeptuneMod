@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.mixin.minecraft.entity.player;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
 import net.canarymod.api.entity.living.humanoid.HumanCapabilities;
 import net.minecraft.entity.player.PlayerCapabilities;
