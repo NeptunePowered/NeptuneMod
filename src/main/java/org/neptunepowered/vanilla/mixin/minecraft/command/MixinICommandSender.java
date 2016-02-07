@@ -41,6 +41,7 @@ import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ICommandSender.class)
+@Implements(@Interface(iface = MessageReceiver.class, prefix = "messagereceiver$"))
 public interface MixinICommandSender extends ICommandSender, MessageReceiver {
 
     @Intrinsic
