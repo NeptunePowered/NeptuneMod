@@ -23,6 +23,7 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
+import com.mojang.authlib.GameProfile;
 import net.canarymod.api.entity.EntityItem;
 import net.canarymod.api.entity.living.humanoid.Human;
 import net.canarymod.api.entity.living.humanoid.HumanCapabilities;
@@ -48,6 +49,11 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Shadow
     public abstract IChatComponent shadow$getDisplayName();
+
+    @Shadow
+    protected GameProfile getGameProfile() {
+        return null;
+    }
 
     @Inject(method = "trySleep", at = @At(value = "INVOKE"))
     public void onTrySleep(BlockPos bedLocation, CallbackInfoReturnable<EntityPlayer.EnumStatus> callbackInfo) {

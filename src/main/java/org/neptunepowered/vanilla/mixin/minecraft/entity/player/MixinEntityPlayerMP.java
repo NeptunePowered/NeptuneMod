@@ -243,7 +243,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public GameProfile getGameProfile() {
-        return null;
+        return super.getGameProfile();
     }
 
     @Override

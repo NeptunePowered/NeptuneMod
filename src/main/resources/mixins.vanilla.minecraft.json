@@ -1,10 +1,12 @@
 {
+    "required": true,
+    "minVersion": "0.4.19",
     "package": "org.neptunepowered.vanilla.mixin.minecraft",
     "refmap": "mixins.vanilla.refmap.json",
     "mixins": [
         "block.material.MixinMaterial",
         "block.MixinBlock",
-        "command.MixinCommandSender",
+        "command.MixinICommandSender",
         "command.MixinServerCommandManager",
         "crash.MixinCrashReport",
         "entity.ai.attributes.MixinAttributeModifier",
@@ -92,5 +94,8 @@
         "village.MixinVillage",
         "world.biome.MixinBiomeGenBase",
         "world.chunk.MixinChunk"
-    ]
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
 }

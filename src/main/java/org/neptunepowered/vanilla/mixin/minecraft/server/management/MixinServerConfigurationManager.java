@@ -64,17 +64,20 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
+import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Mixin(ServerConfigurationManager.class)
 public abstract class MixinServerConfigurationManager implements ConfigurationManager {
+
+    @Shadow private static Logger logger;
 
     @Shadow public List playerEntityList;
     @Shadow public Map uuidToPlayerMap;
@@ -114,14 +117,19 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
 
         if (playerIn.ridingEntity != null) {
             worldserver.removePlayerEntityDangerously(playerIn.ridingEntity);
-            ServerConfigurationManager.logger.debug("removing player mount");
+            logger.debug("removing player mount");
         }
 
         worldserver.removeEntity(playerIn);
         worldserver.getPlayerManager().removePlayer(playerIn);
         this.playerEntityList.remove(playerIn);
-        this.uuidToPlayerMap.remove(playerIn.getUniqueID());
-        this.playerStatFiles.remove(playerIn.getUniqueID());
+        UUID uuid = playerIn.getUniqueID();
+        EntityPlayerMP entityplayermp = (EntityPlayerMP) this.uuidToPlayerMap.get(uuid);
+
+        if (entityplayermp == playerIn) {
+            this.uuidToPlayerMap.remove(uuid);
+            this.playerStatFiles.remove(uuid);
+        }
 
         // Neptune: start
         PlayerListData playerListData = ((Player) playerIn).getPlayerListData(PlayerListAction.REMOVE_PLAYER);
@@ -161,24 +169,20 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
             s1 = netManager.getRemoteAddress().toString();
         }
 
-        ServerConfigurationManager.logger
-                .info(playerIn.getName() + "[" + s1 + "] logged in with entity id " + playerIn
-                        .getEntityId() + " at (" + playerIn.posX + ", " + playerIn.posY + ", " + playerIn.posZ + ")");
+        logger.info(playerIn.getName() + "[" + s1 + "] logged in with entity id " + playerIn.getEntityId() + " at (" + playerIn.posX + ", "
+                + playerIn.posY + ", " + playerIn.posZ + ")");
         WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
         WorldInfo worldinfo = worldserver.getWorldInfo();
         BlockPos blockpos = worldserver.getSpawnPoint();
-        this.setPlayerGameTypeBasedOnOther(playerIn, null, worldserver);
+        this.setPlayerGameTypeBasedOnOther(playerIn, (EntityPlayerMP) null, worldserver);
         NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.mcServer, netManager, playerIn);
         nethandlerplayserver.sendPacket(
-                new S01PacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(),
-                        worldinfo.isHardcoreModeEnabled(), worldserver.provider.getDimensionId(),
-                        worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(),
+                new S01PacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(), worldinfo.isHardcoreModeEnabled(),
+                        worldserver.provider.getDimensionId(), worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(),
                         worldserver.getGameRules().getBoolean("reducedDebugInfo")));
-        nethandlerplayserver
-                .sendPacket(new S3FPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(
-                        this.mcServer.getServerModName())));
-        nethandlerplayserver
-                .sendPacket(new S41PacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
+        nethandlerplayserver.sendPacket(new S3FPacketCustomPayload("MC|Brand",
+                (new PacketBuffer(Unpooled.buffer())).writeString(mcServer.getServerModName())));
+        nethandlerplayserver.sendPacket(new S41PacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
         nethandlerplayserver.sendPacket(new S05PacketSpawnPosition(blockpos));
         nethandlerplayserver.sendPacket(new S39PacketPlayerAbilities(playerIn.capabilities));
         nethandlerplayserver.sendPacket(new S09PacketHeldItemChange(playerIn.inventory.currentItem));
@@ -189,11 +193,9 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         ChatComponentTranslation chatcomponenttranslation;
 
         if (!playerIn.getName().equalsIgnoreCase(s)) {
-            chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.joined.renamed",
-                    new Object[]{playerIn.getDisplayName(), s});
+            chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.joined.renamed", new Object[]{playerIn.getDisplayName(), s});
         } else {
-            chatcomponenttranslation =
-                    new ChatComponentTranslation("multiplayer.player.joined", new Object[]{playerIn.getDisplayName()});
+            chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.joined", new Object[]{playerIn.getDisplayName()});
         }
 
         chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.YELLOW);
@@ -210,18 +212,14 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         //this.sendChatMsg(chatcomponenttranslation); // Neptune: Called above
 
         this.playerLoggedIn(playerIn);
-        nethandlerplayserver.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw,
-                playerIn.rotationPitch);
+        nethandlerplayserver.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw, playerIn.rotationPitch);
         this.updateTimeAndWeatherForPlayer(playerIn, worldserver);
 
         if (this.mcServer.getResourcePackUrl().length() > 0) {
             playerIn.loadResourcePack(this.mcServer.getResourcePackUrl(), this.mcServer.getResourcePackHash());
         }
 
-        Iterator iterator = playerIn.getActivePotionEffects().iterator();
-
-        while (iterator.hasNext()) {
-            PotionEffect potioneffect = (PotionEffect) iterator.next();
+        for (PotionEffect potioneffect : playerIn.getActivePotionEffects()) {
             nethandlerplayserver.sendPacket(new S1DPacketEntityEffect(playerIn.getEntityId(), potioneffect));
         }
 

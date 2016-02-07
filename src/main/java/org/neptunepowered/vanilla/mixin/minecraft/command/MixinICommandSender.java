@@ -40,84 +40,83 @@ import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin({EntityPlayerMP.class, CommandBlockLogic.class, RConConsoleSource.class})
-@Implements(@Interface(iface = MessageReceiver.class, prefix = "messagereceiver$"))
-public abstract class MixinCommandSender implements ICommandSender, MessageReceiver {
+@Mixin(ICommandSender.class)
+public interface MixinICommandSender extends ICommandSender, MessageReceiver {
 
     @Intrinsic
-    public String messagereceiver$getName() {
+    default String messagereceiver$getName() {
         return getName();
     }
 
     @Override
-    public void notice(String message) {
+    default void notice(String message) {
         message(ChatFormat.RED + message);
     }
 
     @Override
-    public void notice(CharSequence message) {
+    default void notice(CharSequence message) {
         notice(message.toString());
     }
 
     @Override
-    public void notice(CharSequence... messages) {
+    default void notice(CharSequence... messages) {
         for (CharSequence message : messages) {
             notice(message);
         }
     }
 
     @Override
-    public void notice(Iterable<? extends CharSequence> messages) {
+    default void notice(Iterable<? extends CharSequence> messages) {
         for (CharSequence message : messages) {
             notice(message);
         }
     }
 
     @Override
-    public void message(String message) {
+    default void message(String message) {
         addChatMessage(new ChatComponentText(message));
     }
 
     @Override
-    public void message(CharSequence message) {
+    default void message(CharSequence message) {
         message(message.toString());
     }
 
     @Override
-    public void message(CharSequence... messages) {
+    default void message(CharSequence... messages) {
         for (CharSequence message : messages) {
             message(message);
         }
     }
 
     @Override
-    public void message(Iterable<? extends CharSequence> messages) {
+    default void message(Iterable<? extends CharSequence> messages) {
         for (CharSequence message : messages) {
             message(message);
         }
     }
 
     @Override
-    public void message(ChatComponent... chatComponents) {
+    default void message(ChatComponent... chatComponents) {
         for (ChatComponent message : chatComponents) {
             message(message.getText());
         }
     }
 
     @Override
-    public boolean hasPermission(String node) {
+    default boolean hasPermission(String node) {
         //PermissionCheckHook hook = (PermissionCheckHook) new PermissionCheckHook(node, this, false).call();
         //return hook.getResult();
         return true; // Testing
     }
 
     @Override
-    public boolean safeHasPermission(String permission) {
+    default boolean safeHasPermission(String permission) {
         return true; // Testing
     }
 
     @Override
-    public ReceiverType getReceiverType() {
+    default ReceiverType getReceiverType() {
         if (this instanceof Player) {
             return ReceiverType.PLAYER;
         } else if (this instanceof net.canarymod.api.CommandBlockLogic) {
@@ -128,7 +127,7 @@ public abstract class MixinCommandSender implements ICommandSender, MessageRecei
     }
 
     @Override
-    public Player asPlayer() {
+    default Player asPlayer() {
         if (this instanceof Player) {
             return (Player) this;
         }
@@ -136,7 +135,7 @@ public abstract class MixinCommandSender implements ICommandSender, MessageRecei
     }
 
     @Override
-    public Server asServer() {
+    default Server asServer() {
         if (this instanceof Server) {
             return (Server) this;
         }
@@ -144,7 +143,7 @@ public abstract class MixinCommandSender implements ICommandSender, MessageRecei
     }
 
     @Override
-    public net.canarymod.api.CommandBlockLogic asCommandBlock() {
+    default net.canarymod.api.CommandBlockLogic asCommandBlock() {
         if (this instanceof net.canarymod.api.CommandBlockLogic) {
             return (net.canarymod.api.CommandBlockLogic) this;
         }
@@ -152,7 +151,8 @@ public abstract class MixinCommandSender implements ICommandSender, MessageRecei
     }
 
     @Override
-    public String getLocale() {
+    default String getLocale() {
         return null;
     }
+
 }
