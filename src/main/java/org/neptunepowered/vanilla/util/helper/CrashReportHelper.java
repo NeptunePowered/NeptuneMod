@@ -1,7 +1,7 @@
 /*
  * This file is part of NeptuneCommon, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary;
+package org.neptunepowered.vanilla.util.helper;
 
 import net.canarymod.Canary;
-import net.visualillusionsent.utils.JarUtils;
-import org.spongepowered.asm.launch.MixinTweaker;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import net.canarymod.plugin.Plugin;
 
-@Mixin(Canary.class)
-public class MixinCanary {
+public final class CrashReportHelper {
 
-    @Shadow(remap = false) private static String jarPath;
-
-    /*
-    This is a temporary way to get the implementation title.
-     */
-    @Overwrite
-    public static String getImplementationTitle() {
-        return "NeptuneVanilla";
-    }
-
-    /*
-    This is a temporary way to get the implementation version.
-     */
-    @Overwrite
-    public static String getImplementationVersion() {
-        return "1.8-1.2.1-SNAPSHOT";
-    }
-
-    @Overwrite
-    public static String getCanaryJarPath() {
-        if (jarPath == null) {
-            jarPath = JarUtils.getJarPath(MixinTweaker.class);
+    public static String createCrashSectionMessage() {
+        StringBuilder result = new StringBuilder(64);
+        for (Plugin plugin : Canary.pluginManager().getPlugins()) {
+            result.append("\n\t\t").append(plugin.getName());
         }
-        return jarPath;
+        return result.toString();
     }
 }

@@ -1,7 +1,7 @@
 /*
  * This file is part of NeptuneCommon, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary;
+package org.neptunepowered.vanilla.mixin.minecraft.network;
 
-import net.canarymod.Canary;
-import net.visualillusionsent.utils.JarUtils;
-import org.spongepowered.asm.launch.MixinTweaker;
+import io.netty.channel.SimpleChannelInboundHandler;
+import net.minecraft.network.NetworkManager;
+import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkManager;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(Canary.class)
-public class MixinCanary {
+@Mixin(NetworkManager.class)
+public abstract class MixinNetworkManager extends SimpleChannelInboundHandler implements IMixinNetworkManager {
 
-    @Shadow(remap = false) private static String jarPath;
+    private int protocolVersion;
+    private String hostnamePinged;
+    private int portPinged;
 
-    /*
-    This is a temporary way to get the implementation title.
-     */
-    @Overwrite
-    public static String getImplementationTitle() {
-        return "NeptuneVanilla";
+    @Override
+    public int getProtocolVersion() {
+        return this.protocolVersion;
     }
 
-    /*
-    This is a temporary way to get the implementation version.
-     */
-    @Overwrite
-    public static String getImplementationVersion() {
-        return "1.8-1.2.1-SNAPSHOT";
+    @Override
+    public void setProtocolVersion(int version) {
+        this.protocolVersion = version;
     }
 
-    @Overwrite
-    public static String getCanaryJarPath() {
-        if (jarPath == null) {
-            jarPath = JarUtils.getJarPath(MixinTweaker.class);
-        }
-        return jarPath;
+    @Override
+    public String getHostnamePinged() {
+        return this.hostnamePinged;
+    }
+
+    @Override
+    public void setHostnamePinged(String hostname) {
+        this.hostnamePinged = hostname;
+    }
+
+    @Override
+    public int getPortPinged() {
+        return this.portPinged;
+    }
+
+    @Override
+    public void setPortPinged(int port) {
+        this.portPinged = port;
     }
 }

@@ -1,8 +1,0 @@
-{
-    "package": "org.neptunepowered.common.mixin.canary",
-    "refmap": "mixins.common.refmap.json",
-    "mixins": [
-        "commandsys.MixinCanaryCommand",
-        "MixinCanary"
-    ]
-}

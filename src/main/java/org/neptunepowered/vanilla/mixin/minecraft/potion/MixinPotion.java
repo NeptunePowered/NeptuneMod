@@ -1,7 +1,7 @@
 /*
  * This file is part of NeptuneCommon, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary;
+package org.neptunepowered.vanilla.mixin.minecraft.potion;
 
-import net.canarymod.Canary;
-import net.visualillusionsent.utils.JarUtils;
-import org.spongepowered.asm.launch.MixinTweaker;
+import net.canarymod.api.potion.PotionEffectType;
+import net.minecraft.potion.Potion;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(Canary.class)
-public class MixinCanary {
+@Mixin(Potion.class)
+public abstract class MixinPotion implements net.canarymod.api.potion.Potion {
 
-    @Shadow(remap = false) private static String jarPath;
+    @Shadow public int id;
+    @Shadow private boolean isBadEffect;
 
-    /*
-    This is a temporary way to get the implementation title.
-     */
-    @Overwrite
-    public static String getImplementationTitle() {
-        return "NeptuneVanilla";
+    @Override
+    public int getID() {
+        return id;
     }
 
-    /*
-    This is a temporary way to get the implementation version.
-     */
-    @Overwrite
-    public static String getImplementationVersion() {
-        return "1.8-1.2.1-SNAPSHOT";
+    @Override
+    @Shadow
+    public abstract String getName();
+
+    @Override
+    public PotionEffectType getEffectType() {
+        return PotionEffectType.fromName(getName());
     }
 
-    @Overwrite
-    public static String getCanaryJarPath() {
-        if (jarPath == null) {
-            jarPath = JarUtils.getJarPath(MixinTweaker.class);
-        }
-        return jarPath;
+    @Override
+    public boolean isBad() {
+        return isBadEffect;
     }
+
+    @Override
+    @Shadow
+    public abstract double getEffectiveness();
+
+    @Override
+    @Shadow
+    public abstract boolean isUsable();
+
+    @Override
+    @Shadow
+    public abstract boolean isInstant();
 }

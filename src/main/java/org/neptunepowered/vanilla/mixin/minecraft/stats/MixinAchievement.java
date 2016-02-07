@@ -1,7 +1,7 @@
 /*
  * This file is part of NeptuneCommon, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary;
+package org.neptunepowered.vanilla.mixin.minecraft.stats;
 
-import net.canarymod.Canary;
-import net.visualillusionsent.utils.JarUtils;
-import org.spongepowered.asm.launch.MixinTweaker;
+import net.minecraft.stats.Achievement;
+import net.minecraft.stats.IStatType;
+import net.minecraft.stats.StatBase;
+import net.minecraft.util.IChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(Canary.class)
-public class MixinCanary {
+@Mixin(Achievement.class)
+public abstract class MixinAchievement extends StatBase implements net.canarymod.api.statistics.Achievement {
 
-    @Shadow(remap = false) private static String jarPath;
+    @Shadow public Achievement parentAchievement;
+    @Shadow private String achievementDescription;
+    @Shadow private boolean isSpecial;
 
-    /*
-    This is a temporary way to get the implementation title.
-     */
-    @Overwrite
-    public static String getImplementationTitle() {
-        return "NeptuneVanilla";
+    public MixinAchievement(String p_i45307_1_, IChatComponent p_i45307_2_, IStatType p_i45307_3_) {
+        super(p_i45307_1_, p_i45307_2_, p_i45307_3_);
     }
 
-    /*
-    This is a temporary way to get the implementation version.
-     */
-    @Overwrite
-    public static String getImplementationVersion() {
-        return "1.8-1.2.1-SNAPSHOT";
+    @Override
+    public String getDescription() {
+        return achievementDescription;
     }
 
-    @Overwrite
-    public static String getCanaryJarPath() {
-        if (jarPath == null) {
-            jarPath = JarUtils.getJarPath(MixinTweaker.class);
-        }
-        return jarPath;
+    @Override
+    public net.canarymod.api.statistics.Achievement getParent() {
+        return (net.canarymod.api.statistics.Achievement) parentAchievement;
+    }
+
+    @Override
+    public boolean isSpecial() {
+        return isSpecial;
     }
 }

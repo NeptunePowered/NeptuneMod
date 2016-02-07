@@ -2,6 +2,7 @@
     "package": "org.neptunepowered.vanilla.mixin.canary",
     "refmap": "mixins.vanilla.refmap.json",
     "mixins": [
+        "commandsys.MixinCanaryCommand",
         "MixinCanary"
     ]
 }

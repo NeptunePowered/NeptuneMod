@@ -1,7 +1,7 @@
 /*
  * This file is part of NeptuneCommon, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary;
+package org.neptunepowered.vanilla.mixin.minecraft.nbt;
 
-import net.canarymod.Canary;
-import net.visualillusionsent.utils.JarUtils;
-import org.spongepowered.asm.launch.MixinTweaker;
+import net.canarymod.api.nbt.PrimitiveTag;
+import net.minecraft.nbt.NBTBase;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(Canary.class)
-public class MixinCanary {
+@Mixin(NBTBase.NBTPrimitive.class)
+@Implements(@Interface(iface = PrimitiveTag.class, prefix = "tag$"))
+public abstract class MixinNBTPrimitive extends NBTBase {
 
-    @Shadow(remap = false) private static String jarPath;
+    @Shadow
+    public abstract long getLong();
 
-    /*
-    This is a temporary way to get the implementation title.
-     */
-    @Overwrite
-    public static String getImplementationTitle() {
-        return "NeptuneVanilla";
+    @Shadow
+    public abstract int getInt();
+
+    @Shadow
+    public abstract short getShort();
+
+    @Shadow
+    public abstract byte getByte();
+
+    @Shadow
+    public abstract double getDouble();
+
+    @Shadow
+    public abstract float getFloat();
+
+    public long tag$getLongValue() {
+        return getLong();
     }
 
-    /*
-    This is a temporary way to get the implementation version.
-     */
-    @Overwrite
-    public static String getImplementationVersion() {
-        return "1.8-1.2.1-SNAPSHOT";
+    public int tag$getIntValue() {
+        return getInt();
     }
 
-    @Overwrite
-    public static String getCanaryJarPath() {
-        if (jarPath == null) {
-            jarPath = JarUtils.getJarPath(MixinTweaker.class);
-        }
-        return jarPath;
+    public short tag$getShortValue() {
+        return getShort();
+    }
+
+    public byte tag$getByteValue() {
+        return getByte();
+    }
+
+    public double tag$getDoubleValue() {
+        return getDouble();
+    }
+
+    public float tag$getFloatValue() {
+        return getFloat();
     }
 }

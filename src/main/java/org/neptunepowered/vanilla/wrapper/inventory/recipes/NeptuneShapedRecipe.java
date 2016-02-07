@@ -1,7 +1,7 @@
 /*
  * This file is part of NeptuneCommon, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary;
+package org.neptunepowered.vanilla.wrapper.inventory.recipes;
 
-import net.canarymod.Canary;
-import net.visualillusionsent.utils.JarUtils;
-import org.spongepowered.asm.launch.MixinTweaker;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import net.canarymod.api.inventory.Item;
+import net.canarymod.api.inventory.recipes.ShapedRecipe;
+import net.minecraft.item.crafting.ShapedRecipes;
+import org.neptunepowered.vanilla.wrapper.inventory.recipes.*;
 
-@Mixin(Canary.class)
-public class MixinCanary {
+public class NeptuneShapedRecipe extends org.neptunepowered.common.wrapper.inventory.recipes.NeptuneRecipe implements ShapedRecipe {
 
-    @Shadow(remap = false) private static String jarPath;
-
-    /*
-    This is a temporary way to get the implementation title.
-     */
-    @Overwrite
-    public static String getImplementationTitle() {
-        return "NeptuneVanilla";
+    public NeptuneShapedRecipe(ShapedRecipes handle) {
+        super(handle);
     }
 
-    /*
-    This is a temporary way to get the implementation version.
-     */
-    @Overwrite
-    public static String getImplementationVersion() {
-        return "1.8-1.2.1-SNAPSHOT";
+    @Override
+    public int getWidth() {
+        return this.getHandle().recipeWidth;
     }
 
-    @Overwrite
-    public static String getCanaryJarPath() {
-        if (jarPath == null) {
-            jarPath = JarUtils.getJarPath(MixinTweaker.class);
-        }
-        return jarPath;
+    @Override
+    public int getHeight() {
+        return this.getHandle().recipeHeight;
+    }
+
+    @Override
+    public Item[] getRecipeItems() {
+        return (Item[]) this.getHandle().recipeItems;
+    }
+
+    @Override
+    public boolean isShapeless() {
+        return false;
+    }
+
+    @Override
+    public boolean isShaped() {
+        return true;
+    }
+
+    @Override
+    public ShapedRecipes getHandle() {
+        return (ShapedRecipes) super.getHandle();
     }
 }

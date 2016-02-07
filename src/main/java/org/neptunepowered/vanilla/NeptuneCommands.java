@@ -1,7 +1,7 @@
 /*
  * This file is part of NeptuneCommon, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary;
+package org.neptunepowered.vanilla;
 
 import net.canarymod.Canary;
-import net.visualillusionsent.utils.JarUtils;
-import org.spongepowered.asm.launch.MixinTweaker;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import net.canarymod.chat.ChatFormat;
+import net.canarymod.chat.MessageReceiver;
+import net.canarymod.commandsys.Command;
+import net.canarymod.commandsys.CommandListener;
 
-@Mixin(Canary.class)
-public class MixinCanary {
+public class NeptuneCommands implements CommandListener {
 
-    @Shadow(remap = false) private static String jarPath;
-
-    /*
-    This is a temporary way to get the implementation title.
-     */
-    @Overwrite
-    public static String getImplementationTitle() {
-        return "NeptuneVanilla";
+    @Command(aliases = { "neptune" },
+            description = "Neptune command",
+            permissions = { "neptune.command.base" },
+            toolTip = "/neptune [info]")
+    public void baseCommand(MessageReceiver caller, String[] args) {
+        this.infoCommand(caller, args);
     }
 
-    /*
-    This is a temporary way to get the implementation version.
-     */
-    @Overwrite
-    public static String getImplementationVersion() {
-        return "1.8-1.2.1-SNAPSHOT";
-    }
-
-    @Overwrite
-    public static String getCanaryJarPath() {
-        if (jarPath == null) {
-            jarPath = JarUtils.getJarPath(MixinTweaker.class);
-        }
-        return jarPath;
+    @Command(aliases = { "info" },
+            parent = "neptune",
+            description = "info subcommand",
+            permissions = { "neptune.command.info" },
+            toolTip = "/neptune info")
+    public void infoCommand(MessageReceiver caller, String[] args) {
+        caller.message(String.format("%s%s=== %s %s ===",
+                ChatFormat.BOLD, ChatFormat.BLUE, Canary.getImplementationTitle(), Canary.getImplementationVersion()));
+        caller.message("Website: https://www.neptunepowered.org/");
+        caller.message("Lead Developer: Jamie Mansfield");
     }
 }

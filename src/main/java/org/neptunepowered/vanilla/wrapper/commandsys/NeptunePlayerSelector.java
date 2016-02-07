@@ -1,7 +1,7 @@
 /*
  * This file is part of NeptuneCommon, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,41 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary;
+package org.neptunepowered.vanilla.wrapper.commandsys;
 
-import net.canarymod.Canary;
-import net.visualillusionsent.utils.JarUtils;
-import org.spongepowered.asm.launch.MixinTweaker;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
+import net.canarymod.api.entity.living.humanoid.Player;
+import net.canarymod.chat.MessageReceiver;
+import net.canarymod.commandsys.PlayerSelector;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
 
-@Mixin(Canary.class)
-public class MixinCanary {
+import java.util.List;
 
-    @Shadow(remap = false) private static String jarPath;
+public class NeptunePlayerSelector implements PlayerSelector {
 
-    /*
-    This is a temporary way to get the implementation title.
-     */
-    @Overwrite
-    public static String getImplementationTitle() {
-        return "NeptuneVanilla";
+    @Override
+    public Player matchOnePlayer(MessageReceiver caller, String pattern) {
+        return (Player) net.minecraft.command.PlayerSelector.matchOnePlayer((ICommandSender) caller, pattern);
     }
 
-    /*
-    This is a temporary way to get the implementation version.
-     */
-    @Overwrite
-    public static String getImplementationVersion() {
-        return "1.8-1.2.1-SNAPSHOT";
+    @Override
+    public Player[] matchPlayers(MessageReceiver caller, String pattern) {
+        List matches = net.minecraft.command.PlayerSelector
+                .matchEntities((ICommandSender) caller, pattern, EntityPlayerMP.class);
+        return (Player[]) matches.toArray(new Player[matches.size()]);
     }
 
-    @Overwrite
-    public static String getCanaryJarPath() {
-        if (jarPath == null) {
-            jarPath = JarUtils.getJarPath(MixinTweaker.class);
-        }
-        return jarPath;
+    @Override
+    public boolean matchesMultiplePlayers(String pattern) {
+        return net.minecraft.command.PlayerSelector.matchesMultiplePlayers(pattern);
     }
 }

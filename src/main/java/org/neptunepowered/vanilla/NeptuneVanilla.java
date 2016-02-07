@@ -26,7 +26,6 @@ package org.neptunepowered.vanilla;
 import net.canarymod.Canary;
 import net.canarymod.api.Server;
 import net.minecraft.server.MinecraftServer;
-import org.neptunepowered.common.Neptune;
 
 public class NeptuneVanilla {
 

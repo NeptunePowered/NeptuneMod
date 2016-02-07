@@ -89,8 +89,6 @@ public class NeptuneServerTweaker implements ITweaker {
         logger.debug("Initializing Mixin environment...");
         MixinBootstrap.init();
         MixinEnvironment env = MixinEnvironment.getDefaultEnvironment()
-                .addConfiguration("mixins.common.canary.json")
-                .addConfiguration("mixins.common.minecraft.json")
                 .addConfiguration("mixins.vanilla.canary.json")
                 .addConfiguration("mixins.vanilla.minecraft.json");
         env.setSide(MixinEnvironment.Side.SERVER);
@@ -108,7 +106,7 @@ public class NeptuneServerTweaker implements ITweaker {
         }
 
         logger.debug("Applying access transformer...");
-        Launch.blackboard.put("vanilla.at", new URL[]{getResource("common_at.cfg")});
+        Launch.blackboard.put("vanilla.at", new URL[]{getResource("vanilla_at.cfg")});
         loader.registerTransformer("org.neptunepowered.vanilla.launch.transformers.AccessTransformer");
 
         logger.info("Initialization finished. Starting Minecraft server...");
