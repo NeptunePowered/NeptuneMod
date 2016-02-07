@@ -9,17 +9,23 @@ buildscript {
             name = 'sponge'
             url = 'http://repo.spongepowered.org/maven'
         }
+        maven {
+            url = 'https://plugins.gradle.org/m2/'
+        }
+
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-20160116.192356-17'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
         classpath 'org.spongepowered:mixingradle:0.3-SNAPSHOT'
+        classpath 'gradle.plugin.nl.javadude.gradle.plugins:license-gradle-plugin:0.12.1'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle.tweaker-server'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.github.hierynomus.license'
 
 group = 'org.neptunepowered'
 archivesBaseName = project.name.toLowerCase()
@@ -67,6 +73,17 @@ dependencies {
 
     shadow 'org.ow2.asm:asm-all:5.0.4'
     shadow 'net.sf.jopt-simple:jopt-simple:4.6'
+}
+
+license {
+    header file('HEADER.txt')
+    include '**/*.java'
+    include '**/*.groovy'
+
+    strictCheck true
+    mapping {
+        java = 'SLASHSTAR_STYLE'
+    }
 }
 
 minecraft {
