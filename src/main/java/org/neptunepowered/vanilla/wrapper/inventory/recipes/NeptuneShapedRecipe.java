@@ -26,9 +26,8 @@ package org.neptunepowered.vanilla.wrapper.inventory.recipes;
 import net.canarymod.api.inventory.Item;
 import net.canarymod.api.inventory.recipes.ShapedRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
-import org.neptunepowered.vanilla.wrapper.inventory.recipes.*;
 
-public class NeptuneShapedRecipe extends org.neptunepowered.common.wrapper.inventory.recipes.NeptuneRecipe implements ShapedRecipe {
+public class NeptuneShapedRecipe extends NeptuneRecipe implements ShapedRecipe {
 
     public NeptuneShapedRecipe(ShapedRecipes handle) {
         super(handle);

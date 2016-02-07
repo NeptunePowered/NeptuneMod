@@ -21,14 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.wrapper.world.blocks.properties;
+package org.neptunepowered.vanilla.wrapper.world.blocks.properties;
 
 import net.canarymod.api.world.blocks.properties.BlockBooleanProperty;
 import net.minecraft.block.properties.PropertyBool;
-import org.neptunepowered.common.wrapper.world.blocks.properties.*;
 
-public class NeptuneBlockBooleanProperty extends org.neptunepowered.common.wrapper.world.blocks.properties.NeptuneBlockProperty
-        implements BlockBooleanProperty {
+public class NeptuneBlockBooleanProperty extends NeptuneBlockProperty implements BlockBooleanProperty {
 
     public NeptuneBlockBooleanProperty(PropertyBool handle) {
         super(handle);

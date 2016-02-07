@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.wrapper.packet;
+package org.neptunepowered.vanilla.wrapper.packet;
 
 import net.canarymod.api.packet.BlockChangePacket;
 import net.canarymod.api.world.blocks.Block;
@@ -30,9 +30,8 @@ import net.canarymod.api.world.position.Position;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.BlockPos;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.play.server.IMixinS23PacketBlockChange;
-import org.neptunepowered.common.wrapper.packet.*;
 
-public class NeptuneBlockChangePacket extends org.neptunepowered.common.wrapper.packet.NeptunePacket implements BlockChangePacket {
+public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChangePacket {
 
     public NeptuneBlockChangePacket(S23PacketBlockChange handle) {
         super(handle);

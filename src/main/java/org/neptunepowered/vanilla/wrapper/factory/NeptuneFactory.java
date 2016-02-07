@@ -34,16 +34,6 @@ import net.canarymod.api.factory.ObjectFactory;
 import net.canarymod.api.factory.PacketFactory;
 import net.canarymod.api.factory.PotionFactory;
 import net.canarymod.api.factory.StatisticsFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptuneAIFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptuneAttributeFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptuneChatComponentFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptuneEntityFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptuneItemFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptuneNBTFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptuneObjectFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptunePacketFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptunePotionFactory;
-import org.neptunepowered.vanilla.wrapper.factory.NeptuneStatisticsFactory;
 
 public class NeptuneFactory implements Factory {
 

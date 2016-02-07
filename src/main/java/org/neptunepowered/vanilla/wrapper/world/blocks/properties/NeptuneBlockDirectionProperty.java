@@ -21,16 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.wrapper.world.blocks.properties;
+package org.neptunepowered.vanilla.wrapper.world.blocks.properties;
 
 import net.canarymod.api.world.blocks.BlockFace;
 import net.canarymod.api.world.blocks.properties.BlockDirectionProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.util.EnumFacing;
-import org.neptunepowered.common.wrapper.world.blocks.properties.*;
 
-public class NeptuneBlockDirectionProperty extends org.neptunepowered.common.wrapper.world.blocks.properties.NeptuneBlockEnumProperty
-        implements BlockDirectionProperty {
+public class NeptuneBlockDirectionProperty extends NeptuneBlockEnumProperty implements BlockDirectionProperty {
 
     public NeptuneBlockDirectionProperty(PropertyDirection handle) {
         super(handle);

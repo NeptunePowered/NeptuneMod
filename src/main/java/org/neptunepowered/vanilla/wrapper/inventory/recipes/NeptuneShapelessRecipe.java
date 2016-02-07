@@ -21,16 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.wrapper.inventory.recipes;
+package org.neptunepowered.vanilla.wrapper.inventory.recipes;
 
 import net.canarymod.api.inventory.Item;
 import net.canarymod.api.inventory.recipes.ShapelessRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import org.neptunepowered.common.wrapper.inventory.recipes.*;
 
 import java.util.List;
 
-public class NeptuneShapelessRecipe extends org.neptunepowered.common.wrapper.inventory.recipes.NeptuneRecipe implements ShapelessRecipe {
+public class NeptuneShapelessRecipe extends NeptuneRecipe implements ShapelessRecipe {
 
     public NeptuneShapelessRecipe(ShapelessRecipes handle) {
         super(handle);

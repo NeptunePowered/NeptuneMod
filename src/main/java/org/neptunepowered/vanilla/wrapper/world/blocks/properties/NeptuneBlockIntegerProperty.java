@@ -21,14 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.wrapper.world.blocks.properties;
+package org.neptunepowered.vanilla.wrapper.world.blocks.properties;
 
 import net.canarymod.api.world.blocks.properties.BlockIntegerProperty;
 import net.minecraft.block.properties.PropertyInteger;
-import org.neptunepowered.common.wrapper.world.blocks.properties.*;
 
-public class NeptuneBlockIntegerProperty extends org.neptunepowered.common.wrapper.world.blocks.properties.NeptuneBlockProperty
-        implements BlockIntegerProperty {
+public class NeptuneBlockIntegerProperty extends NeptuneBlockProperty implements BlockIntegerProperty {
 
     public NeptuneBlockIntegerProperty(PropertyInteger handle) {
         super(handle);

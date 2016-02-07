@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.wrapper.packet;
+package org.neptunepowered.vanilla.wrapper.packet;
 
 import net.canarymod.api.packet.Packet;
 import org.neptunepowered.vanilla.util.Wrapper;

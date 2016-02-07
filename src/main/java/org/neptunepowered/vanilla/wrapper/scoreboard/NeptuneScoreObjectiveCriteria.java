@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.wrapper.scoreboard;
+package org.neptunepowered.vanilla.wrapper.scoreboard;
 
 import net.canarymod.api.scoreboard.ScoreObjectiveCriteria;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;

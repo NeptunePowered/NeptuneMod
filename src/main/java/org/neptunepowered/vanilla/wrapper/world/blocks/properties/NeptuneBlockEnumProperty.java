@@ -21,14 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.common.wrapper.world.blocks.properties;
+package org.neptunepowered.vanilla.wrapper.world.blocks.properties;
 
 import net.canarymod.api.world.blocks.properties.BlockEnumProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import org.neptunepowered.common.wrapper.world.blocks.properties.*;
 
-public class NeptuneBlockEnumProperty extends org.neptunepowered.common.wrapper.world.blocks.properties.NeptuneBlockProperty
-        implements BlockEnumProperty {
+public class NeptuneBlockEnumProperty extends NeptuneBlockProperty implements BlockEnumProperty {
 
     public NeptuneBlockEnumProperty(PropertyEnum handle) {
         super(handle);
