@@ -1,59 +1,182 @@
 buildscript {
     repositories {
-        mavenCentral()
         jcenter()
         maven {
             name = 'forge'
             url = 'http://files.minecraftforge.net/maven'
         }
         maven {
-            name = 'minecrell-snapshots'
-            url = 'http://repo.minecrell.net/snapshots'
+            name = 'sponge'
+            url = 'http://repo.spongepowered.org/maven'
         }
     }
     dependencies {
-        classpath 'net.minecrell:VanillaGradle:1.0.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-20160116.192356-17'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
+        classpath 'org.spongepowered:mixingradle:0.3-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecrell.vanilla'
-ext.minecraftPlugin = plugins.getPlugin('net.minecrell.vanilla')
-apply from: project(':Common').file('gradle/implementation.gradle')
 
-minecraft {
-    serverTweaker = 'org.neptunepowered.vanilla.launch.server.NeptuneServerTweaker'
-}
+apply plugin: 'net.minecraftforge.gradle.tweaker-server'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
 
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'org.neptunepowered.vanilla.launch.server.NeptuneServerMain',
-                'Class-Path': 'minecraft_server.1.8.jar lib/launchwrapper-1.11.jar'
-        )
+group = 'org.neptunepowered'
+archivesBaseName = project.name.toLowerCase()
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+repositories {
+    maven {
+        name = 'vi-repo'
+        url = 'http://repo.visualillusionsent.net/repository/internal'
+    }
+    maven {
+        name = 'vi-snapshots'
+        url = 'http://repo.visualillusionsent.net/repository/snapshots'
+    }
+    maven {
+        name = 'sponge'
+        url = 'http://repo.spongepowered.org/maven'
+    }
+    maven {
+        name = 'mcstats-releases'
+        url = 'http://repo.mcstats.org/content/repositories/releases'
+    }
+    maven {
+        name = 'mcstats-snapshots'
+        url = 'http://repo.mcstats.org/content/repositories/snapshots'
     }
 }
 
 configurations {
-    // While we could set this to 'runtime', Eclipse doesn't support runtime dependencies
-    // properly so this was always going before 'compile' in Eclipse
     shadow
 }
 
+ext.apiVersion = '1.2.1-SNAPSHOT'
+
 dependencies {
+    compile "net.canarymod:CanaryLib:$apiVersion"
+    compile('org.spongepowered:mixin:0.4.19-SNAPSHOT') {
+        exclude module: 'launchwrapper'
+        exclude module: 'guava'
+    }
+
     compile 'org.ow2.asm:asm-debug-all:5.0.4'
 
     shadow 'org.ow2.asm:asm-all:5.0.4'
 }
 
+minecraft {
+    version = '1.8.9'
+    mappings = 'snapshot_20160207'
+    runDir = 'run'
+
+    tweakClass = 'org.neptunepowered.vanilla.launch.server.NeptuneServerTweaker'
+    atSource sourceSets.main
+
+    makeObfSourceJar = false
+}
+
+// Set project version
+version = "$minecraft.version-$apiVersion"
+
+sourceSets {
+    main {
+        refMap = 'mixins.vanilla.refmap.json'
+    }
+}
+
+// Source compiler configuration
+configure([compileJava, compileTestJava]) {
+    options.compilerArgs += ['-Xlint:all', '-Xlint:-path']
+    options.deprecation = true
+    options.encoding = 'UTF-8'
+}
+
+test {
+    testLogging {
+        exceptionFormat = 'full' // Always print full stack trace if something goes wrong in the unit tests
+        showStandardStreams = true
+    }
+}
+
+jar {
+    classifier = 'base'
+    manifest {
+        attributes(
+                'Main-Class': 'org.neptunepowered.vanilla.launch.server.NeptuneServerMain',
+                'Class-Path': 'minecraft_server.1.8.9.jar libraries/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar'
+        )
+    }
+}
+
+// Reobfuscate to SRG mappings
+reobf.jar.mappingType = 'SEARGE'
+
 shadowJar {
+    classifier = ''
     configurations += [project.configurations.shadow]
 
-    from minecraftPlugin.delayedFile('{SRG_DIR}/notch-srg.srg')
-    rename 'notch-srg.srg', 'mappings.srg'
+    // Clear the current source set
+    // TODO: Find a better way for this, will likely break in the future
+    mainSpec.sourcePaths.clear()
+
+    dependsOn reobfJar
+
+    // Wait for reobf task to be fully configured
+    afterEvaluate {
+        // Include obfuscated classes
+        from zipTree(reobfJar.jar)
+    }
+
+    // Exclude ForgeGradle classes from shaded JAR
+    exclude 'GradleStart**'
+    exclude 'net/minecraftforge/**'
+    exclude 'dummyThing'
+
+    from plugins.getPlugin('net.minecraftforge.gradle.tweaker-server').delayedFile(net.minecraftforge.gradle.common.Constants.MCP_DATA_SRG)
+    rename 'joined.srg', 'mappings.srg'
 
     dependencies {
+        include dependency('net.canarymod:CanaryLib')
+        include dependency('org.spongepowered:mixin')
+
+        // CanaryLib
+        include dependency('net.visualillusionsent:viutils')
+        include dependency('org.jdom:jdom2')
+        include dependency('com.mchange:c3p0')
+        include dependency('com.googlecode.json-simple:json-simple')
+        include dependency('org.mcstats.standalone:metrics')
+
+        // Launchwrapper
         include dependency('net.sf.jopt-simple:jopt-simple')
         include dependency('org.ow2.asm:asm-all')
     }
 }
-assemble.dependsOn shadowJar
+
+task sourceJar(type: Jar, overwrite: true) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives shadowJar
+    archives sourceJar
+    archives javadocJar
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.10'
+}
