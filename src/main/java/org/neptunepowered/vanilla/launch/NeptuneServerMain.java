@@ -65,7 +65,7 @@ public class NeptuneServerMain {
         }
 
         Launch.main(join(args,
-                "--tweakClass", "org.neptunepowered.vanilla.launch.server.NeptuneServerTweaker"
+                "--tweakClass", "org.neptunepowered.vanilla.launch.NeptuneServerTweaker"
         ));
     }
 
