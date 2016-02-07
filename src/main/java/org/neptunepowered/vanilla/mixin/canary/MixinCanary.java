@@ -48,7 +48,7 @@ public abstract class MixinCanary {
      */
     @Overwrite
     public static String getImplementationVersion() {
-        return "1.8-1.2.1-SNAPSHOT";
+        return "1.8.9-1.2.1-SNAPSHOT";
     }
 
     @Overwrite

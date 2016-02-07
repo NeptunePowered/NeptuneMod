@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.factory;
+package org.neptunepowered.vanilla.factory;
 
 import com.google.common.collect.Maps;
 import net.canarymod.api.attributes.Attribute;

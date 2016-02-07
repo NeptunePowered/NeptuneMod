@@ -21,25 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.factory;
+package org.neptunepowered.vanilla.factory;
 
-import net.canarymod.api.factory.StatisticsFactory;
-import net.canarymod.api.statistics.Achievement;
-import net.canarymod.api.statistics.Stat;
-import net.minecraft.stats.StatList;
+import net.canarymod.api.factory.PotionFactory;
+import net.canarymod.api.potion.PotionEffect;
+import net.canarymod.api.potion.PotionEffectType;
 
-public class NeptuneStatisticsFactory implements StatisticsFactory {
+public class NeptunePotionFactory implements PotionFactory {
 
     @Override
-    public Stat getStat(String nmsName) {
-        return (Stat) StatList.getOneShotStat(nmsName);
+    public PotionEffect newPotionEffect(int id, int duration, int amplifier) {
+        return (PotionEffect) new net.minecraft.potion.PotionEffect(id, duration, amplifier);
     }
 
     @Override
-    public Achievement getAchievement(String nmsName) {
-        if (StatList.getOneShotStat(nmsName) instanceof Achievement) {
-            return (Achievement) StatList.getOneShotStat(nmsName);
-        }
-        return null;
+    public PotionEffect newPotionEffect(int id, int duration, int amplifier, boolean ambient) {
+        return (PotionEffect) new net.minecraft.potion.PotionEffect(id, duration, amplifier, ambient, true);
+    }
+
+    @Override
+    public PotionEffect newPotionEffect(PotionEffectType type, int duration, int amplifier) {
+        return newPotionEffect(type.getID(), duration, amplifier);
+    }
+
+    @Override
+    public PotionEffect newPotionEffect(PotionEffectType type, int duration, int amplifier, boolean ambient) {
+        return newPotionEffect(type.getID(), duration, amplifier, ambient);
     }
 }

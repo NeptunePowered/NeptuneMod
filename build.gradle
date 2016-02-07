@@ -74,7 +74,7 @@ minecraft {
     mappings = 'snapshot_20160207'
     runDir = 'run'
 
-    tweakClass = 'org.neptunepowered.vanilla.launch.server.NeptuneServerTweaker'
+    tweakClass = 'org.neptunepowered.vanilla.launch.NeptuneServerTweaker'
     atSource sourceSets.main
 
     makeObfSourceJar = false
