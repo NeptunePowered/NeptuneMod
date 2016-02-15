@@ -80,7 +80,7 @@ public class NeptuneChatComponent extends Wrapper<IChatComponent> implements Cha
     @Override
     public List<ChatComponent> getSiblings() {
         List<ChatComponent> components = Lists.newArrayList();
-        for (IChatComponent chatComponent : (List<IChatComponent>) getHandle().getSiblings()) {
+        for (IChatComponent chatComponent : getHandle().getSiblings()) {
             components.add(new NeptuneChatComponent(chatComponent));
         }
         return components;

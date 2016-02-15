@@ -49,5 +49,8 @@ public class NeptuneCommands implements CommandListener {
                 ChatFormat.BOLD, ChatFormat.BLUE, Canary.getImplementationTitle(), Canary.getImplementationVersion()));
         caller.message("Website: https://www.neptunepowered.org/");
         caller.message("Lead Developer: Jamie Mansfield");
+        caller.message("With Contributions By: 14mRh4X0r, Minecrell");
+        caller.message("Copyright (c) 2015-2016, Jamie Mansfield");
+        caller.message("Licensed under the MIT license.");
     }
 }

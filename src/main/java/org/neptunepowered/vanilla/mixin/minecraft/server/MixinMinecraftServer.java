@@ -23,8 +23,6 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.server;
 
-import static net.canarymod.Canary.log;
-
 import com.google.common.collect.Lists;
 import net.canarymod.api.CommandBlockLogic;
 import net.canarymod.api.ConfigurationManager;
@@ -41,12 +39,8 @@ import net.canarymod.api.inventory.recipes.SmeltRecipe;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
-import net.canarymod.chat.ReceiverType;
-import net.canarymod.exceptions.InvalidInstanceException;
-import net.canarymod.logger.Logman;
 import net.canarymod.tasks.ServerTask;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
@@ -348,99 +342,8 @@ public abstract class MixinMinecraftServer implements Server {
     }
 
     @Override
-    public String getName() {
-        return "Console";
-    }
-
-    @Override
-    public void notice(String message) {
-        log.info(Logman.NOTICE, message);
-    }
-
-    @Override
-    public void notice(CharSequence message) {
-        log.info(Logman.NOTICE, message);
-    }
-
-    @Override
-    public void notice(CharSequence... messages) {
-        for (CharSequence message : messages) {
-            notice(message);
-        }
-    }
-
-    @Override
-    public void notice(Iterable<? extends CharSequence> messages) {
-        for (CharSequence message : messages) {
-            notice(message);
-        }
-    }
-
-    @Override
-    public void message(CharSequence message) {
-        log.info(Logman.MESSAGE, message);
-    }
-
-    @Override
-    public void message(String message) {
-        log.info(Logman.MESSAGE, message);
-    }
-
-    @Override
-    public void message(CharSequence... messages) {
-        for (CharSequence message : messages) {
-            message(message);
-        }
-    }
-
-    @Override
-    public void message(Iterable<? extends CharSequence> messages) {
-        for (CharSequence message : messages) {
-            message(message);
-        }
-    }
-
-    @Override
-    public void message(ChatComponent... chatComponents) {
-        for (ChatComponent chatComponent : chatComponents) {
-            log.info(Logman.MESSAGE, chatComponent.getFullText());
-        }
-    }
-
-    @Override
-    public boolean hasPermission(String node) {
-        return true;
-    }
-
-    @Override
-    public boolean safeHasPermission(String permission) {
-        return true;
-    }
-
-    @Override
-    public ReceiverType getReceiverType() {
-        return ReceiverType.SERVER;
-    }
-
-    @Override
-    public Player asPlayer() {
-        throw new InvalidInstanceException("Server is not a MessageReceiver of the type: PLAYER");
-    }
-
-    @Override
-    public Server asServer() {
-        return this;
-    }
-
-    @Override
-    public CommandBlockLogic asCommandBlock() {
-        throw new InvalidInstanceException("Server is not a MessageReceiver of the type: COMMANDBLOCK");
-    }
-
-    @Override
-    public String getLocale() {
-        return null;
-    }
+    @Shadow
+    public abstract String getName();
 
     @Overwrite
     public String getServerModName() {

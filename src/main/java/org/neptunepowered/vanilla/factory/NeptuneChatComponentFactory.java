@@ -62,11 +62,16 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ChatFormatting getFormattingByName(String name) {
-        return null;
+        return new NeptuneChatFormatting(EnumChatFormatting.getValueByName(name));
     }
 
     @Override
     public ChatFormatting getStyleByChar(char charcode) {
+        for (EnumChatFormatting chatFormatting : EnumChatFormatting.values()) {
+            if (chatFormatting.formattingCode == charcode) {
+                return new NeptuneChatFormatting(chatFormatting);
+            }
+        }
         return null;
     }
 

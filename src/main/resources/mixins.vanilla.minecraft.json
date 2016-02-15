@@ -14,6 +14,9 @@
         "entity.ai.attributes.MixinBaseAttributeMap",
         "entity.ai.attributes.MixinModifiableAttributeInstance",
         "entity.ai.attributes.MixinRangedAttribute",
+        "entity.ai.MixinEntityAIArrowAttack",
+        "entity.ai.MixinEntityAIAttackOnCollide",
+        "entity.ai.MixinEntityAIAvoidEntity",
         "entity.ai.MixinEntityAIBase",
         "entity.ai.MixinEntityAITasks",
         "entity.effect.MixinEntityLightningBolt",
@@ -93,7 +96,8 @@
         "village.MixinMerchantRecipe",
         "village.MixinVillage",
         "world.biome.MixinBiomeGenBase",
-        "world.chunk.MixinChunk"
+        "world.chunk.MixinChunk",
+        "world.MixinWorldServer"
     ],
     "injectors": {
         "defaultRequire": 1
