@@ -35,6 +35,9 @@ import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
 import net.minecraft.util.AxisAlignedBB;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -42,6 +45,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Mixin(net.minecraft.entity.Entity.class)
+@Implements(@Interface(iface = Entity.class, prefix = "entity$"))
 public abstract class MixinEntity implements Entity {
 
     @Shadow public double posX;
@@ -62,6 +66,8 @@ public abstract class MixinEntity implements Entity {
     @Shadow protected UUID entityUniqueID;
     @Shadow private int entityId;
     @Shadow private AxisAlignedBB boundingBox;
+
+    @Shadow public abstract void moveEntity(double x, double y, double z);
 
     @Shadow
     public abstract void setDead();
@@ -203,9 +209,9 @@ public abstract class MixinEntity implements Entity {
 
     }
 
-    @Override
-    public void moveEntity(double motionX, double motionY, double motionZ) {
-
+    @Intrinsic
+    public void entity$moveEntity(double motionX, double motionY, double motionZ) {
+        this.moveEntity(motionX, motionY, motionZ);
     }
 
     @Override
