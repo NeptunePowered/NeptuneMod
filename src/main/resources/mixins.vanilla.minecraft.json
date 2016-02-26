@@ -93,6 +93,7 @@
         "util.MixinChatComponentText",
         "util.MixinChatStyle",
         "util.MixinDamageSource",
+        "util.MixinEnumChatFormatting",
         "village.MixinMerchantRecipe",
         "village.MixinVillage",
         "world.biome.MixinBiomeGenBase",

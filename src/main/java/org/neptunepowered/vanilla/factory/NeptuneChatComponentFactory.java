@@ -34,7 +34,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatFormatting;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneClickEventAction;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneHoverEventAction;
 
@@ -62,14 +61,14 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ChatFormatting getFormattingByName(String name) {
-        return new NeptuneChatFormatting(EnumChatFormatting.getValueByName(name));
+        return (ChatFormatting) (Object) EnumChatFormatting.getValueByName(name);
     }
 
     @Override
     public ChatFormatting getStyleByChar(char charcode) {
         for (EnumChatFormatting chatFormatting : EnumChatFormatting.values()) {
             if (chatFormatting.formattingCode == charcode) {
-                return new NeptuneChatFormatting(chatFormatting);
+                return (ChatFormatting) (Object) chatFormatting;
             }
         }
         return null;
@@ -77,112 +76,112 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ChatFormatting colorBlack() {
-        return new NeptuneChatFormatting(EnumChatFormatting.BLACK);
+        return (ChatFormatting) (Object) EnumChatFormatting.BLACK;
     }
 
     @Override
     public ChatFormatting colorDarkBlue() {
-        return new NeptuneChatFormatting(EnumChatFormatting.DARK_BLUE);
+        return (ChatFormatting) (Object) EnumChatFormatting.DARK_BLUE;
     }
 
     @Override
     public ChatFormatting colorDarkGreen() {
-        return new NeptuneChatFormatting(EnumChatFormatting.DARK_GREEN);
+        return (ChatFormatting) (Object) EnumChatFormatting.DARK_GREEN;
     }
 
     @Override
     public ChatFormatting colorDarkAqua() {
-        return new NeptuneChatFormatting(EnumChatFormatting.DARK_AQUA);
+        return (ChatFormatting) (Object) EnumChatFormatting.DARK_AQUA;
     }
 
     @Override
     public ChatFormatting colorDarkRed() {
-        return new NeptuneChatFormatting(EnumChatFormatting.DARK_RED);
+        return (ChatFormatting) (Object) EnumChatFormatting.DARK_RED;
     }
 
     @Override
     public ChatFormatting colorDarkPurple() {
-        return new NeptuneChatFormatting(EnumChatFormatting.DARK_PURPLE);
+        return (ChatFormatting) (Object) EnumChatFormatting.DARK_PURPLE;
     }
 
     @Override
     public ChatFormatting colorGold() {
-        return new NeptuneChatFormatting(EnumChatFormatting.GOLD);
+        return (ChatFormatting) (Object) EnumChatFormatting.GOLD;
     }
 
     @Override
     public ChatFormatting colorGray() {
-        return new NeptuneChatFormatting(EnumChatFormatting.GRAY);
+        return (ChatFormatting) (Object) EnumChatFormatting.GRAY;
     }
 
     @Override
     public ChatFormatting colorDarkGray() {
-        return new NeptuneChatFormatting(EnumChatFormatting.DARK_GRAY);
+        return (ChatFormatting) (Object) EnumChatFormatting.DARK_GRAY;
     }
 
     @Override
     public ChatFormatting colorBlue() {
-        return new NeptuneChatFormatting(EnumChatFormatting.BLUE);
+        return (ChatFormatting) (Object) EnumChatFormatting.BLUE;
     }
 
     @Override
     public ChatFormatting colorGreen() {
-        return new NeptuneChatFormatting(EnumChatFormatting.GREEN);
+        return (ChatFormatting) (Object) EnumChatFormatting.GREEN;
     }
 
     @Override
     public ChatFormatting colorAqua() {
-        return new NeptuneChatFormatting(EnumChatFormatting.AQUA);
+        return (ChatFormatting) (Object) EnumChatFormatting.AQUA;
     }
 
     @Override
     public ChatFormatting colorRed() {
-        return new NeptuneChatFormatting(EnumChatFormatting.RED);
+        return (ChatFormatting) (Object) EnumChatFormatting.RED;
     }
 
     @Override
     public ChatFormatting colorLightPurple() {
-        return new NeptuneChatFormatting(EnumChatFormatting.LIGHT_PURPLE);
+        return (ChatFormatting) (Object) EnumChatFormatting.LIGHT_PURPLE;
     }
 
     @Override
     public ChatFormatting colorYellow() {
-        return new NeptuneChatFormatting(EnumChatFormatting.YELLOW);
+        return (ChatFormatting) (Object) EnumChatFormatting.YELLOW;
     }
 
     @Override
     public ChatFormatting colorWhite() {
-        return new NeptuneChatFormatting(EnumChatFormatting.WHITE);
+        return (ChatFormatting) (Object) EnumChatFormatting.WHITE;
     }
 
     @Override
     public ChatFormatting styleObfuscated() {
-        return new NeptuneChatFormatting(EnumChatFormatting.OBFUSCATED);
+        return (ChatFormatting) (Object) EnumChatFormatting.OBFUSCATED;
     }
 
     @Override
     public ChatFormatting styleBold() {
-        return new NeptuneChatFormatting(EnumChatFormatting.BOLD);
+        return (ChatFormatting) (Object) EnumChatFormatting.BOLD;
     }
 
     @Override
     public ChatFormatting styleStrikethrough() {
-        return new NeptuneChatFormatting(EnumChatFormatting.STRIKETHROUGH);
+        return (ChatFormatting) (Object) EnumChatFormatting.STRIKETHROUGH;
     }
 
     @Override
     public ChatFormatting styleUnderline() {
-        return new NeptuneChatFormatting(EnumChatFormatting.UNDERLINE);
+        return (ChatFormatting) (Object) EnumChatFormatting.UNDERLINE;
     }
 
     @Override
     public ChatFormatting styleItalic() {
-        return new NeptuneChatFormatting(EnumChatFormatting.ITALIC);
+        return (ChatFormatting) (Object) EnumChatFormatting.ITALIC;
     }
 
     @Override
     public ChatFormatting styleReset() {
-        return new NeptuneChatFormatting(EnumChatFormatting.RESET);
+        return (ChatFormatting) (Object) EnumChatFormatting.RESET;
     }
 
     @Override

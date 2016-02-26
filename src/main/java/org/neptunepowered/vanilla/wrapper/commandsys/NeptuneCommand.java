@@ -43,7 +43,7 @@ public class NeptuneCommand extends CanaryCommand {
 
     public NeptuneCommand(final ICommand command) {
         super(new DynamicCommandAnnotation(
-                        (String[]) command.getCommandAliases().toArray(new String[command.getCommandAliases().size()]),
+                        command.getCommandAliases().toArray(new String[command.getCommandAliases().size()]),
                         new String[0], "", "", "", "", new String[0], 0, 0, "", 2), Neptune.minecraftCommandOwner, null,
                 new TabCompleteDispatch() {
                     @Override

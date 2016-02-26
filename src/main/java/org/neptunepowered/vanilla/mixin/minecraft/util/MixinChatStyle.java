@@ -28,7 +28,6 @@ import net.canarymod.api.chat.ChatStyle;
 import net.canarymod.api.chat.ClickEvent;
 import net.canarymod.api.chat.HoverEvent;
 import net.minecraft.util.EnumChatFormatting;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatFormatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -50,7 +49,7 @@ public abstract class MixinChatStyle implements ChatStyle {
 
     @Override
     public ChatFormatting getColor() {
-        return new NeptuneChatFormatting(color);
+        return (ChatFormatting) (Object) color;
     }
 
     @Override
@@ -93,7 +92,7 @@ public abstract class MixinChatStyle implements ChatStyle {
 
     @Override
     public ChatStyle setColor(ChatFormatting color) {
-        this.color = ((NeptuneChatFormatting) color).getHandle();
+        this.color = (EnumChatFormatting) (Object) color;
         return this;
     }
 

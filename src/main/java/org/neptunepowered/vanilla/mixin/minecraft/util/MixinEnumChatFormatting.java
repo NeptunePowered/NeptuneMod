@@ -21,35 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.chat;
+package org.neptunepowered.vanilla.mixin.minecraft.util;
 
 import net.canarymod.api.chat.ChatFormatting;
 import net.minecraft.util.EnumChatFormatting;
-import org.neptunepowered.vanilla.util.Wrapper;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public class NeptuneChatFormatting extends Wrapper<EnumChatFormatting> implements ChatFormatting {
+@Mixin(EnumChatFormatting.class)
+public abstract class MixinEnumChatFormatting implements ChatFormatting {
 
-    public NeptuneChatFormatting(EnumChatFormatting handle) {
-        super(handle);
-    }
+    @Shadow public char formattingCode;
+
+    @Shadow
+    public abstract boolean isFancyStyling();
+
+    @Shadow
+    public abstract String getFriendlyName();
 
     @Override
     public char getFormattingCode() {
-        return getHandle().formattingCode;
+        return this.formattingCode;
     }
 
     @Override
     public boolean isFormat() {
-        return getHandle().isFancyStyling();
+        return this.isFancyStyling();
     }
 
+    @Shadow
     @Override
-    public boolean isColor() {
-        return getHandle().isColor();
-    }
+    public abstract boolean isColor();
 
     @Override
     public String getName() {
-        return getHandle().getFriendlyName();
+        return this.getFriendlyName();
     }
 }
