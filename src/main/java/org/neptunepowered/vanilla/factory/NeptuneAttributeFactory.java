@@ -38,16 +38,16 @@ public class NeptuneAttributeFactory implements AttributeFactory {
     private static Map<String, IAttribute> map = Maps.newHashMap();
 
     static {
-        map.put(SharedMonsterAttributes.maxHealth.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.maxHealth);
-        map.put(SharedMonsterAttributes.followRange.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.followRange);
-        map.put(SharedMonsterAttributes.knockbackResistance.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.knockbackResistance);
-        map.put(SharedMonsterAttributes.movementSpeed.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.movementSpeed);
-        map.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.attackDamage);
+        map.put(SharedMonsterAttributes.MAX_HEALTH.getAttributeUnlocalizedName(),
+                SharedMonsterAttributes.MAX_HEALTH);
+        map.put(SharedMonsterAttributes.FOLLOW_RANGE.getAttributeUnlocalizedName(),
+                SharedMonsterAttributes.FOLLOW_RANGE);
+        map.put(SharedMonsterAttributes.KNOCKBACK_RESISTANCE.getAttributeUnlocalizedName(),
+                SharedMonsterAttributes.KNOCKBACK_RESISTANCE);
+        map.put(SharedMonsterAttributes.MOVEMENT_SPEED.getAttributeUnlocalizedName(),
+                SharedMonsterAttributes.MOVEMENT_SPEED);
+        map.put(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName(),
+                SharedMonsterAttributes.ATTACK_DAMAGE);
 
         map.put(EntityZombie.reinforcementChance.getAttributeUnlocalizedName(),
                 EntityZombie.reinforcementChance);

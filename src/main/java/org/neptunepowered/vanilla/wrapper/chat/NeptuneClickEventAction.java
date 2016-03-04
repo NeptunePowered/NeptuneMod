@@ -24,7 +24,7 @@
 package org.neptunepowered.vanilla.wrapper.chat;
 
 import net.canarymod.api.chat.ClickEventAction;
-import net.minecraft.event.ClickEvent;
+import net.minecraft.util.text.event.ClickEvent;
 import org.neptunepowered.vanilla.util.Wrapper;
 
 public class NeptuneClickEventAction extends Wrapper<ClickEvent.Action> implements ClickEventAction {

@@ -24,7 +24,7 @@
 package org.neptunepowered.vanilla.wrapper;
 
 import net.canarymod.NativeTranslateBridge;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 public class NeptuneTranslator extends NativeTranslateBridge {
 
@@ -36,16 +36,16 @@ public class NeptuneTranslator extends NativeTranslateBridge {
 
     @Override
     protected String nativeTranslate(String key) {
-        return StatCollector.translateToLocal(key);
+        return I18n.translateToLocal(key);
     }
 
     @Override
     protected String nativeTranslate(String key, Object... args) {
-        return StatCollector.translateToLocalFormatted(key, args);
+        return I18n.translateToLocalFormatted(key, args);
     }
 
     @Override
     protected boolean nativeCanTranslate(String key) {
-        return StatCollector.canTranslate(key);
+        return I18n.canTranslate(key);
     }
 }

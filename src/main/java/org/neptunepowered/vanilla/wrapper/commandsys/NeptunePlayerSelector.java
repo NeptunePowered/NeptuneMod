@@ -35,18 +35,18 @@ public class NeptunePlayerSelector implements PlayerSelector {
 
     @Override
     public Player matchOnePlayer(MessageReceiver caller, String pattern) {
-        return (Player) net.minecraft.command.PlayerSelector.matchOnePlayer((ICommandSender) caller, pattern);
+        return (Player) net.minecraft.command.EntitySelector.matchOnePlayer((ICommandSender) caller, pattern);
     }
 
     @Override
     public Player[] matchPlayers(MessageReceiver caller, String pattern) {
-        List matches = net.minecraft.command.PlayerSelector
+        List matches = net.minecraft.command.EntitySelector
                 .matchEntities((ICommandSender) caller, pattern, EntityPlayerMP.class);
         return (Player[]) matches.toArray(new Player[matches.size()]);
     }
 
     @Override
     public boolean matchesMultiplePlayers(String pattern) {
-        return net.minecraft.command.PlayerSelector.matchesMultiplePlayers(pattern);
+        return net.minecraft.command.EntitySelector.matchesMultiplePlayers(pattern);
     }
 }
