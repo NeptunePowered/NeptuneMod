@@ -44,7 +44,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.server.management.PlayerList;
 import org.neptunepowered.vanilla.wrapper.inventory.recipes.NeptuneRecipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -60,7 +60,7 @@ public abstract class MixinMinecraftServer implements Server {
     @Shadow public long[] tickTimeArray;
     @Shadow private int tickCounter;
     @Shadow private boolean serverRunning;
-    @Shadow private ServerConfigurationManager serverConfigManager;
+    @Shadow private PlayerList serverConfigManager;
     @Shadow private ServerStatusResponse statusResponse;
 
     @Shadow

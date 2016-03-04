@@ -24,7 +24,7 @@
 package org.neptunepowered.vanilla.interfaces.minecraft.network.play.server;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public interface IMixinS23PacketBlockChange {
 

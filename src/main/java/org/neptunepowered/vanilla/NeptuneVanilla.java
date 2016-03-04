@@ -24,7 +24,6 @@
 package org.neptunepowered.vanilla;
 
 import net.canarymod.Canary;
-import net.canarymod.api.Server;
 import net.minecraft.server.MinecraftServer;
 
 import java.io.File;
@@ -36,7 +35,10 @@ public class NeptuneVanilla {
         MinecraftServer.main(args);
         new File("config").mkdirs(); // TODO: Please fix this properly
         initNeptune();
-        Canary.setServer((Server) MinecraftServer.getServer());
+    }
+
+    public static MinecraftServer getServer() {
+        return (MinecraftServer) Canary.getServer();
     }
 
     private static void initNeptune() {

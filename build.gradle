@@ -13,10 +13,10 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-20160116.192356-17'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
         classpath 'org.spongepowered:mixingradle:0.3-SNAPSHOT'
-        classpath 'gradle.plugin.net.minecrell:licenser:0.1.1'
+        classpath 'gradle.plugin.net.minecrell:licenser:0.1.2'
     }
 }
 
@@ -62,7 +62,7 @@ ext.apiVersion = '1.2.1-SNAPSHOT'
 
 dependencies {
     compile "net.canarymod:CanaryLib:$apiVersion"
-    compile('org.spongepowered:mixin:0.5.1-SNAPSHOT') {
+    compile('org.spongepowered:mixin:0.5.3-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
     }
@@ -80,8 +80,8 @@ license {
 }
 
 minecraft {
-    version = '1.8.9'
-    mappings = 'snapshot_20160216'
+    version = '1.9'
+    mappings = 'snapshot_20160304'
     runDir = 'run'
 
     tweakClass = 'org.neptunepowered.vanilla.launch.NeptuneServerTweaker'
@@ -118,7 +118,7 @@ jar {
     manifest {
         attributes(
                 'Main-Class': 'org.neptunepowered.vanilla.launch.NeptuneServerMain',
-                'Class-Path': 'minecraft_server.1.8.9.jar libraries/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar'
+                'Class-Path': 'minecraft_server.1.9.jar libraries/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar'
         )
     }
 }

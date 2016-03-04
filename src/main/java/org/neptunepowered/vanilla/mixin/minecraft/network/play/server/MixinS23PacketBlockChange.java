@@ -24,13 +24,13 @@
 package org.neptunepowered.vanilla.mixin.minecraft.network.play.server;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.network.play.server.S23PacketBlockChange;
-import net.minecraft.util.BlockPos;
+import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.util.math.BlockPos;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.play.server.IMixinS23PacketBlockChange;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(S23PacketBlockChange.class)
+@Mixin(SPacketBlockChange.class)
 public class MixinS23PacketBlockChange implements IMixinS23PacketBlockChange {
 
     @Shadow private BlockPos blockPosition;

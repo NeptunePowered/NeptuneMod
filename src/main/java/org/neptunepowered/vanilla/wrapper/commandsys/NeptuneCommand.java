@@ -32,8 +32,9 @@ import net.canarymod.commandsys.TabCompleteException;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.neptunepowered.vanilla.Neptune;
+import org.neptunepowered.vanilla.NeptuneVanilla;
 
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class NeptuneCommand extends CanaryCommand {
                 new TabCompleteDispatch() {
                     @Override
                     public List<String> complete(MessageReceiver msgrec, String[] args) throws TabCompleteException {
-                        return command.addTabCompletionOptions((ICommandSender) msgrec, args, BlockPos.ORIGIN);
+                        return command.getTabCompletionOptions(NeptuneVanilla.getServer(), (ICommandSender) msgrec, args, BlockPos.ORIGIN);
                     }
                 });
         this.command = command;
@@ -57,7 +58,7 @@ public class NeptuneCommand extends CanaryCommand {
     @Override
     protected void execute(MessageReceiver caller, String[] parameters) {
         try {
-            this.command.processCommand((ICommandSender) caller, parameters);
+            this.command.execute(NeptuneVanilla.getServer(), (ICommandSender) caller, parameters);
         } catch (CommandException e) {
             Canary.log.error("Eh, something has broken :(", e);
         }
