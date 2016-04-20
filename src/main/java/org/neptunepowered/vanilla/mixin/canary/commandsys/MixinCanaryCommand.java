@@ -23,17 +23,18 @@
  */
 package org.neptunepowered.vanilla.mixin.canary.commandsys;
 
-import com.google.common.collect.Lists;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.commandsys.CanaryCommand;
 import net.canarymod.commandsys.Command;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.BlockPos;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Mixin(CanaryCommand.class)
@@ -59,32 +60,38 @@ public abstract class MixinCanaryCommand implements ICommand {
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getCommandUsage(ICommandSender iCommandSender) {
         return this.getLocaleDescription();
     }
 
     @Override
-    public List getCommandAliases() {
-        return Lists.newArrayList(this.meta.aliases());
+    public List<String> getCommandAliases() {
+        return Arrays.asList(this.meta.aliases());
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-        this.parseCommand((MessageReceiver) sender, args);
+    public void execute(MinecraftServer minecraftServer, ICommandSender iCommandSender, String[] strings)
+            throws CommandException {
+        this.parseCommand((MessageReceiver) iCommandSender, strings);
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender sender) {
-        return this.canUse((MessageReceiver) sender);
+    public boolean checkPermission(MinecraftServer minecraftServer, ICommandSender iCommandSender) {
+        return this.canUse((MessageReceiver) iCommandSender);
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
-        return this.tabComplete((MessageReceiver) sender, args);
+    public List<String> getTabCompletionOptions(MinecraftServer minecraftServer, ICommandSender iCommandSender,
+            String[] strings, BlockPos blockPos) {
+        return this.tabComplete((MessageReceiver) iCommandSender, strings);
     }
 
     @Override
-    public boolean isUsernameIndex(String[] args, int index) {
+    public boolean isUsernameIndex(String[] strings, int i) {
         return false;
     }
+
+    @Override
+    @Shadow
+    public abstract int compareTo(ICommand o);
 }
