@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.util;
+package org.neptunepowered.vanilla.mixin.minecraft.util.text;
 
 import net.canarymod.api.chat.ChatFormatting;
 import net.canarymod.api.chat.ChatStyle;
@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Style.class)
-public abstract class MixinChatStyle implements ChatStyle {
+public abstract class MixinStyle implements ChatStyle {
 
     @Shadow private Style parentStyle;
     @Shadow private TextFormatting color;

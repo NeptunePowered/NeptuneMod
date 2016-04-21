@@ -26,7 +26,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.stats;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.IStatType;
 import net.minecraft.stats.StatBase;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -37,7 +37,7 @@ public abstract class MixinAchievement extends StatBase implements net.canarymod
     @Shadow private String achievementDescription;
     @Shadow private boolean isSpecial;
 
-    public MixinAchievement(String p_i45307_1_, IChatComponent p_i45307_2_, IStatType p_i45307_3_) {
+    public MixinAchievement(String p_i45307_1_, ITextComponent p_i45307_2_, IStatType p_i45307_3_) {
         super(p_i45307_1_, p_i45307_2_, p_i45307_3_);
     }
 

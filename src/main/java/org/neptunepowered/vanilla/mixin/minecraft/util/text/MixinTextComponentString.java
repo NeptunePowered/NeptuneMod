@@ -21,16 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.network.play.server;
+package org.neptunepowered.vanilla.mixin.minecraft.util.text;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentString;
+import org.neptunepowered.vanilla.interfaces.minecraft.util.text.IMixinTextComponentString;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public interface IMixinS23PacketBlockChange {
+@Mixin(TextComponentString.class)
+public abstract class MixinTextComponentString extends TextComponentBase implements IMixinTextComponentString {
 
-    IBlockState getBlockState();
+    @Shadow private String text;
 
-    BlockPos getBlockPosition();
-
-    void setBlockPosition(BlockPos pos);
+    @Override
+    public void setText(String text) {
+        this.text = text;
+    }
 }

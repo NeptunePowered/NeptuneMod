@@ -26,7 +26,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.world.biome;
 import net.canarymod.api.world.Biome;
 import net.canarymod.api.world.BiomeType;
 import net.canarymod.api.world.World;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.BiomeGenBase;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

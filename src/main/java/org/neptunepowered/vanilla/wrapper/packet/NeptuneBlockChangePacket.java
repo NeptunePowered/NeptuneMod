@@ -29,7 +29,7 @@ import net.canarymod.api.world.blocks.BlockType;
 import net.canarymod.api.world.position.Position;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.util.math.BlockPos;
-import org.neptunepowered.vanilla.interfaces.minecraft.network.play.server.IMixinS23PacketBlockChange;
+import org.neptunepowered.vanilla.interfaces.minecraft.network.play.server.IMixinSPacketBlockChange;
 
 public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChangePacket {
 
@@ -74,7 +74,7 @@ public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChan
 
     @Override
     public void setPosition(Position position) {
-        ((IMixinS23PacketBlockChange) getHandle()).setBlockPosition(
+        ((IMixinSPacketBlockChange) getHandle()).setBlockPosition(
                 new BlockPos(position.getX(), position.getY(), position.getZ()));
     }
 

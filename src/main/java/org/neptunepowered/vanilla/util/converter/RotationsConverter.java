@@ -27,11 +27,11 @@ import net.canarymod.api.world.position.Rotations;
 
 public class RotationsConverter {
 
-    public static Rotations of(net.minecraft.util.Rotations minecraft) {
+    public static Rotations of(net.minecraft.util.math.Rotations minecraft) {
         return new Rotations(minecraft.getX(), minecraft.getY(), minecraft.getZ());
     }
 
-    public static net.minecraft.util.Rotations of(Rotations canary) {
-        return new net.minecraft.util.Rotations(canary.getX(), canary.getY(), canary.getZ());
+    public static net.minecraft.util.math.Rotations of(Rotations canary) {
+        return new net.minecraft.util.math.Rotations(canary.getX(), canary.getY(), canary.getZ());
     }
 }

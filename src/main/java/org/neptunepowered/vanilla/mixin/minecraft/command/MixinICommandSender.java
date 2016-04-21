@@ -31,10 +31,7 @@ import net.canarymod.chat.MessageReceiver;
 import net.canarymod.chat.ReceiverType;
 import net.canarymod.exceptions.InvalidInstanceException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.server.CommandBlockLogic;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.rcon.RConConsoleSource;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -75,7 +72,7 @@ public interface MixinICommandSender extends ICommandSender, MessageReceiver {
 
     @Override
     default void message(String message) {
-        addChatMessage(new ChatComponentText(message));
+        addChatMessage(new TextComponentString(message));
     }
 
     @Override

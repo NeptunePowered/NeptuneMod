@@ -26,13 +26,20 @@ package org.neptunepowered.vanilla.util.helper;
 import net.canarymod.Canary;
 import net.canarymod.plugin.Plugin;
 
+import java.util.concurrent.Callable;
+
 public final class CrashReportHelper {
 
-    public static String createCrashSectionMessage() {
-        StringBuilder result = new StringBuilder(64);
-        for (Plugin plugin : Canary.pluginManager().getPlugins()) {
-            result.append("\n\t\t").append(plugin.getName());
-        }
-        return result.toString();
+    public static Callable<String> createCrashSectionMessage() {
+        return () -> {
+            StringBuilder result = new StringBuilder(64);
+            for (Plugin plugin : Canary.pluginManager().getPlugins()) {
+                result.append("\n\t\t")
+                        .append(plugin.getName())
+                        .append(" version ")
+                        .append(plugin.getVersion());
+            }
+            return result.toString();
+        };
     }
 }

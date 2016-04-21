@@ -21,40 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.util;
+package org.neptunepowered.vanilla.mixin.minecraft.network.play.server;
 
-import net.canarymod.api.chat.ChatFormatting;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.util.math.BlockPos;
+import org.neptunepowered.vanilla.interfaces.minecraft.network.play.server.IMixinSPacketBlockChange;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(EnumChatFormatting.class)
-public abstract class MixinEnumChatFormatting implements ChatFormatting {
+@Mixin(SPacketBlockChange.class)
+public class MixinSPacketBlockChange implements IMixinSPacketBlockChange {
 
-    @Shadow public char formattingCode;
-
-    @Shadow
-    public abstract boolean isFancyStyling();
-
-    @Shadow
-    public abstract String getFriendlyName();
+    @Shadow private BlockPos blockPosition;
+    @Shadow private IBlockState blockState;
 
     @Override
-    public char getFormattingCode() {
-        return this.formattingCode;
+    public IBlockState getBlockState() {
+        return this.blockState;
     }
 
     @Override
-    public boolean isFormat() {
-        return this.isFancyStyling();
+    public BlockPos getBlockPosition() {
+        return this.blockPosition;
     }
 
-    @Shadow
     @Override
-    public abstract boolean isColor();
-
-    @Override
-    public String getName() {
-        return this.getFriendlyName();
+    public void setBlockPosition(BlockPos pos) {
+        this.blockPosition = pos;
     }
 }

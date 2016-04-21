@@ -28,7 +28,7 @@ import net.canarymod.api.DamageType;
 import net.canarymod.api.entity.Entity;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -42,7 +42,7 @@ public abstract class MixinDamageSource implements DamageSource {
     @Shadow private boolean damageIsAbsolute;
 
     @Shadow
-    public abstract IChatComponent getDeathMessage(EntityLivingBase p_151519_1_);
+    public abstract ITextComponent getDeathMessage(EntityLivingBase p_151519_1_);
 
     @Shadow
     public abstract net.minecraft.entity.Entity getEntity();

@@ -29,10 +29,10 @@ import org.neptunepowered.vanilla.wrapper.chat.NeptuneClickEventAction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(net.minecraft.event.ClickEvent.class)
+@Mixin(net.minecraft.util.text.event.ClickEvent.class)
 public abstract class MixinClickEvent implements ClickEvent {
 
-    @Shadow private net.minecraft.event.ClickEvent.Action action;
+    @Shadow private net.minecraft.util.text.event.ClickEvent.Action action;
 
     @Override
     public ClickEventAction getAction() {

@@ -26,7 +26,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.village;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.world.Village;
 import net.canarymod.api.world.position.Location;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
