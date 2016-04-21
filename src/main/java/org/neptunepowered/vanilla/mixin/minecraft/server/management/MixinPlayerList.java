@@ -37,19 +37,32 @@ import net.canarymod.chat.MessageReceiver;
 import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.PlayerListHook;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.server.SPacketCustomPayload;
+import net.minecraft.network.play.server.SPacketEntityEffect;
+import net.minecraft.network.play.server.SPacketHeldItemChange;
+import net.minecraft.network.play.server.SPacketJoinGame;
+import net.minecraft.network.play.server.SPacketPlayerAbilities;
+import net.minecraft.network.play.server.SPacketPlayerListItem;
+import net.minecraft.network.play.server.SPacketServerDifficulty;
+import net.minecraft.network.play.server.SPacketSpawnPosition;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.stats.StatList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.storage.WorldInfo;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
@@ -57,12 +70,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Mixin(ServerConfigurationManager.class)
-public abstract class MixinServerConfigurationManager implements ConfigurationManager {
+@Mixin(PlayerList.class)
+public abstract class MixinPlayerList implements ConfigurationManager {
 
     @Shadow private static Logger logger;
 
@@ -82,7 +96,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     protected abstract void sendScoreboard(ServerScoreboard scoreboardIn, EntityPlayerMP playerIn);
 
     @Shadow
-    public abstract void sendChatMsg(IChatComponent component);
+    public abstract void sendChatMsg(ITextComponent component);
 
     @Shadow
     public abstract void playerLoggedIn(EntityPlayerMP playerIn);
@@ -96,48 +110,71 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     @Shadow
     public abstract int getCurrentPlayerCount();
 
+    @Shadow
+    public abstract MinecraftServer getServerInstance();
+
+    @Shadow
+    public abstract void func_187243_f(EntityPlayerMP p_187243_1_);
+
+    @Shadow
+    public abstract List getPlayerList();
+
     @Overwrite
     public void playerLoggedOut(EntityPlayerMP playerIn) {
+        WorldServer worldserver = playerIn.getServerForPlayer();
         playerIn.triggerAchievement(StatList.leaveGameStat);
         this.writePlayerData(playerIn);
-        WorldServer worldserver = playerIn.getServerForPlayer();
+        if (playerIn.isRiding()) {
+            Entity uuid = playerIn.getLowestRidingEntity();
+            if (uuid.func_184180_b(EntityPlayerMP.class).size() == 1) {
+                logger.debug("Removing player mount");
+                playerIn.dismountRidingEntity();
+                worldserver.removePlayerEntityDangerously(uuid);
+                Iterator entityplayermp = uuid.func_184182_bu().iterator();
 
-        if (playerIn.ridingEntity != null) {
-            worldserver.removePlayerEntityDangerously(playerIn.ridingEntity);
-            logger.debug("removing player mount");
+                while (entityplayermp.hasNext()) {
+                    Entity entity1 = (Entity) entityplayermp.next();
+                    worldserver.removePlayerEntityDangerously(entity1);
+                }
+
+                worldserver.getChunkFromChunkCoords(playerIn.chunkCoordX, playerIn.chunkCoordZ).setChunkModified();
+            }
         }
 
         worldserver.removeEntity(playerIn);
-        worldserver.getPlayerManager().removePlayer(playerIn);
+        worldserver.getPlayerChunkManager().removePlayer(playerIn);
         this.playerEntityList.remove(playerIn);
-        UUID uuid = playerIn.getUniqueID();
-        EntityPlayerMP entityplayermp = (EntityPlayerMP) this.uuidToPlayerMap.get(uuid);
-
-        if (entityplayermp == playerIn) {
-            this.uuidToPlayerMap.remove(uuid);
-            this.playerStatFiles.remove(uuid);
+        UUID uuid1 = playerIn.getUniqueID();
+        EntityPlayerMP entityplayermp1 = (EntityPlayerMP) this.uuidToPlayerMap.get(uuid1);
+        if (entityplayermp1 == playerIn) {
+            this.uuidToPlayerMap.remove(uuid1);
+            this.playerStatFiles.remove(uuid1);
         }
 
-        // Neptune: start
+        // Neptune: Start
         PlayerListData playerListData = ((Player) playerIn).getPlayerListData(PlayerListAction.REMOVE_PLAYER);
         for (int i = 0; i < playerEntityList.size(); i++) {
             EntityPlayerMP playerMP = (EntityPlayerMP) this.playerEntityList.get(i);
             PlayerListHook playerListHook = new PlayerListHook(playerListData.copy(), (Player) playerMP);
-            if (!playerListHook.call().isCanceled()) {
-                S38PacketPlayerListItem packet = new S38PacketPlayerListItem();
-                packet.action = S38PacketPlayerListItem.Action.valueOf(PlayerListAction.REMOVE_PLAYER.name());
-                WorldSettings.GameType gameType =
-                        WorldSettings.GameType.getByID(playerListHook.getData().getMode().getId());
-                IChatComponent iChatComponent = playerListHook.getData().displayNameSet() ? ((NeptuneChatComponent)
-                        playerListHook.getData().getDisplayName()).getHandle() : null;
-                packet.players.add(packet.new AddPlayerData(playerListHook.getData()
-                        .getProfile(), playerListHook.getData().getPing(), gameType, iChatComponent));
-                playerMP.playerNetServerHandler.sendPacket(packet);
-            }
+
+            ITextComponent displayName = playerListHook.getData().displayNameSet() ? ((NeptuneChatComponent)
+                    playerListHook.getData().getDisplayName()).getHandle() : null;
+            WorldSettings.GameType gameType =
+                    WorldSettings.GameType.getByID(playerListHook.getData().getMode().getId());
+
+            SPacketPlayerListItem packet =
+                    new SPacketPlayerListItem(SPacketPlayerListItem.Action.REMOVE_PLAYER);
+            packet.players.add(packet.new AddPlayerData(
+                    playerListHook.getData().getProfile(),
+                    playerListHook.getData().getPing(),
+                    gameType,
+                    displayName));
         }
+
+        // Neptune: Replaced by above code
+        //this.sendPacketToAllPlayers(new SPacketPlayerListItem(net.minecraft.network.play.server
+        //        .SPacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[]{playerIn}));
         // Neptune: end
-        //this.sendPacketToAllPlayers(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.REMOVE_PLAYER, new
-        // EntityPlayerMP[] {playerIn})); // Neptune: replaced by above code
     }
 
     @Overwrite
@@ -156,72 +193,108 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
             s1 = netManager.getRemoteAddress().toString();
         }
 
-        logger.info(playerIn.getName() + "[" + s1 + "] logged in with entity id " + playerIn.getEntityId() + " at (" + playerIn.posX + ", "
-                + playerIn.posY + ", " + playerIn.posZ + ")");
+        logger.info(playerIn.getName() + "[" + s1 + "] logged in with entity id " + playerIn.getEntityId() + " at ("
+                + playerIn.posX + ", " + playerIn.posY + ", " + playerIn.posZ + ")");
         WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
         WorldInfo worldinfo = worldserver.getWorldInfo();
         BlockPos blockpos = worldserver.getSpawnPoint();
         this.setPlayerGameTypeBasedOnOther(playerIn, (EntityPlayerMP) null, worldserver);
         NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.mcServer, netManager, playerIn);
         nethandlerplayserver.sendPacket(
-                new S01PacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(), worldinfo.isHardcoreModeEnabled(),
-                        worldserver.provider.getDimensionId(), worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(),
+                new SPacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(),
+                        worldinfo.isHardcoreModeEnabled(), worldserver.provider.getDimensionType().getId(),
+                        worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(),
                         worldserver.getGameRules().getBoolean("reducedDebugInfo")));
-        nethandlerplayserver.sendPacket(new S3FPacketCustomPayload("MC|Brand",
-                (new PacketBuffer(Unpooled.buffer())).writeString(mcServer.getServerModName())));
-        nethandlerplayserver.sendPacket(new S41PacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
-        nethandlerplayserver.sendPacket(new S05PacketSpawnPosition(blockpos));
-        nethandlerplayserver.sendPacket(new S39PacketPlayerAbilities(playerIn.capabilities));
-        nethandlerplayserver.sendPacket(new S09PacketHeldItemChange(playerIn.inventory.currentItem));
+        nethandlerplayserver.sendPacket(new SPacketCustomPayload("MC|Brand",
+                (new PacketBuffer(Unpooled.buffer())).writeString(this.getServerInstance().getServerModName())));
+        nethandlerplayserver
+                .sendPacket(new SPacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
+        nethandlerplayserver.sendPacket(new SPacketSpawnPosition(blockpos));
+        nethandlerplayserver.sendPacket(new SPacketPlayerAbilities(playerIn.capabilities));
+        nethandlerplayserver.sendPacket(new SPacketHeldItemChange(playerIn.inventory.currentItem));
+        this.func_187243_f(playerIn);
         playerIn.getStatFile().func_150877_d();
         playerIn.getStatFile().sendAchievements(playerIn);
         this.sendScoreboard((ServerScoreboard) worldserver.getScoreboard(), playerIn);
         this.mcServer.refreshStatusNextTick();
-        ChatComponentTranslation chatcomponenttranslation;
+        TextComponentTranslation textcomponenttranslation;
 
         if (!playerIn.getName().equalsIgnoreCase(s)) {
-            chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.joined.renamed", new Object[]{playerIn.getDisplayName(), s});
+            textcomponenttranslation = new TextComponentTranslation("multiplayer.player.joined.renamed",
+                    new Object[]{playerIn.getDisplayName(), s});
         } else {
-            chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.joined", new Object[]{playerIn.getDisplayName()});
+            textcomponenttranslation =
+                    new TextComponentTranslation("multiplayer.player.joined", new Object[]{playerIn.getDisplayName()});
         }
 
-        chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.YELLOW);
+        textcomponenttranslation.getChatStyle().setColor(TextFormatting.YELLOW);
 
         // Neptune: start
         ConnectionHook hook = (ConnectionHook)
                 new ConnectionHook(
-                        (Player) playerIn, chatcomponenttranslation.getUnformattedTextForChat(), false
+                        (Player) playerIn, textcomponenttranslation.getUnformattedTextForChat(), false
                 ).call();
         if (!hook.isHidden()) {
-            this.sendChatMsg(chatcomponenttranslation);
+            this.sendChatMsg(textcomponenttranslation);
         }
+
+        // Neptune: Called above
+        //this.sendChatMsg(textcomponenttranslation);
         // Neptune: end
-        //this.sendChatMsg(chatcomponenttranslation); // Neptune: Called above
 
         this.playerLoggedIn(playerIn);
-        nethandlerplayserver.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw, playerIn.rotationPitch);
+        nethandlerplayserver.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw,
+                playerIn.rotationPitch);
         this.updateTimeAndWeatherForPlayer(playerIn, worldserver);
 
-        if (this.mcServer.getResourcePackUrl().length() > 0) {
+        if (!this.mcServer.getResourcePackUrl().isEmpty()) {
             playerIn.loadResourcePack(this.mcServer.getResourcePackUrl(), this.mcServer.getResourcePackHash());
         }
 
         for (PotionEffect potioneffect : playerIn.getActivePotionEffects()) {
-            nethandlerplayserver.sendPacket(new S1DPacketEntityEffect(playerIn.getEntityId(), potioneffect));
+            nethandlerplayserver.sendPacket(new SPacketEntityEffect(playerIn.getEntityId(), potioneffect));
+        }
+
+        if (nbttagcompound != null) {
+            if (nbttagcompound.hasKey("RootVehicle", 10)) {
+                NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("RootVehicle");
+                Entity entity2 = AnvilChunkLoader
+                        .func_186051_a(nbttagcompound1.getCompoundTag("Entity"), worldserver, true);
+
+                if (entity2 != null) {
+                    UUID uuid = nbttagcompound1.getUniqueId("Attach");
+
+                    if (entity2.getUniqueID().equals(uuid)) {
+                        playerIn.startRiding(entity2, true);
+                    } else {
+                        for (Entity entity : entity2.func_184182_bu()) {
+                            if (entity.getUniqueID().equals(uuid)) {
+                                playerIn.startRiding(entity, true);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!playerIn.isRiding()) {
+                        logger.warn("Couldn\'t reattach entity to player");
+                        worldserver.removePlayerEntityDangerously(entity2);
+
+                        for (Entity entity3 : entity2.func_184182_bu()) {
+                            worldserver.removePlayerEntityDangerously(entity3);
+                        }
+                    }
+                }
+            } else if (nbttagcompound.hasKey("Riding", 10)) {
+                Entity entity1 =
+                        AnvilChunkLoader.func_186051_a(nbttagcompound.getCompoundTag("Riding"), worldserver, true);
+
+                if (entity1 != null) {
+                    playerIn.startRiding(entity1, true);
+                }
+            }
         }
 
         playerIn.addSelfToInternalCraftingInventory();
-
-        if (nbttagcompound != null && nbttagcompound.hasKey("Riding", 10)) {
-            Entity entity = EntityList.createEntityFromNBT(nbttagcompound.getCompoundTag("Riding"), worldserver);
-
-            if (entity != null) {
-                entity.forceSpawn = true;
-                worldserver.spawnEntityInWorld(entity);
-                playerIn.mountEntity(entity);
-                entity.forceSpawn = false;
-            }
-        }
 
         // Neptune: start
         Canary.motd().sendMOTD((MessageReceiver) playerIn);
@@ -245,7 +318,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
 
     @Override
     public List<Player> getAllPlayers() {
-        return null;
+        return (List<Player>) this.getPlayerList();
     }
 
     @Override
