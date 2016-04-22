@@ -23,11 +23,11 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.entity.ai;
 
-import net.canarymod.api.ai.AIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
+import net.canarymod.api.ai.AIArrowAttack;
+import net.minecraft.entity.ai.EntityAIAttackRanged;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(EntityAIAttackOnCollide.class)
-public abstract class MixinEntityAIAttackOnCollide extends MixinEntityAIBase implements AIAttackOnCollide {
+@Mixin(EntityAIAttackRanged.class)
+public abstract class MixinEntityAIAttackRanged extends MixinEntityAIBase implements AIArrowAttack {
 
 }

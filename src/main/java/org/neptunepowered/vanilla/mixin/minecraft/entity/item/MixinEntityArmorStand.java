@@ -37,12 +37,12 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EntityArmorStand.class)
 public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implements ArmorStand {
 
-    @Shadow private net.minecraft.util.Rotations headRotation;
-    @Shadow private net.minecraft.util.Rotations bodyRotation;
-    @Shadow private net.minecraft.util.Rotations leftArmRotation;
-    @Shadow private net.minecraft.util.Rotations rightArmRotation;
-    @Shadow private net.minecraft.util.Rotations leftLegRotation;
-    @Shadow private net.minecraft.util.Rotations rightLegRotation;
+    @Shadow private net.minecraft.util.math.Rotations headRotation;
+    @Shadow private net.minecraft.util.math.Rotations bodyRotation;
+    @Shadow private net.minecraft.util.math.Rotations leftArmRotation;
+    @Shadow private net.minecraft.util.math.Rotations rightArmRotation;
+    @Shadow private net.minecraft.util.math.Rotations leftLegRotation;
+    @Shadow private net.minecraft.util.math.Rotations rightLegRotation;
 
     @Shadow
     public abstract ItemStack[] getInventory();
@@ -66,22 +66,22 @@ public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implem
     public abstract void setNoBasePlate(boolean p_175426_1_);
 
     @Shadow
-    public abstract void setHeadRotation(net.minecraft.util.Rotations p_175415_1_);
+    public abstract void setHeadRotation(net.minecraft.util.math.Rotations p_175415_1_);
 
     @Shadow
-    public abstract void setBodyRotation(net.minecraft.util.Rotations p_175424_1_);
+    public abstract void setBodyRotation(net.minecraft.util.math.Rotations p_175424_1_);
 
     @Shadow
-    public abstract void setLeftArmRotation(net.minecraft.util.Rotations p_175405_1_);
+    public abstract void setLeftArmRotation(net.minecraft.util.math.Rotations p_175405_1_);
 
     @Shadow
-    public abstract void setRightArmRotation(net.minecraft.util.Rotations p_175428_1_);
+    public abstract void setRightArmRotation(net.minecraft.util.math.Rotations p_175428_1_);
 
     @Shadow
-    public abstract void setLeftLegRotation(net.minecraft.util.Rotations p_175417_1_);
+    public abstract void setLeftLegRotation(net.minecraft.util.math.Rotations p_175417_1_);
 
     @Shadow
-    public abstract void setRightLegRotation(net.minecraft.util.Rotations p_175427_1_);
+    public abstract void setRightLegRotation(net.minecraft.util.math.Rotations p_175427_1_);
 
     @Override
     public Item[] getAllEquipment() {

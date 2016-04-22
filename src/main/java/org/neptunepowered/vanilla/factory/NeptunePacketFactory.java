@@ -42,11 +42,11 @@ import net.canarymod.api.world.Chunk;
 import net.canarymod.api.world.blocks.BlockType;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
-import net.minecraft.network.play.server.S03PacketTimeUpdate;
-import net.minecraft.network.play.server.S06PacketUpdateHealth;
-import net.minecraft.network.play.server.S2EPacketCloseWindow;
-import net.minecraft.network.play.server.S36PacketSignEditorOpen;
-import net.minecraft.util.BlockPos;
+import net.minecraft.network.play.server.SPacketCloseWindow;
+import net.minecraft.network.play.server.SPacketSignEditorOpen;
+import net.minecraft.network.play.server.SPacketTimeUpdate;
+import net.minecraft.network.play.server.SPacketUpdateHealth;
+import net.minecraft.util.math.BlockPos;
 import org.neptunepowered.vanilla.wrapper.packet.NeptunePacket;
 
 import java.util.List;
@@ -100,7 +100,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet updateTime(long worldAge, long time) {
-        return new NeptunePacket(new S03PacketTimeUpdate(worldAge, time, false));
+        return new NeptunePacket(new SPacketTimeUpdate(worldAge, time, false));
     }
 
     @Override
@@ -115,7 +115,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet updateHealth(float health, int foodLevel, float saturation) {
-        return new NeptunePacket(new S06PacketUpdateHealth(health, foodLevel, saturation));
+            return new NeptunePacket(new SPacketUpdateHealth(health, foodLevel, saturation));
     }
 
     @Override
@@ -312,7 +312,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet closeWindow(int windowId) {
-        return new NeptunePacket(new S2EPacketCloseWindow(windowId));
+        return new NeptunePacket(new SPacketCloseWindow(windowId));
     }
 
     @Override
@@ -347,7 +347,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet signEditorOpen(int x, int y, int z) {
-        return new NeptunePacket(new S36PacketSignEditorOpen(new BlockPos(x, y, z)));
+        return new NeptunePacket(new SPacketSignEditorOpen(new BlockPos(x, y, z)));
     }
 
     @Override

@@ -26,17 +26,19 @@ package org.neptunepowered.vanilla.factory;
 import net.canarymod.api.factory.PotionFactory;
 import net.canarymod.api.potion.PotionEffect;
 import net.canarymod.api.potion.PotionEffectType;
+import net.minecraft.potion.Potion;
 
 public class NeptunePotionFactory implements PotionFactory {
 
     @Override
     public PotionEffect newPotionEffect(int id, int duration, int amplifier) {
-        return (PotionEffect) new net.minecraft.potion.PotionEffect(id, duration, amplifier);
+        return (PotionEffect) new net.minecraft.potion.PotionEffect(Potion.getPotionById(id), duration, amplifier);
     }
 
     @Override
     public PotionEffect newPotionEffect(int id, int duration, int amplifier, boolean ambient) {
-        return (PotionEffect) new net.minecraft.potion.PotionEffect(id, duration, amplifier, ambient, true);
+        return (PotionEffect) new net.minecraft.potion.PotionEffect(
+                Potion.getPotionById(id), duration, amplifier, ambient, true);
     }
 
     @Override
