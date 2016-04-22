@@ -39,9 +39,6 @@ public abstract class MixinAxisAlignedBB implements BoundingBox {
     @Shadow public double maxZ;
 
     @Shadow
-    public abstract AxisAlignedBB shadow$contract(double x, double y, double z);
-
-    @Shadow
     public abstract AxisAlignedBB addCoord(double x, double y, double z);
 
     @Shadow
@@ -107,7 +104,7 @@ public abstract class MixinAxisAlignedBB implements BoundingBox {
 
     @Override
     public BoundingBox contract(double x, double y, double z) {
-        return (BoundingBox) shadow$contract(x, y, z);
+        return null; // TODO: 1.9
     }
 
     @Override

@@ -40,12 +40,12 @@ public class NeptuneChatComponent extends Wrapper<ITextComponent> implements Cha
 
     @Override
     public ChatComponent setChatStyle(ChatStyle style) {
-        return (ChatComponent) getHandle().setChatStyle((net.minecraft.util.text.Style) style);
+        return (ChatComponent) getHandle().setStyle((net.minecraft.util.text.Style) style);
     }
 
     @Override
     public ChatStyle getChatStyle() {
-        return (ChatStyle) getHandle().getChatStyle();
+        return (ChatStyle) getHandle().getStyle();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class NeptuneChatComponent extends Wrapper<ITextComponent> implements Cha
 
     @Override
     public String getFullText() {
-        return getHandle().getUnformattedTextForChat();
+        return getHandle().getUnformattedText();
     }
 
     @Override

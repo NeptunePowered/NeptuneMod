@@ -81,7 +81,7 @@ license {
 
 minecraft {
     version = '1.9'
-    mappings = 'snapshot_20160304'
+    mappings = 'snapshot_20160403'
     runDir = 'run'
 
     tweakClass = 'org.neptunepowered.vanilla.launch.NeptuneServerTweaker'

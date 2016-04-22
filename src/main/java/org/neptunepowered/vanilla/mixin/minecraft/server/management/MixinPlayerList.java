@@ -67,10 +67,8 @@ import net.minecraft.world.storage.WorldInfo;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -114,70 +112,11 @@ public abstract class MixinPlayerList implements ConfigurationManager {
     public abstract MinecraftServer getServerInstance();
 
     @Shadow
-    public abstract void func_187243_f(EntityPlayerMP p_187243_1_);
+    public abstract void updatePermissionLevel(EntityPlayerMP p_187243_1_);
 
     @Shadow
     public abstract List getPlayerList();
 
-    @Overwrite
-    public void playerLoggedOut(EntityPlayerMP playerIn) {
-        WorldServer worldserver = playerIn.getServerForPlayer();
-        playerIn.triggerAchievement(StatList.leaveGameStat);
-        this.writePlayerData(playerIn);
-        if (playerIn.isRiding()) {
-            Entity uuid = playerIn.getLowestRidingEntity();
-            if (uuid.func_184180_b(EntityPlayerMP.class).size() == 1) {
-                logger.debug("Removing player mount");
-                playerIn.dismountRidingEntity();
-                worldserver.removePlayerEntityDangerously(uuid);
-                Iterator entityplayermp = uuid.func_184182_bu().iterator();
-
-                while (entityplayermp.hasNext()) {
-                    Entity entity1 = (Entity) entityplayermp.next();
-                    worldserver.removePlayerEntityDangerously(entity1);
-                }
-
-                worldserver.getChunkFromChunkCoords(playerIn.chunkCoordX, playerIn.chunkCoordZ).setChunkModified();
-            }
-        }
-
-        worldserver.removeEntity(playerIn);
-        worldserver.getPlayerChunkManager().removePlayer(playerIn);
-        this.playerEntityList.remove(playerIn);
-        UUID uuid1 = playerIn.getUniqueID();
-        EntityPlayerMP entityplayermp1 = (EntityPlayerMP) this.uuidToPlayerMap.get(uuid1);
-        if (entityplayermp1 == playerIn) {
-            this.uuidToPlayerMap.remove(uuid1);
-            this.playerStatFiles.remove(uuid1);
-        }
-
-        // Neptune: Start
-        PlayerListData playerListData = ((Player) playerIn).getPlayerListData(PlayerListAction.REMOVE_PLAYER);
-        for (int i = 0; i < playerEntityList.size(); i++) {
-            EntityPlayerMP playerMP = (EntityPlayerMP) this.playerEntityList.get(i);
-            PlayerListHook playerListHook = new PlayerListHook(playerListData.copy(), (Player) playerMP);
-
-            ITextComponent displayName = playerListHook.getData().displayNameSet() ? ((NeptuneChatComponent)
-                    playerListHook.getData().getDisplayName()).getHandle() : null;
-            WorldSettings.GameType gameType =
-                    WorldSettings.GameType.getByID(playerListHook.getData().getMode().getId());
-
-            SPacketPlayerListItem packet =
-                    new SPacketPlayerListItem(SPacketPlayerListItem.Action.REMOVE_PLAYER);
-            packet.players.add(packet.new AddPlayerData(
-                    playerListHook.getData().getProfile(),
-                    playerListHook.getData().getPing(),
-                    gameType,
-                    displayName));
-        }
-
-        // Neptune: Replaced by above code
-        //this.sendPacketToAllPlayers(new SPacketPlayerListItem(net.minecraft.network.play.server
-        //        .SPacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[]{playerIn}));
-        // Neptune: end
-    }
-
-    @Overwrite
     public void initializeConnectionToPlayer(NetworkManager netManager, EntityPlayerMP playerIn) {
         GameProfile gameprofile = playerIn.getGameProfile();
         PlayerProfileCache playerprofilecache = this.mcServer.getPlayerProfileCache();
@@ -186,7 +125,7 @@ public abstract class MixinPlayerList implements ConfigurationManager {
         playerprofilecache.addEntry(gameprofile);
         NBTTagCompound nbttagcompound = this.readPlayerDataFromFile(playerIn);
         playerIn.setWorld(this.mcServer.worldServerForDimension(playerIn.dimension));
-        playerIn.theItemInWorldManager.setWorld((WorldServer) playerIn.worldObj);
+        playerIn.interactionManager.setWorld((WorldServer) playerIn.worldObj);
         String s1 = "local";
 
         if (netManager.getRemoteAddress() != null) {
@@ -201,7 +140,7 @@ public abstract class MixinPlayerList implements ConfigurationManager {
         this.setPlayerGameTypeBasedOnOther(playerIn, (EntityPlayerMP) null, worldserver);
         NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.mcServer, netManager, playerIn);
         nethandlerplayserver.sendPacket(
-                new SPacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(),
+                new SPacketJoinGame(playerIn.getEntityId(), playerIn.interactionManager.getGameType(),
                         worldinfo.isHardcoreModeEnabled(), worldserver.provider.getDimensionType().getId(),
                         worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(),
                         worldserver.getGameRules().getBoolean("reducedDebugInfo")));
@@ -212,7 +151,7 @@ public abstract class MixinPlayerList implements ConfigurationManager {
         nethandlerplayserver.sendPacket(new SPacketSpawnPosition(blockpos));
         nethandlerplayserver.sendPacket(new SPacketPlayerAbilities(playerIn.capabilities));
         nethandlerplayserver.sendPacket(new SPacketHeldItemChange(playerIn.inventory.currentItem));
-        this.func_187243_f(playerIn);
+        this.updatePermissionLevel(playerIn);
         playerIn.getStatFile().func_150877_d();
         playerIn.getStatFile().sendAchievements(playerIn);
         this.sendScoreboard((ServerScoreboard) worldserver.getScoreboard(), playerIn);
@@ -227,12 +166,12 @@ public abstract class MixinPlayerList implements ConfigurationManager {
                     new TextComponentTranslation("multiplayer.player.joined", new Object[]{playerIn.getDisplayName()});
         }
 
-        textcomponenttranslation.getChatStyle().setColor(TextFormatting.YELLOW);
+        textcomponenttranslation.getStyle().setColor(TextFormatting.YELLOW);
 
         // Neptune: start
         ConnectionHook hook = (ConnectionHook)
                 new ConnectionHook(
-                        (Player) playerIn, textcomponenttranslation.getUnformattedTextForChat(), false
+                        (Player) playerIn, textcomponenttranslation.getUnformattedText(), false
                 ).call();
         if (!hook.isHidden()) {
             this.sendChatMsg(textcomponenttranslation);
@@ -258,8 +197,8 @@ public abstract class MixinPlayerList implements ConfigurationManager {
         if (nbttagcompound != null) {
             if (nbttagcompound.hasKey("RootVehicle", 10)) {
                 NBTTagCompound nbttagcompound1 = nbttagcompound.getCompoundTag("RootVehicle");
-                Entity entity2 = AnvilChunkLoader
-                        .func_186051_a(nbttagcompound1.getCompoundTag("Entity"), worldserver, true);
+                Entity entity2 =
+                        AnvilChunkLoader.readWorldEntity(nbttagcompound1.getCompoundTag("Entity"), worldserver, true);
 
                 if (entity2 != null) {
                     UUID uuid = nbttagcompound1.getUniqueId("Attach");
@@ -267,7 +206,7 @@ public abstract class MixinPlayerList implements ConfigurationManager {
                     if (entity2.getUniqueID().equals(uuid)) {
                         playerIn.startRiding(entity2, true);
                     } else {
-                        for (Entity entity : entity2.func_184182_bu()) {
+                        for (Entity entity : entity2.getRecursivePassengers()) {
                             if (entity.getUniqueID().equals(uuid)) {
                                 playerIn.startRiding(entity, true);
                                 break;
@@ -279,14 +218,14 @@ public abstract class MixinPlayerList implements ConfigurationManager {
                         logger.warn("Couldn\'t reattach entity to player");
                         worldserver.removePlayerEntityDangerously(entity2);
 
-                        for (Entity entity3 : entity2.func_184182_bu()) {
+                        for (Entity entity3 : entity2.getRecursivePassengers()) {
                             worldserver.removePlayerEntityDangerously(entity3);
                         }
                     }
                 }
             } else if (nbttagcompound.hasKey("Riding", 10)) {
                 Entity entity1 =
-                        AnvilChunkLoader.func_186051_a(nbttagcompound.getCompoundTag("Riding"), worldserver, true);
+                        AnvilChunkLoader.readWorldEntity(nbttagcompound.getCompoundTag("Riding"), worldserver, true);
 
                 if (entity1 != null) {
                     playerIn.startRiding(entity1, true);
@@ -298,6 +237,64 @@ public abstract class MixinPlayerList implements ConfigurationManager {
 
         // Neptune: start
         Canary.motd().sendMOTD((MessageReceiver) playerIn);
+        // Neptune: end
+    }
+
+    public void playerLoggedOut(EntityPlayerMP playerIn) {
+        WorldServer worldserver = playerIn.getServerWorld();
+        playerIn.addStat(StatList.leaveGame);
+        this.writePlayerData(playerIn);
+
+        if (playerIn.isRiding()) {
+            Entity entity = playerIn.getLowestRidingEntity();
+
+            if (entity.getRecursivePassengersByType(EntityPlayerMP.class).size() == 1) {
+                logger.debug("Removing player mount");
+                playerIn.dismountRidingEntity();
+                worldserver.removePlayerEntityDangerously(entity);
+
+                for (Entity entity1 : entity.getRecursivePassengers()) {
+                    worldserver.removePlayerEntityDangerously(entity1);
+                }
+
+                worldserver.getChunkFromChunkCoords(playerIn.chunkCoordX, playerIn.chunkCoordZ).setChunkModified();
+            }
+        }
+
+        worldserver.removeEntity(playerIn);
+        worldserver.getPlayerChunkMap().removePlayer(playerIn);
+        this.playerEntityList.remove(playerIn);
+        UUID uuid = playerIn.getUniqueID();
+        EntityPlayerMP entityplayermp = (EntityPlayerMP) this.uuidToPlayerMap.get(uuid);
+
+        if (entityplayermp == playerIn) {
+            this.uuidToPlayerMap.remove(uuid);
+            this.playerStatFiles.remove(uuid);
+        }
+
+        // Neptune: Start
+        PlayerListData playerListData = ((Player) playerIn).getPlayerListData(PlayerListAction.REMOVE_PLAYER);
+        for (int i = 0; i < playerEntityList.size(); i++) {
+            EntityPlayerMP playerMP = (EntityPlayerMP) this.playerEntityList.get(i);
+            PlayerListHook playerListHook = new PlayerListHook(playerListData.copy(), (Player) playerMP);
+
+            ITextComponent displayName = playerListHook.getData().displayNameSet() ? ((NeptuneChatComponent)
+                    playerListHook.getData().getDisplayName()).getHandle() : null;
+            WorldSettings.GameType gameType =
+                    WorldSettings.GameType.getByID(playerListHook.getData().getMode().getId());
+
+            SPacketPlayerListItem packet =
+                    new SPacketPlayerListItem(SPacketPlayerListItem.Action.REMOVE_PLAYER);
+            packet.players.add(packet.new AddPlayerData(
+                    playerListHook.getData().getProfile(),
+                    playerListHook.getData().getPing(),
+                    gameType,
+                    displayName));
+        }
+
+        // Neptune: Replaced by above code
+        //this.sendPacketToAllPlayers(new SPacketPlayerListItem(net.minecraft.network.play.server
+        //        .SPacketPlayerListItem.Action.REMOVE_PLAYER, new EntityPlayerMP[]{playerIn}));
         // Neptune: end
     }
 

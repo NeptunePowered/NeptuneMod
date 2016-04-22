@@ -32,6 +32,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.ai.EntityMoveHelper;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNavigate;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,7 +57,7 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
     public abstract EntityMoveHelper getMoveHelper();
 
     @Shadow
-    public abstract ItemStack getHeldItem();
+    public abstract ItemStack getItemStackFromSlot(EntityEquipmentSlot slotIn);
 
     @Shadow
     public abstract ItemStack[] getInventory();
@@ -94,7 +95,7 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
 
     @Override
     public Item getItemInHand() {
-        return (Item) this.getHeldItem();
+        return (Item) this.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
     }
 
     @Override

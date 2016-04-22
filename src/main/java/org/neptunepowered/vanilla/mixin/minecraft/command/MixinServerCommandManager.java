@@ -66,7 +66,7 @@ public abstract class MixinServerCommandManager extends CommandHandler implement
 
         if (!exists) {
             TextComponentTranslation chatcomponenttranslation = new TextComponentTranslation("commands.generic.notFound", new Object[0]);
-            chatcomponenttranslation.getChatStyle().setColor(TextFormatting.RED);
+            chatcomponenttranslation.getStyle().setColor(TextFormatting.RED);
             sender.addChatMessage(chatcomponenttranslation);
         }
 

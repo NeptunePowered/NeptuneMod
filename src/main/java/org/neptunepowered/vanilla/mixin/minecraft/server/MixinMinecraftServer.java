@@ -60,7 +60,7 @@ public abstract class MixinMinecraftServer implements Server {
     @Shadow public long[] tickTimeArray;
     @Shadow private int tickCounter;
     @Shadow private boolean serverRunning;
-    @Shadow private PlayerList serverConfigManager;
+    @Shadow private PlayerList playerList;
     @Shadow private ServerStatusResponse statusResponse;
 
     @Shadow
@@ -72,13 +72,17 @@ public abstract class MixinMinecraftServer implements Server {
     @Shadow
     public abstract String[] getAllUsernames();
 
-    @Override
     @Shadow
-    public abstract String getHostname();
+    public abstract String getServerHostname();
+
+    @Override
+    public String getHostname() {
+        return this.getServerHostname();
+    }
 
     @Override
     public int getNumPlayersOnline() {
-        return serverConfigManager.getCurrentPlayerCount();
+        return playerList.getCurrentPlayerCount();
     }
 
     @Override
@@ -87,7 +91,7 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public String[] getPlayerNameList() {
-        return serverConfigManager.getAllUsernames();
+        return playerList.getAllUsernames();
     }
 
     @Override
@@ -212,7 +216,7 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public ConfigurationManager getConfigurationManager() {
-        return (ConfigurationManager) serverConfigManager;
+        return (ConfigurationManager) playerList;
     }
 
     @Override
