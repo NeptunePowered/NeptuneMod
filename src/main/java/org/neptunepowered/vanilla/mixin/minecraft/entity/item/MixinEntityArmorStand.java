@@ -28,7 +28,6 @@ import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.inventory.Item;
 import net.canarymod.api.world.position.Rotations;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.item.ItemStack;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
 import org.neptunepowered.vanilla.util.converter.RotationsConverter;
 import org.spongepowered.asm.mixin.Mixin;
@@ -43,12 +42,6 @@ public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implem
     @Shadow private net.minecraft.util.math.Rotations rightArmRotation;
     @Shadow private net.minecraft.util.math.Rotations leftLegRotation;
     @Shadow private net.minecraft.util.math.Rotations rightLegRotation;
-
-    @Shadow
-    public abstract ItemStack[] getInventory();
-
-    @Shadow
-    public abstract void setCurrentItemOrArmor(int slotIn, ItemStack stack);
 
     @Shadow
     public abstract boolean getShowArms();
@@ -85,7 +78,7 @@ public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implem
 
     @Override
     public Item[] getAllEquipment() {
-        return (Item[]) this.getInventory();
+        return null; // TODO: 1.9
     }
 
     @Override
@@ -100,7 +93,7 @@ public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implem
 
     @Override
     public void setEquipment(Slot slot, Item item) {
-        this.setCurrentItemOrArmor(slot.ordinal(), (ItemStack) item);
+        // TODO: 1.9
     }
 
     @Override

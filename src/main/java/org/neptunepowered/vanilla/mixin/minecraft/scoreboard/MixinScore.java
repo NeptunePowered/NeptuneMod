@@ -38,7 +38,7 @@ public abstract class MixinScore implements net.canarymod.api.scoreboard.Score {
     @Shadow private net.minecraft.scoreboard.ScoreObjective theScoreObjective;
 
     @Shadow
-    public abstract void increseScore(int amount);
+    public abstract void increaseScore(int amount);
 
     @Shadow
     public abstract void decreaseScore(int amount);
@@ -49,9 +49,6 @@ public abstract class MixinScore implements net.canarymod.api.scoreboard.Score {
     @Shadow
     public abstract void setScorePoints(int points);
 
-    @Shadow
-    public abstract void func_96651_a(List p_96651_1_);
-
     @Override
     public String getName() {
         return null;
@@ -59,7 +56,7 @@ public abstract class MixinScore implements net.canarymod.api.scoreboard.Score {
 
     @Override
     public void addToScore(int toAdd) {
-        increseScore(toAdd);
+        this.increaseScore(toAdd);
     }
 
     @Override
@@ -89,7 +86,7 @@ public abstract class MixinScore implements net.canarymod.api.scoreboard.Score {
 
     @Override
     public void setReadOnlyScore(List<?> list) {
-        func_96651_a(list);
+        // TODO: 1.9
     }
 
     @Override

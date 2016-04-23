@@ -25,7 +25,6 @@ package org.neptunepowered.vanilla.mixin.minecraft.server.management;
 
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
-import net.canarymod.Canary;
 import net.canarymod.api.ConfigurationManager;
 import net.canarymod.api.PlayerListAction;
 import net.canarymod.api.PlayerListData;
@@ -33,7 +32,6 @@ import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.packet.Packet;
 import net.canarymod.api.world.DimensionType;
 import net.canarymod.api.world.World;
-import net.canarymod.chat.MessageReceiver;
 import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.PlayerListHook;
 import net.minecraft.entity.Entity;
@@ -67,6 +65,7 @@ import net.minecraft.world.storage.WorldInfo;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
@@ -117,6 +116,7 @@ public abstract class MixinPlayerList implements ConfigurationManager {
     @Shadow
     public abstract List getPlayerList();
 
+    @Overwrite
     public void initializeConnectionToPlayer(NetworkManager netManager, EntityPlayerMP playerIn) {
         GameProfile gameprofile = playerIn.getGameProfile();
         PlayerProfileCache playerprofilecache = this.mcServer.getPlayerProfileCache();
@@ -236,10 +236,12 @@ public abstract class MixinPlayerList implements ConfigurationManager {
         playerIn.addSelfToInternalCraftingInventory();
 
         // Neptune: start
-        Canary.motd().sendMOTD((MessageReceiver) playerIn);
+        // Canary.motd().sendMOTD((MessageReceiver) playerIn);
+        // TODO: 1.9
         // Neptune: end
     }
 
+    @Overwrite
     public void playerLoggedOut(EntityPlayerMP playerIn) {
         WorldServer worldserver = playerIn.getServerWorld();
         playerIn.addStat(StatList.leaveGame);

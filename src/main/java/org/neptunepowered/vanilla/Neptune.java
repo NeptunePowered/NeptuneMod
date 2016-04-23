@@ -39,11 +39,9 @@ import net.canarymod.plugin.DefaultPluginManager;
 import net.canarymod.plugin.PluginLangLoader;
 import net.canarymod.user.OperatorsProvider;
 import net.canarymod.user.WhitelistProvider;
-import net.minecraft.server.MinecraftServer;
-import org.neptunepowered.vanilla.interfaces.minecraft.command.IMixinServerCommandManager;
+import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.wrapper.NeptuneTranslator;
 import org.neptunepowered.vanilla.wrapper.commandsys.NeptunePlayerSelector;
-import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.wrapper.util.NeptuneJsonNBTUtility;
 
 public class Neptune extends Canary {
@@ -80,7 +78,8 @@ public class Neptune extends Canary {
     }
 
     public void registerCanaryCommands() {
-        ((IMixinServerCommandManager) ((MinecraftServer) server).getCommandManager()).registerEarlyCommands();
+        // ((IMixinServerCommandManager) NeptuneVanilla.getServer().getCommandManager()).registerEarlyCommands();
+        // TODO: 1.9
         try {
             this.commandManager.registerCommands(new CommandList(), getServer(), true);
         } catch (CommandDependencyException e) {

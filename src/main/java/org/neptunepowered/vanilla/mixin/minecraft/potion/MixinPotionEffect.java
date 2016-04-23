@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.potion;
 
 import net.canarymod.api.entity.living.LivingBase;
 import net.canarymod.api.potion.PotionEffect;
+import net.minecraft.potion.Potion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -36,9 +37,13 @@ public abstract class MixinPotionEffect implements PotionEffect {
     @Shadow
     public abstract String getEffectName();
 
-    @Override
     @Shadow
-    public abstract int getPotionID();
+    public abstract Potion getPotion();
+
+    @Override
+    public int getPotionID() {
+        return Potion.getIdFromPotion(this.getPotion());
+    }
 
     @Override
     @Shadow
@@ -50,12 +55,12 @@ public abstract class MixinPotionEffect implements PotionEffect {
 
     @Override
     public boolean isAmbient() {
-        return isAmbient;
+        return this.isAmbient;
     }
 
     @Override
     public String getName() {
-        return getEffectName();
+        return this.getEffectName();
     }
 
     @Override

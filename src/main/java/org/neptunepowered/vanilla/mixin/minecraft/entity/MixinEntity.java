@@ -34,6 +34,7 @@ import net.canarymod.api.world.World;
 import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -73,6 +74,9 @@ public abstract class MixinEntity implements Entity {
 
     @Shadow
     protected abstract boolean getFlag(int flag);
+
+    @Shadow
+    public abstract EntityDataManager getDataManager();
 
     @Override
     public double getX() {

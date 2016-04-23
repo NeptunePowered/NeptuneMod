@@ -42,8 +42,8 @@ public abstract class MixinStyle implements ChatStyle {
     @Shadow private Boolean underlined;
     @Shadow private Boolean strikethrough;
     @Shadow private Boolean obfuscated;
-    @Shadow private net.minecraft.util.text.event.ClickEvent chatClickEvent;
-    @Shadow private net.minecraft.util.text.event.HoverEvent chatHoverEvent;
+    @Shadow private net.minecraft.util.text.event.ClickEvent clickEvent;
+    @Shadow private net.minecraft.util.text.event.HoverEvent hoverEvent;
 
     @Shadow
     public abstract Style createShallowCopy();
@@ -83,12 +83,12 @@ public abstract class MixinStyle implements ChatStyle {
 
     @Override
     public ClickEvent getChatClickEvent() {
-        return (ClickEvent) chatClickEvent;
+        return (ClickEvent) clickEvent;
     }
 
     @Override
     public HoverEvent getChatHoverEvent() {
-        return (HoverEvent) chatHoverEvent;
+        return (HoverEvent) hoverEvent;
     }
 
     @Override
@@ -129,13 +129,13 @@ public abstract class MixinStyle implements ChatStyle {
 
     @Override
     public ChatStyle setChatClickEvent(ClickEvent clickEvent) {
-        this.chatClickEvent = (net.minecraft.util.text.event.ClickEvent) clickEvent;
+        this.clickEvent = (net.minecraft.util.text.event.ClickEvent) clickEvent;
         return this;
     }
 
     @Override
     public ChatStyle setChatHoverEvent(HoverEvent hoverEvent) {
-        this.chatHoverEvent = (net.minecraft.util.text.event.HoverEvent) hoverEvent;
+        this.hoverEvent = (net.minecraft.util.text.event.HoverEvent) hoverEvent;
         return this;
     }
 

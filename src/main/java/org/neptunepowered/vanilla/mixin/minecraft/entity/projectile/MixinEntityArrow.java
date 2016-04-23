@@ -35,7 +35,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class MixinEntityArrow extends MixinEntity implements Arrow {
 
     @Shadow public net.minecraft.entity.Entity shootingEntity;
-    @Shadow public int canBePickedUp;
+    @Shadow public EntityArrow.PickupStatus canBePickedUp;
     @Shadow private boolean inGround;
     @Shadow private int knockbackStrength;
     @Shadow private int ticksInGround;
@@ -46,12 +46,12 @@ public abstract class MixinEntityArrow extends MixinEntity implements Arrow {
 
     @Override
     public boolean canPickUp() {
-        return this.canBePickedUp == 1 ? true : false;
+        return this.canBePickedUp == EntityArrow.PickupStatus.ALLOWED;
     }
 
     @Override
     public void setCanPickUp(boolean canPickUp) {
-        this.canBePickedUp = canPickUp == true ? 1 : 0;
+        this.canBePickedUp = canPickUp == true ? EntityArrow.PickupStatus.ALLOWED : EntityArrow.PickupStatus.DISALLOWED;
     }
 
     @Override

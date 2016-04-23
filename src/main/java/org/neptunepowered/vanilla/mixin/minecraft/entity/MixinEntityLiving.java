@@ -41,9 +41,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EntityLiving.class)
 public abstract class MixinEntityLiving extends MixinEntityLivingBase implements net.canarymod.api.entity.living.EntityLiving {
 
-    @Shadow protected float[] equipmentDropChances;
     @Shadow private boolean persistenceRequired;
-    @Shadow private ItemStack[] equipment;
     @Shadow protected EntityAITasks tasks;
     @Shadow protected EntityAITasks targetTasks;
 
@@ -58,12 +56,6 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
 
     @Shadow
     public abstract ItemStack getItemStackFromSlot(EntityEquipmentSlot slotIn);
-
-    @Shadow
-    public abstract ItemStack[] getInventory();
-
-    @Shadow
-    public abstract ItemStack shadow$getEquipmentInSlot(int slotIn);
 
     @Shadow
     public abstract PathNavigate getNavigator();
@@ -100,32 +92,32 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
 
     @Override
     public Item[] getEquipment() {
-        return (Item[]) this.getInventory();
+        return null; // TODO: 1.9
     }
 
     @Override
     public Item getEquipmentInSlot(int slot) {
-        return (Item) this.shadow$getEquipmentInSlot(slot);
+        return null; // TODO: 1.9
     }
 
     @Override
     public void setEquipment(Item[] items) {
-        this.equipment = (ItemStack[]) items;
+        // TODO: 1.9
     }
 
     @Override
     public void setEquipment(Item item, int slot) {
-        this.equipment[slot] = (ItemStack) item;
+        // TODO: 1.9
     }
 
     @Override
     public float getDropChance(int slot) {
-        return this.equipmentDropChances[slot];
+        return 0; // TODO: 1.9
     }
 
     @Override
     public void setDropChance(int slot, float chance) {
-        this.equipmentDropChances[slot] = chance;
+        // TODO: 1.9
     }
 
     @Override

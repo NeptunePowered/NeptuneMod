@@ -31,6 +31,7 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import org.neptunepowered.vanilla.wrapper.commandsys.NeptuneCommand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -53,6 +54,9 @@ public abstract class MixinCanaryCommand implements ICommand {
 
     @Shadow(remap = false)
     public abstract String getLocaleDescription();
+
+    @Shadow(remap = false)
+    public abstract int compareTo(CanaryCommand o);
 
     @Override
     public String getCommandName() {
@@ -92,6 +96,7 @@ public abstract class MixinCanaryCommand implements ICommand {
     }
 
     @Override
-    @Shadow
-    public abstract int compareTo(ICommand o);
+    public int compareTo(ICommand o) {
+        return this.compareTo(new NeptuneCommand(o));
+    }
 }

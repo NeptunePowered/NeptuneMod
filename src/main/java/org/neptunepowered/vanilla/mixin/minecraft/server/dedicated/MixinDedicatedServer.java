@@ -58,6 +58,7 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     public void onStartServer(CallbackInfoReturnable<Boolean> ci) throws IOException {
         Canary.enableEarlyPlugins();
         ((Neptune) Canary.instance()).lateInitialisation();
-        Canary.enableLatePlugins();
+        //Canary.enableLatePlugins();
+        // TODO: 1.9
     }
 }

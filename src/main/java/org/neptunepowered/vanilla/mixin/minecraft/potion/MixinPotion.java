@@ -33,6 +33,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class MixinPotion implements net.canarymod.api.potion.Potion {
 
     @Shadow private boolean isBadEffect;
+    @Shadow private double effectiveness;
 
     @Override
     public int getID() {
@@ -54,12 +55,14 @@ public abstract class MixinPotion implements net.canarymod.api.potion.Potion {
     }
 
     @Override
-    @Shadow
-    public abstract double getEffectiveness();
+    public double getEffectiveness() {
+        return this.effectiveness;
+    }
 
     @Override
-    @Shadow
-    public abstract boolean isUsable();
+    public boolean isUsable() {
+        return false; // TODO: 1.9
+    }
 
     @Override
     @Shadow
