@@ -39,6 +39,7 @@ import net.canarymod.api.inventory.recipes.SmeltRecipe;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
+import net.canarymod.config.Configuration;
 import net.canarymod.tasks.ServerTask;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -82,8 +83,10 @@ public abstract class MixinMinecraftServer implements Server {
     }
 
     @Override
-    @Shadow
-    public abstract int getMaxPlayers();
+    @Overwrite
+    public int getMaxPlayers() {
+        return Configuration.getServerConfig().getMaxPlayers();
+    }
 
     @Override
     public String[] getPlayerNameList() {
@@ -344,6 +347,11 @@ public abstract class MixinMinecraftServer implements Server {
     @Override
     @Shadow
     public abstract String getName();
+
+    @Override
+    public String getLocale() {
+        return Configuration.getServerConfig().getServerLocale();
+    }
 
     @Overwrite
     public String getServerModName() {

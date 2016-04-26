@@ -23,6 +23,7 @@
  */
 package org.neptunepowered.vanilla.util.helper;
 
+import net.canarymod.config.Configuration;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.gui.MinecraftServerGui;
 
@@ -47,14 +48,20 @@ public final class MinecraftServerGuiHelper {
         jframe.setLocationRelativeTo(null);
         jframe.setVisible(true);
         jframe.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent p_windowClosing_1_) {
                 serverIn.initiateShutdown();
 
                 while (!serverIn.isServerStopped()) {
                     try {
                         Thread.sleep(100L);
-                    } catch (InterruptedException interruptedexception) {
-                        interruptedexception.printStackTrace();
+                    } catch (InterruptedException interruptedException) {
+                        // Neptune - start
+                        if (Configuration.getServerConfig().isDebugMode()) {
+                            interruptedException.printStackTrace();
+                        }
+                        // interruptedException.printStackTrace();
+                        // Neptune - end
                     }
                 }
 
