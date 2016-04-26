@@ -21,34 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.scoreboard;
+package org.neptunepowered.vanilla.mixin.minecraft.scoreboard;
 
 import net.canarymod.api.scoreboard.ScoreObjectiveCriteria;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
-import org.neptunepowered.vanilla.util.Wrapper;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
+import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.List;
 
-public class NeptuneScoreObjectiveCriteria extends Wrapper<IScoreObjectiveCriteria> implements ScoreObjectiveCriteria {
+@Mixin(IScoreObjectiveCriteria.class)
+@Implements(@Interface(iface = ScoreObjectiveCriteria.class, prefix = "criteria$"))
+public interface MixinIScoreObjectiveCriteria extends IScoreObjectiveCriteria, ScoreObjectiveCriteria {
 
-    public NeptuneScoreObjectiveCriteria(IScoreObjectiveCriteria handle) {
-        super(handle);
+    @Override
+    default String getProtocolName() {
+        return this.getName();
     }
 
     @Override
-    public String getProtocolName() {
-        return this.getHandle().getName();
+    default int getScore(List<?> var1) {
+        return this.setScore((List<EntityPlayer>) var1);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public int getScore(List<?> list) {
-        return this.getHandle().setScore((List<EntityPlayer>) list);
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return this.getHandle().isReadOnly();
+    @Intrinsic
+    default boolean criteria$isReadOnly() {
+        return this.isReadOnly();
     }
 }

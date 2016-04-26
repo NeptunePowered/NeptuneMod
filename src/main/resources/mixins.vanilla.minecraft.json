@@ -79,6 +79,7 @@
         "pathfinding.MixinPathNavigate",
         "potion.MixinPotion",
         "potion.MixinPotionEffect",
+        "scoreboard.MixinIScoreObjectiveCriteria",
         "scoreboard.MixinScore",
         "scoreboard.MixinScoreboard",
         "scoreboard.MixinScoreObjective",

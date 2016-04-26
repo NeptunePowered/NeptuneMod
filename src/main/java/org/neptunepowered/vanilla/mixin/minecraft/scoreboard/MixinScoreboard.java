@@ -33,7 +33,6 @@ import net.canarymod.api.scoreboard.Team;
 import net.canarymod.api.world.World;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
 import net.minecraft.scoreboard.Scoreboard;
-import org.neptunepowered.vanilla.wrapper.scoreboard.NeptuneScoreObjectiveCriteria;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -63,7 +62,7 @@ public abstract class MixinScoreboard implements net.canarymod.api.scoreboard.Sc
 
     @Override
     public ScoreObjective addScoreObjective(String name, ScoreObjectiveCriteria criteria) {
-        return (ScoreObjective) this.addScoreObjective(name, ((NeptuneScoreObjectiveCriteria) criteria).getHandle());
+        return (ScoreObjective) this.addScoreObjective(name, (IScoreObjectiveCriteria) criteria);
     }
 
     @Override
