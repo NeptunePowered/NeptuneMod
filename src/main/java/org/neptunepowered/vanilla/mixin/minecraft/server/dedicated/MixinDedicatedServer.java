@@ -24,10 +24,13 @@
 package org.neptunepowered.vanilla.mixin.minecraft.server.dedicated;
 
 import net.canarymod.Canary;
+import net.canarymod.config.Configuration;
+import net.minecraft.profiler.PlayerUsageSnooper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.neptunepowered.vanilla.Neptune;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -50,5 +53,67 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
         Canary.enableEarlyPlugins();
         ((Neptune) Canary.instance()).lateInitialisation();
         Canary.enableLatePlugins();
+    }
+
+    /**
+     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
+     *
+     * @author jamierocks
+     */
+    @Overwrite
+    public void addServerStatsToSnooper(PlayerUsageSnooper playerSnooper) {
+        playerSnooper.addClientStat("whitelist_enabled", Configuration.getServerConfig().isWhitelistEnabled());
+        playerSnooper.addClientStat("whitelist_count", Canary.whitelist().getSize());
+        super.addServerStatsToSnooper(playerSnooper);
+    }
+
+    /**
+     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
+     *
+     * @author jamierocks
+     */
+    @Overwrite
+    public boolean isSnooperEnabled() {
+        return Configuration.getServerConfig().isSnooperEnabled();
+    }
+
+    /**
+     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
+     *
+     * @author jamierocks
+     */
+    @Overwrite
+    public boolean isCommandBlockEnabled() {
+        return Configuration.getServerConfig().isCommandBlockEnabled();
+    }
+
+    /**
+     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
+     *
+     * @author jamierocks
+     */
+    @Overwrite
+    public boolean isAnnouncingPlayerAchievements() {
+        return Configuration.getServerConfig().getAnnounceAchievements();
+    }
+
+    /**
+     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
+     *
+     * @author jamierocks
+     */
+    @Overwrite
+    public int getNetworkCompressionTreshold() {
+        return Configuration.getServerConfig().getNetworkCompressionThreshold();
+    }
+
+    /**
+     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
+     *
+     * @author jamierocks
+     */
+    @Overwrite
+    public long getMaxTickTime() {
+        return Configuration.getServerConfig().getMaxTickTime();
     }
 }

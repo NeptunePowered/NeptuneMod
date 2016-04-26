@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.server;
 
 import com.google.common.collect.Lists;
+import net.canarymod.Canary;
 import net.canarymod.api.CommandBlockLogic;
 import net.canarymod.api.ConfigurationManager;
 import net.canarymod.api.OfflinePlayer;
@@ -100,12 +101,12 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public List<Player> getPlayerList() {
-        return null;
+        return (List) this.serverConfigManager.getPlayerList();
     }
 
     @Override
     public String getDefaultWorldName() {
-        return null;
+        return Configuration.getServerConfig().getDefaultWorldName();
     }
 
     @Override
@@ -281,7 +282,7 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public String getCanaryModVersion() {
-        return null;
+        return Canary.getImplementationVersion();
     }
 
     @Override
