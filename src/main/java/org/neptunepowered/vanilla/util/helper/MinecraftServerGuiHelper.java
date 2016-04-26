@@ -32,7 +32,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-public class MinecraftServerGuiHelper {
+public final class MinecraftServerGuiHelper {
 
     public static JFrame createServerGui(final DedicatedServer serverIn) {
         try {
