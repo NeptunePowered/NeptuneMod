@@ -63,7 +63,15 @@ import net.canarymod.api.entity.living.monster.Creeper;
 import net.canarymod.api.entity.living.monster.EntityMob;
 import net.canarymod.api.entity.living.monster.RangedAttackMob;
 import net.canarymod.api.factory.AIFactory;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIArrowAttack;
+import net.minecraft.entity.ai.EntityAIAttackOnCollide;
+import net.minecraft.entity.ai.EntityAIBeg;
+import net.minecraft.entity.ai.EntityAIBreakDoor;
+import net.minecraft.entity.ai.EntityAIControlledByPlayer;
+import net.minecraft.entity.ai.EntityAICreeperSwell;
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.passive.EntityWolf;
 
 public class NeptuneAIFactory implements AIFactory {
 
@@ -77,33 +85,35 @@ public class NeptuneAIFactory implements AIFactory {
     @Override
     public AIAttackOnCollide newAIAttackOnCollide(EntityMob creature, Class<? extends LivingBase> targetClass,
             double moveSpeed, boolean persistant) {
-        return null;
+        return (AIAttackOnCollide) new EntityAIAttackOnCollide(
+                (EntityCreature) creature, (Class <? extends net.minecraft.entity.Entity>) targetClass,
+                moveSpeed, persistant);
     }
 
     @Override
     public AIAvoidEntity newAIAvoidEntity(EntityMob mob, Predicate predicate, float radius, double farSpeed,
             double nearSpeed) {
-        return null;
+        return null; // TODO: ?
     }
 
     @Override
     public AIBeg newAIBeg(Wolf wolf, float minBegDistance) {
-        return null;
+        return (AIBeg) new EntityAIBeg((EntityWolf) wolf, minBegDistance);
     }
 
     @Override
     public AIBreakDoor newAIBreakDoor(EntityLiving entity) {
-        return null;
+        return (AIBreakDoor) new EntityAIBreakDoor((net.minecraft.entity.EntityLiving) entity);
     }
 
     @Override
     public AIControlledByPlayer newAIControlledByPlayer(EntityLiving entity, float speed) {
-        return null;
+        return (AIControlledByPlayer) new EntityAIControlledByPlayer((net.minecraft.entity.EntityLiving) entity, speed);
     }
 
     @Override
     public AICreeperSwell newAICreeperSwell(Creeper creeper) {
-        return null;
+        return (AICreeperSwell) new EntityAICreeperSwell((EntityCreeper) creeper);
     }
 
     @Override
