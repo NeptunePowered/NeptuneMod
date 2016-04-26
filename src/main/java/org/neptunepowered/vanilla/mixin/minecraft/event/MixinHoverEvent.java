@@ -26,17 +26,17 @@ package org.neptunepowered.vanilla.mixin.minecraft.event;
 import net.canarymod.api.chat.ChatComponent;
 import net.canarymod.api.chat.HoverEvent;
 import net.canarymod.api.chat.HoverEventAction;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneHoverEventAction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(net.minecraft.event.HoverEvent.class)
+@Mixin(net.minecraft.util.text.event.HoverEvent.class)
 public class MixinHoverEvent implements HoverEvent {
 
-    @Shadow private net.minecraft.event.HoverEvent.Action action;
-    @Shadow private IChatComponent value;
+    @Shadow private net.minecraft.util.text.event.HoverEvent.Action action;
+    @Shadow private ITextComponent value;
 
     @Override
     public HoverEventAction getAction() {

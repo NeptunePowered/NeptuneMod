@@ -21,9 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.util;
+package org.neptunepowered.vanilla.mixin.minecraft.util.text;
 
-public interface IMixinChatComponentText {
+import net.canarymod.api.chat.ChatFormatting;
+import net.minecraft.util.text.TextFormatting;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-    void setText(String text);
+@Mixin(TextFormatting.class)
+public abstract class MixinTextFormatting implements ChatFormatting {
+
+    @Shadow public char formattingCode;
+
+    @Shadow
+    public abstract boolean isFancyStyling();
+
+    @Shadow
+    public abstract String getFriendlyName();
+
+    @Override
+    public char getFormattingCode() {
+        return this.formattingCode;
+    }
+
+    @Override
+    public boolean isFormat() {
+        return this.isFancyStyling();
+    }
+
+    @Shadow
+    @Override
+    public abstract boolean isColor();
+
+    @Override
+    public String getName() {
+        return this.getFriendlyName();
+    }
 }

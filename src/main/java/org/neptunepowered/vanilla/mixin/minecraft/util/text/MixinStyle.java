@@ -21,31 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.util;
+package org.neptunepowered.vanilla.mixin.minecraft.util.text;
 
 import net.canarymod.api.chat.ChatFormatting;
 import net.canarymod.api.chat.ChatStyle;
 import net.canarymod.api.chat.ClickEvent;
 import net.canarymod.api.chat.HoverEvent;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(net.minecraft.util.ChatStyle.class)
-public abstract class MixinChatStyle implements ChatStyle {
+@Mixin(Style.class)
+public abstract class MixinStyle implements ChatStyle {
 
-    @Shadow private net.minecraft.util.ChatStyle parentStyle;
-    @Shadow private EnumChatFormatting color;
+    @Shadow private Style parentStyle;
+    @Shadow private TextFormatting color;
     @Shadow private Boolean bold;
     @Shadow private Boolean italic;
     @Shadow private Boolean underlined;
     @Shadow private Boolean strikethrough;
     @Shadow private Boolean obfuscated;
-    @Shadow private net.minecraft.event.ClickEvent chatClickEvent;
-    @Shadow private net.minecraft.event.HoverEvent chatHoverEvent;
+    @Shadow private net.minecraft.util.text.event.ClickEvent clickEvent;
+    @Shadow private net.minecraft.util.text.event.HoverEvent hoverEvent;
 
     @Shadow
-    public abstract net.minecraft.util.ChatStyle createShallowCopy();
+    public abstract Style createShallowCopy();
 
     @Override
     public ChatFormatting getColor() {
@@ -82,17 +83,17 @@ public abstract class MixinChatStyle implements ChatStyle {
 
     @Override
     public ClickEvent getChatClickEvent() {
-        return (ClickEvent) chatClickEvent;
+        return (ClickEvent) clickEvent;
     }
 
     @Override
     public HoverEvent getChatHoverEvent() {
-        return (HoverEvent) chatHoverEvent;
+        return (HoverEvent) hoverEvent;
     }
 
     @Override
     public ChatStyle setColor(ChatFormatting color) {
-        this.color = (EnumChatFormatting) (Object) color;
+        this.color = (TextFormatting) (Object) color;
         return this;
     }
 
@@ -128,19 +129,19 @@ public abstract class MixinChatStyle implements ChatStyle {
 
     @Override
     public ChatStyle setChatClickEvent(ClickEvent clickEvent) {
-        this.chatClickEvent = (net.minecraft.event.ClickEvent) clickEvent;
+        this.clickEvent = (net.minecraft.util.text.event.ClickEvent) clickEvent;
         return this;
     }
 
     @Override
     public ChatStyle setChatHoverEvent(HoverEvent hoverEvent) {
-        this.chatHoverEvent = (net.minecraft.event.HoverEvent) hoverEvent;
+        this.hoverEvent = (net.minecraft.util.text.event.HoverEvent) hoverEvent;
         return this;
     }
 
     @Override
     public ChatStyle setParentStyle(ChatStyle chatStyle) {
-        parentStyle = (net.minecraft.util.ChatStyle) chatStyle;
+        parentStyle = (Style) chatStyle;
         return this;
     }
 

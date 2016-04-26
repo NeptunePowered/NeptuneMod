@@ -26,18 +26,18 @@ package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.living.monster.Witch;
 import net.minecraft.entity.monster.EntityWitch;
+import net.minecraft.network.datasync.DataParameter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityWitch.class)
 public abstract class MixinEntityWitch extends MixinEntityMob implements Witch {
 
-    @Shadow
-    public abstract boolean getAggressive();
+    @Shadow private static DataParameter<Boolean> IS_AGGRESSIVE;
 
     @Override
     public boolean isAgressive() {
-        return this.getAggressive();
+        return this.getDataManager().get(IS_AGGRESSIVE);
     }
 
     @Override

@@ -27,13 +27,13 @@ import net.canarymod.api.packet.BlockChangePacket;
 import net.canarymod.api.world.blocks.Block;
 import net.canarymod.api.world.blocks.BlockType;
 import net.canarymod.api.world.position.Position;
-import net.minecraft.network.play.server.S23PacketBlockChange;
-import net.minecraft.util.BlockPos;
-import org.neptunepowered.vanilla.interfaces.minecraft.network.play.server.IMixinS23PacketBlockChange;
+import net.minecraft.network.play.server.SPacketBlockChange;
+import net.minecraft.util.math.BlockPos;
+import org.neptunepowered.vanilla.interfaces.minecraft.network.play.server.IMixinSPacketBlockChange;
 
 public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChangePacket {
 
-    public NeptuneBlockChangePacket(S23PacketBlockChange handle) {
+    public NeptuneBlockChangePacket(SPacketBlockChange handle) {
         super(handle);
     }
 
@@ -74,7 +74,7 @@ public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChan
 
     @Override
     public void setPosition(Position position) {
-        ((IMixinS23PacketBlockChange) getHandle()).setBlockPosition(
+        ((IMixinSPacketBlockChange) getHandle()).setBlockPosition(
                 new BlockPos(position.getX(), position.getY(), position.getZ()));
     }
 
@@ -119,7 +119,7 @@ public class NeptuneBlockChangePacket extends NeptunePacket implements BlockChan
     }
 
     @Override
-    public S23PacketBlockChange getHandle() {
-        return (S23PacketBlockChange) super.getHandle();
+    public SPacketBlockChange getHandle() {
+        return (SPacketBlockChange) super.getHandle();
     }
 }

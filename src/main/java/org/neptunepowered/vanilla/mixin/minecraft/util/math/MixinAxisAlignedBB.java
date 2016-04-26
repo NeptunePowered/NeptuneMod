@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.util;
+package org.neptunepowered.vanilla.mixin.minecraft.util.math;
 
 import net.canarymod.api.BoundingBox;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -37,9 +37,6 @@ public abstract class MixinAxisAlignedBB implements BoundingBox {
     @Shadow public double maxX;
     @Shadow public double maxY;
     @Shadow public double maxZ;
-
-    @Shadow
-    public abstract AxisAlignedBB shadow$contract(double x, double y, double z);
 
     @Shadow
     public abstract AxisAlignedBB addCoord(double x, double y, double z);
@@ -107,7 +104,7 @@ public abstract class MixinAxisAlignedBB implements BoundingBox {
 
     @Override
     public BoundingBox contract(double x, double y, double z) {
-        return (BoundingBox) shadow$contract(x, y, z);
+        return null; // TODO: 1.9
     }
 
     @Override

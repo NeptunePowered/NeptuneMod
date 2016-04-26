@@ -21,33 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.network.play.server;
+package org.neptunepowered.vanilla.interfaces.minecraft.util.text;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.network.play.server.S23PacketBlockChange;
-import net.minecraft.util.BlockPos;
-import org.neptunepowered.vanilla.interfaces.minecraft.network.play.server.IMixinS23PacketBlockChange;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+public interface IMixinTextComponentString {
 
-@Mixin(S23PacketBlockChange.class)
-public class MixinS23PacketBlockChange implements IMixinS23PacketBlockChange {
-
-    @Shadow private BlockPos blockPosition;
-    @Shadow private IBlockState blockState;
-
-    @Override
-    public IBlockState getBlockState() {
-        return this.blockState;
-    }
-
-    @Override
-    public BlockPos getBlockPosition() {
-        return this.blockPosition;
-    }
-
-    @Override
-    public void setBlockPosition(BlockPos pos) {
-        this.blockPosition = pos;
-    }
+    void setText(String text);
 }

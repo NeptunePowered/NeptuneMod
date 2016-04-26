@@ -32,6 +32,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.ai.EntityMoveHelper;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNavigate;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,9 +41,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EntityLiving.class)
 public abstract class MixinEntityLiving extends MixinEntityLivingBase implements net.canarymod.api.entity.living.EntityLiving {
 
-    @Shadow protected float[] equipmentDropChances;
     @Shadow private boolean persistenceRequired;
-    @Shadow private ItemStack[] equipment;
     @Shadow protected EntityAITasks tasks;
     @Shadow protected EntityAITasks targetTasks;
 
@@ -56,13 +55,7 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
     public abstract EntityMoveHelper getMoveHelper();
 
     @Shadow
-    public abstract ItemStack getHeldItem();
-
-    @Shadow
-    public abstract ItemStack[] getInventory();
-
-    @Shadow
-    public abstract ItemStack shadow$getEquipmentInSlot(int slotIn);
+    public abstract ItemStack getItemStackFromSlot(EntityEquipmentSlot slotIn);
 
     @Shadow
     public abstract PathNavigate getNavigator();
@@ -94,37 +87,37 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
 
     @Override
     public Item getItemInHand() {
-        return (Item) this.getHeldItem();
+        return (Item) this.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
     }
 
     @Override
     public Item[] getEquipment() {
-        return (Item[]) this.getInventory();
+        return null; // TODO: 1.9
     }
 
     @Override
     public Item getEquipmentInSlot(int slot) {
-        return (Item) this.shadow$getEquipmentInSlot(slot);
+        return null; // TODO: 1.9
     }
 
     @Override
     public void setEquipment(Item[] items) {
-        this.equipment = (ItemStack[]) items;
+        // TODO: 1.9
     }
 
     @Override
     public void setEquipment(Item item, int slot) {
-        this.equipment[slot] = (ItemStack) item;
+        // TODO: 1.9
     }
 
     @Override
     public float getDropChance(int slot) {
-        return this.equipmentDropChances[slot];
+        return 0; // TODO: 1.9
     }
 
     @Override
     public void setDropChance(int slot, float chance) {
-        this.equipmentDropChances[slot] = chance;
+        // TODO: 1.9
     }
 
     @Override

@@ -27,7 +27,7 @@ import net.canarymod.api.GameMode;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.hook.player.GameModeChangeHook;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.management.ItemInWorldManager;
+import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.world.WorldSettings;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,7 +35,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ItemInWorldManager.class)
+@Mixin(PlayerInteractionManager.class)
 public class MixinItemInWorldManager {
 
     @Shadow public EntityPlayerMP thisPlayerMP;

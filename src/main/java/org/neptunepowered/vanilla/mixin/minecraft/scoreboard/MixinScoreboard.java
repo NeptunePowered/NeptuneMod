@@ -31,7 +31,7 @@ import net.canarymod.api.scoreboard.ScoreObjectiveCriteria;
 import net.canarymod.api.scoreboard.ScorePosition;
 import net.canarymod.api.scoreboard.Team;
 import net.canarymod.api.world.World;
-import net.minecraft.scoreboard.IScoreObjectiveCriteria;
+import net.minecraft.scoreboard.IScoreCriteria;
 import net.minecraft.scoreboard.Scoreboard;
 import org.neptunepowered.vanilla.wrapper.scoreboard.NeptuneScoreObjectiveCriteria;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,7 +46,7 @@ public abstract class MixinScoreboard implements net.canarymod.api.scoreboard.Sc
     @Shadow private Map teams;
 
     @Shadow
-    public abstract net.minecraft.scoreboard.ScoreObjective addScoreObjective(String name, IScoreObjectiveCriteria criteria);
+    public abstract net.minecraft.scoreboard.ScoreObjective addScoreObjective(String name, IScoreCriteria criteria);
 
     @Shadow
     public abstract net.minecraft.scoreboard.ScoreObjective getObjective(String name);

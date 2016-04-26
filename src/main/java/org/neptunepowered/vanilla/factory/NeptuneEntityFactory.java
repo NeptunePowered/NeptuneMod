@@ -39,8 +39,6 @@ import net.canarymod.api.factory.EntityFactory;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.position.Location;
 import net.minecraft.entity.EntityLeashKnot;
-import net.minecraft.entity.EntityMinecartCommandBlock;
-import net.minecraft.entity.ai.EntityMinecartMobSpawner;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -54,9 +52,11 @@ import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecartChest;
+import net.minecraft.entity.item.EntityMinecartCommandBlock;
 import net.minecraft.entity.item.EntityMinecartEmpty;
 import net.minecraft.entity.item.EntityMinecartFurnace;
 import net.minecraft.entity.item.EntityMinecartHopper;
+import net.minecraft.entity.item.EntityMinecartMobSpawner;
 import net.minecraft.entity.item.EntityMinecartTNT;
 import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.item.EntityTNTPrimed;
@@ -91,13 +91,13 @@ import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
-import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityEgg;
 import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.entity.projectile.EntityPotion;
 import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.entity.projectile.EntitySnowball;
+import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 
 public class NeptuneEntityFactory implements EntityFactory {
@@ -128,7 +128,7 @@ public class NeptuneEntityFactory implements EntityFactory {
             case ARMORSTAND:
                 return (Entity) new EntityArmorStand((net.minecraft.world.World) world);
             case ARROW:
-                return (Entity) new EntityArrow((net.minecraft.world.World) world);
+                return (Entity) new EntityTippedArrow((net.minecraft.world.World) world);
             case BAT:
                 return (Entity) new EntityBat((net.minecraft.world.World) world);
             case BLACKSMITH:
@@ -215,7 +215,7 @@ public class NeptuneEntityFactory implements EntityFactory {
                 librarian.setProfession(Villager.Profession.LIBRARIAN);
                 return librarian;
             case LIGHTNINGBOLT:
-                return (Entity) new EntityLightningBolt((net.minecraft.world.World) world, 0, 0, 0);
+                return (Entity) new EntityLightningBolt((net.minecraft.world.World) world, 0, 0, 0, true);
             case MAGMACUBE:
                 return (Entity) new EntityMagmaCube((net.minecraft.world.World) world);
             case MOBSPAWNERMINECART:

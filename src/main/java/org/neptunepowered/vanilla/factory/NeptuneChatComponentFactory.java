@@ -30,9 +30,9 @@ import net.canarymod.api.chat.ClickEventAction;
 import net.canarymod.api.chat.HoverEvent;
 import net.canarymod.api.chat.HoverEventAction;
 import net.canarymod.api.factory.ChatComponentFactory;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneClickEventAction;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneHoverEventAction;
@@ -41,7 +41,7 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ChatComponent newChatComponent(String text) {
-        return new NeptuneChatComponent(new ChatComponentText(text));
+        return new NeptuneChatComponent(new TextComponentString(text));
     }
 
     @Override
@@ -56,17 +56,17 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ChatComponent deserialize(String json) {
-        return new NeptuneChatComponent(IChatComponent.Serializer.jsonToComponent(json));
+        return new NeptuneChatComponent(ITextComponent.Serializer.jsonToComponent(json));
     }
 
     @Override
     public ChatFormatting getFormattingByName(String name) {
-        return (ChatFormatting) (Object) EnumChatFormatting.getValueByName(name);
+        return (ChatFormatting) (Object) TextFormatting.getValueByName(name);
     }
 
     @Override
     public ChatFormatting getStyleByChar(char charcode) {
-        for (EnumChatFormatting chatFormatting : EnumChatFormatting.values()) {
+        for (TextFormatting chatFormatting : TextFormatting.values()) {
             if (chatFormatting.formattingCode == charcode) {
                 return (ChatFormatting) (Object) chatFormatting;
             }
@@ -76,167 +76,167 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ChatFormatting colorBlack() {
-        return (ChatFormatting) (Object) EnumChatFormatting.BLACK;
+        return (ChatFormatting) (Object) TextFormatting.BLACK;
     }
 
     @Override
     public ChatFormatting colorDarkBlue() {
-        return (ChatFormatting) (Object) EnumChatFormatting.DARK_BLUE;
+        return (ChatFormatting) (Object) TextFormatting.DARK_BLUE;
     }
 
     @Override
     public ChatFormatting colorDarkGreen() {
-        return (ChatFormatting) (Object) EnumChatFormatting.DARK_GREEN;
+        return (ChatFormatting) (Object) TextFormatting.DARK_GREEN;
     }
 
     @Override
     public ChatFormatting colorDarkAqua() {
-        return (ChatFormatting) (Object) EnumChatFormatting.DARK_AQUA;
+        return (ChatFormatting) (Object) TextFormatting.DARK_AQUA;
     }
 
     @Override
     public ChatFormatting colorDarkRed() {
-        return (ChatFormatting) (Object) EnumChatFormatting.DARK_RED;
+        return (ChatFormatting) (Object) TextFormatting.DARK_RED;
     }
 
     @Override
     public ChatFormatting colorDarkPurple() {
-        return (ChatFormatting) (Object) EnumChatFormatting.DARK_PURPLE;
+        return (ChatFormatting) (Object) TextFormatting.DARK_PURPLE;
     }
 
     @Override
     public ChatFormatting colorGold() {
-        return (ChatFormatting) (Object) EnumChatFormatting.GOLD;
+        return (ChatFormatting) (Object) TextFormatting.GOLD;
     }
 
     @Override
     public ChatFormatting colorGray() {
-        return (ChatFormatting) (Object) EnumChatFormatting.GRAY;
+        return (ChatFormatting) (Object) TextFormatting.GRAY;
     }
 
     @Override
     public ChatFormatting colorDarkGray() {
-        return (ChatFormatting) (Object) EnumChatFormatting.DARK_GRAY;
+        return (ChatFormatting) (Object) TextFormatting.DARK_GRAY;
     }
 
     @Override
     public ChatFormatting colorBlue() {
-        return (ChatFormatting) (Object) EnumChatFormatting.BLUE;
+        return (ChatFormatting) (Object) TextFormatting.BLUE;
     }
 
     @Override
     public ChatFormatting colorGreen() {
-        return (ChatFormatting) (Object) EnumChatFormatting.GREEN;
+        return (ChatFormatting) (Object) TextFormatting.GREEN;
     }
 
     @Override
     public ChatFormatting colorAqua() {
-        return (ChatFormatting) (Object) EnumChatFormatting.AQUA;
+        return (ChatFormatting) (Object) TextFormatting.AQUA;
     }
 
     @Override
     public ChatFormatting colorRed() {
-        return (ChatFormatting) (Object) EnumChatFormatting.RED;
+        return (ChatFormatting) (Object) TextFormatting.RED;
     }
 
     @Override
     public ChatFormatting colorLightPurple() {
-        return (ChatFormatting) (Object) EnumChatFormatting.LIGHT_PURPLE;
+        return (ChatFormatting) (Object) TextFormatting.LIGHT_PURPLE;
     }
 
     @Override
     public ChatFormatting colorYellow() {
-        return (ChatFormatting) (Object) EnumChatFormatting.YELLOW;
+        return (ChatFormatting) (Object) TextFormatting.YELLOW;
     }
 
     @Override
     public ChatFormatting colorWhite() {
-        return (ChatFormatting) (Object) EnumChatFormatting.WHITE;
+        return (ChatFormatting) (Object) TextFormatting.WHITE;
     }
 
     @Override
     public ChatFormatting styleObfuscated() {
-        return (ChatFormatting) (Object) EnumChatFormatting.OBFUSCATED;
+        return (ChatFormatting) (Object) TextFormatting.OBFUSCATED;
     }
 
     @Override
     public ChatFormatting styleBold() {
-        return (ChatFormatting) (Object) EnumChatFormatting.BOLD;
+        return (ChatFormatting) (Object) TextFormatting.BOLD;
     }
 
     @Override
     public ChatFormatting styleStrikethrough() {
-        return (ChatFormatting) (Object) EnumChatFormatting.STRIKETHROUGH;
+        return (ChatFormatting) (Object) TextFormatting.STRIKETHROUGH;
     }
 
     @Override
     public ChatFormatting styleUnderline() {
-        return (ChatFormatting) (Object) EnumChatFormatting.UNDERLINE;
+        return (ChatFormatting) (Object) TextFormatting.UNDERLINE;
     }
 
     @Override
     public ChatFormatting styleItalic() {
-        return (ChatFormatting) (Object) EnumChatFormatting.ITALIC;
+        return (ChatFormatting) (Object) TextFormatting.ITALIC;
     }
 
     @Override
     public ChatFormatting styleReset() {
-        return (ChatFormatting) (Object) EnumChatFormatting.RESET;
+        return (ChatFormatting) (Object) TextFormatting.RESET;
     }
 
     @Override
     public ClickEvent newClickEvent(ClickEventAction action, String value) {
-        return (ClickEvent) new net.minecraft.event.ClickEvent(((NeptuneClickEventAction) action).getHandle(), value);
+        return (ClickEvent) new net.minecraft.util.text.event.ClickEvent(((NeptuneClickEventAction) action).getHandle(), value);
     }
 
     @Override
     public ClickEventAction getClickEventActionByName(String name) {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.getValueByCanonicalName(name));
+        return new NeptuneClickEventAction(net.minecraft.util.text.event.ClickEvent.Action.getValueByCanonicalName(name));
     }
 
     @Override
     public ClickEventAction getOpenURL() {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.OPEN_URL);
+        return new NeptuneClickEventAction(net.minecraft.util.text.event.ClickEvent.Action.OPEN_URL);
     }
 
     @Override
     public ClickEventAction getOpenFile() {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.OPEN_FILE);
+        return new NeptuneClickEventAction(net.minecraft.util.text.event.ClickEvent.Action.OPEN_FILE);
     }
 
     @Override
     public ClickEventAction getRunCommand() {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.RUN_COMMAND);
+        return new NeptuneClickEventAction(net.minecraft.util.text.event.ClickEvent.Action.RUN_COMMAND);
     }
 
     @Override
     public ClickEventAction getSuggestCommand() {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.SUGGEST_COMMAND);
+        return new NeptuneClickEventAction(net.minecraft.util.text.event.ClickEvent.Action.SUGGEST_COMMAND);
     }
 
     @Override
     public HoverEvent newHoverEvent(HoverEventAction action, ChatComponent value) {
-        return (HoverEvent) new net.minecraft.event.HoverEvent(((NeptuneHoverEventAction) action).getHandle(),
+        return (HoverEvent) new net.minecraft.util.text.event.HoverEvent(((NeptuneHoverEventAction) action).getHandle(),
                 ((NeptuneChatComponent) value).getHandle());
     }
 
     @Override
     public HoverEventAction getHoverEventActionByName(String name) {
-        return new NeptuneHoverEventAction(net.minecraft.event.HoverEvent.Action.getValueByCanonicalName(name));
+        return new NeptuneHoverEventAction(net.minecraft.util.text.event.HoverEvent.Action.getValueByCanonicalName(name));
     }
 
     @Override
     public HoverEventAction getShowText() {
-        return new NeptuneHoverEventAction(net.minecraft.event.HoverEvent.Action.SHOW_TEXT);
+        return new NeptuneHoverEventAction(net.minecraft.util.text.event.HoverEvent.Action.SHOW_TEXT);
     }
 
     @Override
     public HoverEventAction getShowAchievement() {
-        return new NeptuneHoverEventAction(net.minecraft.event.HoverEvent.Action.SHOW_ACHIEVEMENT);
+        return new NeptuneHoverEventAction(net.minecraft.util.text.event.HoverEvent.Action.SHOW_ACHIEVEMENT);
     }
 
     @Override
     public HoverEventAction getShowItem() {
-        return new NeptuneHoverEventAction(net.minecraft.event.HoverEvent.Action.SHOW_ITEM);
+        return new NeptuneHoverEventAction(net.minecraft.util.text.event.HoverEvent.Action.SHOW_ITEM);
     }
 }

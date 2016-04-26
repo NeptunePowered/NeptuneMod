@@ -31,9 +31,9 @@ import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.ServerCommandManager;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import org.neptunepowered.vanilla.Neptune;
 import org.neptunepowered.vanilla.interfaces.minecraft.command.IMixinServerCommandManager;
 import org.neptunepowered.vanilla.wrapper.commandsys.NeptuneCommand;
@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mixin(ServerCommandManager.class)
-public class MixinServerCommandManager extends CommandHandler implements IMixinServerCommandManager {
+public abstract class MixinServerCommandManager extends CommandHandler implements IMixinServerCommandManager {
 
     private List<NeptuneCommand> earlyRegisterCommands = Lists.newArrayList();
 
@@ -65,8 +65,8 @@ public class MixinServerCommandManager extends CommandHandler implements IMixinS
         boolean exists = Canary.commands().parseCommand((MessageReceiver) sender, commandName, args);
 
         if (!exists) {
-            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.generic.notFound", new Object[0]);
-            chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
+            TextComponentTranslation chatcomponenttranslation = new TextComponentTranslation("commands.generic.notFound", new Object[0]);
+            chatcomponenttranslation.getStyle().setColor(TextFormatting.RED);
             sender.addChatMessage(chatcomponenttranslation);
         }
 

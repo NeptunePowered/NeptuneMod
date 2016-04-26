@@ -28,14 +28,14 @@ import net.canarymod.api.attributes.Attribute;
 import net.canarymod.api.attributes.AttributeMap;
 import net.canarymod.api.attributes.AttributeModifier;
 import net.canarymod.api.attributes.ModifiedAttribute;
-import net.minecraft.entity.ai.attributes.BaseAttributeMap;
+import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Collection;
 
-@Mixin(BaseAttributeMap.class)
-public abstract class MixinBaseAttributeMap implements AttributeMap {
+@Mixin(AbstractAttributeMap.class)
+public abstract class MixinAbstractAttributeMap implements AttributeMap {
 
     @Shadow
     public abstract void applyAttributeModifiers(Multimap p_111147_1_);

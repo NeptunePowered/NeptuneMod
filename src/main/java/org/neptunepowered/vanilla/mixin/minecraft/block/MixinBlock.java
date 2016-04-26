@@ -39,30 +39,32 @@ import java.util.Random;
 @Mixin(Block.class)
 public abstract class MixinBlock implements BlockBase {
 
+    @Shadow protected boolean fullBlock;
+    @Shadow protected int lightOpacity;
+    @Shadow protected int lightValue;
+    @Shadow protected boolean useNeighborBrightness;
     @Shadow protected Material blockMaterial;
     @Shadow protected boolean needsRandomTick;
-    @Shadow protected double minX;
-    @Shadow protected double minY;
-    @Shadow protected double minZ;
-    @Shadow protected double maxX;
-    @Shadow protected double maxY;
-    @Shadow protected double maxZ;
 
     @Override
-    @Shadow
-    public abstract boolean isFullBlock();
+    public boolean isFullBlock() {
+        return this.fullBlock;
+    }
 
     @Override
-    @Shadow
-    public abstract int getLightOpacity();
+    public int getLightOpacity() {
+        return this.lightOpacity;
+    }
 
     @Override
-    @Shadow
-    public abstract int getLightValue();
+    public int getLightValue() {
+        return this.lightValue;
+    }
 
     @Override
-    @Shadow
-    public abstract boolean getUseNeighborBrightness();
+    public boolean getUseNeighborBrightness() {
+        return this.useNeighborBrightness;
+    }
 
     @Override
     public BlockMaterial getMaterial() {
@@ -80,17 +82,19 @@ public abstract class MixinBlock implements BlockBase {
     }
 
     @Override
-    @Shadow
-    public abstract boolean isNormalCube();
+    public boolean isNormalCube() {
+        return false; // TODO: 1.9
+    }
 
     @Override
     public boolean isVisuallyOpaque() {
         return false;
     }
 
-    @Shadow
     @Override
-    public abstract boolean isFullCube();
+    public boolean isFullCube() {
+        return false; // TODO: 1.9
+    }
 
     @Override
     public boolean isPassable(net.canarymod.api.world.blocks.Block block, Position pos) {
@@ -122,8 +126,9 @@ public abstract class MixinBlock implements BlockBase {
     public abstract boolean hasTileEntity();
 
     @Override
-    @Shadow
-    public abstract boolean isOpaqueCube();
+    public boolean isOpaqueCube() {
+        return false; // TODO: 1.9
+    }
 
     @Override
     @Shadow
@@ -151,32 +156,32 @@ public abstract class MixinBlock implements BlockBase {
 
     @Override
     public double getBlockBoundsMinX() {
-        return this.minX;
+        return 0; // TODO: 1.9
     }
 
     @Override
     public double getBlockBoundsMaxX() {
-        return this.maxX;
+        return 0; // TODO: 1.9
     }
 
     @Override
     public double getBlockBoundsMinY() {
-        return this.minY;
+        return 0; // TODO: 1.9
     }
 
     @Override
     public double getBlockBoundsMaxY() {
-        return this.maxY;
+        return 0; // TODO: 1.9
     }
 
     @Override
     public double getBlockBoundsMinZ() {
-        return this.minZ;
+        return 0; // TODO: 1.9
     }
 
     @Override
     public double getBlockBoundsMaxZ() {
-        return this.maxZ;
+        return 0; // TODO: 1.9
     }
 
     @Override
@@ -195,8 +200,9 @@ public abstract class MixinBlock implements BlockBase {
     }
 
     @Override
-    @Shadow
-    public abstract int getMobilityFlag();
+    public int getMobilityFlag() {
+        return 0; // TODO: 1.9
+    }
 
     @Override
     public boolean requiresUpdates() {

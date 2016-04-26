@@ -24,7 +24,7 @@
 package org.neptunepowered.vanilla.wrapper.chat;
 
 import net.canarymod.api.chat.HoverEventAction;
-import net.minecraft.event.HoverEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import org.neptunepowered.vanilla.util.Wrapper;
 
 public class NeptuneHoverEventAction extends Wrapper<HoverEvent.Action> implements HoverEventAction {

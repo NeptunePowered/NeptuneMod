@@ -39,6 +39,6 @@ public abstract class MixinCrashReport {
 
     @Inject(method = "populateEnvironment", at = @At("RETURN"))
     private void onPopulateEnvironment(CallbackInfo ci) {
-        this.theReportCategory.addCrashSection("Canary Plugins", CrashReportHelper.createCrashSectionMessage());
+        this.theReportCategory.addCrashSectionCallable("Canary Plugins", CrashReportHelper.createCrashSectionMessage());
     }
 }

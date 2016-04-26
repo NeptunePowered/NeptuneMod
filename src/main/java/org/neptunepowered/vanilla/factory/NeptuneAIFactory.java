@@ -63,14 +63,14 @@ import net.canarymod.api.entity.living.monster.Creeper;
 import net.canarymod.api.entity.living.monster.EntityMob;
 import net.canarymod.api.entity.living.monster.RangedAttackMob;
 import net.canarymod.api.factory.AIFactory;
-import net.minecraft.entity.ai.EntityAIArrowAttack;
+import net.minecraft.entity.ai.EntityAIAttackRanged;
 
 public class NeptuneAIFactory implements AIFactory {
 
     @Override
     public AIArrowAttack newAIArrowAttack(RangedAttackMob mob, double moveSpeed, int attackTimeModifier,
             int maxRangedAttackTime, int maxAttackDistance) {
-        return (AIArrowAttack) new EntityAIArrowAttack(null, moveSpeed, attackTimeModifier, maxRangedAttackTime,
+        return (AIArrowAttack) new EntityAIAttackRanged(null, moveSpeed, attackTimeModifier, maxRangedAttackTime,
                 maxAttackDistance);
     }
 

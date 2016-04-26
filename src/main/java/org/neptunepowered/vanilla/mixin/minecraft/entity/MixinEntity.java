@@ -34,7 +34,8 @@ import net.canarymod.api.world.World;
 import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.AxisAlignedBB;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -58,7 +59,6 @@ public abstract class MixinEntity implements Entity {
     @Shadow public float rotationYaw;
     @Shadow public boolean preventEntitySpawning;
     @Shadow public net.minecraft.world.World worldObj;
-    @Shadow public net.minecraft.entity.Entity riddenByEntity;
     @Shadow public net.minecraft.entity.Entity ridingEntity;
     @Shadow public boolean onGround;
     @Shadow public boolean isDead;
@@ -74,6 +74,9 @@ public abstract class MixinEntity implements Entity {
 
     @Shadow
     protected abstract boolean getFlag(int flag);
+
+    @Shadow
+    public abstract EntityDataManager getDataManager();
 
     @Override
     public double getX() {
@@ -352,7 +355,7 @@ public abstract class MixinEntity implements Entity {
 
     @Override
     public Entity getRiding() {
-        return (Entity) riddenByEntity;
+        return null; // TODO: 1.9
     }
 
     @Override
@@ -367,7 +370,7 @@ public abstract class MixinEntity implements Entity {
 
     @Override
     public void mount(Entity entity) {
-        this.riddenByEntity = (net.minecraft.entity.Entity) entity;
+        // TODO: 1.9
     }
 
     @Override

@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.block.material;
 
 import net.canarymod.api.world.blocks.BlockMaterial;
+import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,7 +33,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class MixinMaterial implements BlockMaterial {
 
     @Shadow private boolean canBurn;
-    @Shadow private int mobilityFlag;
+    @Shadow private EnumPushReaction mobilityFlag;
     @Shadow private boolean isTranslucent;
     @Shadow private boolean requiresNoTool;
 
@@ -72,7 +73,7 @@ public abstract class MixinMaterial implements BlockMaterial {
 
     @Override
     public int getMobility() {
-        return this.mobilityFlag;
+        return this.mobilityFlag.ordinal(); // TODO: Maybe?
     }
 
     @Override

@@ -26,33 +26,32 @@ package org.neptunepowered.vanilla.wrapper.chat;
 import com.google.common.collect.Lists;
 import net.canarymod.api.chat.ChatComponent;
 import net.canarymod.api.chat.ChatStyle;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-import org.neptunepowered.vanilla.interfaces.minecraft.util.IMixinChatComponentText;
+import net.minecraft.util.text.ITextComponent;
+import org.neptunepowered.vanilla.interfaces.minecraft.util.text.IMixinTextComponentString;
 import org.neptunepowered.vanilla.util.Wrapper;
 
 import java.util.List;
 
-public class NeptuneChatComponent extends Wrapper<IChatComponent> implements ChatComponent {
+public class NeptuneChatComponent extends Wrapper<ITextComponent> implements ChatComponent {
 
-    public NeptuneChatComponent(IChatComponent chatComponent) {
+    public NeptuneChatComponent(ITextComponent chatComponent) {
         super(chatComponent);
     }
 
     @Override
     public ChatComponent setChatStyle(ChatStyle style) {
-        return (ChatComponent) getHandle().setChatStyle((net.minecraft.util.ChatStyle) style);
+        return (ChatComponent) getHandle().setStyle((net.minecraft.util.text.Style) style);
     }
 
     @Override
     public ChatStyle getChatStyle() {
-        return (ChatStyle) getHandle().getChatStyle();
+        return (ChatStyle) getHandle().getStyle();
     }
 
     @Override
     public ChatComponent setText(String text) {
-        if (getHandle() instanceof ChatComponentText) {
-            ((IMixinChatComponentText) getHandle()).setText(text);
+        if (getHandle() instanceof ITextComponent) {
+            ((IMixinTextComponentString) getHandle()).setText(text);
         }
         return this;
     }
@@ -74,13 +73,13 @@ public class NeptuneChatComponent extends Wrapper<IChatComponent> implements Cha
 
     @Override
     public String getFullText() {
-        return getHandle().getUnformattedTextForChat();
+        return getHandle().getUnformattedText();
     }
 
     @Override
     public List<ChatComponent> getSiblings() {
         List<ChatComponent> components = Lists.newArrayList();
-        for (IChatComponent chatComponent : getHandle().getSiblings()) {
+        for (ITextComponent chatComponent : getHandle().getSiblings()) {
             components.add(new NeptuneChatComponent(chatComponent));
         }
         return components;
@@ -88,7 +87,7 @@ public class NeptuneChatComponent extends Wrapper<IChatComponent> implements Cha
 
     @Override
     public String serialize() {
-        return IChatComponent.Serializer.componentToJson(getHandle());
+        return ITextComponent.Serializer.componentToJson(getHandle());
     }
 
     @Override

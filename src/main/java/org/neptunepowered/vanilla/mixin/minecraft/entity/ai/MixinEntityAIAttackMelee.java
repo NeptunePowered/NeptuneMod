@@ -21,16 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.network.play.server;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.ai;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.canarymod.api.ai.AIAttackOnCollide;
+import net.minecraft.entity.ai.EntityAIAttackMelee;
+import org.spongepowered.asm.mixin.Mixin;
 
-public interface IMixinS23PacketBlockChange {
+@Mixin(EntityAIAttackMelee.class)
+public abstract class MixinEntityAIAttackMelee extends MixinEntityAIBase implements AIAttackOnCollide {
 
-    IBlockState getBlockState();
-
-    BlockPos getBlockPosition();
-
-    void setBlockPosition(BlockPos pos);
 }

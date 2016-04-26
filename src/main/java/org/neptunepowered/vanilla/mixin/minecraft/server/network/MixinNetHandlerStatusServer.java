@@ -27,8 +27,8 @@ import com.mojang.authlib.GameProfile;
 import net.canarymod.hook.system.ServerListPingHook;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
-import net.minecraft.network.status.client.C00PacketServerQuery;
-import net.minecraft.network.status.server.S00PacketServerInfo;
+import net.minecraft.network.status.client.CPacketServerQuery;
+import net.minecraft.network.status.server.SPacketServerInfo;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.NetHandlerStatusServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkManager;
@@ -47,7 +47,7 @@ public class MixinNetHandlerStatusServer {
     @Shadow private NetworkManager networkManager;
 
     @Overwrite
-    public void processServerQuery(C00PacketServerQuery packetIn) {
+    public void processServerQuery(CPacketServerQuery packetIn) {
         ServerListPingHook hook =
                 (ServerListPingHook) new ServerListPingHook((InetSocketAddress) networkManager.getRemoteAddress(),
                         ((IMixinNetworkManager) networkManager).getProtocolVersion(),
@@ -65,13 +65,13 @@ public class MixinNetHandlerStatusServer {
 
         ServerStatusResponse response = new ServerStatusResponse();
         response.setProtocolVersionInfo(server.getServerStatusResponse().getProtocolVersionInfo());
-        ServerStatusResponse.PlayerCountData playerCountData = new ServerStatusResponse.PlayerCountData(hook
-                .getMaxPlayers(), hook.getCurrentPlayers());
+        ServerStatusResponse.Players playerCountData =
+                new ServerStatusResponse.Players(hook.getMaxPlayers(), hook.getCurrentPlayers());
         playerCountData.setPlayers(hook.getProfiles().toArray(new GameProfile[hook.getProfiles().size()]));
         response.setPlayerCountData(playerCountData);
         response.setServerDescription(((NeptuneChatComponent) hook.getMotd()).getHandle());
         response.setFavicon(hook.getFavicon());
 
-        networkManager.sendPacket(new S00PacketServerInfo(response));
+        networkManager.sendPacket(new SPacketServerInfo(response));
     }
 }

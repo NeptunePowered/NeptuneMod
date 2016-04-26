@@ -75,7 +75,7 @@ public abstract class MixinEntityLivingBase extends MixinEntity implements Livin
 
     @Override
     public void setMaxHealth(double maxHealth) {
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(maxHealth);
+        this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(maxHealth);
     }
 
     @Override

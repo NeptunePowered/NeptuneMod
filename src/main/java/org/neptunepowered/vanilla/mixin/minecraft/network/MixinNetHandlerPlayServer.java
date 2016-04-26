@@ -31,8 +31,8 @@ import net.canarymod.api.packet.Packet;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S02PacketChat;
-import net.minecraft.network.play.server.S07PacketRespawn;
+import net.minecraft.network.play.server.SPacketChat;
+import net.minecraft.network.play.server.SPacketRespawn;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
 import org.neptunepowered.vanilla.wrapper.packet.NeptunePacket;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,7 +56,7 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler {
 
     @Override
     public void handleChat(Packet chatPacket) {
-        if (!(((NeptunePacket) chatPacket).getHandle() instanceof S02PacketChat)) {
+        if (!(((NeptunePacket) chatPacket).getHandle() instanceof SPacketChat)) {
             return;
         }
 
@@ -70,7 +70,7 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler {
 
     @Override
     public void handleRespawn(Packet respawnPacket) {
-        if (!(((NeptunePacket) respawnPacket).getHandle() instanceof S07PacketRespawn)) {
+        if (!(((NeptunePacket) respawnPacket).getHandle() instanceof SPacketRespawn)) {
             return;
         }
 
@@ -89,7 +89,7 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler {
 
     @Override
     public void sendMessage(ChatComponent chatComponent) {
-        sendPacket(new S02PacketChat(((NeptuneChatComponent) chatComponent).getHandle()));
+        sendPacket(new SPacketChat(((NeptuneChatComponent) chatComponent).getHandle()));
     }
 
     @Override

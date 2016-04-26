@@ -25,18 +25,19 @@ package org.neptunepowered.vanilla.mixin.minecraft.potion;
 
 import net.canarymod.api.potion.PotionEffectType;
 import net.minecraft.potion.Potion;
+import org.omg.CORBA.Object;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Potion.class)
 public abstract class MixinPotion implements net.canarymod.api.potion.Potion {
 
-    @Shadow public int id;
     @Shadow private boolean isBadEffect;
+    @Shadow private double effectiveness;
 
     @Override
     public int getID() {
-        return id;
+        return Potion.getIdFromPotion((Potion) (Object) this);
     }
 
     @Override
@@ -54,12 +55,14 @@ public abstract class MixinPotion implements net.canarymod.api.potion.Potion {
     }
 
     @Override
-    @Shadow
-    public abstract double getEffectiveness();
+    public double getEffectiveness() {
+        return this.effectiveness;
+    }
 
     @Override
-    @Shadow
-    public abstract boolean isUsable();
+    public boolean isUsable() {
+        return false; // TODO: 1.9
+    }
 
     @Override
     @Shadow

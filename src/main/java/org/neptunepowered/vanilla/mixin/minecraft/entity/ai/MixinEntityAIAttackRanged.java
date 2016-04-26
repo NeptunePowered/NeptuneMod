@@ -21,21 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.util;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.ai;
 
-import net.minecraft.util.ChatComponentStyle;
-import net.minecraft.util.ChatComponentText;
-import org.neptunepowered.vanilla.interfaces.minecraft.util.IMixinChatComponentText;
+import net.canarymod.api.ai.AIArrowAttack;
+import net.minecraft.entity.ai.EntityAIAttackRanged;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(ChatComponentText.class)
-public abstract class MixinChatComponentText extends ChatComponentStyle implements IMixinChatComponentText {
+@Mixin(EntityAIAttackRanged.class)
+public abstract class MixinEntityAIAttackRanged extends MixinEntityAIBase implements AIArrowAttack {
 
-    @Shadow private String text;
-
-    @Override
-    public void setText(String text) {
-        this.text = text;
-    }
 }
