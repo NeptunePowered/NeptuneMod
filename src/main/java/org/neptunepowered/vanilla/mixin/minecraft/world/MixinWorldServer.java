@@ -73,8 +73,7 @@ public abstract class MixinWorldServer extends net.minecraft.world.World impleme
 
     @Shadow private net.minecraft.entity.EntityTracker theEntityTracker;
 
-    MixinWorldServer(ISaveHandler saveHandlerIn,
-            WorldInfo info,
+    MixinWorldServer(ISaveHandler saveHandlerIn, WorldInfo info,
             WorldProvider providerIn, Profiler profilerIn, boolean client) {
         super(saveHandlerIn, info, providerIn, profilerIn, client);
     }

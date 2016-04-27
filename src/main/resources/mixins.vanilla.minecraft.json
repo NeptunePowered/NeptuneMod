@@ -147,6 +147,7 @@
         "world.biome.MixinBiomeGenBase",
         "world.chunk.MixinChunk",
         "world.storage.MixinSaveHandler",
+        "world.storage.MixinWorldInfo",
         "world.MixinWorldServer"
     ],
     "injectors": {
