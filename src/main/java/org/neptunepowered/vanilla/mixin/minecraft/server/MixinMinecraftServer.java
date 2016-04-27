@@ -47,6 +47,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
+import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.neptunepowered.vanilla.wrapper.inventory.recipes.NeptuneRecipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -64,6 +65,8 @@ public abstract class MixinMinecraftServer implements Server {
     @Shadow private boolean serverRunning;
     @Shadow private ServerConfigurationManager serverConfigManager;
     @Shadow private ServerStatusResponse statusResponse;
+
+    private WorldManager worldManager = new NeptuneWorldManager();
 
     @Shadow
     public abstract void initiateShutdown();
@@ -111,7 +114,7 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public WorldManager getWorldManager() {
-        return null;
+        return this.worldManager;
     }
 
     @Override
