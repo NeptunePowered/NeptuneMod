@@ -109,6 +109,9 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     @Shadow
     public abstract int getCurrentPlayerCount();
 
+    @Shadow
+    public abstract List<EntityPlayerMP> getPlayerList();
+
     @Overwrite
     public void playerLoggedOut(EntityPlayerMP playerIn) {
         playerIn.triggerAchievement(StatList.leaveGameStat);
@@ -248,7 +251,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
 
     @Override
     public int getNumPlayersOnline() {
-        return getCurrentPlayerCount();
+        return this.getCurrentPlayerCount();
     }
 
     @Override
@@ -258,7 +261,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
 
     @Override
     public List<Player> getAllPlayers() {
-        return null;
+        return (List) this.getPlayerList();
     }
 
     @Override
