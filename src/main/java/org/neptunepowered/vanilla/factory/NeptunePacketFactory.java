@@ -47,7 +47,6 @@ import net.minecraft.network.play.server.S06PacketUpdateHealth;
 import net.minecraft.network.play.server.S2EPacketCloseWindow;
 import net.minecraft.network.play.server.S36PacketSignEditorOpen;
 import net.minecraft.util.BlockPos;
-import org.neptunepowered.vanilla.wrapper.packet.NeptunePacket;
 
 import java.util.List;
 import java.util.Map;
@@ -100,7 +99,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet updateTime(long worldAge, long time) {
-        return new NeptunePacket(new S03PacketTimeUpdate(worldAge, time, false));
+        return (Packet) new S03PacketTimeUpdate(worldAge, time, false);
     }
 
     @Override
@@ -115,7 +114,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet updateHealth(float health, int foodLevel, float saturation) {
-        return new NeptunePacket(new S06PacketUpdateHealth(health, foodLevel, saturation));
+        return (Packet) new S06PacketUpdateHealth(health, foodLevel, saturation);
     }
 
     @Override
@@ -312,7 +311,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet closeWindow(int windowId) {
-        return new NeptunePacket(new S2EPacketCloseWindow(windowId));
+        return (Packet) new S2EPacketCloseWindow(windowId);
     }
 
     @Override
@@ -347,7 +346,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet signEditorOpen(int x, int y, int z) {
-        return new NeptunePacket(new S36PacketSignEditorOpen(new BlockPos(x, y, z)));
+        return (Packet) new S36PacketSignEditorOpen(new BlockPos(x, y, z));
     }
 
     @Override

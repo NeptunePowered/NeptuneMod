@@ -23,31 +23,99 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.network.play.server;
 
+import net.canarymod.api.packet.BlockChangePacket;
+import net.canarymod.api.world.blocks.Block;
+import net.canarymod.api.world.blocks.BlockType;
+import net.canarymod.api.world.position.Position;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.util.BlockPos;
-import org.neptunepowered.vanilla.interfaces.minecraft.network.play.server.IMixinS23PacketBlockChange;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(S23PacketBlockChange.class)
-public class MixinS23PacketBlockChange implements IMixinS23PacketBlockChange {
+public abstract class MixinS23PacketBlockChange implements BlockChangePacket {
 
     @Shadow private BlockPos blockPosition;
     @Shadow private IBlockState blockState;
 
     @Override
-    public IBlockState getBlockState() {
-        return this.blockState;
+    public int getX() {
+        return this.blockPosition.getX();
     }
 
     @Override
-    public BlockPos getBlockPosition() {
-        return this.blockPosition;
+    public void setX(int x) {
+        this.setPosition(new Position(x, this.getY(), this.getZ()));
     }
 
     @Override
-    public void setBlockPosition(BlockPos pos) {
-        this.blockPosition = pos;
+    public int getY() {
+        return this.blockPosition.getY();
+    }
+
+    @Override
+    public void setY(int y) {
+        this.setPosition(new Position(this.getX(), y, this.getZ()));
+    }
+
+    @Override
+    public int getZ() {
+        return this.blockPosition.getZ();
+    }
+
+    @Override
+    public void setZ(int z) {
+        this.setPosition(new Position(this.getX(), this.getY(), z));
+    }
+
+    @Override
+    public Position getPosition() {
+        return new Position(this.getX(), this.getY(), this.getZ());
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        this.blockPosition = new BlockPos(position.getX(), position.getY(), position.getZ());
+    }
+
+    @Override
+    public BlockType getType() {
+        return null;
+    }
+
+    @Override
+    public void setType(BlockType blockType) {
+
+    }
+
+    @Override
+    public int getTypeId() {
+        return net.minecraft.block.Block.getIdFromBlock(this.blockState.getBlock());
+    }
+
+    @Override
+    public void setTypeId(int i) {
+
+    }
+
+    @Override
+    public int getData() {
+        return 0;
+    }
+
+    @Override
+    public void setData(int i) {
+
+    }
+
+    @Override
+    public Block getBlock() {
+        return (Block) this.blockState.getBlock();
+    }
+
+    @Override
+    public void setBlock(Block block) {
+
     }
 }

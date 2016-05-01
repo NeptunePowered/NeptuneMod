@@ -21,24 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.packet;
+package org.neptunepowered.vanilla.mixin.minecraft.network;
 
 import net.canarymod.api.packet.Packet;
-import org.neptunepowered.vanilla.util.Wrapper;
+import org.spongepowered.asm.mixin.Mixin;
 
-public class NeptunePacket extends Wrapper<net.minecraft.network.Packet> implements Packet {
-
-    public NeptunePacket(net.minecraft.network.Packet handle) {
-        super(handle);
-    }
+@Mixin(net.minecraft.network.Packet.class)
+public interface MixinPacket extends net.minecraft.network.Packet, Packet {
 
     @Override
-    public int getPacketSize() {
+    default int getPacketSize() {
         return 0;
     }
 
     @Override
-    public int getPacketId() {
+    default int getPacketId() {
         return 0;
     }
 }

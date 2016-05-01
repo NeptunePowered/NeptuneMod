@@ -76,6 +76,7 @@
         "network.play.server.MixinS23PacketBlockChange",
         "network.MixinNetHandlerPlayServer",
         "network.MixinNetworkManager",
+        "network.MixinPacket",
         "pathfinding.MixinPathNavigate",
         "potion.MixinPotion",
         "potion.MixinPotionEffect",
