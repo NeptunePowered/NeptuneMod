@@ -31,19 +31,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.UIManager;
 
 public final class MinecraftServerGuiHelper {
 
-    public static JFrame createServerGui(final DedicatedServer serverIn) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception exception) {
-        }
-
-        MinecraftServerGui minecraftservergui = new MinecraftServerGui(serverIn);
+    public static JFrame createServerGui(final MinecraftServerGui serverGui, final DedicatedServer serverIn) {
         JFrame jframe = new JFrame("NeptuneVanilla - Lightweight CanaryLib implementation");
-        jframe.add(minecraftservergui);
+        jframe.add(serverGui);
         jframe.pack();
         jframe.setLocationRelativeTo(null);
         jframe.setVisible(true);

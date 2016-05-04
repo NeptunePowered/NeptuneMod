@@ -23,21 +23,48 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.server.gui;
 
+import net.canarymod.api.gui.GUIControl;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.gui.MinecraftServerGui;
 import org.neptunepowered.vanilla.util.helper.MinecraftServerGuiHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 
 import javax.swing.JFrame;
 
 @Mixin(MinecraftServerGui.class)
-public class MixinMinecraftServerGui {
+public class MixinMinecraftServerGui implements GUIControl {
 
-    private static JFrame minecraftServerFrame;
+    private JFrame jframe;
 
+    @Shadow private DedicatedServer server;
+
+    @Override
+    public void closeWindow() {
+        if (this.jframe != null) {
+            this.jframe.dispose();
+        }
+        this.jframe = null;
+    }
+
+    @Override
+    public void start() {
+        this.jframe = MinecraftServerGuiHelper.createServerGui((MinecraftServerGui) (Object) this, this.server);
+    }
+
+    @Override
+    public String getName() {
+        return this.jframe.getTitle();
+    }
+
+    /**
+     * Replaced by {@link GUIControl#start()}
+     *
+     * @param serverIn The incoming {@link DedicatedServer}
+     * @author jamierocks
+     */
     @Overwrite
     public static void createServerGui(final DedicatedServer serverIn) {
-        minecraftServerFrame = MinecraftServerGuiHelper.createServerGui(serverIn);
     }
 }

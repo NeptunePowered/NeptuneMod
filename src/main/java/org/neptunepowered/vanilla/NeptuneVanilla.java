@@ -30,9 +30,16 @@ import net.minecraft.server.MinecraftServer;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.UIManager;
+
 public class NeptuneVanilla {
 
     public static void main(String[] args) throws IOException {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception exception) {
+        }
+
         MinecraftServer.main(args);
         new File("config").mkdirs(); // TODO: Please fix this properly
         initNeptune();

@@ -24,13 +24,17 @@
 package org.neptunepowered.vanilla.mixin.minecraft.server.dedicated;
 
 import net.canarymod.Canary;
+import net.canarymod.api.gui.GUIControl;
 import net.canarymod.config.Configuration;
+import net.canarymod.hook.system.ServerGuiStartHook;
 import net.minecraft.profiler.PlayerUsageSnooper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.gui.MinecraftServerGui;
 import org.neptunepowered.vanilla.Neptune;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -41,6 +45,8 @@ import java.net.Proxy;
 
 @Mixin(DedicatedServer.class)
 public abstract class MixinDedicatedServer extends MinecraftServer {
+
+    @Shadow private boolean guiIsEnabled;
 
     MixinDedicatedServer(File workDir, Proxy proxy, File profileCacheDir) {
         super(workDir, proxy, profileCacheDir);
@@ -53,6 +59,31 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
         Canary.enableEarlyPlugins();
         ((Neptune) Canary.instance()).lateInitialisation();
         Canary.enableLatePlugins();
+    }
+
+    /**
+     * Overwrite to use the Canary GUI system.
+     *
+     * @author jamierocks
+     */
+    @Overwrite
+    public void setGuiEnabled() {
+        try {
+            MinecraftServerGui serverGui = new MinecraftServerGui((DedicatedServer) (Object) this);
+            ServerGuiStartHook guiStartHook =
+                    (ServerGuiStartHook) new ServerGuiStartHook((GUIControl) serverGui).call();
+
+            if (guiStartHook.getGui() != null) {
+                Neptune.currentGui = guiStartHook.getGui();
+            } else {
+                Neptune.currentGui = (GUIControl) serverGui;
+            }
+
+            Canary.getServer().getCurrentGUI().start();
+            this.guiIsEnabled = true;
+        } catch (Exception ex) {
+            Canary.log.error("The GUI failed to start!", ex);
+        }
     }
 
     /**

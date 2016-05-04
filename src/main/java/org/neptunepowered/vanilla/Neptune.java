@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla;
 
 import net.canarymod.Canary;
+import net.canarymod.api.gui.GUIControl;
 import net.canarymod.bansystem.BanManager;
 import net.canarymod.commandsys.CommandDependencyException;
 import net.canarymod.commandsys.CommandList;
@@ -40,10 +41,10 @@ import net.canarymod.plugin.PluginLangLoader;
 import net.canarymod.user.OperatorsProvider;
 import net.canarymod.user.WhitelistProvider;
 import net.minecraft.server.MinecraftServer;
+import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.interfaces.minecraft.command.IMixinServerCommandManager;
 import org.neptunepowered.vanilla.wrapper.NeptuneTranslator;
 import org.neptunepowered.vanilla.wrapper.commandsys.NeptunePlayerSelector;
-import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.wrapper.util.NeptuneJsonNBTUtility;
 
 public class Neptune extends Canary {
@@ -54,6 +55,7 @@ public class Neptune extends Canary {
             return "Minecraft";
         }
     };
+    public static GUIControl currentGui;
 
     private boolean isInitialised = false;
 
