@@ -70,7 +70,9 @@ import net.minecraft.entity.ai.EntityAIBeg;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAIControlledByPlayer;
 import net.minecraft.entity.ai.EntityAICreeperSwell;
+import net.minecraft.entity.ai.EntityAIDefendVillage;
 import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.passive.EntityWolf;
 
 public class NeptuneAIFactory implements AIFactory {
@@ -118,7 +120,7 @@ public class NeptuneAIFactory implements AIFactory {
 
     @Override
     public AIDefendVillage newAIDefendVillage(IronGolem ironGolem) {
-        return null;
+        return (AIDefendVillage) new EntityAIDefendVillage((EntityIronGolem) ironGolem);
     }
 
     @Override
