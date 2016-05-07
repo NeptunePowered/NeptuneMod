@@ -36,6 +36,7 @@ import net.canarymod.api.world.World;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.PlayerListHook;
+import net.canarymod.hook.player.PreConnectionHook;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -54,8 +55,12 @@ import net.minecraft.network.play.server.S41PacketServerDifficulty;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.BanList;
+import net.minecraft.server.management.IPBanEntry;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.server.management.UserListBans;
+import net.minecraft.server.management.UserListBansEntry;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
@@ -70,6 +75,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -78,11 +86,15 @@ import java.util.UUID;
 public abstract class MixinServerConfigurationManager implements ConfigurationManager {
 
     @Shadow private static Logger logger;
+    @Shadow private static SimpleDateFormat dateFormat;
 
     @Shadow public List playerEntityList;
     @Shadow public Map uuidToPlayerMap;
+    @Shadow protected int maxPlayers;
     @Shadow private MinecraftServer mcServer;
     @Shadow private Map playerStatFiles;
+    @Shadow private UserListBans bannedPlayers;
+    @Shadow private BanList bannedIPs;
 
     @Shadow
     public abstract NBTTagCompound readPlayerDataFromFile(EntityPlayerMP playerIn);
@@ -111,6 +123,15 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
 
     @Shadow
     public abstract List<EntityPlayerMP> getPlayerList();
+
+    @Shadow
+    public abstract EntityPlayerMP getPlayerByUsername(String username);
+
+    @Shadow
+    public abstract boolean canJoin(GameProfile profile);
+
+    @Shadow
+    public abstract boolean func_183023_f(GameProfile p_183023_1_);
 
     @Overwrite
     public void playerLoggedOut(EntityPlayerMP playerIn) {
@@ -172,7 +193,8 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
             s1 = netManager.getRemoteAddress().toString();
         }
 
-        logger.info(playerIn.getName() + "[" + s1 + "] logged in with entity id " + playerIn.getEntityId() + " at (" + playerIn.posX + ", "
+        logger.info(playerIn.getName() + "[" + s1 + "] logged in with entity id " + playerIn.getEntityId() + " at ("
+                + playerIn.posX + ", "
                 + playerIn.posY + ", " + playerIn.posZ + ")");
         WorldServer worldserver = this.mcServer.worldServerForDimension(playerIn.dimension);
         WorldInfo worldinfo = worldserver.getWorldInfo();
@@ -180,12 +202,15 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         this.setPlayerGameTypeBasedOnOther(playerIn, (EntityPlayerMP) null, worldserver);
         NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.mcServer, netManager, playerIn);
         nethandlerplayserver.sendPacket(
-                new S01PacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(), worldinfo.isHardcoreModeEnabled(),
-                        worldserver.provider.getDimensionId(), worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(),
+                new S01PacketJoinGame(playerIn.getEntityId(), playerIn.theItemInWorldManager.getGameType(),
+                        worldinfo.isHardcoreModeEnabled(),
+                        worldserver.provider.getDimensionId(), worldserver.getDifficulty(), this.getMaxPlayers(),
+                        worldinfo.getTerrainType(),
                         worldserver.getGameRules().getBoolean("reducedDebugInfo")));
         nethandlerplayserver.sendPacket(new S3FPacketCustomPayload("MC|Brand",
                 (new PacketBuffer(Unpooled.buffer())).writeString(mcServer.getServerModName())));
-        nethandlerplayserver.sendPacket(new S41PacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
+        nethandlerplayserver
+                .sendPacket(new S41PacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
         nethandlerplayserver.sendPacket(new S05PacketSpawnPosition(blockpos));
         nethandlerplayserver.sendPacket(new S39PacketPlayerAbilities(playerIn.capabilities));
         nethandlerplayserver.sendPacket(new S09PacketHeldItemChange(playerIn.inventory.currentItem));
@@ -196,9 +221,11 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         ChatComponentTranslation chatcomponenttranslation;
 
         if (!playerIn.getName().equalsIgnoreCase(s)) {
-            chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.joined.renamed", new Object[]{playerIn.getDisplayName(), s});
+            chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.joined.renamed",
+                    new Object[]{playerIn.getDisplayName(), s});
         } else {
-            chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.joined", new Object[]{playerIn.getDisplayName()});
+            chatcomponenttranslation =
+                    new ChatComponentTranslation("multiplayer.player.joined", new Object[]{playerIn.getDisplayName()});
         }
 
         chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.YELLOW);
@@ -215,7 +242,8 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         //this.sendChatMsg(chatcomponenttranslation); // Neptune: Called above
 
         this.playerLoggedIn(playerIn);
-        nethandlerplayserver.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw, playerIn.rotationPitch);
+        nethandlerplayserver.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw,
+                playerIn.rotationPitch);
         this.updateTimeAndWeatherForPlayer(playerIn, worldserver);
 
         if (this.mcServer.getResourcePackUrl().length() > 0) {
@@ -244,6 +272,46 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         // Neptune: end
     }
 
+    @Overwrite
+    public String allowUserToConnect(SocketAddress address, GameProfile profile) {
+        // Neptune - start
+        String ip = ((InetSocketAddress) address).getAddress().getHostAddress();
+
+        PreConnectionHook hook =
+                (PreConnectionHook) new PreConnectionHook(ip, profile.getName(), profile.getId(),
+                        DimensionType.NORMAL, Canary.getServer().getDefaultWorldName()).call();
+
+        if (hook.getKickReason() != null) {
+            return hook.getKickReason();
+        }
+        // Neptune - end
+
+        if (this.bannedPlayers.isBanned(profile)) {
+            UserListBansEntry userlistbansentry = this.bannedPlayers.getEntry(profile);
+            String s1 = "You are banned from this server!\nReason: " + userlistbansentry.getBanReason();
+
+            if (userlistbansentry.getBanEndDate() != null) {
+                s1 = s1 + "\nYour ban will be removed on " + dateFormat.format(userlistbansentry.getBanEndDate());
+            }
+
+            return s1;
+        } else if (!this.canJoin(profile)) {
+            return "You are not white-listed on this server!";
+        } else if (this.bannedIPs.isBanned(address)) {
+            IPBanEntry ipbanentry = this.bannedIPs.getBanEntry(address);
+            String s = "Your IP address is banned from this server!\nReason: " + ipbanentry.getBanReason();
+
+            if (ipbanentry.getBanEndDate() != null) {
+                s = s + "\nYour ban will be removed on " + dateFormat.format(ipbanentry.getBanEndDate());
+            }
+
+            return s;
+        } else {
+            return this.playerEntityList.size() >= this.maxPlayers && !this.func_183023_f(profile) ?
+                    "The server is full!" : null;
+        }
+    }
+
     @Override
     public void sendPacketToAllInWorld(String world, Packet packet) {
 
@@ -256,7 +324,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
 
     @Override
     public Player getPlayerByName(String name) {
-        return null;
+        return (Player) this.getPlayerByUsername(name);
     }
 
     @Override

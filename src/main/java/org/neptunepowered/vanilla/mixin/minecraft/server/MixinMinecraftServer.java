@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.server;
 
 import com.google.common.collect.Lists;
 import net.canarymod.Canary;
+import net.canarymod.ToolBox;
 import net.canarymod.api.CommandBlockLogic;
 import net.canarymod.api.ConfigurationManager;
 import net.canarymod.api.OfflinePlayer;
@@ -149,12 +150,36 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public Player matchPlayer(String player) {
-        return null;
+        Player lastPlayer = null;
+
+        player = player.toLowerCase();
+
+        for (Player cPlayer : getConfigurationManager().getAllPlayers()) {
+            if (cPlayer.getName().toLowerCase().equals(player)) {
+                // Perfect match found
+                lastPlayer = cPlayer;
+                break;
+            }
+            if (cPlayer.getName().toLowerCase().indexOf(player) != -1) {
+                // Partial match
+                if (lastPlayer != null) {
+                    // Found multiple
+                    return null;
+                }
+                lastPlayer = cPlayer;
+            }
+        }
+
+        return lastPlayer;
     }
 
     @Override
     public OfflinePlayer getOfflinePlayer(String player) {
-        return null;
+        UUID uuid = ToolBox.uuidFromUsername(player);
+        if (uuid == null) {
+            return null;
+        }
+        return getOfflinePlayer(uuid);
     }
 
     @Override
@@ -164,27 +189,53 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public PlayerReference matchKnownPlayer(String player) {
-        return null;
+        PlayerReference reference = matchPlayer(player);
+        if (reference == null) {
+            reference = getOfflinePlayer(player);
+        }
+        return reference;
     }
 
     @Override
     public PlayerReference matchKnownPlayer(UUID uuid) {
-        return null;
+        PlayerReference reference = getPlayerFromUUID(uuid);
+        if (reference == null) {
+            reference = getOfflinePlayer(uuid);
+        }
+        return reference;
     }
 
     @Override
     public Player getPlayer(String player) {
-        return null;
+        return getConfigurationManager().getPlayerByName(player);
     }
 
     @Override
     public Player getPlayerFromUUID(String uuid) {
-        return null;
+        Player player = null;
+
+        for (Player p : getConfigurationManager().getAllPlayers()) {
+            if (p.getUUIDString().equals(uuid)) {
+                player = p;
+                break;
+            }
+        }
+
+        return player;
     }
 
     @Override
     public Player getPlayerFromUUID(UUID uuid) {
-        return null;
+        Player player = null;
+
+        for (Player p : getConfigurationManager().getAllPlayers()) {
+            if (p.getUUID().equals(uuid)) {
+                player = p;
+                break;
+            }
+        }
+
+        return player;
     }
 
     @Override
