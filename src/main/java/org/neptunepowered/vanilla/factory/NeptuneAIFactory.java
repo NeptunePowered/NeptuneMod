@@ -71,8 +71,16 @@ import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAIControlledByPlayer;
 import net.minecraft.entity.ai.EntityAICreeperSwell;
 import net.minecraft.entity.ai.EntityAIDefendVillage;
+import net.minecraft.entity.ai.EntityAIEatGrass;
+import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
+import net.minecraft.entity.ai.EntityAIFleeSun;
+import net.minecraft.entity.ai.EntityAIFollowGolem;
+import net.minecraft.entity.ai.EntityAIFollowOwner;
+import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.passive.EntityTameable;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
 
 public class NeptuneAIFactory implements AIFactory {
@@ -125,7 +133,7 @@ public class NeptuneAIFactory implements AIFactory {
 
     @Override
     public AIEatGrass newAIEatGrass(EntityLiving entity) {
-        return null;
+        return (AIEatGrass) new EntityAIEatGrass((net.minecraft.entity.EntityLiving) entity);
     }
 
     @Override
@@ -135,27 +143,28 @@ public class NeptuneAIFactory implements AIFactory {
 
     @Override
     public AIFindEntityNearestPlayer newAIFindEntityNearestPlayer(EntityLiving entityLiving) {
-        return null;
+        return (AIFindEntityNearestPlayer) new EntityAIFindEntityNearestPlayer(
+                (net.minecraft.entity.EntityLiving) entityLiving);
     }
 
     @Override
     public AIFleeSun newAIFleeSun(EntityMob mob, double speed) {
-        return null;
+        return (AIFleeSun) new EntityAIFleeSun((EntityCreature) mob, speed);
     }
 
     @Override
     public AIFollowGolem newAIFollowGolem(Villager villager) {
-        return null;
+        return (AIFollowGolem) new EntityAIFollowGolem((EntityVillager) villager);
     }
 
     @Override
     public AIFollowOwner newAIFollowOwner(Tameable entity, double speed, float minDistance, float maxDistance) {
-        return null;
+        return (AIFollowOwner) new EntityAIFollowOwner((EntityTameable) entity, speed, minDistance, maxDistance);
     }
 
     @Override
     public AIFollowParent newAIFollowParent(EntityAnimal animal, double speed) {
-        return null;
+        return (AIFollowParent) new EntityAIFollowParent((net.minecraft.entity.passive.EntityAnimal) animal, speed);
     }
 
     @Override
