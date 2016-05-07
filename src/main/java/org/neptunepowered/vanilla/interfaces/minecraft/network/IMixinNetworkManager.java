@@ -23,6 +23,11 @@
  */
 package org.neptunepowered.vanilla.interfaces.minecraft.network;
 
+import com.mojang.authlib.properties.Property;
+
+import java.net.SocketAddress;
+import java.util.UUID;
+
 public interface IMixinNetworkManager {
 
     int getProtocolVersion();
@@ -36,4 +41,16 @@ public interface IMixinNetworkManager {
     int getPortPinged();
 
     void setPortPinged(int port);
+
+    // Bungeecord Support
+
+    void setRemoteAddress(SocketAddress socketAddress);
+
+    Property[] getSpoofedProfile();
+
+    void setSpoofedProfile(Property[] spoofedProfile);
+
+    UUID getSpoofedUUID();
+
+    void setSpoofedUUID(UUID uuid);
 }

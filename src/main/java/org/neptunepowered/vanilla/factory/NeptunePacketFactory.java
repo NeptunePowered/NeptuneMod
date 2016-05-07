@@ -42,7 +42,9 @@ import net.canarymod.api.world.Chunk;
 import net.canarymod.api.world.blocks.BlockType;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
+import net.minecraft.network.play.server.S04PacketEntityEquipment;
 import net.minecraft.network.play.server.S06PacketUpdateHealth;
 import net.minecraft.network.play.server.S2EPacketCloseWindow;
 import net.minecraft.network.play.server.S36PacketSignEditorOpen;
@@ -56,19 +58,19 @@ public class NeptunePacketFactory implements PacketFactory {
     @Override
     public Packet createPacket(int id, Object... args) throws InvalidPacketConstructionException {
         switch (id) {
-            case 0x00: // 0
+            case 0x00:
                 throw new InvalidPacketConstructionException(id, "KeepAlive", "Keep Alive packets should only be "
                         + "handled by the Server");
-            case 0x01: // 1
+            case 0x01:
                 throw new InvalidPacketConstructionException(id, "JoinGame", "Join Game packets should only be "
                         + "handled by the Server");
-            case 0x03: // 3
+            case 0x03:
                 return updateTime((Long) args[0], (Long) args[1]);
-            case 0x06: // 6
+            case 0x06:
                 return updateHealth((Float) args[0], (Integer) args[1], (Float) args[2]);
-            case 0x2E: // 46
+            case 0x2E:
                 return closeWindow((Integer) args[0]);
-            case 0x36: // 54
+            case 0x36:
                 return signEditorOpen((Integer) args[0], (Integer) args[1], (Integer) args[2]);
             case 0x3A:
                 throw new InvalidPacketConstructionException(id, "TabComplete",
@@ -104,7 +106,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet entityEquipment(int entityID, int slot, Item item) {
-        return null;
+        return (Packet) new S04PacketEntityEquipment(entityID, slot, (ItemStack) item);
     }
 
     @Override

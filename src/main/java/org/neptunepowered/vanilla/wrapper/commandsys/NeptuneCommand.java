@@ -59,7 +59,7 @@ public class NeptuneCommand extends CanaryCommand {
         try {
             this.command.processCommand((ICommandSender) caller, parameters);
         } catch (CommandException e) {
-            Canary.log.error("Eh, something has broken :(", e);
+            Canary.log.error("Failed to execute command: " + this.command.getCommandName(), e);
         }
     }
 }

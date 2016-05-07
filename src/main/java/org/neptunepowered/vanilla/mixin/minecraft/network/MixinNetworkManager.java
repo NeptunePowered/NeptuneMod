@@ -23,10 +23,15 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.network;
 
+import com.mojang.authlib.properties.Property;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.network.NetworkManager;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkManager;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+import java.net.SocketAddress;
+import java.util.UUID;
 
 @Mixin(NetworkManager.class)
 public abstract class MixinNetworkManager extends SimpleChannelInboundHandler implements IMixinNetworkManager {
@@ -34,6 +39,10 @@ public abstract class MixinNetworkManager extends SimpleChannelInboundHandler im
     private int protocolVersion;
     private String hostnamePinged;
     private int portPinged;
+
+    @Shadow private SocketAddress socketAddress;
+    private Property[] spoofedProfile;
+    private UUID spoofedUUID;
 
     @Override
     public int getProtocolVersion() {
@@ -63,5 +72,30 @@ public abstract class MixinNetworkManager extends SimpleChannelInboundHandler im
     @Override
     public void setPortPinged(int port) {
         this.portPinged = port;
+    }
+
+    @Override
+    public void setRemoteAddress(SocketAddress socketAddress) {
+        this.socketAddress = socketAddress;
+    }
+
+    @Override
+    public Property[] getSpoofedProfile() {
+        return this.spoofedProfile;
+    }
+
+    @Override
+    public void setSpoofedProfile(Property[] spoofedProfile) {
+        this.spoofedProfile = spoofedProfile;
+    }
+
+    @Override
+    public UUID getSpoofedUUID() {
+        return this.spoofedUUID;
+    }
+
+    @Override
+    public void setSpoofedUUID(UUID uuid) {
+        this.spoofedUUID = uuid;
     }
 }
