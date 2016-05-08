@@ -26,6 +26,8 @@ package org.neptunepowered.vanilla.mixin.minecraft.server.management;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.canarymod.Canary;
+import net.canarymod.ToolBox;
+import net.canarymod.Translator;
 import net.canarymod.api.ConfigurationManager;
 import net.canarymod.api.PlayerListAction;
 import net.canarymod.api.PlayerListData;
@@ -33,7 +35,10 @@ import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.packet.Packet;
 import net.canarymod.api.world.DimensionType;
 import net.canarymod.api.world.World;
+import net.canarymod.bansystem.Ban;
 import net.canarymod.chat.MessageReceiver;
+import net.canarymod.config.Configuration;
+import net.canarymod.config.ServerConfiguration;
 import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.PlayerListHook;
 import net.canarymod.hook.player.PreConnectionHook;
@@ -56,11 +61,9 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.BanList;
-import net.minecraft.server.management.IPBanEntry;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.server.management.UserListBans;
-import net.minecraft.server.management.UserListBansEntry;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
@@ -126,12 +129,6 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
 
     @Shadow
     public abstract EntityPlayerMP getPlayerByUsername(String username);
-
-    @Shadow
-    public abstract boolean canJoin(GameProfile profile);
-
-    @Shadow
-    public abstract boolean func_183023_f(GameProfile p_183023_1_);
 
     @Overwrite
     public void playerLoggedOut(EntityPlayerMP playerIn) {
@@ -272,44 +269,49 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         // Neptune: end
     }
 
+    /**
+     * Complete overwrite to use Canary internals.
+     *
+     * @author jamierocks
+     */
     @Overwrite
     public String allowUserToConnect(SocketAddress address, GameProfile profile) {
-        // Neptune - start
+        ServerConfiguration srv = Configuration.getServerConfig();
         String ip = ((InetSocketAddress) address).getAddress().getHostAddress();
 
-        PreConnectionHook hook =
-                (PreConnectionHook) new PreConnectionHook(ip, profile.getName(), profile.getId(),
-                        DimensionType.NORMAL, Canary.getServer().getDefaultWorldName()).call();
+        PreConnectionHook hook = (PreConnectionHook) new PreConnectionHook(ip, profile.getName(), profile.getId(),
+                DimensionType.NORMAL, Canary.getServer().getDefaultWorldName()).call();
 
         if (hook.getKickReason() != null) {
             return hook.getKickReason();
         }
-        // Neptune - end
 
-        if (this.bannedPlayers.isBanned(profile)) {
-            UserListBansEntry userlistbansentry = this.bannedPlayers.getEntry(profile);
-            String s1 = "You are banned from this server!\nReason: " + userlistbansentry.getBanReason();
+        if (Canary.bans().isBanned(profile.getId().toString())) {
+            Ban ban = Canary.bans().getBan(profile.getId().toString());
 
-            if (userlistbansentry.getBanEndDate() != null) {
-                s1 = s1 + "\nYour ban will be removed on " + dateFormat.format(userlistbansentry.getBanEndDate());
+            if (ban.getExpiration() != -1) {
+                return ban.getReason() + ", " +
+                        srv.getBanExpireDateMessage() + ToolBox.formatTimestamp(ban.getExpiration());
             }
-
-            return s1;
-        } else if (!this.canJoin(profile)) {
-            return "You are not white-listed on this server!";
-        } else if (this.bannedIPs.isBanned(address)) {
-            IPBanEntry ipbanentry = this.bannedIPs.getBanEntry(address);
-            String s = "Your IP address is banned from this server!\nReason: " + ipbanentry.getBanReason();
-
-            if (ipbanentry.getBanEndDate() != null) {
-                s = s + "\nYour ban will be removed on " + dateFormat.format(ipbanentry.getBanEndDate());
-            }
-
-            return s;
-        } else {
-            return this.playerEntityList.size() >= this.maxPlayers && !this.func_183023_f(profile) ?
-                    "The server is full!" : null;
         }
+
+        if (Canary.bans().isIpBanned(ip)) {
+            return Translator.translate(srv.getDefaultBannedMessage());
+        }
+
+        if (!Canary.whitelist().isWhitelisted(profile.getId().toString())
+                && Configuration.getServerConfig().isWhitelistEnabled()) {
+            return srv.getWhitelistMessage();
+        }
+
+        if (this.playerEntityList.size() >= this.maxPlayers) {
+            if (Canary.reservelist().isSlotReserved(profile.getId().toString())
+                    && Configuration.getServerConfig().isReservelistEnabled()) {
+                return null;
+            }
+            return srv.getServerFullMessage();
+        }
+        return null;
     }
 
     @Override
