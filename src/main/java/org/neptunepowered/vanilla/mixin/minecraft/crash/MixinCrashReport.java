@@ -45,8 +45,11 @@ public abstract class MixinCrashReport {
             for (Plugin plugin : Canary.pluginManager().getPlugins()) {
                 result.append("\n\t\t")
                         .append(plugin.getName())
-                        .append(" version ")
-                        .append(plugin.getVersion());
+                        .append(" v ")
+                        .append(plugin.getVersion())
+                        .append(" (")
+                        .append(plugin.getPath())
+                        .append(")");
             }
             return result.toString();
         });

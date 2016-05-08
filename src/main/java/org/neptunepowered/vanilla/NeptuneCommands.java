@@ -29,7 +29,7 @@ import net.canarymod.chat.MessageReceiver;
 import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandListener;
 
-public class NeptuneCommands implements CommandListener {
+public final class NeptuneCommands implements CommandListener {
 
     @Command(aliases = { "neptune" },
             description = "Neptune command",
@@ -45,12 +45,12 @@ public class NeptuneCommands implements CommandListener {
             permissions = { "neptune.command.info" },
             toolTip = "/neptune info")
     public void infoCommand(MessageReceiver caller, String[] args) {
-        caller.message(String.format("%s%s=== %s %s ===",
+        caller.message(String.format("%s%s---- %s %s ----",
                 ChatFormat.BOLD, ChatFormat.BLUE, Canary.getImplementationTitle(), Canary.getImplementationVersion()));
-        caller.message("Website: https://www.neptunepowered.org/");
-        caller.message("Lead Developer: Jamie Mansfield");
-        caller.message("With Contributions By: 14mRh4X0r, Minecrell");
-        caller.message("Copyright (c) 2015-2016, Jamie Mansfield");
-        caller.message("Licensed under the MIT license.");
+        caller.message(ChatFormat.GOLD + "Website:" + ChatFormat.WHITE + " https://www.neptunepowered.org/");
+        caller.message(ChatFormat.GOLD + "Lead Developer:" + ChatFormat.WHITE + " Jamie Mansfield");
+        caller.message(ChatFormat.GOLD + "With Contributions By:" + ChatFormat.WHITE + " 14mRh4X0r, Minecrell");
+        caller.message(ChatFormat.RED + "Copyright (c) 2015-2016, Jamie Mansfield");
+        caller.message(ChatFormat.RED + "Licensed under the MIT license.");
     }
 }
