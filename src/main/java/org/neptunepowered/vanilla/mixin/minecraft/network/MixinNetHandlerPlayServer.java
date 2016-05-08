@@ -28,6 +28,7 @@ import net.canarymod.api.NetServerHandler;
 import net.canarymod.api.chat.ChatComponent;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.packet.Packet;
+import net.canarymod.hook.player.KickHook;
 import net.canarymod.hook.player.PlayerIdleHook;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -36,6 +37,8 @@ import net.minecraft.network.play.server.S00PacketKeepAlive;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S07PacketRespawn;
 import net.minecraft.server.MinecraftServer;
+import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
+import org.neptunepowered.vanilla.util.helper.NetHandlerPlayServerHelper;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -44,7 +47,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.net.SocketAddress;
 
 @Mixin(NetHandlerPlayServer.class)
-public abstract class MixinNetHandlerPlayServer implements NetServerHandler {
+public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMixinNetHandlerPlayServer {
 
     @Shadow public NetworkManager netManager;
     @Shadow public EntityPlayerMP playerEntity;
@@ -59,9 +62,6 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler {
 
     @Shadow
     public abstract void sendPacket(final net.minecraft.network.Packet packetIn);
-
-    @Shadow
-    public abstract void kickPlayerFromServer(String reason);
 
     @Shadow
     public abstract long currentTimeMillis();
@@ -105,6 +105,20 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler {
             }
             // Neptune - end
         }
+    }
+
+    /**
+     * Overwrite to fire the KickHook.
+     *
+     * @author jamierocks
+     */
+    @Overwrite
+    public void kickPlayerFromServer(String reason) {
+        // Fire KickHook
+        new KickHook((Player) this.playerEntity, Canary.getServer(), reason).call();
+
+        // Kick player
+        this.kickPlayerFromServerWithoutHook(reason);
     }
 
     @Override
@@ -153,5 +167,10 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler {
     @Override
     public SocketAddress getSocketAdress() {
         return this.netManager.getRemoteAddress();
+    }
+
+    @Override
+    public void kickPlayerFromServerWithoutHook(String reason) {
+        NetHandlerPlayServerHelper.kickPlayerFromServer(this.playerEntity, reason);
     }
 }

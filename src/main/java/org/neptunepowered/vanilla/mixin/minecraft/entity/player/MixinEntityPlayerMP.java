@@ -45,8 +45,10 @@ import net.canarymod.hook.player.TeleportHook;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
+import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -55,6 +57,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Shadow public int ping;
     @Shadow private StatisticsFile statsFile;
+    @Shadow public NetHandlerPlayServer playerNetServerHandler;
 
     @Override
     public void initPlayerData() {
@@ -83,12 +86,12 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void sendPacket(Packet packet) {
-
+        this.getNetServerHandler().sendPacket(packet);
     }
 
     @Override
     public NetServerHandler getNetServerHandler() {
-        return null;
+        return (NetServerHandler) this.playerNetServerHandler;
     }
 
     @Override
@@ -98,12 +101,12 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void kick(String reason) {
-
+        this.playerNetServerHandler.kickPlayerFromServer(reason);
     }
 
     @Override
     public void kickNoHook(String reason) {
-
+        ((IMixinNetHandlerPlayServer) this.playerNetServerHandler).kickPlayerFromServerWithoutHook(reason);
     }
 
     @Override
