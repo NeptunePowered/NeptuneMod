@@ -293,6 +293,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
                 return ban.getReason() + ", " +
                         srv.getBanExpireDateMessage() + ToolBox.formatTimestamp(ban.getExpiration());
             }
+            return ban.getReason();
         }
 
         if (Canary.bans().isIpBanned(ip)) {
