@@ -66,6 +66,7 @@
         "entity.MixinEntityLeashKnot",
         "entity.MixinEntityLiving",
         "entity.MixinEntityLivingBase",
+        "entity.MixinEntityTracker",
         "entity.MixinProjectile",
         "event.MixinClickEvent",
         "event.MixinHoverEvent",

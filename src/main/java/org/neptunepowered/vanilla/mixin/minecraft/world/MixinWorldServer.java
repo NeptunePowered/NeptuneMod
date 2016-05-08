@@ -63,6 +63,7 @@ import net.minecraft.world.storage.WorldInfo;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
@@ -70,7 +71,9 @@ import java.util.List;
 @Implements(@Interface(iface = World.class, prefix = "world$"))
 public abstract class MixinWorldServer extends net.minecraft.world.World implements IThreadListener {
 
-    protected MixinWorldServer(ISaveHandler saveHandlerIn,
+    @Shadow private net.minecraft.entity.EntityTracker theEntityTracker;
+
+    MixinWorldServer(ISaveHandler saveHandlerIn,
             WorldInfo info,
             WorldProvider providerIn, Profiler profilerIn, boolean client) {
         super(saveHandlerIn, info, providerIn, profilerIn, client);
@@ -85,7 +88,7 @@ public abstract class MixinWorldServer extends net.minecraft.world.World impleme
     }
 
     public EntityTracker world$getEntityTracker() {
-        return null;
+        return (EntityTracker) this.theEntityTracker;
     }
 
     public DimensionType world$getType() {

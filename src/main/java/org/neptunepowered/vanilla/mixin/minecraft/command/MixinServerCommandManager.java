@@ -95,7 +95,7 @@ public class MixinServerCommandManager extends CommandHandler implements IMixinS
     }
 
     @Override
-    public List getTabCompletionOptions(ICommandSender sender, String command, BlockPos pos) {
+    public List<String> getTabCompletionOptions(ICommandSender sender, String command, BlockPos pos) {
         command = command.trim();
         if (command.startsWith("/")) {
             command = command.substring(1);
