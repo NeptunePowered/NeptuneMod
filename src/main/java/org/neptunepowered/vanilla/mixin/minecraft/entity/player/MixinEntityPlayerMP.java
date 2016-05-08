@@ -318,7 +318,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public String getUUIDString() {
-        return null;
+        return this.getUUID().toString();
     }
 
     @Override

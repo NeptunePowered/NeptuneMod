@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.server;
 
 import com.google.common.collect.Lists;
+import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
 import net.canarymod.api.CommandBlockLogic;
@@ -38,6 +39,7 @@ import net.canarymod.api.gui.GUIControl;
 import net.canarymod.api.inventory.recipes.CraftingRecipe;
 import net.canarymod.api.inventory.recipes.Recipe;
 import net.canarymod.api.inventory.recipes.SmeltRecipe;
+import net.canarymod.api.nbt.CompoundTag;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
@@ -45,10 +47,16 @@ import net.canarymod.config.Configuration;
 import net.canarymod.tasks.ServerTask;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.SaveHandler;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
+import org.neptunepowered.vanilla.wrapper.NeptuneOfflinePlayer;
 import org.neptunepowered.vanilla.wrapper.inventory.recipes.NeptuneRecipe;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -77,6 +85,9 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Shadow
     public abstract String[] getAllUsernames();
+
+    @Shadow
+    public abstract PlayerProfileCache getPlayerProfileCache();
 
     @Override
     @Shadow
@@ -184,7 +195,25 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public OfflinePlayer getOfflinePlayer(UUID uuid) {
-        return null;
+        ISaveHandler saveHandler = MinecraftServer.getServer().getEntityWorld().getSaveHandler();
+
+        if (saveHandler instanceof SaveHandler) {
+            NBTTagCompound tagCompound = ((IMixinSaveHandler) saveHandler).readPlayerData(uuid);
+
+            if (tagCompound != null) {
+                GameProfile profile = getPlayerProfileCache().getProfileByUUID(uuid);
+
+                if (profile != null) {
+                    return new NeptuneOfflinePlayer(profile.getName(), uuid, (CompoundTag) tagCompound);
+                } else {
+                    return new NeptuneOfflinePlayer("PLAYER_NAME_UNKNOWN", uuid, (CompoundTag) tagCompound);
+                }
+            }
+
+            return null;
+        } else {
+            throw new RuntimeException("ISaveHandler is not of type SaveHandler! Failing to load playerdata");
+        }
     }
 
     @Override

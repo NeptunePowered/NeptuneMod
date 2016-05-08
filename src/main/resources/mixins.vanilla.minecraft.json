@@ -116,6 +116,7 @@
         "village.MixinVillage",
         "world.biome.MixinBiomeGenBase",
         "world.chunk.MixinChunk",
+        "world.storage.MixinSaveHandler",
         "world.MixinWorldServer"
     ],
     "injectors": {
