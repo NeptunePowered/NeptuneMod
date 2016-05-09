@@ -28,6 +28,10 @@ import net.canarymod.chat.ChatFormat;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandListener;
+import net.canarymod.commandsys.TabComplete;
+import net.canarymod.commandsys.TabCompleteHelper;
+
+import java.util.List;
 
 public final class NeptuneCommands implements CommandListener {
 
@@ -52,5 +56,13 @@ public final class NeptuneCommands implements CommandListener {
         caller.message(ChatFormat.GOLD + "With Contributions By:" + ChatFormat.WHITE + " 14mRh4X0r, Minecrell");
         caller.message(ChatFormat.RED + "Copyright (c) 2015-2016, Jamie Mansfield");
         caller.message(ChatFormat.RED + "Licensed under the MIT license.");
+    }
+
+    @TabComplete(commands = { "neptune" })
+    public List<String> playtimeTabComplete(MessageReceiver caller, String[] args) {
+        if (args.length == 1) {
+            return TabCompleteHelper.matchTo(args, new String[] { "info" });
+        }
+        return null;
     }
 }
