@@ -23,6 +23,7 @@
  */
 package org.neptunepowered.vanilla.factory;
 
+import com.google.common.collect.Lists;
 import net.canarymod.api.DataWatcher;
 import net.canarymod.api.chat.ChatComponent;
 import net.canarymod.api.entity.Entity;
@@ -42,13 +43,24 @@ import net.canarymod.api.world.Chunk;
 import net.canarymod.api.world.blocks.BlockType;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S04PacketEntityEquipment;
+import net.minecraft.network.play.server.S05PacketSpawnPosition;
 import net.minecraft.network.play.server.S06PacketUpdateHealth;
+import net.minecraft.network.play.server.S09PacketHeldItemChange;
+import net.minecraft.network.play.server.S0APacketUseBed;
+import net.minecraft.network.play.server.S0BPacketAnimation;
+import net.minecraft.network.play.server.S0DPacketCollectItem;
+import net.minecraft.network.play.server.S2BPacketChangeGameState;
+import net.minecraft.network.play.server.S2CPacketSpawnGlobalEntity;
 import net.minecraft.network.play.server.S2EPacketCloseWindow;
+import net.minecraft.network.play.server.S2FPacketSetSlot;
+import net.minecraft.network.play.server.S33PacketUpdateSign;
 import net.minecraft.network.play.server.S36PacketSignEditorOpen;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.List;
 import java.util.Map;
@@ -57,41 +69,8 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet createPacket(int id, Object... args) throws InvalidPacketConstructionException {
-        switch (id) {
-            case 0x00:
-                throw new InvalidPacketConstructionException(id, "KeepAlive", "Keep Alive packets should only be "
-                        + "handled by the Server");
-            case 0x01:
-                throw new InvalidPacketConstructionException(id, "JoinGame", "Join Game packets should only be "
-                        + "handled by the Server");
-            case 0x03:
-                return updateTime((Long) args[0], (Long) args[1]);
-            case 0x06:
-                return updateHealth((Float) args[0], (Integer) args[1], (Float) args[2]);
-            case 0x2E:
-                return closeWindow((Integer) args[0]);
-            case 0x36:
-                return signEditorOpen((Integer) args[0], (Integer) args[1], (Integer) args[2]);
-            case 0x3A:
-                throw new InvalidPacketConstructionException(id, "TabComplete",
-                        "No function unless requested and client waiting.");
-            case 0x3B:
-                throw new InvalidPacketConstructionException(id, "ScoreboardObjective",
-                        "Use the Scoreboard API instead.");
-            case 0x3C:
-                throw new InvalidPacketConstructionException(id, "UpdateScore", "Use the Scoreboard API instead.");
-            case 0x3D:
-                throw new InvalidPacketConstructionException(id, "DisplayScoreboard",
-                        "Use the Scoreboard API instead.");
-            case 0x3E:
-                throw new InvalidPacketConstructionException(id, "Teams", "Use the Scoreboard API instead.");
-            case 0x3F:
-                throw new InvalidPacketConstructionException(id, "CustomPayload", "Use ChannelManager instead.");
-            case 0x40:
-                throw new InvalidPacketConstructionException(id, "Disconnect", "Use kick methods instead.");
-            default:
-                throw new InvalidPacketConstructionException(id, "UNKNOWN", "Unknown Packet ID");
-        }
+        // todo: implement
+        return null;
     }
 
     @Override
@@ -111,7 +90,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet spawnPosition(int x, int y, int z) {
-        return null;
+        return (Packet) new S05PacketSpawnPosition(new BlockPos(x, y, z));
     }
 
     @Override
@@ -126,17 +105,17 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet heldItemChange(int slot) {
-        return null;
+        return (Packet) new S09PacketHeldItemChange(slot);
     }
 
     @Override
     public Packet useBed(Player player, int x, int y, int z) {
-        return null;
+        return (Packet) new S0APacketUseBed((EntityPlayer) player, new BlockPos(x, y, z));
     }
 
     @Override
     public Packet animation(Player player, int animation) {
-        return null;
+        return (Packet) new S0BPacketAnimation((net.minecraft.entity.Entity) player, animation);
     }
 
     @Override
@@ -146,7 +125,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet collectItem(int entityItemID, int collectorID) {
-        return null;
+        return (Packet) new S0DPacketCollectItem(entityItemID, collectorID);
     }
 
     @Override
@@ -298,12 +277,12 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet changeGameState(int state, int mode) {
-        return null;
+        return (Packet) new S2BPacketChangeGameState(state, mode);
     }
 
     @Override
     public Packet spawnGlobalEntity(Entity entity) {
-        return null;
+        return (Packet) new S2CPacketSpawnGlobalEntity((net.minecraft.entity.Entity) entity);
     }
 
     @Override
@@ -318,7 +297,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet setSlot(int windowId, int slotId, Item item) {
-        return null;
+        return (Packet) new S2FPacketSetSlot(windowId, slotId, (ItemStack) item);
     }
 
     @Override
@@ -333,7 +312,14 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet updateSign(int x, int y, int z, String[] text) {
-        return null;
+        List<ChatComponentText> texts = Lists.newArrayList();
+
+        for (String t : text) {
+            texts.add(new ChatComponentText(t));
+        }
+
+        return (Packet)
+                new S33PacketUpdateSign(null, new BlockPos(x, y, z), texts.toArray(new ChatComponentText[texts.size()]));
     }
 
     @Override
