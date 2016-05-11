@@ -190,7 +190,7 @@ public abstract class MixinMinecraftServer implements Server {
         if (uuid == null) {
             return null;
         }
-        return getOfflinePlayer(uuid);
+        return this.getOfflinePlayer(uuid);
     }
 
     @Override
@@ -427,10 +427,6 @@ public abstract class MixinMinecraftServer implements Server {
     public void showTitle(ChatComponent title, ChatComponent subtitle) {
 
     }
-
-    @Override
-    @Shadow
-    public abstract String getName();
 
     @Override
     public String getLocale() {

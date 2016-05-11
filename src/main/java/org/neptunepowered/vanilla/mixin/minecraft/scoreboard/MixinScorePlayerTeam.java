@@ -28,6 +28,9 @@ import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.scoreboard.Scoreboard;
 import net.canarymod.api.scoreboard.Team;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -35,31 +38,23 @@ import java.util.List;
 import java.util.Set;
 
 @Mixin(ScorePlayerTeam.class)
+@Implements(@Interface(iface = Team.class, prefix = "team$"))
 public abstract class MixinScorePlayerTeam extends net.minecraft.scoreboard.Team implements Team {
 
     @Shadow private net.minecraft.scoreboard.Scoreboard theScoreboard;
-    @Shadow private Set membershipSet;
+    @Shadow private Set<String> membershipSet;
     @Shadow private String registeredName;
     @Shadow private boolean canSeeFriendlyInvisibles;
     @Shadow private String teamNameSPT;
 
-    @Shadow
-    public abstract String getColorPrefix();
-
-    @Shadow
-    public abstract void setNamePrefix(String prefix);
-
-    @Shadow
-    public abstract String getColorSuffix();
-
-    @Shadow
-    public abstract void setNameSuffix(String suffix);
-
-    @Shadow
-    public abstract void setSeeFriendlyInvisiblesEnabled(boolean friendlyInvisibles);
-
-    @Shadow
-    public abstract void setTeamName(String name);
+    @Shadow public abstract String getColorPrefix();
+    @Shadow public abstract void setNamePrefix(String prefix);
+    @Shadow public abstract String getColorSuffix();
+    @Shadow public abstract void setNameSuffix(String suffix);
+    @Shadow public abstract void setSeeFriendlyInvisiblesEnabled(boolean friendlyInvisibles);
+    @Shadow public abstract void setTeamName(String name);
+    @Shadow public abstract boolean getAllowFriendlyFire();
+    @Shadow public abstract void setAllowFriendlyFire(boolean bool);
 
     @Override
     public String getProtocolName() {
@@ -73,27 +68,27 @@ public abstract class MixinScorePlayerTeam extends net.minecraft.scoreboard.Team
 
     @Override
     public void setDisplayName(String name) {
-        setTeamName(name);
+        this.setTeamName(name);
     }
 
     @Override
     public String getPrefix() {
-        return getColorPrefix();
+        return this.getColorPrefix();
     }
 
     @Override
     public void setPrefix(String prefix) {
-        setNamePrefix(prefix);
+        this.setNamePrefix(prefix);
     }
 
     @Override
     public String getSuffix() {
-        return getColorSuffix();
+        return this.getColorSuffix();
     }
 
     @Override
     public void setSuffix(String suffix) {
-        setNameSuffix(suffix);
+        this.setNameSuffix(suffix);
     }
 
     @Override
@@ -103,13 +98,7 @@ public abstract class MixinScorePlayerTeam extends net.minecraft.scoreboard.Team
 
     @Override
     public List<String> getPlayerNames() {
-        List<String> playerNames = Lists.newArrayList();
-
-        for (Object name : membershipSet) {
-            playerNames.add((String) name);
-        }
-
-        return playerNames;
+        return Lists.newArrayList(this.membershipSet);
     }
 
     @Override
@@ -132,13 +121,15 @@ public abstract class MixinScorePlayerTeam extends net.minecraft.scoreboard.Team
         return (Scoreboard) this.theScoreboard;
     }
 
-    @Override
-    @Shadow
-    public abstract boolean getAllowFriendlyFire();
+    @Intrinsic
+    public boolean team$getAllowFriendlyFire() {
+        return this.getAllowFriendlyFire();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setAllowFriendlyFire(boolean bool);
+    @Intrinsic
+    public void team$setAllowFriendlyFire(boolean bool) {
+        this.setAllowFriendlyFire(bool);
+    }
 
     @Override
     public boolean getSeeFriendlyInvisibles() {
@@ -147,6 +138,6 @@ public abstract class MixinScorePlayerTeam extends net.minecraft.scoreboard.Team
 
     @Override
     public void setSeeFriendlyInvisibles(boolean bool) {
-        setSeeFriendlyInvisiblesEnabled(bool);
+        this.setSeeFriendlyInvisiblesEnabled(bool);
     }
 }

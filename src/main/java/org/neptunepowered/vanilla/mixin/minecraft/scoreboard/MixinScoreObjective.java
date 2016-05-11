@@ -30,15 +30,22 @@ import net.canarymod.api.scoreboard.Scoreboard;
 import net.canarymod.api.world.World;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
 import net.minecraft.scoreboard.ScoreObjective;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ScoreObjective.class)
+@Implements(@Interface(iface = net.canarymod.api.scoreboard.ScoreObjective.class, prefix = "objective$"))
 public abstract class MixinScoreObjective implements net.canarymod.api.scoreboard.ScoreObjective {
 
     @Shadow private net.minecraft.scoreboard.Scoreboard theScoreboard;
     @Shadow private IScoreObjectiveCriteria objectiveCriteria;
     @Shadow private String name;
+
+    @Shadow public abstract String getDisplayName();
+    @Shadow public abstract void setDisplayName(String nameIn);
 
     @Override
     public String getProtocolName() {
@@ -50,13 +57,15 @@ public abstract class MixinScoreObjective implements net.canarymod.api.scoreboar
         return (ScoreObjectiveCriteria) this.objectiveCriteria;
     }
 
-    @Override
-    @Shadow
-    public abstract String getDisplayName();
+    @Intrinsic
+    public String objective$getDisplayName() {
+        return this.getDisplayName();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setDisplayName(String name);
+    @Intrinsic
+    public void objective$setDisplayName(String name) {
+        this.setDisplayName(name);
+    }
 
     @Override
     public void setScoreboardPosition(ScorePosition type) {
