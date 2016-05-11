@@ -29,6 +29,7 @@ import net.canarymod.api.attributes.AttributeMap;
 import net.canarymod.api.attributes.AttributeModifier;
 import net.canarymod.api.attributes.ModifiedAttribute;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -37,11 +38,9 @@ import java.util.Collection;
 @Mixin(BaseAttributeMap.class)
 public abstract class MixinBaseAttributeMap implements AttributeMap {
 
-    @Shadow
-    public abstract void applyAttributeModifiers(Multimap p_111147_1_);
-
-    @Shadow
-    public abstract void removeAttributeModifiers(Multimap p_111148_1_);
+    @Shadow public abstract void applyAttributeModifiers(Multimap p_111147_1_);
+    @Shadow public abstract void removeAttributeModifiers(Multimap p_111148_1_);
+    @Shadow public abstract Collection<IAttributeInstance> shadow$getAllAttributes();
 
     @Override
     public ModifiedAttribute getModifiedAttribute(Attribute attribute) {
@@ -59,8 +58,9 @@ public abstract class MixinBaseAttributeMap implements AttributeMap {
     }
 
     @Override
-    @Shadow
-    public abstract Collection<ModifiedAttribute> getAllAttributes();
+    public Collection<ModifiedAttribute> getAllAttributes() {
+        return (Collection) this.shadow$getAllAttributes();
+    }
 
     @Override
     public void addModifier(ModifiedAttribute attribute) {
@@ -69,11 +69,11 @@ public abstract class MixinBaseAttributeMap implements AttributeMap {
 
     @Override
     public void removeModifiers(Multimap<String, AttributeModifier> map) {
-        removeAttributeModifiers(map);
+        this.removeAttributeModifiers(map);
     }
 
     @Override
     public void applyModifiers(Multimap<String, AttributeModifier> map) {
-        applyAttributeModifiers(map);
+        this.applyAttributeModifiers(map);
     }
 }

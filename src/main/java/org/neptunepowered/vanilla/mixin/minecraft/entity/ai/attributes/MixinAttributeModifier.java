@@ -24,42 +24,53 @@
 package org.neptunepowered.vanilla.mixin.minecraft.entity.ai.attributes;
 
 import net.canarymod.api.attributes.AttributeModifier;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.UUID;
 
 @Mixin(net.minecraft.entity.ai.attributes.AttributeModifier.class)
+@Implements(@Interface(iface = AttributeModifier.class, prefix = "modifier$"))
 public abstract class MixinAttributeModifier implements AttributeModifier {
 
     @Shadow private UUID id;
 
-    @Shadow
-    public abstract net.minecraft.entity.ai.attributes.AttributeModifier shadow$setSaved(boolean saved);
+    @Shadow public abstract net.minecraft.entity.ai.attributes.AttributeModifier shadow$setSaved(boolean saved);
+    @Shadow public abstract String getName();
+    @Shadow public abstract int getOperation();
+    @Shadow public abstract double getAmount();
+    @Shadow public abstract boolean isSaved();
 
     @Override
     public UUID getUUID() {
-        return id;
+        return this.id;
+    }
+
+    @Intrinsic
+    public String modifier$getName() {
+        return this.getName();
+    }
+
+    @Intrinsic
+    public int modifier$getOperation() {
+        return this.getOperation();
+    }
+
+    @Intrinsic
+    public double modifier$getAmount() {
+        return this.getAmount();
+    }
+
+    @Intrinsic
+    public boolean modifier$isSaved() {
+        return this.isSaved();
     }
 
     @Override
-    @Shadow
-    public abstract String getName();
-
-    @Override
-    @Shadow
-    public abstract int getOperation();
-
-    @Override
-    @Shadow
-    public abstract double getAmount();
-
-    @Override
-    @Shadow
-    public abstract boolean isSaved();
-
-    @Override
     public AttributeModifier setSaved(boolean saved) {
-        return (AttributeModifier) shadow$setSaved(saved);
+        return (AttributeModifier) this.shadow$setSaved(saved);
     }
 }

@@ -33,11 +33,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EntityAITasks.class)
 public abstract class MixinEntityAITasks implements AIManager {
 
-    @Shadow
-    public abstract void addTask(int p_75776_1_, EntityAIBase p_75776_2_);
-
-    @Shadow
-    public abstract void removeTask(EntityAIBase p_85156_1_);
+    @Shadow public abstract void addTask(int p_75776_1_, EntityAIBase p_75776_2_);
+    @Shadow public abstract void removeTask(EntityAIBase p_85156_1_);
 
     @Override
     public boolean addTask(int priority, AIBase ai) {

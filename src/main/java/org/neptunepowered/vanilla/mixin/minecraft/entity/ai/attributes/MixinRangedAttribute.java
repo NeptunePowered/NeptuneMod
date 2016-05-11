@@ -24,45 +24,35 @@
 package org.neptunepowered.vanilla.mixin.minecraft.entity.ai.attributes;
 
 import net.canarymod.api.attributes.RangedAttribute;
-import net.minecraft.entity.ai.attributes.BaseAttribute;
-import net.minecraft.entity.ai.attributes.IAttribute;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(net.minecraft.entity.ai.attributes.RangedAttribute.class)
-@Implements(@Interface(iface = RangedAttribute.class, prefix = "atr$"))
-public abstract class MixinRangedAttribute extends BaseAttribute {
+public abstract class MixinRangedAttribute extends MixinBaseAttribute implements RangedAttribute {
 
     @Shadow private double minimumValue;
     @Shadow private double maximumValue;
 
-    protected MixinRangedAttribute(IAttribute p_i45892_1_, String unlocalizedNameIn,
-            double defaultValueIn) {
-        super(p_i45892_1_, unlocalizedNameIn, defaultValueIn);
-    }
-
-    @Shadow
-    public abstract net.minecraft.entity.ai.attributes.RangedAttribute setDescription(String descriptionIn);
+    @Shadow public abstract net.minecraft.entity.ai.attributes.RangedAttribute shadow$setDescription(String desc);
+    @Shadow public abstract double clampValue(double p_111109_1_);
 
     @Override
-    @Shadow
-    public abstract double clampValue(double p_111109_1_);
-
-    public RangedAttribute atr$setDescription(String description) {
-        return (RangedAttribute) setDescription(description);
+    public RangedAttribute setDescription(String description) {
+        return (RangedAttribute) shadow$setDescription(description);
     }
 
-    public double atr$setValue(double value) {
-        return clampValue(value);
+    @Override
+    public double setValue(double value) {
+        return this.clampValue(value);
     }
 
-    public double atr$getMaxValue() {
-        return maximumValue;
+    @Override
+    public double getMaxValue() {
+        return this.maximumValue;
     }
 
-    public double atr$getMinValue() {
-        return minimumValue;
+    @Override
+    public double getMinValue() {
+        return this.minimumValue;
     }
 }

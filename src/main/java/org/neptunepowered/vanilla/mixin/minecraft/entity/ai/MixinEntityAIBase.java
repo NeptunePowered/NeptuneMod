@@ -25,37 +25,50 @@ package org.neptunepowered.vanilla.mixin.minecraft.entity.ai;
 
 import net.canarymod.api.ai.AIBase;
 import net.minecraft.entity.ai.EntityAIBase;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityAIBase.class)
+@Implements(@Interface(iface = AIBase.class, prefix = "ai$"))
 public abstract class MixinEntityAIBase implements AIBase {
 
-    @Shadow
-    public abstract boolean isInterruptible();
+    @Shadow public abstract boolean shouldExecute();
+    @Shadow public abstract boolean continueExecuting();
+    @Shadow public abstract void startExecuting();
+    @Shadow public abstract void resetTask();
+    @Shadow public abstract void updateTask();
+    @Shadow public abstract boolean isInterruptible();
 
-    @Override
-    @Shadow
-    public abstract boolean shouldExecute();
+    @Intrinsic
+    public boolean ai$shouldExecute() {
+        return this.shouldExecute();
+    }
 
-    @Override
-    @Shadow
-    public abstract boolean continueExecuting();
-
-    @Override
-    public boolean isContinuous() {
-        return isInterruptible();
+    @Intrinsic
+    public boolean ai$continueExecuting() {
+        return this.continueExecuting();
     }
 
     @Override
-    @Shadow
-    public abstract void startExecuting();
+    public boolean isContinuous() {
+        return this.isInterruptible();
+    }
 
-    @Override
-    @Shadow
-    public abstract void resetTask();
+    @Intrinsic
+    public void ai$startExecuting() {
+        this.startExecuting();
+    }
 
-    @Override
-    @Shadow
-    public abstract void updateTask();
+    @Intrinsic
+    public void ai$resetTask() {
+        this.resetTask();
+    }
+
+    @Intrinsic
+    public void ai$updateTask() {
+        this.updateTask();
+    }
 }

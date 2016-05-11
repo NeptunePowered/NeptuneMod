@@ -25,10 +25,14 @@ package org.neptunepowered.vanilla.mixin.minecraft.block.material;
 
 import net.canarymod.api.world.blocks.BlockMaterial;
 import net.minecraft.block.material.Material;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Material.class)
+@Implements(@Interface(iface = BlockMaterial.class, prefix = "material$"))
 public abstract class MixinMaterial implements BlockMaterial {
 
     @Shadow private boolean canBurn;
@@ -36,16 +40,21 @@ public abstract class MixinMaterial implements BlockMaterial {
     @Shadow private boolean isTranslucent;
     @Shadow private boolean requiresNoTool;
 
-    @Shadow
-    public abstract boolean blocksLight();
+    @Shadow public abstract boolean blocksLight();
+    @Shadow public abstract boolean isLiquid();
+    @Shadow public abstract boolean isSolid();
+    @Shadow public abstract boolean isReplaceable();
+    @Shadow public abstract boolean isOpaque();
 
-    @Override
-    @Shadow
-    public abstract boolean isLiquid();
+    @Intrinsic
+    public boolean material$isLiquid() {
+        return this.isLiquid();
+    }
 
-    @Override
-    @Shadow
-    public abstract boolean isSolid();
+    @Intrinsic
+    public boolean material$isSolid() {
+        return this.isSolid();
+    }
 
     @Override
     public boolean canPreventGrassGrowth() {
@@ -57,13 +66,15 @@ public abstract class MixinMaterial implements BlockMaterial {
         return this.canBurn;
     }
 
-    @Override
-    @Shadow
-    public abstract boolean isReplaceable();
+    @Intrinsic
+    public boolean material$isReplaceable() {
+        return this.isReplaceable();
+    }
 
-    @Override
-    @Shadow
-    public abstract boolean isOpaque();
+    @Intrinsic
+    public boolean material$isOpaque() {
+        return this.isOpaque();
+    }
 
     @Override
     public boolean noToolRequired() {

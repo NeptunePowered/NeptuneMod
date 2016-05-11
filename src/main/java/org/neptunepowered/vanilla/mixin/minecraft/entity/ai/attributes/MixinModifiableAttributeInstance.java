@@ -28,58 +28,59 @@ import net.canarymod.api.attributes.AttributeModifier;
 import net.canarymod.api.attributes.ModifiedAttribute;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.UUID;
 
 @Mixin(ModifiableAttributeInstance.class)
+@Implements(@Interface(iface = ModifiedAttribute.class, prefix = "attribute$"))
 public abstract class MixinModifiableAttributeInstance implements ModifiedAttribute {
 
     @Shadow private IAttribute genericAttribute;
 
-    @Shadow
-    public abstract net.minecraft.entity.ai.attributes.AttributeModifier shadow$getModifier(UUID uuid);
-
-    @Shadow
-    public abstract void applyModifier(net.minecraft.entity.ai.attributes.AttributeModifier modifier);
-
-    @Shadow
-    public abstract void removeModifier(net.minecraft.entity.ai.attributes.AttributeModifier modifier);
-
-    @Shadow
-    public abstract double getAttributeValue();
+    @Shadow public abstract net.minecraft.entity.ai.attributes.AttributeModifier shadow$getModifier(UUID uuid);
+    @Shadow public abstract void applyModifier(net.minecraft.entity.ai.attributes.AttributeModifier modifier);
+    @Shadow public abstract void removeModifier(net.minecraft.entity.ai.attributes.AttributeModifier modifier);
+    @Shadow public abstract double getAttributeValue();
+    @Shadow public abstract double getBaseValue();
+    @Shadow public abstract void setBaseValue(double value);
 
     @Override
     public Attribute getAttribute() {
         return (Attribute) genericAttribute;
     }
 
-    @Override
-    @Shadow
-    public abstract double getBaseValue();
+    @Intrinsic
+    public double attribute$getBaseValue() {
+        return this.getBaseValue();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setBaseValue(double value);
+    @Intrinsic
+    public void attribute$setBaseValue(double value) {
+        this.setBaseValue(value);
+    }
 
     @Override
     public AttributeModifier getModifier(UUID uuid) {
-        return (AttributeModifier) shadow$getModifier(uuid);
+        return (AttributeModifier) this.shadow$getModifier(uuid);
     }
 
     @Override
     public void apply(AttributeModifier attributeModifier) {
-        applyModifier((net.minecraft.entity.ai.attributes.AttributeModifier) attributeModifier);
+        this.applyModifier((net.minecraft.entity.ai.attributes.AttributeModifier) attributeModifier);
     }
 
     @Override
     public void remove(AttributeModifier attributeModifier) {
-        removeModifier((net.minecraft.entity.ai.attributes.AttributeModifier) attributeModifier);
+        this.removeModifier((net.minecraft.entity.ai.attributes.AttributeModifier) attributeModifier);
     }
 
     @Override
     public double getValue() {
-        return getAttributeValue();
+        return this.getAttributeValue();
     }
 }
