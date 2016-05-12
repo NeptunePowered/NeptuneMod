@@ -30,27 +30,37 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(Canary.class)
+@Mixin(value = Canary.class, remap = false)
 public abstract class MixinCanary {
 
-    @Shadow(remap = false) private static String jarPath;
+    @Shadow private static String jarPath;
 
-    /*
-    This is a temporary way to get the implementation title.
+    /**
+     * Overwrite to get the implementation title.
+     *
+     * @author jamierocks
      */
     @Overwrite
     public static String getImplementationTitle() {
         return "NeptuneVanilla";
     }
 
-    /*
-    This is a temporary way to get the implementation version.
+    /**
+     * Overwrite to get the implementation version.
+     *
+     * @author jamierocks
      */
     @Overwrite
     public static String getImplementationVersion() {
         return "1.8.9-1.2.1-SNAPSHOT";
     }
 
+    /**
+     * Overwrite to get the jar path of Canary properly.
+     * <i>Works in both production and dev environments</i>
+     *
+     * @author jamierocks
+     */
     @Overwrite
     public static String getCanaryJarPath() {
         if (jarPath == null) {

@@ -27,6 +27,7 @@ import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.commandsys.PlayerSelector;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import java.util.List;
@@ -40,9 +41,9 @@ public class NeptunePlayerSelector implements PlayerSelector {
 
     @Override
     public Player[] matchPlayers(MessageReceiver caller, String pattern) {
-        List matches = net.minecraft.command.PlayerSelector
+        List<? extends Entity> matches = net.minecraft.command.PlayerSelector
                 .matchEntities((ICommandSender) caller, pattern, EntityPlayerMP.class);
-        return (Player[]) matches.toArray(new Player[matches.size()]);
+        return matches.toArray(new Player[matches.size()]);
     }
 
     @Override
