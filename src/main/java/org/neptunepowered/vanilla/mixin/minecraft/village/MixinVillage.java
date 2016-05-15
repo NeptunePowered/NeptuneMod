@@ -27,10 +27,14 @@ import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.world.Village;
 import net.canarymod.api.world.position.Location;
 import net.minecraft.util.BlockPos;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(net.minecraft.village.Village.class)
+@Implements(@Interface(iface = Village.class, prefix = "village$"))
 public abstract class MixinVillage implements Village {
 
     @Shadow private BlockPos center;
@@ -48,55 +52,67 @@ public abstract class MixinVillage implements Village {
     @Shadow
     public abstract boolean isPlayerReputationTooLow(String p_82687_1_);
 
+    @Shadow
+    public abstract boolean isMatingSeason();
+
+    @Shadow
+    public abstract void endMatingSeason();
+
+    @Shadow
+    public abstract boolean isAnnihilated();
+
     @Override
     public void setReputationForPlayer(Player player, int rep) {
-        setReputationForPlayer(player.getName(), rep);
+        this.setReputationForPlayer(player.getName(), rep);
     }
 
     @Override
     public int getReputationForPlayer(Player player) {
-        return getReputationForPlayer(player.getName());
+        return this.getReputationForPlayer(player.getName());
     }
 
     @Override
     public boolean isPlayerReputationTooLow(Player player) {
-        return isPlayerReputationTooLow(player.getName());
+        return this.isPlayerReputationTooLow(player.getName());
     }
 
-    @Override
-    @Shadow
-    public abstract boolean isMatingSeason();
+    @Intrinsic
+    public boolean village$isMatingSeason() {
+        return this.isMatingSeason();
+    }
 
     @Override
     public void startMatingSeason() {
-        noBreedTicks -= 3600;
+        this.noBreedTicks -= 3600;
+    }
+
+    @Intrinsic
+    public void village$endMatingSeason() {
+        this.endMatingSeason();
     }
 
     @Override
-    @Shadow
-    public abstract void endMatingSeason();
-
-    @Override
     public Location getCenter() {
-        return new Location(center.getX(), center.getY(), center.getZ());
+        return new Location(this.center.getX(), this.center.getY(), this.center.getZ());
     }
 
     @Override
     public int getRadius() {
-        return villageRadius;
+        return this.villageRadius;
     }
 
     @Override
     public int getVillagerCount() {
-        return numVillagers;
+        return this.numVillagers;
     }
 
     @Override
     public int getIronGolemCount() {
-        return numIronGolems;
+        return this.numIronGolems;
     }
 
-    @Override
-    @Shadow
-    public abstract boolean isAnnihilated();
+    @Intrinsic
+    public boolean village$isAnnihilated() {
+        return this.isAnnihilated();
+    }
 }

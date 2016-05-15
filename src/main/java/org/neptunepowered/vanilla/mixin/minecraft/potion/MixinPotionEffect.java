@@ -25,10 +25,15 @@ package org.neptunepowered.vanilla.mixin.minecraft.potion;
 
 import net.canarymod.api.entity.living.LivingBase;
 import net.canarymod.api.potion.PotionEffect;
+import net.minecraft.entity.EntityLivingBase;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(net.minecraft.potion.PotionEffect.class)
+@Implements(@Interface(iface = PotionEffect.class, prefix = "effect$"))
 public abstract class MixinPotionEffect implements PotionEffect {
 
     @Shadow private boolean isAmbient;
@@ -36,30 +41,45 @@ public abstract class MixinPotionEffect implements PotionEffect {
     @Shadow
     public abstract String getEffectName();
 
-    @Override
     @Shadow
     public abstract int getPotionID();
 
-    @Override
     @Shadow
     public abstract int getDuration();
 
-    @Override
     @Shadow
     public abstract int getAmplifier();
 
+    @Shadow
+    public abstract void performEffect(EntityLivingBase entityIn);
+
+    @Intrinsic
+    public int effect$getPotionID() {
+        return this.getPotionID();
+    }
+
+    @Intrinsic
+    public int effect$getDuration() {
+        return this.getDuration();
+    }
+
+    @Intrinsic
+    public int effect$getAmplifier() {
+        return this.getAmplifier();
+    }
+
     @Override
     public boolean isAmbient() {
-        return isAmbient;
+        return this.isAmbient;
     }
 
     @Override
     public String getName() {
-        return getEffectName();
+        return this.getEffectName();
     }
 
     @Override
     public void performEffect(LivingBase entity) {
-
+        this.performEffect((EntityLivingBase) entity);
     }
 }

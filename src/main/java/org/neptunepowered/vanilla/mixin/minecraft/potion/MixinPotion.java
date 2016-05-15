@@ -25,43 +25,63 @@ package org.neptunepowered.vanilla.mixin.minecraft.potion;
 
 import net.canarymod.api.potion.PotionEffectType;
 import net.minecraft.potion.Potion;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Potion.class)
+@Implements(@Interface(iface = net.canarymod.api.potion.Potion.class, prefix = "potion$"))
 public abstract class MixinPotion implements net.canarymod.api.potion.Potion {
 
     @Shadow public int id;
     @Shadow private boolean isBadEffect;
 
-    @Override
-    public int getID() {
-        return id;
-    }
-
-    @Override
     @Shadow
     public abstract String getName();
 
+    @Shadow
+    public abstract double getEffectiveness();
+
+    @Shadow
+    public abstract boolean isUsable();
+
+    @Shadow
+    public abstract boolean isInstant();
+
+    @Override
+    public int getID() {
+        return this.id;
+    }
+
+    @Intrinsic
+    public String potion$getName() {
+        return this.getName();
+    }
+
     @Override
     public PotionEffectType getEffectType() {
-        return PotionEffectType.fromName(getName());
+        return PotionEffectType.fromName(this.getName());
     }
 
     @Override
     public boolean isBad() {
-        return isBadEffect;
+        return this.isBadEffect;
     }
 
-    @Override
-    @Shadow
-    public abstract double getEffectiveness();
+    @Intrinsic
+    public double potion$getEffectiveness() {
+        return this.getEffectiveness();
+    }
 
-    @Override
-    @Shadow
-    public abstract boolean isUsable();
+    @Intrinsic
+    public boolean potion$isUsable() {
+        return this.isUsable();
+    }
 
-    @Override
-    @Shadow
-    public abstract boolean isInstant();
+    @Intrinsic
+    public boolean potion$isInstant() {
+        return this.isInstant();
+    }
 }

@@ -29,10 +29,14 @@ import net.canarymod.api.entity.Entity;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.IChatComponent;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(net.minecraft.util.DamageSource.class)
+@Implements(@Interface(iface = DamageSource.class, prefix = "source$"))
 public abstract class MixinDamageSource implements DamageSource {
 
     @Shadow public String damageType;
@@ -47,18 +51,30 @@ public abstract class MixinDamageSource implements DamageSource {
     @Shadow
     public abstract net.minecraft.entity.Entity getEntity();
 
-    @Override
-    public boolean validInCreativeMode() {
-        return isDamageAllowedInCreativeMode;
-    }
-
-    @Override
     @Shadow
     public abstract boolean isFireDamage();
 
-    @Override
     @Shadow
     public abstract boolean isProjectile();
+
+    @Shadow
+    public abstract float getHungerDamage();
+
+
+    @Override
+    public boolean validInCreativeMode() {
+        return this.isDamageAllowedInCreativeMode;
+    }
+
+    @Intrinsic
+    public boolean source$isFireDamage() {
+        return this.isFireDamage();
+    }
+
+    @Intrinsic
+    public boolean source$isProjectile() {
+        return this.isProjectile();
+    }
 
     @Override
     public DamageType getDamagetype() {
@@ -72,36 +88,37 @@ public abstract class MixinDamageSource implements DamageSource {
 
     @Override
     public String getDeathMessage(Player player) {
-        return getDeathMessage((EntityLivingBase) player).getUnformattedText();
+        return this.getDeathMessage((EntityLivingBase) player).getUnformattedText();
+    }
+
+    @Intrinsic
+    public float source$getHungerDamage() {
+        return this.getHungerDamage();
     }
 
     @Override
-    @Shadow
-    public abstract float getHungerDamage();
-
-    @Override
     public void setHungerDamage(float hunger) {
-        hungerDamage = hunger;
+        this.hungerDamage = hunger;
     }
 
     @Override
     public Entity getDamageDealer() {
-        return (Entity) getEntity();
+        return (Entity) this.getEntity();
     }
 
     @Override
     public boolean isUnblockable() {
-        return damageIsAbsolute;
+        return this.damageIsAbsolute;
     }
 
     @Override
     public void setUnblockable(boolean blockable) {
-        damageIsAbsolute = blockable;
+        this.damageIsAbsolute = blockable;
     }
 
     @Override
     public String getNativeName() {
-        return damageType;
+        return this.damageType;
     }
 
     @Override

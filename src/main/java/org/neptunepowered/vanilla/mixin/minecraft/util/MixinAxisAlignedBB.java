@@ -25,10 +25,14 @@ package org.neptunepowered.vanilla.mixin.minecraft.util;
 
 import net.canarymod.api.BoundingBox;
 import net.minecraft.util.AxisAlignedBB;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AxisAlignedBB.class)
+@Implements(@Interface(iface = BoundingBox.class, prefix = "box$"))
 public abstract class MixinAxisAlignedBB implements BoundingBox {
 
     @Shadow public double minX;
@@ -64,6 +68,9 @@ public abstract class MixinAxisAlignedBB implements BoundingBox {
 
     @Shadow
     public abstract boolean intersectsWith(AxisAlignedBB other);
+
+    @Shadow
+    public abstract double getAverageEdgeLength();
 
     @Override
     public double getMinX() {
@@ -140,7 +147,8 @@ public abstract class MixinAxisAlignedBB implements BoundingBox {
         return intersectsWith((AxisAlignedBB) other);
     }
 
-    @Override
-    @Shadow
-    public abstract double getAverageEdgeLength();
+    @Intrinsic
+    public double box$getAverageEdgeLength() {
+        return this.getAverageEdgeLength();
+    }
 }
