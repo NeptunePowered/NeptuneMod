@@ -34,10 +34,14 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNavigate;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityLiving.class)
+@Implements(@Interface(iface = net.canarymod.api.entity.living.EntityLiving.class, prefix = "entity$"))
 public abstract class MixinEntityLiving extends MixinEntityLivingBase implements net.canarymod.api.entity.living.EntityLiving {
 
     @Shadow protected float[] equipmentDropChances;
@@ -67,15 +71,25 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
     @Shadow
     public abstract PathNavigate getNavigator();
 
+    @Shadow
+    public abstract void playLivingSound();
+
+    @Shadow
+    public abstract boolean canPickUpLoot();
+
+    @Shadow
+    public abstract void setCanPickUpLoot(boolean loot);
+
     @Override
     public void moveEntityToXYZ(double x, double y, double z, float speed) {
         this.lookAt(x, y, z);
         this.getMoveHelper().setMoveTo(x, y, z, speed);
     }
 
-    @Override
-    @Shadow
-    public abstract void playLivingSound();
+    @Intrinsic
+    public void entity$playLivingSound() {
+        this.playLivingSound();;
+    }
 
     @Override
     public boolean spawn(net.canarymod.api.entity.living.EntityLiving... riders) {
@@ -127,13 +141,15 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
         this.equipmentDropChances[slot] = chance;
     }
 
-    @Override
-    @Shadow
-    public abstract boolean canPickUpLoot();
+    @Intrinsic
+    public boolean entity$canPickUpLoot() {
+        return this.canPickUpLoot();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setCanPickUpLoot(boolean loot);
+    @Intrinsic
+    public void entity$setCanPickUpLoot(boolean loot) {
+        this.setCanPickUpLoot(loot);
+    }
 
     @Override
     public boolean isPersistenceRequired() {

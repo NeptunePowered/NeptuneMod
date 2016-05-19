@@ -67,13 +67,44 @@ public abstract class MixinEntity implements Entity {
     @Shadow private int entityId;
     @Shadow private AxisAlignedBB boundingBox;
 
-    @Shadow public abstract void moveEntity(double x, double y, double z);
+    @Shadow
+    public abstract void moveEntity(double x, double y, double z);
 
     @Shadow
     public abstract void setDead();
 
     @Shadow
     protected abstract boolean getFlag(int flag);
+
+    @Shadow
+    public abstract float getEyeHeight();
+
+    @Shadow
+    public abstract boolean isSprinting();
+
+    @Shadow
+    public abstract void setSprinting(boolean sprinting);
+
+    @Shadow
+    public abstract boolean isSneaking();
+
+    @Shadow
+    public abstract void setSneaking(boolean sneaking);
+
+    @Shadow
+    public abstract boolean isInvisible();
+
+    @Shadow
+    public abstract void setInvisible(boolean invisible);
+
+    @Shadow
+    public abstract boolean isInWater();
+
+    @Shadow
+    public abstract boolean isInLava();
+
+    @Shadow
+    public abstract String getName();
 
     @Override
     public double getX() {
@@ -180,9 +211,10 @@ public abstract class MixinEntity implements Entity {
         return new Location(getWorld(), getX(), getY(), getZ(), getPitch(), getRotation());
     }
 
-    @Override
-    @Shadow
-    public abstract float getEyeHeight();
+    @Intrinsic
+    public float entity$getEyeHeight() {
+        return this.getEyeHeight();
+    }
 
     @Override
     public int getID() {
@@ -249,21 +281,25 @@ public abstract class MixinEntity implements Entity {
         return (World) worldObj;
     }
 
-    @Override
-    @Shadow
-    public abstract boolean isSprinting();
+    @Intrinsic
+    public boolean entity$isSprinting() {
+        return this.isSprinting();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setSprinting(boolean sprinting);
+    @Intrinsic
+    public void entity$setSprinting(boolean sprinting) {
+        this.setSprinting(sprinting);
+    }
 
-    @Override
-    @Shadow
-    public abstract boolean isSneaking();
+    @Intrinsic
+    public boolean entity$isSneaking() {
+        return this.isSneaking();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setSneaking(boolean sneaking);
+    @Intrinsic
+    public void entity$setSneaking(boolean sneaking) {
+        this.setSneaking(sneaking);
+    }
 
     @Override
     public int getFireTicks() {
@@ -320,9 +356,9 @@ public abstract class MixinEntity implements Entity {
         return null;
     }
 
-    @Override
-    public String getName() {
-        return null;
+    @Intrinsic
+    public String entity$getName() {
+        return this.getName();
     }
 
     @Override
@@ -395,13 +431,15 @@ public abstract class MixinEntity implements Entity {
 
     }
 
-    @Override
-    @Shadow
-    public abstract boolean isInvisible();
+    @Intrinsic
+    public boolean entity$isInvisible() {
+        return this.isInvisible();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setInvisible(boolean invisible);
+    @Intrinsic
+    public void entity$setInvisible(boolean invisible) {
+        this.setInvisible(invisible);
+    }
 
     @Override
     public CompoundTag getMetaData() {
@@ -423,13 +461,15 @@ public abstract class MixinEntity implements Entity {
         return isInWeb;
     }
 
-    @Override
-    @Shadow
-    public abstract boolean isInWater();
+    @Intrinsic
+    public boolean entity$isInWater() {
+        return this.isInWater();
+    }
 
-    @Override
-    @Shadow
-    public abstract boolean isInLava();
+    @Intrinsic
+    public boolean entity$isInLava() {
+        return this.isInLava();
+    }
 
     @Override
     public boolean hasDisplayName() {
