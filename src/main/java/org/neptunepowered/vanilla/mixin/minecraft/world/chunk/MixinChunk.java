@@ -23,6 +23,7 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.world.chunk;
 
+import com.google.common.collect.Maps;
 import net.canarymod.api.entity.Entity;
 import net.canarymod.api.world.Biome;
 import net.canarymod.api.world.BiomeType;
@@ -33,6 +34,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
+import org.neptunepowered.vanilla.util.converter.PositionConverter;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -40,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mixin(Chunk.class)
+@Implements(@Interface(iface = net.canarymod.api.world.Chunk.class, prefix = "chunk$"))
 public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
 
     @Shadow private int xPosition;
@@ -57,6 +63,18 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
 
     @Shadow
     public abstract void generateSkylightMap();
+
+    @Shadow
+    public abstract boolean isLoaded();
+
+    @Shadow
+    public abstract Map<BlockPos, net.minecraft.tileentity.TileEntity> shadow$getTileEntityMap();
+
+    @Shadow
+    public abstract int[] getHeightMap();
+
+    @Shadow
+    public abstract void relightBlock(int x, int y, int z);
 
     @Override
     public int getX() {
@@ -98,9 +116,10 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
         return 256;
     }
 
-    @Override
-    @Shadow
-    public abstract boolean isLoaded();
+    @Intrinsic
+    public boolean chunk$isLoaded() {
+        return this.isLoaded();
+    }
 
     @Override
     public World getDimension() {
@@ -133,8 +152,16 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
     }
 
     @Override
-    @Shadow
-    public abstract Map<Position, TileEntity> getTileEntityMap();
+    public Map<Position, TileEntity> getTileEntityMap() {
+        final Map<Position, TileEntity> tileEntityMap = Maps.newHashMap();
+
+        for (BlockPos pos : this.shadow$getTileEntityMap().keySet()) {
+            net.minecraft.tileentity.TileEntity tileEntity = this.shadow$getTileEntityMap().get(pos);
+            tileEntityMap.put(PositionConverter.of(pos), (TileEntity) tileEntity);
+        }
+
+        return tileEntityMap;
+    }
 
     @Override
     public boolean hasEntities() {
@@ -146,9 +173,10 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
         return null;
     }
 
-    @Override
-    @Shadow
-    public abstract int[] getHeightMap();
+    @Intrinsic
+    public int[] chunk$getHeightMap() {
+        return this.getHeightMap();
+    }
 
     @Override
     public int[] getPrecipitationHeightMap() {
@@ -180,7 +208,8 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
 
     }
 
-    @Override
-    @Shadow
-    public abstract void relightBlock(int x, int y, int z);
+    @Intrinsic
+    public void chunk$relightBlock(int x, int y, int z) {
+        this.relightBlock(x, y, z);
+    }
 }

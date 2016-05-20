@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableBiMap;
 import net.canarymod.api.entity.hanging.Painting;
 import net.minecraft.entity.item.EntityPainting;
 
-public class ArtConverter {
+public final class ArtConverter {
 
     private static BiMap<EntityPainting.EnumArt, Painting.ArtType> map =
             ImmutableBiMap.<EntityPainting.EnumArt, Painting.ArtType>builder()

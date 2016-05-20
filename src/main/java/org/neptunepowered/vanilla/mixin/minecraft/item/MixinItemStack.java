@@ -31,10 +31,14 @@ import net.canarymod.api.inventory.Item;
 import net.canarymod.api.inventory.ItemType;
 import net.canarymod.api.nbt.CompoundTag;
 import net.minecraft.item.ItemStack;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ItemStack.class)
+@Implements(@Interface(iface = Item.class, prefix = "item$"))
 public abstract class MixinItemStack implements Item {
 
     @Shadow public int stackSize;
@@ -55,6 +59,18 @@ public abstract class MixinItemStack implements Item {
 
     @Shadow
     public abstract ItemStack setStackDisplayName(String displayName);
+
+    @Shadow
+    public abstract boolean hasDisplayName();
+
+    @Shadow
+    public abstract String getDisplayName();
+
+    @Shadow
+    public abstract int getRepairCost();
+
+    @Shadow
+    public abstract void setRepairCost(int cost);
 
     @Override
     public int getId() {
@@ -161,13 +177,15 @@ public abstract class MixinItemStack implements Item {
 
     }
 
-    @Override
-    @Shadow
-    public abstract boolean hasDisplayName();
+    @Intrinsic
+    public boolean item$hasDisplayName() {
+        return this.hasDisplayName();
+    }
 
-    @Override
-    @Shadow
-    public abstract String getDisplayName();
+    @Intrinsic
+    public String item$getDisplayName() {
+        return this.getDisplayName();
+    }
 
     @Override
     public void setDisplayName(String name) {
@@ -179,13 +197,15 @@ public abstract class MixinItemStack implements Item {
         clearCustomName();
     }
 
-    @Override
-    @Shadow
-    public abstract int getRepairCost();
+    @Intrinsic
+    public int item$getRepairCost() {
+        return this.getRepairCost();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setRepairCost(int cost);
+    @Intrinsic
+    public void item$setRepairCost(int cost) {
+        this.setRepairCost(cost);
+    }
 
     @Override
     public String[] getLore() {

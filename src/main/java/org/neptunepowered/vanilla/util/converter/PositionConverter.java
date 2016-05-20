@@ -21,48 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.item;
+package org.neptunepowered.vanilla.util.converter;
 
-import net.canarymod.api.inventory.BaseItem;
-import net.minecraft.item.Item;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
-import org.spongepowered.asm.mixin.Intrinsic;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import net.canarymod.api.world.position.Position;
+import net.minecraft.util.BlockPos;
 
-@Mixin(Item.class)
-@Implements(@Interface(iface = BaseItem.class, prefix = "item$"))
-public abstract class MixinItem implements BaseItem {
+public final class PositionConverter {
 
-    @Shadow protected int maxStackSize;
-
-    @Shadow
-    protected abstract Item shadow$setMaxDamage(int maxDamageIn);
-
-    @Shadow
-    public abstract int getMaxDamage();
-
-    @Shadow
-    public abstract boolean isDamageable();
-
-    @Override
-    public int getMaxStackSize() {
-        return maxStackSize;
+    public static Position of(BlockPos minecraft) {
+        return new Position(minecraft.getX(), minecraft.getY(), minecraft.getZ());
     }
 
-    @Intrinsic
-    public int item$getMaxDamage() {
-        return this.getMaxDamage();
-    }
-
-    @Override
-    public void setMaxDamage(int damage) {
-        shadow$setMaxDamage(damage);
-    }
-
-    @Intrinsic
-    public boolean item$isDamageable() {
-        return this.isDamageable();
+    public static BlockPos of(Position canary) {
+        return new BlockPos(canary.getX(), canary.getY(), canary.getZ());
     }
 }

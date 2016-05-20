@@ -26,20 +26,28 @@ package org.neptunepowered.vanilla.mixin.minecraft.event;
 import net.canarymod.api.chat.ClickEvent;
 import net.canarymod.api.chat.ClickEventAction;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneClickEventAction;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(net.minecraft.event.ClickEvent.class)
+@Implements(@Interface(iface = ClickEvent.class, prefix = "event$"))
 public abstract class MixinClickEvent implements ClickEvent {
 
     @Shadow private net.minecraft.event.ClickEvent.Action action;
+
+    @Shadow
+    public abstract String getValue();
 
     @Override
     public ClickEventAction getAction() {
         return new NeptuneClickEventAction(action);
     }
 
-    @Override
-    @Shadow
-    public abstract String getValue();
+    @Intrinsic
+    public String event$getValue() {
+        return this.getValue();
+    }
 }
