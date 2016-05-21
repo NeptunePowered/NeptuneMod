@@ -32,10 +32,12 @@ import net.canarymod.api.scoreboard.ScorePosition;
 import net.canarymod.api.scoreboard.Team;
 import net.canarymod.api.world.World;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -45,14 +47,30 @@ public abstract class MixinScoreboard implements net.canarymod.api.scoreboard.Sc
     @Shadow private Map teams;
 
     @Shadow
-    public abstract net.minecraft.scoreboard.ScoreObjective addScoreObjective(String name, IScoreObjectiveCriteria criteria);
+    public abstract net.minecraft.scoreboard.ScoreObjective addScoreObjective(String name,
+            IScoreObjectiveCriteria criteria);
 
     @Shadow
     public abstract net.minecraft.scoreboard.ScoreObjective getObjective(String name);
 
+    @Shadow
+    public abstract void removeObjective(net.minecraft.scoreboard.ScoreObjective p_96519_1_);
+
+    @Shadow
+    public abstract Collection<net.minecraft.scoreboard.ScoreObjective> shadow$getScoreObjectives();
+
+    @Shadow
+    public abstract ScorePlayerTeam shadow$getTeam(String p_96508_1_);
+
     @Override
     public List<ScoreObjective> getScoreObjectives() {
-        return null;
+        final List<ScoreObjective> scoreObjectives = Lists.newArrayList();
+
+        for (net.minecraft.scoreboard.ScoreObjective objective : this.shadow$getScoreObjectives()) {
+            scoreObjectives.add((ScoreObjective) objective);
+        }
+
+        return scoreObjectives;
     }
 
     @Override
@@ -67,7 +85,7 @@ public abstract class MixinScoreboard implements net.canarymod.api.scoreboard.Sc
 
     @Override
     public void removeScoreObjective(ScoreObjective objective) {
-
+        this.removeObjective((net.minecraft.scoreboard.ScoreObjective) objective);
     }
 
     @Override
@@ -162,7 +180,7 @@ public abstract class MixinScoreboard implements net.canarymod.api.scoreboard.Sc
 
     @Override
     public Team getTeam(String name) {
-        return null;
+        return (Team) this.shadow$getTeam(name);
     }
 
     @Override

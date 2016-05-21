@@ -60,7 +60,6 @@ public abstract class MixinDamageSource implements DamageSource {
     @Shadow
     public abstract float getHungerDamage();
 
-
     @Override
     public boolean validInCreativeMode() {
         return this.isDamageAllowedInCreativeMode;

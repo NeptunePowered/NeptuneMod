@@ -47,14 +47,29 @@ public abstract class MixinScorePlayerTeam extends net.minecraft.scoreboard.Team
     @Shadow private boolean canSeeFriendlyInvisibles;
     @Shadow private String teamNameSPT;
 
-    @Shadow public abstract String getColorPrefix();
-    @Shadow public abstract void setNamePrefix(String prefix);
-    @Shadow public abstract String getColorSuffix();
-    @Shadow public abstract void setNameSuffix(String suffix);
-    @Shadow public abstract void setSeeFriendlyInvisiblesEnabled(boolean friendlyInvisibles);
-    @Shadow public abstract void setTeamName(String name);
-    @Shadow public abstract boolean getAllowFriendlyFire();
-    @Shadow public abstract void setAllowFriendlyFire(boolean bool);
+    @Shadow
+    public abstract String getColorPrefix();
+
+    @Shadow
+    public abstract void setNamePrefix(String prefix);
+
+    @Shadow
+    public abstract String getColorSuffix();
+
+    @Shadow
+    public abstract void setNameSuffix(String suffix);
+
+    @Shadow
+    public abstract void setSeeFriendlyInvisiblesEnabled(boolean friendlyInvisibles);
+
+    @Shadow
+    public abstract void setTeamName(String name);
+
+    @Shadow
+    public abstract boolean getAllowFriendlyFire();
+
+    @Shadow
+    public abstract void setAllowFriendlyFire(boolean bool);
 
     @Override
     public String getProtocolName() {

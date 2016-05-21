@@ -44,8 +44,11 @@ public abstract class MixinScoreObjective implements net.canarymod.api.scoreboar
     @Shadow private IScoreObjectiveCriteria objectiveCriteria;
     @Shadow private String name;
 
-    @Shadow public abstract String getDisplayName();
-    @Shadow public abstract void setDisplayName(String nameIn);
+    @Shadow
+    public abstract String getDisplayName();
+
+    @Shadow
+    public abstract void setDisplayName(String nameIn);
 
     @Override
     public String getProtocolName() {

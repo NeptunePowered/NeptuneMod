@@ -52,29 +52,32 @@ public abstract class MixinScore implements net.canarymod.api.scoreboard.Score {
     @Shadow
     public abstract void func_96651_a(List p_96651_1_);
 
+    @Shadow
+    public abstract String getPlayerName();
+
     @Override
     public String getName() {
-        return null;
+        return this.getPlayerName();
     }
 
     @Override
     public void addToScore(int toAdd) {
-        increseScore(toAdd);
+        this.increseScore(toAdd);
     }
 
     @Override
     public void removeFromScore(int toRemove) {
-        decreaseScore(toRemove);
+        this.decreaseScore(toRemove);
     }
 
     @Override
     public int getScore() {
-        return getScorePoints();
+        return this.getScorePoints();
     }
 
     @Override
     public void setScore(int toSet) {
-        setScorePoints(toSet);
+        this.setScorePoints(toSet);
     }
 
     @Override
@@ -89,11 +92,11 @@ public abstract class MixinScore implements net.canarymod.api.scoreboard.Score {
 
     @Override
     public void setReadOnlyScore(List<?> list) {
-        func_96651_a(list);
+        this.func_96651_a(list);
     }
 
     @Override
     public void update() {
-        // Not all that sure about this method, as I'm not sure this type of functionality exists
+        // TODO: look into this
     }
 }
