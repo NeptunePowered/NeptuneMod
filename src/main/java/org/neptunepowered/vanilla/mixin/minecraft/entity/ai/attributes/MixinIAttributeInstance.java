@@ -23,66 +23,50 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.entity.ai.attributes;
 
-import com.google.common.collect.Multimap;
 import net.canarymod.api.attributes.Attribute;
-import net.canarymod.api.attributes.AttributeMap;
 import net.canarymod.api.attributes.AttributeModifier;
 import net.canarymod.api.attributes.ModifiedAttribute;
-import net.minecraft.entity.ai.attributes.BaseAttributeMap;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Collection;
+import java.util.UUID;
 
-@Mixin(BaseAttributeMap.class)
-@Implements(@Interface(iface = AttributeMap.class, prefix = "map$"))
-public abstract class MixinBaseAttributeMap implements AttributeMap {
+@Mixin(IAttributeInstance.class)
+@Implements(@Interface(iface = ModifiedAttribute.class, prefix = "modifier$"))
+public interface MixinIAttributeInstance extends IAttributeInstance {
 
-    @Shadow
-    public abstract void applyAttributeModifiers(Multimap p_111147_1_);
-
-    @Shadow
-    public abstract void removeAttributeModifiers(Multimap p_111148_1_);
-
-    @Shadow
-    public abstract Collection<IAttributeInstance> shadow$getAllAttributes();
-
-    @Override
-    public ModifiedAttribute getModifiedAttribute(Attribute attribute) {
-        return null;
-    }
-
-    @Override
-    public ModifiedAttribute getModifiedAttributeByName(String name) {
-        return null;
-    }
-
-    @Override
-    public ModifiedAttribute registerAttribute(Attribute attribute) {
-        return null;
+    @Intrinsic
+    default Attribute modifier$getAttribute() {
+        return (Attribute) this.getAttribute();
     }
 
     @Intrinsic
-    public Collection<ModifiedAttribute> map$getAllAttributes() {
-        return (Collection) this.shadow$getAllAttributes();
+    default double modifier$getBaseValue() {
+        return this.getBaseValue();
     }
 
-    @Override
-    public void addModifier(ModifiedAttribute attribute) {
-
+    @Intrinsic
+    default void modifier$setBaseValue(double var1) {
+        this.setBaseValue(var1);
     }
 
-    @Override
-    public void removeModifiers(Multimap<String, AttributeModifier> map) {
-        this.removeAttributeModifiers(map);
+    @Intrinsic
+    default AttributeModifier modifier$getModifier(UUID var1) {
+        return (AttributeModifier) this.getModifier(var1);
     }
 
-    @Override
-    public void applyModifiers(Multimap<String, AttributeModifier> map) {
-        this.applyAttributeModifiers(map);
+    default void modifier$apply(AttributeModifier var1) {
+        this.applyModifier((net.minecraft.entity.ai.attributes.AttributeModifier) var1);
+    }
+
+    default void modifier$remove(AttributeModifier var1) {
+        this.removeModifier((net.minecraft.entity.ai.attributes.AttributeModifier) var1);
+    }
+
+    default double modifier$getValue() {
+        return this.getAttributeValue();
     }
 }

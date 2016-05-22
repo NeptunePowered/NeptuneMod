@@ -151,8 +151,13 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
         return (Biome) getBiome(new BlockPos(x, 0, z), worldObj.getWorldChunkManager());
     }
 
-    @Override
-    public Map<Position, TileEntity> getTileEntityMap() {
+    /**
+     * This is a hack as so that it's not included on the dev env as it will cause a StackOverflowException :(
+     *
+     * @author jamierocks
+     */
+    @Intrinsic
+    public Map<Position, TileEntity> chunk$getTileEntityMap() {
         final Map<Position, TileEntity> tileEntityMap = Maps.newHashMap();
 
         for (BlockPos pos : this.shadow$getTileEntityMap().keySet()) {

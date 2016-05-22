@@ -23,29 +23,26 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.event;
 
-import net.canarymod.api.chat.ChatComponent;
-import net.canarymod.api.chat.HoverEvent;
 import net.canarymod.api.chat.HoverEventAction;
-import net.minecraft.util.IChatComponent;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(net.minecraft.event.HoverEvent.class)
-@Implements(@Interface(iface = HoverEvent.class, prefix = "event$"))
-public abstract class MixinHoverEvent implements HoverEvent {
+@Mixin(net.minecraft.event.HoverEvent.Action.class)
+public abstract class MixinHoverEventAction implements HoverEventAction {
 
-    @Shadow private net.minecraft.event.HoverEvent.Action action;
-    @Shadow private IChatComponent value;
+    @Shadow
+    public abstract boolean shouldAllowInChat();
+
+    @Shadow
+    public abstract String getCanonicalName();
 
     @Override
-    public HoverEventAction getAction() {
-        return (HoverEventAction) (Object) this.action;
+    public boolean allowedInChat() {
+        return this.shouldAllowInChat();
     }
 
-    public ChatComponent event$getValue() {
-        return new NeptuneChatComponent(value);
+    @Override
+    public String getName() {
+        return this.getCanonicalName();
     }
 }
