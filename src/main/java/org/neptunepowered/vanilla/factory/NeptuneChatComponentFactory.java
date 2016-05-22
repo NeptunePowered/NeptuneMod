@@ -34,8 +34,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneClickEventAction;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneHoverEventAction;
 
 public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
@@ -186,57 +184,58 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ClickEvent newClickEvent(ClickEventAction action, String value) {
-        return (ClickEvent) new net.minecraft.event.ClickEvent(((NeptuneClickEventAction) action).getHandle(), value);
+        return (ClickEvent) new net.minecraft.event.ClickEvent(
+                (net.minecraft.event.ClickEvent.Action) (Object) action, value);
     }
 
     @Override
     public ClickEventAction getClickEventActionByName(String name) {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.getValueByCanonicalName(name));
+        return (ClickEventAction) (Object) net.minecraft.event.ClickEvent.Action.getValueByCanonicalName(name);
     }
 
     @Override
     public ClickEventAction getOpenURL() {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.OPEN_URL);
+        return (ClickEventAction) (Object) net.minecraft.event.ClickEvent.Action.OPEN_URL;
     }
 
     @Override
     public ClickEventAction getOpenFile() {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.OPEN_FILE);
+        return (ClickEventAction) (Object) net.minecraft.event.ClickEvent.Action.OPEN_FILE;
     }
 
     @Override
     public ClickEventAction getRunCommand() {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.RUN_COMMAND);
+        return (ClickEventAction) (Object) net.minecraft.event.ClickEvent.Action.RUN_COMMAND;
     }
 
     @Override
     public ClickEventAction getSuggestCommand() {
-        return new NeptuneClickEventAction(net.minecraft.event.ClickEvent.Action.SUGGEST_COMMAND);
+        return (ClickEventAction) (Object) net.minecraft.event.ClickEvent.Action.SUGGEST_COMMAND;
     }
 
     @Override
     public HoverEvent newHoverEvent(HoverEventAction action, ChatComponent value) {
-        return (HoverEvent) new net.minecraft.event.HoverEvent(((NeptuneHoverEventAction) action).getHandle(),
+        return (HoverEvent) new net.minecraft.event.HoverEvent((net.minecraft.event.HoverEvent.Action) (Object) action,
                 ((NeptuneChatComponent) value).getHandle());
     }
 
     @Override
     public HoverEventAction getHoverEventActionByName(String name) {
-        return new NeptuneHoverEventAction(net.minecraft.event.HoverEvent.Action.getValueByCanonicalName(name));
+        return (HoverEventAction) (Object) net.minecraft.event.HoverEvent.Action.getValueByCanonicalName(name);
     }
 
     @Override
     public HoverEventAction getShowText() {
-        return new NeptuneHoverEventAction(net.minecraft.event.HoverEvent.Action.SHOW_TEXT);
+        return (HoverEventAction) (Object) net.minecraft.event.HoverEvent.Action.SHOW_TEXT;
     }
 
     @Override
     public HoverEventAction getShowAchievement() {
-        return new NeptuneHoverEventAction(net.minecraft.event.HoverEvent.Action.SHOW_ACHIEVEMENT);
+        return (HoverEventAction) (Object) net.minecraft.event.HoverEvent.Action.SHOW_ACHIEVEMENT;
     }
 
     @Override
     public HoverEventAction getShowItem() {
-        return new NeptuneHoverEventAction(net.minecraft.event.HoverEvent.Action.SHOW_ITEM);
+        return (HoverEventAction) (Object) net.minecraft.event.HoverEvent.Action.SHOW_ITEM;
     }
 }

@@ -45,7 +45,8 @@ public abstract class MixinHoverEvent implements HoverEvent {
         return (HoverEventAction) (Object) this.action;
     }
 
-    public ChatComponent event$getValue() {
+    @Override
+    public ChatComponent getValue() {
         return new NeptuneChatComponent(value);
     }
 }

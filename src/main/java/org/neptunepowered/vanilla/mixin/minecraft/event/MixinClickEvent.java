@@ -25,7 +25,6 @@ package org.neptunepowered.vanilla.mixin.minecraft.event;
 
 import net.canarymod.api.chat.ClickEvent;
 import net.canarymod.api.chat.ClickEventAction;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneClickEventAction;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -43,7 +42,7 @@ public abstract class MixinClickEvent implements ClickEvent {
 
     @Override
     public ClickEventAction getAction() {
-        return new NeptuneClickEventAction(action);
+        return (ClickEventAction) (Object) this.action;
     }
 
     @Intrinsic

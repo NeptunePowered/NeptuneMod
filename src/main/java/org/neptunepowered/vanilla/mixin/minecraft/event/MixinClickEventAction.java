@@ -21,25 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.chat;
+package org.neptunepowered.vanilla.mixin.minecraft.event;
 
-import net.canarymod.api.chat.HoverEventAction;
-import net.minecraft.event.HoverEvent;
-import org.neptunepowered.vanilla.util.Wrapper;
+import net.canarymod.api.chat.ClickEventAction;
+import net.minecraft.event.ClickEvent;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public class NeptuneHoverEventAction extends Wrapper<HoverEvent.Action> implements HoverEventAction {
+@Mixin(ClickEvent.Action.class)
+public abstract class MixinClickEventAction implements ClickEventAction {
 
-    public NeptuneHoverEventAction(HoverEvent.Action handle) {
-        super(handle);
-    }
+    @Shadow
+    public abstract boolean shouldAllowInChat();
+
+    @Shadow
+    public abstract String getCanonicalName();
 
     @Override
     public boolean allowedInChat() {
-        return getHandle().shouldAllowInChat();
+        return this.shouldAllowInChat();
     }
 
     @Override
     public String getName() {
-        return getHandle().getCanonicalName();
+        return this.getCanonicalName();
     }
 }
