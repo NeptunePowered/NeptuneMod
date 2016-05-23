@@ -77,6 +77,16 @@ import net.minecraft.entity.ai.EntityAIFleeSun;
 import net.minecraft.entity.ai.EntityAIFollowGolem;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAIFollowParent;
+import net.minecraft.entity.ai.EntityAIHarvestFarmland;
+import net.minecraft.entity.ai.EntityAILeapAtTarget;
+import net.minecraft.entity.ai.EntityAILookAtTradePlayer;
+import net.minecraft.entity.ai.EntityAILookAtVillager;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAIMate;
+import net.minecraft.entity.ai.EntityAIMoveIndoors;
+import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
+import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
+import net.minecraft.entity.ai.EntityAIMoveTowardsTarget;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.passive.EntityTameable;
@@ -169,7 +179,7 @@ public class NeptuneAIFactory implements AIFactory {
 
     @Override
     public AIHarvestFarmland newAIHarvestFarmland(Villager villager, double speed) {
-        return null;
+        return (AIHarvestFarmland) new EntityAIHarvestFarmland((EntityVillager) villager, speed);
     }
 
     @Override
@@ -179,47 +189,47 @@ public class NeptuneAIFactory implements AIFactory {
 
     @Override
     public AILeapAtTarget newAILeapAtTarget(EntityLiving entity, float leapMotionY) {
-        return null;
+        return (AILeapAtTarget) new EntityAILeapAtTarget((net.minecraft.entity.EntityLiving) entity, leapMotionY);
     }
 
     @Override
     public AILookAtTradePlayer newAILookAtTradePlayer(Villager villager) {
-        return null;
+        return (AILookAtTradePlayer) new EntityAILookAtTradePlayer((EntityVillager) villager);
     }
 
     @Override
     public AILookAtVillager newAILookAtVillager(IronGolem golem) {
-        return null;
+        return (AILookAtVillager) new EntityAILookAtVillager((EntityIronGolem) golem);
     }
 
     @Override
     public AILookIdle newAILookIdle(EntityLiving entity) {
-        return null;
+        return (AILookIdle) new EntityAILookIdle((net.minecraft.entity.EntityLiving) entity);
     }
 
     @Override
     public AIMate newAIMate(EntityAnimal animal, double speed) {
-        return null;
+        return (AIMate) new EntityAIMate((net.minecraft.entity.passive.EntityAnimal) animal, speed);
     }
 
     @Override
     public AIMoveIndoors newAIMoveIndoors(EntityMob entity) {
-        return null;
+        return (AIMoveIndoors) new EntityAIMoveIndoors((EntityCreature) entity);
     }
 
     @Override
     public AIMoveThroughVillage newAIMoveThroughVillage(EntityMob entity, double speed, boolean isNoctournal) {
-        return null;
+        return (AIMoveThroughVillage) new EntityAIMoveThroughVillage((EntityCreature) entity, speed, isNoctournal);
     }
 
     @Override
     public AIMoveTowardsRestriction newAIMoveTowardsRestriction(EntityMob entity, double speed) {
-        return null;
+        return (AIMoveTowardsRestriction) new EntityAIMoveTowardsRestriction((EntityCreature) entity, speed);
     }
 
     @Override
     public AIMoveTowardsTarget newAIMoveTowardsTarget(EntityMob entity, double speed, float maxDistance) {
-        return null;
+        return (AIMoveTowardsTarget) new EntityAIMoveTowardsTarget((EntityCreature) entity, speed, maxDistance);
     }
 
     @Override
