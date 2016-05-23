@@ -33,17 +33,22 @@ import net.canarymod.commandsys.DuplicateCommandException;
 import net.canarymod.database.DatabaseLoader;
 import net.canarymod.help.HelpManager;
 import net.canarymod.hook.HookExecutor;
+import net.canarymod.kit.KitProvider;
 import net.canarymod.motd.CanaryMessageOfTheDayListener;
 import net.canarymod.motd.MessageOfTheDay;
+import net.canarymod.permissionsystem.PermissionManager;
 import net.canarymod.plugin.DefaultPluginManager;
 import net.canarymod.plugin.PluginLangLoader;
 import net.canarymod.user.OperatorsProvider;
+import net.canarymod.user.ReservelistProvider;
+import net.canarymod.user.UserAndGroupsProvider;
 import net.canarymod.user.WhitelistProvider;
+import net.canarymod.warp.WarpProvider;
 import net.minecraft.server.MinecraftServer;
+import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.interfaces.minecraft.command.IMixinServerCommandManager;
 import org.neptunepowered.vanilla.wrapper.NeptuneTranslator;
 import org.neptunepowered.vanilla.wrapper.commandsys.NeptunePlayerSelector;
-import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.wrapper.util.NeptuneJsonNBTUtility;
 
 public class Neptune extends Canary {
@@ -72,11 +77,28 @@ public class Neptune extends Canary {
         this.banManager = new BanManager(); // bans
         this.whitelist = new WhitelistProvider(); // whitelist
         this.ops = new OperatorsProvider(); // op
+        this.reservelist = new ReservelistProvider(); // reverse list
         this.factory = new NeptuneFactory(); // Factories
         this.playerSelector = new NeptunePlayerSelector(); // player selector
         this.pluginManager = new DefaultPluginManager();
 
         pluginManager.scanForPlugins(); // Scan for plugins
+    }
+
+    public void initPermissions() {
+        this.permissionManager = new PermissionManager();
+    }
+
+    public void initUserAndGroupsManager() {
+        this.userAndGroupsProvider = new UserAndGroupsProvider();
+    }
+
+    public void initKits() {
+        this.kitProvider = new KitProvider();
+    }
+
+    public void initWarps() {
+        this.warpProvider = new WarpProvider();
     }
 
     public void registerCanaryCommands() {
@@ -89,7 +111,7 @@ public class Neptune extends Canary {
             log.error("Failed to set up system commands! The command already exists!", f);
         }
         try {
-            this.commandManager.registerCommands(new org.neptunepowered.vanilla.NeptuneCommands(), getServer(), true);
+            this.commandManager.registerCommands(new NeptuneCommands(), getServer(), true);
         } catch (CommandDependencyException e) {
             log.error("Failed to set up system commands! Dependency resolution failed!", e);
         } catch (DuplicateCommandException f) {
@@ -106,6 +128,10 @@ public class Neptune extends Canary {
             return;
         }
 
+        this.initPermissions();
+        this.initUserAndGroupsManager();
+        this.initKits();
+        this.initWarps();
         this.registerCanaryCommands();
         this.initMOTDListener();
         isInitialised = true;

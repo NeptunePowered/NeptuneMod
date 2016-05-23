@@ -106,7 +106,7 @@ public class NeptuneWorldManager implements WorldManager {
 
     @Override
     public List<String> getExistingWorlds() {
-        return null;
+        return Lists.newArrayList();
     }
 
     @Override
