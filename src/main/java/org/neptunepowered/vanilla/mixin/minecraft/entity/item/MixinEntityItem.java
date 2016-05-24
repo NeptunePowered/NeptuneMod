@@ -28,10 +28,14 @@ import net.canarymod.api.inventory.Item;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntity;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityItem.class)
+@Implements(@Interface(iface = net.canarymod.api.entity.EntityItem.class, prefix = "item$"))
 public abstract class MixinEntityItem extends MixinEntity implements net.canarymod.api.entity.EntityItem {
 
     @Shadow private int age;
@@ -43,6 +47,18 @@ public abstract class MixinEntityItem extends MixinEntity implements net.canarym
 
     @Shadow
     public abstract void setEntityItemStack(ItemStack stack);
+
+    @Shadow
+    public abstract String getOwner();
+
+    @Shadow
+    public abstract void setOwner(String owner);
+
+    @Shadow
+    public abstract String getThrower();
+
+    @Shadow
+    public abstract void setThrower(String thrower);
 
     @Override
     public void setAge(short age) {
@@ -84,21 +100,25 @@ public abstract class MixinEntityItem extends MixinEntity implements net.canarym
         this.setEntityItemStack((ItemStack) item);
     }
 
-    @Override
-    @Shadow
-    public abstract String getOwner();
+    @Intrinsic
+    public String item$getOwner() {
+        return this.getOwner();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setOwner(String owner);
+    @Intrinsic
+    public void item$setOwner(String owner) {
+        this.setOwner(owner);
+    }
 
-    @Override
-    @Shadow
-    public abstract String getThrower();
+    @Intrinsic
+    public String item$getThrower() {
+        return this.getThrower();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setThrower(String thrower);
+    @Intrinsic
+    public void item$setThrower(String thrower) {
+        this.setThrower(thrower);
+    }
 
     @Override
     public EntityType getEntityType() {

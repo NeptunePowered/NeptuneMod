@@ -26,23 +26,31 @@ package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.living.monster.Witch;
 import net.minecraft.entity.monster.EntityWitch;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityWitch.class)
+@Implements(@Interface(iface = Witch.class, prefix = "witch$"))
 public abstract class MixinEntityWitch extends MixinEntityMob implements Witch {
 
     @Shadow
     public abstract boolean getAggressive();
+
+    @Shadow
+    public abstract void setAggressive(boolean aggressive);
 
     @Override
     public boolean isAgressive() {
         return this.getAggressive();
     }
 
-    @Override
-    @Shadow
-    public abstract void setAggressive(boolean aggressive);
+    @Intrinsic
+    public void witch$setAggressive(boolean aggressive) {
+        this.setAggressive(aggressive);
+    }
 
     @Override
     public String getFqName() {

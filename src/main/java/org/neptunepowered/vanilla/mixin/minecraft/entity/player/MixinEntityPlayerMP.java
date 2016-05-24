@@ -46,18 +46,25 @@ import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
+import org.neptunepowered.vanilla.util.converter.GameModeConverter;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityPlayerMP.class)
+@Implements(@Interface(iface = Player.class, prefix = "player$"))
 public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements Player {
 
     @Shadow public int ping;
     @Shadow private StatisticsFile statsFile;
     @Shadow public NetHandlerPlayServer playerNetServerHandler;
+    @Shadow public ItemInWorldManager theItemInWorldManager;
 
     @Override
     public void initPlayerData() {
@@ -244,9 +251,9 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     }
 
-    @Override
-    public GameProfile getGameProfile() {
-        return super.getGameProfile();
+    @Intrinsic
+    public GameProfile player$getGameProfile() {
+        return this.getGameProfile();
     }
 
     @Override
@@ -351,12 +358,12 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public GameMode getMode() {
-        return null;
+        return GameModeConverter.of(this.theItemInWorldManager.getGameType());
     }
 
     @Override
     public void setMode(GameMode mode) {
-
+        this.theItemInWorldManager.setGameType(GameModeConverter.of(mode));
     }
 
     @Override

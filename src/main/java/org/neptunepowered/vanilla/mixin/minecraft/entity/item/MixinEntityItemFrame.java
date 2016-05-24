@@ -29,10 +29,14 @@ import net.canarymod.api.inventory.Item;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.ItemStack;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityHanging;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityItemFrame.class)
+@Implements(@Interface(iface = ItemFrame.class, prefix = "frame$"))
 public abstract class MixinEntityItemFrame extends MixinEntityHanging implements ItemFrame {
 
     @Shadow private float itemDropChance;
@@ -45,6 +49,9 @@ public abstract class MixinEntityItemFrame extends MixinEntityHanging implements
 
     @Shadow
     public abstract int shadow$getRotation();
+
+    @Shadow
+    public abstract void setItemRotation(int rot);
 
     @Override
     public Item getItemInFrame() {
@@ -61,9 +68,10 @@ public abstract class MixinEntityItemFrame extends MixinEntityHanging implements
         return this.shadow$getRotation();
     }
 
-    @Override
-    @Shadow
-    public abstract void setItemRotation(int rot);
+    @Intrinsic
+    public void frame$setItemRotation(int rot) {
+        this.setItemRotation(rot);
+    }
 
     @Override
     public float getItemDropChance() {

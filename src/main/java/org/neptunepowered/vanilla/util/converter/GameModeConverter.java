@@ -21,36 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
+package org.neptunepowered.vanilla.util.converter;
 
-import net.canarymod.api.entity.EntityType;
-import net.canarymod.api.entity.living.monster.Guardian;
-import net.minecraft.entity.monster.EntityGuardian;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
-import org.spongepowered.asm.mixin.Intrinsic;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+import net.canarymod.api.GameMode;
+import net.minecraft.world.WorldSettings;
 
-@Mixin(EntityGuardian.class)
-@Implements(@Interface(iface = Guardian.class, prefix = "guardian$"))
-public abstract class MixinEntityGuardian extends MixinEntityMob implements Guardian {
+public final class GameModeConverter {
 
-    @Shadow
-    public abstract boolean isElder();
+    private static BiMap<WorldSettings.GameType, GameMode> map =
+            ImmutableBiMap.<WorldSettings.GameType, GameMode>builder()
+                    .put(WorldSettings.GameType.SURVIVAL, GameMode.SURVIVAL)
+                    .put(WorldSettings.GameType.CREATIVE, GameMode.CREATIVE)
+                    .put(WorldSettings.GameType.ADVENTURE, GameMode.ADVENTURE)
+                    .put(WorldSettings.GameType.SPECTATOR, GameMode.SPECTATOR)
+                    .build();
 
-    @Intrinsic
-    public boolean guardian$isElder() {
-        return this.isElder();
+    public static GameMode of(WorldSettings.GameType artType) {
+        return map.get(artType);
     }
 
-    @Override
-    public String getFqName() {
-        return "Guardian";
-    }
-
-    @Override
-    public EntityType getEntityType() {
-        return EntityType.GUARDIAN;
+    public static WorldSettings.GameType of(GameMode art) {
+        return map.inverse().get(art);
     }
 }

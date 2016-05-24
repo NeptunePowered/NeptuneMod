@@ -28,12 +28,16 @@ import net.canarymod.api.world.BiomeType;
 import net.canarymod.api.world.World;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.biome.BiomeGenBase;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Random;
 
 @Mixin(BiomeGenBase.class)
+@Implements(@Interface(iface = Biome.class, prefix = "biome$"))
 public abstract class MixinBiomeGenBase implements Biome {
 
     @Shadow public float temperature;
@@ -41,11 +45,23 @@ public abstract class MixinBiomeGenBase implements Biome {
     @Shadow protected boolean enableSnow;
     @Shadow protected boolean enableRain;
 
-    @Shadow public abstract void decorate(net.minecraft.world.World worldIn, Random p_180624_2_, BlockPos p_180624_3_);
-    @Shadow public abstract float getSpawningChance();
-    @Shadow public abstract int getIntRainfall();
-    @Shadow public abstract BiomeGenBase setTemperatureRainfall(float p_76732_1_, float p_76732_2_);
-    @Shadow public abstract BiomeGenBase setColor(int p_76739_1_);
+    @Shadow
+    public abstract void decorate(net.minecraft.world.World worldIn, Random p_180624_2_, BlockPos p_180624_3_);
+
+    @Shadow
+    public abstract float getSpawningChance();
+
+    @Shadow
+    public abstract int getIntRainfall();
+
+    @Shadow
+    public abstract BiomeGenBase setTemperatureRainfall(float p_76732_1_, float p_76732_2_);
+
+    @Shadow
+    public abstract BiomeGenBase setColor(int p_76739_1_);
+
+    @Shadow
+    public abstract boolean canRain();
 
     @Override
     public boolean canSpawnLightning() {
@@ -59,56 +75,56 @@ public abstract class MixinBiomeGenBase implements Biome {
 
     @Override
     public float getSpawnChance() {
-        return getSpawningChance();
+        return this.getSpawningChance();
     }
 
     @Override
     public int getRainfall() {
-        return getIntRainfall();
+        return this.getIntRainfall();
     }
 
     @Override
     public float getTemperature() {
-        return temperature;
+        return this.temperature;
     }
 
     @Override
     public void decorate(World world, Random rnd, int x, int z) {
-        decorate((net.minecraft.world.WorldServer) world, rnd, new BlockPos(x, 0, z));
+        this.decorate((net.minecraft.world.WorldServer) world, rnd, new BlockPos(x, 0, z));
     }
 
     @Override
     public BiomeType getBiomeType() {
-        return BiomeType.fromId((byte) biomeID);
+        return BiomeType.fromId((byte) this.biomeID);
     }
 
     @Override
     public void setTemperatureAndPrecipitation(float temp, float precipitation) {
-        setTemperatureRainfall(temp, precipitation);
+        this.setTemperatureRainfall(temp, precipitation);
     }
 
     @Override
     public void setCanSnow(boolean canSnow) {
-        enableSnow = canSnow;
+        this.enableSnow = canSnow;
     }
 
     @Override
     public void setCanRain(boolean canRain) {
-        enableRain = canRain;
+        this.enableRain = canRain;
     }
 
     @Override
     public boolean canSnow() {
-        return enableSnow;
+        return this.enableSnow;
     }
 
-    @Override
-    public boolean canRain() {
-        return enableRain;
+    @Intrinsic
+    public boolean biome$canRain() {
+        return this.canRain();
     }
 
     @Override
     public void setColor(String hexColor) {
-        setColor(Integer.parseInt(hexColor.replaceFirst("#", ""), 16));
+        this.setColor(Integer.parseInt(hexColor.replaceFirst("#", ""), 16));
     }
 }

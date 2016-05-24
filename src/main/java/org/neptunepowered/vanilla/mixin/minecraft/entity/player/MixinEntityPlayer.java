@@ -33,9 +33,13 @@ import net.canarymod.api.inventory.PlayerInventory;
 import net.canarymod.hook.player.BedEnterHook;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,17 +47,23 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityPlayer.class)
+@Implements(@Interface(iface = Human.class, prefix = "human$"))
 public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements Human {
 
     @Shadow public PlayerCapabilities capabilities;
+    @Shadow private ItemStack itemInUse;
 
     @Shadow
     public abstract IChatComponent shadow$getDisplayName();
 
     @Shadow
-    protected GameProfile getGameProfile() {
-        return null;
-    }
+    public abstract GameProfile getGameProfile();
+
+    @Shadow
+    public abstract boolean isBlocking();
+
+    @Shadow
+    public abstract boolean isUsingItem();
 
     @Inject(method = "trySleep", at = @At(value = "INVOKE"))
     public void onTrySleep(BlockPos bedLocation, CallbackInfoReturnable<EntityPlayer.EnumStatus> callbackInfo) {
@@ -69,7 +79,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Override
     public String getDisplayName() {
-        return shadow$getDisplayName().getUnformattedText(); // .getFormattedText(); Doesn't exist on the server!!
+        return shadow$getDisplayName().getUnformattedText();
     }
 
     @Override
@@ -117,9 +127,9 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     }
 
-    @Override
-    public boolean isBlocking() {
-        return false;
+    @Intrinsic
+    public boolean human$isBlocking() {
+        return this.isBlocking();
     }
 
     @Override
@@ -152,13 +162,13 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     }
 
-    @Override
-    public boolean isUsingItem() {
-        return false;
+    @Intrinsic
+    public boolean human$isUsingItem() {
+        return this.isUsingItem();
     }
 
     @Override
     public Item getItemInUse() {
-        return null;
+        return (Item) this.itemInUse;
     }
 }

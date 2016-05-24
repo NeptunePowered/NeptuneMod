@@ -31,10 +31,14 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemStack;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
 import org.neptunepowered.vanilla.util.converter.RotationsConverter;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityArmorStand.class)
+@Implements(@Interface(iface = ArmorStand.class, prefix = "stand$"))
 public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implements ArmorStand {
 
     @Shadow private net.minecraft.util.Rotations headRotation;
@@ -83,6 +87,15 @@ public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implem
     @Shadow
     public abstract void setRightLegRotation(net.minecraft.util.Rotations p_175427_1_);
 
+    @Shadow
+    public abstract boolean isSmall();
+
+    @Shadow
+    public abstract void setSmall(boolean small);
+
+    @Shadow
+    public abstract void setShowArms(boolean set);
+
     @Override
     public Item[] getAllEquipment() {
         return (Item[]) this.getInventory();
@@ -103,22 +116,25 @@ public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implem
         this.setCurrentItemOrArmor(slot.ordinal(), (ItemStack) item);
     }
 
-    @Override
-    @Shadow
-    public abstract boolean isSmall();
+    @Intrinsic
+    public boolean stand$isSmall() {
+        return this.isSmall();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setSmall(boolean small);
+    @Intrinsic
+    public void stand$setSmall(boolean small) {
+        this.setSmall(small);
+    }
 
     @Override
     public boolean showArms() {
         return this.getShowArms();
     }
 
-    @Override
-    @Shadow
-    public abstract void setShowArms(boolean set);
+    @Intrinsic
+    public void stand$setShowArms(boolean set) {
+        this.setShowArms(set);
+    }
 
     @Override
     public boolean isSlotDiabled(Slot slot, Disability disability) {

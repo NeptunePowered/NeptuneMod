@@ -34,8 +34,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(net.minecraft.entity.projectile.EntityThrowable.class)
 public abstract class MixinEntityThrowable extends MixinEntity implements EntityThrowable {
 
-    protected float gravity = 0.3f;
     @Shadow private EntityLivingBase thrower;
+    private float gravity = 0.3f;
 
     @Overwrite
     protected float getGravityVelocity() {
@@ -49,7 +49,7 @@ public abstract class MixinEntityThrowable extends MixinEntity implements Entity
 
     @Override
     public float getGravity() {
-        return getGravityVelocity();
+        return this.getGravityVelocity();
     }
 
     @Override

@@ -27,13 +27,26 @@ import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.living.IronGolem;
 import net.canarymod.api.world.Village;
 import net.minecraft.entity.monster.EntityIronGolem;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityIronGolem.class)
+@Implements(@Interface(iface = IronGolem.class, prefix = "golem$"))
 public abstract class MixinEntityIronGolem extends MixinEntityGolem implements IronGolem {
 
     @Shadow private net.minecraft.village.Village villageObj;
+
+    @Shadow
+    public abstract boolean isPlayerCreated();
+
+    @Shadow
+    public abstract void setPlayerCreated(boolean b);
+
+    @Shadow
+    public abstract void setHoldingRose(boolean b);
 
     @Override
     public Village getVillage() {
@@ -45,22 +58,25 @@ public abstract class MixinEntityIronGolem extends MixinEntityGolem implements I
         this.villageObj = (net.minecraft.village.Village) village;
     }
 
-    @Override
-    @Shadow
-    public abstract boolean isPlayerCreated();
+    @Intrinsic
+    public boolean golem$isPlayerCreated() {
+        return this.isPlayerCreated();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setPlayerCreated(boolean b);
+    @Intrinsic
+    public void golem$setPlayerCreated(boolean b) {
+        this.setPlayerCreated(b);
+    }
 
     @Override
     public boolean isHoldingRose() {
         return false;
     }
 
-    @Override
-    @Shadow
-    public abstract void setHoldingRose(boolean b);
+    @Intrinsic
+    public void golem$setHoldingRose(boolean b) {
+        this.setHoldingRose(b);
+    }
 
     @Override
     public int getHoldRoseTicks() {

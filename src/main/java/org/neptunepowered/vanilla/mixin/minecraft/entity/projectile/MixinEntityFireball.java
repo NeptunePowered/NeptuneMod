@@ -28,11 +28,15 @@ import net.canarymod.api.entity.living.LivingBase;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityFireball;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntity;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityFireball.class)
+@Implements(@Interface(iface = Fireball.class, prefix = "fireball$"))
 public abstract class MixinEntityFireball extends MixinEntity implements Fireball {
 
     @Shadow private int ticksAlive;
@@ -42,6 +46,11 @@ public abstract class MixinEntityFireball extends MixinEntity implements Firebal
     @Shadow public double accelerationZ;
     @Shadow public EntityLivingBase shootingEntity;
     private float motionFactor = 0.95F;
+
+    @Overwrite
+    public float getMotionFactor() {
+        return this.motionFactor;
+    }
 
     @Override
     public int getTicksAlive() {
@@ -93,10 +102,9 @@ public abstract class MixinEntityFireball extends MixinEntity implements Firebal
         this.accelerationZ = accelZ;
     }
 
-    @Override
-    @Overwrite
-    public float getMotionFactor() {
-        return this.motionFactor;
+    @Intrinsic
+    public float fireball$getMotionFactor() {
+        return this.getMotionFactor();
     }
 
     @Override

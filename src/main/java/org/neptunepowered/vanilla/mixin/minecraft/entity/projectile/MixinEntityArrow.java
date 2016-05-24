@@ -28,10 +28,14 @@ import net.canarymod.api.entity.Entity;
 import net.canarymod.api.entity.EntityType;
 import net.minecraft.entity.projectile.EntityArrow;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntity;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityArrow.class)
+@Implements(@Interface(iface = Arrow.class, prefix = "arrow$"))
 public abstract class MixinEntityArrow extends MixinEntity implements Arrow {
 
     @Shadow public net.minecraft.entity.Entity shootingEntity;
@@ -44,6 +48,15 @@ public abstract class MixinEntityArrow extends MixinEntity implements Arrow {
     @Shadow
     public abstract boolean getIsCritical();
 
+    @Shadow
+    public abstract double getDamage();
+
+    @Shadow
+    public abstract void setDamage(double damage);
+
+    @Shadow
+    public abstract void setIsCritical(boolean critical);
+
     @Override
     public boolean canPickUp() {
         return this.canBePickedUp == 1 ? true : false;
@@ -54,22 +67,25 @@ public abstract class MixinEntityArrow extends MixinEntity implements Arrow {
         this.canBePickedUp = canPickUp == true ? 1 : 0;
     }
 
-    @Override
-    @Shadow
-    public abstract double getDamage();
+    @Intrinsic
+    public double arrow$getDamage() {
+        return this.getDamage();
+    }
 
-    @Override
-    @Shadow
-    public abstract void setDamage(double damage);
+    @Intrinsic
+    public void arrow$setDamage(double damage) {
+        this.setDamage(damage);
+    }
 
     @Override
     public boolean isCritical() {
         return this.getIsCritical();
     }
 
-    @Override
-    @Shadow
-    public abstract void setIsCritical(boolean critical);
+    @Intrinsic
+    public void arrow$setIsCritical(boolean critical) {
+        this.setIsCritical(critical);
+    }
 
     @Override
     public Entity getOwner() {

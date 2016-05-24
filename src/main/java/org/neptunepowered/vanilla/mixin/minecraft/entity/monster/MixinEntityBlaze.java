@@ -26,18 +26,26 @@ package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.living.monster.Blaze;
 import net.minecraft.entity.monster.EntityBlaze;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(EntityBlaze.class)
+@Implements(@Interface(iface = Blaze.class, prefix = "blaze$"))
 public abstract class MixinEntityBlaze extends MixinEntityMob implements Blaze {
 
     @Shadow
     public abstract void setOnFire(boolean onFire);
 
-    @Override
     @Shadow
     public abstract boolean isBurning();
+
+    @Intrinsic
+    public boolean blaze$isBurning() {
+        return this.isBurning();
+    }
 
     @Override
     public void setBurning(boolean isBurning) {
