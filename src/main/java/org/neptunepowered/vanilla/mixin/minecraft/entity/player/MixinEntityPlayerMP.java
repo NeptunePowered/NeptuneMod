@@ -53,7 +53,6 @@ import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerP
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
-import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -251,9 +250,9 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     }
 
-    @Intrinsic
-    public GameProfile player$getGameProfile() {
-        return this.getGameProfile();
+    @Override
+    public GameProfile getGameProfile() {
+        return super.getGameProfile();
     }
 
     @Override

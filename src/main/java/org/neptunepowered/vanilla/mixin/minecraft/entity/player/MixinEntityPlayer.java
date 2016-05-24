@@ -57,7 +57,9 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
     public abstract IChatComponent shadow$getDisplayName();
 
     @Shadow
-    public abstract GameProfile getGameProfile();
+    public GameProfile getGameProfile() {
+        return null;
+    }
 
     @Shadow
     public abstract boolean isBlocking();
