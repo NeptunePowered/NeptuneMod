@@ -23,6 +23,8 @@
  */
 package org.neptunepowered.vanilla.world;
 
+import static net.canarymod.Canary.log;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.canarymod.Canary;
@@ -32,9 +34,16 @@ import net.canarymod.api.world.WorldManager;
 import net.canarymod.api.world.WorldType;
 import net.canarymod.config.Configuration;
 import net.canarymod.config.WorldConfiguration;
+import net.canarymod.hook.system.LoadWorldHook;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import org.neptunepowered.vanilla.interfaces.minecraft.server.IMixinMinecraftServer;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinWorldInfo;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 
@@ -111,28 +120,55 @@ public class NeptuneWorldManager implements WorldManager {
 
     @Override
     public boolean createWorld(WorldConfiguration worldConfiguration) {
-        String worldFqName = worldConfiguration.getFile().getFileName().replace(".cfg", "");
-        String worldName = worldFqName.replaceAll("_.+", "");
-        DimensionType dimensionType = DimensionType.fromName(worldFqName.replaceAll(".+_", ""));
-        long seed = worldConfiguration.getWorldSeed().matches("\\d+") ?
+        if (worldConfiguration == null) {
+            return false;
+        }
+
+        final MinecraftServer minecraftServer = MinecraftServer.getServer();
+
+        final String worldFqName = worldConfiguration.getFile().getFileName().replace(".cfg", "");
+        final String worldName = worldFqName.replaceAll("_.+", "");
+        final DimensionType dimensionType = DimensionType.fromName(worldFqName.replaceAll(".+_", ""));
+        final long seed = worldConfiguration.getWorldSeed().matches("\\d+") ?
                 Long.valueOf(worldConfiguration.getWorldSeed()) : worldConfiguration.getWorldSeed().hashCode();
 
-        AnvilSaveHandler saveHandler =
+        final AnvilSaveHandler saveHandler =
                 new AnvilSaveHandler(new File(Canary.getWorkingDirectory(), "worlds"), worldName, true);
 
-        WorldSettings worldSettings = new WorldSettings(
+        final WorldSettings worldSettings = new WorldSettings(
                 seed,
                 GameModeConverter.of(worldConfiguration.getGameMode()),
                 worldConfiguration.generatesStructures(),
                 false,
                 net.minecraft.world.WorldType.parseWorldType(worldConfiguration.getWorldType().toString()));
-        WorldInfo worldInfo = new WorldInfo(worldSettings, worldName);
+        final WorldInfo worldInfo = new WorldInfo(worldSettings, worldName);
         ((IMixinWorldInfo) worldInfo).setDimensionType(dimensionType);
 
-        //WorldServer world = new WorldServer(MinecraftServer.getServer(), saveHandler, worldInfo, dimensionType
-        // .getId())
+        final WorldServer worldServer;
+        if (dimensionType == DimensionType.NORMAL) {
+            worldServer = new WorldServer(minecraftServer, saveHandler, worldInfo, dimensionType.getId(),
+                    minecraftServer.theProfiler);
+        } else {
+            worldServer = new WorldServerMulti(minecraftServer, saveHandler, dimensionType.getId(),
+                    (WorldServer) this.getWorld(worldName, DimensionType.NORMAL, true), minecraftServer.theProfiler);
+            ((IMixinWorld) worldServer).setWorldInfo(worldInfo);
+        }
 
-        return false;
+        worldServer.initialize(worldSettings);
+        worldServer.addWorldAccess(new net.minecraft.world.WorldManager(minecraftServer, worldServer));
+        worldServer.getWorldInfo().setGameType(GameModeConverter.of(worldConfiguration.getGameMode()));
+        minecraftServer.getConfigurationManager().setPlayerManager(new WorldServer[] { worldServer });
+        worldServer.getWorldInfo().setDifficulty(
+                EnumDifficulty.getDifficultyEnum(worldConfiguration.getDifficulty().getId()));
+
+        ((IMixinMinecraftServer) minecraftServer).initialWorldChunkLoad(worldServer);
+
+        this.existingWorlds.add(worldName + "_" + dimensionType.getName());
+        log.debug(String.format(
+                "Adding new world to world manager, filed as %s_%s", worldName, dimensionType.getName()));
+        this.loadedWorlds.put(worldName + "_" + dimensionType.getName(), (World) worldServer);
+        new LoadWorldHook((World) worldServer).call();
+        return true;
     }
 
     @Override
@@ -152,7 +188,7 @@ public class NeptuneWorldManager implements WorldManager {
 
     @Override
     public Collection<World> getAllWorlds() {
-        return Lists.newArrayList();
+        return Lists.newArrayList(this.loadedWorlds.values());
     }
 
     @Override

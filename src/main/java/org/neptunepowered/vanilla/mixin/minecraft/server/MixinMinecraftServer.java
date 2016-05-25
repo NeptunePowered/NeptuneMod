@@ -23,6 +23,8 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.server;
 
+import static net.minecraft.server.MinecraftServer.getCurrentTimeMillis;
+
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
@@ -52,12 +54,19 @@ import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
+import org.apache.logging.log4j.Logger;
+import org.neptunepowered.vanilla.interfaces.minecraft.server.IMixinMinecraftServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.neptunepowered.vanilla.wrapper.NeptuneOfflinePlayer;
 import org.neptunepowered.vanilla.wrapper.inventory.recipes.NeptuneRecipe;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -67,8 +76,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Mixin(MinecraftServer.class)
-public abstract class MixinMinecraftServer implements Server {
+@Implements(@Interface(iface = Server.class, prefix = "server$"))
+public abstract class MixinMinecraftServer implements Server, IMixinMinecraftServer {
 
+    @Shadow private static Logger logger;
     @Shadow public long[] tickTimeArray;
     @Shadow private int tickCounter;
     @Shadow private boolean serverRunning;
@@ -89,19 +100,39 @@ public abstract class MixinMinecraftServer implements Server {
     @Shadow
     public abstract PlayerProfileCache getPlayerProfileCache();
 
-    @Override
     @Shadow
     public abstract String getHostname();
+
+    @Shadow
+    protected abstract void setUserMessage(String message);
+
+    @Shadow
+    public abstract boolean isServerRunning();
+
+    @Shadow
+    protected abstract void outputPercentRemaining(String message, int percent);
+
+    @Shadow
+    protected abstract void clearCurrentTask();
+
+    @Overwrite
+    public int getMaxPlayers() {
+        return Configuration.getServerConfig().getMaxPlayers();
+    }
+
+    @Intrinsic
+    public String server$getHostname() {
+        return this.getHostname();
+    }
 
     @Override
     public int getNumPlayersOnline() {
         return serverConfigManager.getCurrentPlayerCount();
     }
 
-    @Override
-    @Overwrite
-    public int getMaxPlayers() {
-        return Configuration.getServerConfig().getMaxPlayers();
+    @Intrinsic
+    public int server$getMaxPlayers() {
+        return this.getMaxPlayers();
     }
 
     @Override
@@ -436,5 +467,38 @@ public abstract class MixinMinecraftServer implements Server {
     @Overwrite
     public String getServerModName() {
         return "NeptuneVanilla";
+    }
+
+    @Override
+    public void initialWorldChunkLoad(WorldServer worldServer) {
+        int i = 16;
+        int j = 4;
+        int k = 192;
+        int l = 625;
+        int i1 = 0;
+        this.setUserMessage("menu.generatingTerrain");
+        int j1 = 0;
+        logger.info("Preparing start region for level " + j1);
+        BlockPos blockpos = worldServer.getSpawnPoint();
+        long k1 = getCurrentTimeMillis();
+
+        for (int l1 = -192; l1 <= 192 && this.isServerRunning(); l1 += 16)
+        {
+            for (int i2 = -192; i2 <= 192 && this.isServerRunning(); i2 += 16)
+            {
+                long j2 = getCurrentTimeMillis();
+
+                if (j2 - k1 > 1000L)
+                {
+                    this.outputPercentRemaining("Preparing spawn area", i1 * 100 / 625);
+                    k1 = j2;
+                }
+
+                ++i1;
+                worldServer.theChunkProviderServer.loadChunk(blockpos.getX() + l1 >> 4, blockpos.getZ() + i2 >> 4);
+            }
+        }
+
+        this.clearCurrentTask();
     }
 }

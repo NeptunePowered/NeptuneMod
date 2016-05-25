@@ -25,14 +25,20 @@ package org.neptunepowered.vanilla.mixin.minecraft.world;
 
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(World.class)
-public abstract class MixinWorld {
+public abstract class MixinWorld implements IMixinWorld {
 
     @Shadow protected WorldInfo worldInfo;
 
     @Shadow
     public abstract long getSeed();
+
+    @Override
+    public void setWorldInfo(WorldInfo worldInfo) {
+        this.worldInfo = worldInfo;
+    }
 }
