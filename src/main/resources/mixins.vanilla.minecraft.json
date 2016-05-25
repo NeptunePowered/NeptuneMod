@@ -148,6 +148,7 @@
         "world.chunk.MixinChunk",
         "world.storage.MixinSaveHandler",
         "world.storage.MixinWorldInfo",
+        "world.MixinWorld",
         "world.MixinWorldServer"
     ],
     "injectors": {

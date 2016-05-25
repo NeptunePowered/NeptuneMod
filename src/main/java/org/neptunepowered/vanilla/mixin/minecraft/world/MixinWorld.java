@@ -21,11 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.world.storage;
+package org.neptunepowered.vanilla.mixin.minecraft.world;
 
-import net.canarymod.api.world.DimensionType;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.WorldInfo;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public interface IMixinWorldInfo {
+@Mixin(World.class)
+public abstract class MixinWorld {
 
-    void setDimensionType(DimensionType dimensionType);
+    @Shadow protected WorldInfo worldInfo;
+
+    @Shadow
+    public abstract long getSeed();
 }

@@ -56,7 +56,7 @@ public class NeptuneWorldManager implements WorldManager {
             return;
         }
 
-        File[] worlds = worldsDir.listFiles(pathname -> pathname.isDirectory());
+        File[] worlds = worldsDir.listFiles(File::isDirectory);
         if (worlds == null) {
             return;
         }
