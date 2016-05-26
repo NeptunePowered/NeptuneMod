@@ -161,7 +161,7 @@ public class NeptuneWorldManager implements WorldManager {
         worldServer.getWorldInfo().setDifficulty(
                 EnumDifficulty.getDifficultyEnum(worldConfiguration.getDifficulty().getId()));
 
-        ((IMixinMinecraftServer) minecraftServer).initialWorldChunkLoad(worldServer);
+        ((IMixinMinecraftServer) minecraftServer).prepareSpawnArea(worldServer);
 
         this.existingWorlds.add(worldName + "_" + dimensionType.getName());
         log.debug(String.format(

@@ -42,6 +42,7 @@ import net.canarymod.api.inventory.recipes.CraftingRecipe;
 import net.canarymod.api.inventory.recipes.Recipe;
 import net.canarymod.api.inventory.recipes.SmeltRecipe;
 import net.canarymod.api.nbt.CompoundTag;
+import net.canarymod.api.world.DimensionType;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
@@ -470,35 +471,32 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     }
 
     @Override
-    public void initialWorldChunkLoad(WorldServer worldServer) {
-        int i = 16;
-        int j = 4;
-        int k = 192;
-        int l = 625;
+    public void prepareSpawnArea(WorldServer worldServer) {
         int i1 = 0;
         this.setUserMessage("menu.generatingTerrain");
-        int j1 = 0;
-        logger.info("Preparing start region for level " + j1);
-        BlockPos blockpos = worldServer.getSpawnPoint();
+        logger.info("Preparing start region for level " + worldServer.provider.getDimensionId());
+        BlockPos spawnPoint = worldServer.getSpawnPoint();
         long k1 = getCurrentTimeMillis();
 
-        for (int l1 = -192; l1 <= 192 && this.isServerRunning(); l1 += 16)
-        {
-            for (int i2 = -192; i2 <= 192 && this.isServerRunning(); i2 += 16)
-            {
+        for (int l1 = -192; l1 <= 192 && this.isServerRunning(); l1 += 16) {
+            for (int i2 = -192; i2 <= 192 && this.isServerRunning(); i2 += 16) {
                 long j2 = getCurrentTimeMillis();
 
-                if (j2 - k1 > 1000L)
-                {
+                if (j2 - k1 > 1000L) {
                     this.outputPercentRemaining("Preparing spawn area", i1 * 100 / 625);
                     k1 = j2;
                 }
 
                 ++i1;
-                worldServer.theChunkProviderServer.loadChunk(blockpos.getX() + l1 >> 4, blockpos.getZ() + i2 >> 4);
+                worldServer.theChunkProviderServer.loadChunk(spawnPoint.getX() + l1 >> 4, spawnPoint.getZ() + i2 >> 4);
             }
         }
 
         this.clearCurrentTask();
+    }
+
+    @Override
+    public void loadWorld(String name, DimensionType dimensionType) {
+
     }
 }
