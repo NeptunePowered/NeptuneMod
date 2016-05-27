@@ -31,6 +31,8 @@ import net.canarymod.api.world.blocks.MapColor;
 import net.canarymod.api.world.position.Position;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.util.BlockPos;
+import org.neptunepowered.vanilla.util.converter.PositionConverter;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -52,16 +54,77 @@ public abstract class MixinBlock implements BlockBase {
     @Shadow protected double maxY;
     @Shadow protected double maxZ;
 
-    @Shadow public abstract boolean isFullBlock();
-    @Shadow public abstract int getLightOpacity();
-    @Shadow public abstract int getLightValue();
-    @Shadow public abstract boolean getUseNeighborBrightness();
-    @Shadow public abstract boolean isNormalCube();
-    @Shadow public abstract boolean isFullCube();
-    @Shadow public abstract boolean hasTileEntity();
-    @Shadow public abstract boolean isOpaqueCube();
-    @Shadow public abstract boolean isCollidable();
-    @Shadow public abstract int getMobilityFlag();
+    @Shadow
+    public abstract boolean isFullBlock();
+
+    @Shadow
+    public abstract int getLightOpacity();
+
+    @Shadow
+    public abstract int getLightValue();
+
+    @Shadow
+    public abstract boolean getUseNeighborBrightness();
+
+    @Shadow
+    public abstract boolean isNormalCube();
+
+    @Shadow
+    public abstract boolean isFullCube();
+
+    @Shadow
+    public abstract boolean hasTileEntity();
+
+    @Shadow
+    public abstract boolean isOpaqueCube();
+
+    @Shadow
+    public abstract boolean isCollidable();
+
+    @Shadow
+    public abstract int getMobilityFlag();
+
+    @Shadow
+    public abstract boolean isBlockNormalCube();
+
+    @Shadow
+    public abstract boolean isVisuallyOpaque();
+
+    @Shadow
+    public abstract int getRenderType();
+
+    @Shadow
+    public abstract String getLocalizedName();
+
+    @Shadow
+    public abstract boolean canProvidePower();
+
+    @Shadow
+    public abstract boolean getEnableStats();
+
+    @Shadow
+    public abstract boolean requiresUpdates();
+
+    @Shadow
+    public abstract boolean hasComparatorInputOverride();
+
+    @Shadow
+    public abstract int quantityDropped(Random random);
+
+    @Shadow
+    public abstract int tickRate(net.minecraft.world.World worldIn);
+
+    @Shadow
+    public abstract int getComparatorInputOverride(net.minecraft.world.World worldIn, BlockPos pos);
+
+    @Shadow
+    public abstract float getExplosionResistance(net.minecraft.entity.Entity exploder);
+
+    @Shadow
+    public abstract boolean isReplaceable(net.minecraft.world.World worldIn, BlockPos pos);
+
+    @Shadow
+    public abstract float getBlockHardness(net.minecraft.world.World worldIn, BlockPos pos);
 
     @Intrinsic
     public boolean block$isFullBlock() {
@@ -95,7 +158,7 @@ public abstract class MixinBlock implements BlockBase {
 
     @Override
     public boolean isSolidFullCube() {
-        return false;
+        return this.isBlockNormalCube();
     }
 
     @Intrinsic
@@ -103,9 +166,9 @@ public abstract class MixinBlock implements BlockBase {
         return this.isNormalCube();
     }
 
-    @Override
-    public boolean isVisuallyOpaque() {
-        return false;
+    @Intrinsic
+    public boolean block$isVisuallyOpaque() {
+        return this.isVisuallyOpaque();
     }
 
     @Intrinsic
@@ -118,19 +181,19 @@ public abstract class MixinBlock implements BlockBase {
         return false;
     }
 
-    @Override
-    public int getRenderType() {
-        return 0;
+    @Intrinsic
+    public int block$getRenderType() {
+        return this.getRenderType();
     }
 
     @Override
     public boolean isReplaceable(World worldIn, Position pos) {
-        return false;
+        return this.isReplaceable((net.minecraft.world.World) worldIn, PositionConverter.of(pos));
     }
 
     @Override
     public float getBlockHardness(World worldIn, Position pos) {
-        return 0;
+        return this.getBlockHardness((net.minecraft.world.World) worldIn, PositionConverter.of(pos));
     }
 
     @Override
@@ -155,12 +218,12 @@ public abstract class MixinBlock implements BlockBase {
 
     @Override
     public int tickRate(World worldIn) {
-        return 0;
+        return this.tickRate((net.minecraft.world.World) worldIn);
     }
 
-    @Override
-    public int quantityDropped(Random random) {
-        return 0;
+    @Intrinsic
+    public int block$quantityDropped(Random random) {
+        return this.quantityDropped(random);
     }
 
     @Override
@@ -170,7 +233,7 @@ public abstract class MixinBlock implements BlockBase {
 
     @Override
     public float getExplosionResistance(Entity exploder) {
-        return 0;
+        return this.getExplosionResistance((net.minecraft.entity.Entity) exploder);
     }
 
     @Override
@@ -203,19 +266,19 @@ public abstract class MixinBlock implements BlockBase {
         return this.maxZ;
     }
 
-    @Override
-    public boolean canProvidePower() {
-        return false;
+    @Intrinsic
+    public boolean block$canProvidePower() {
+        return this.canProvidePower();
     }
 
-    @Override
-    public String getLocalizedName() {
-        return null;
+    @Intrinsic
+    public String block$getLocalizedName() {
+        return this.getLocalizedName();
     }
 
-    @Override
-    public boolean getEnableStats() {
-        return false;
+    @Intrinsic
+    public boolean block$getEnableStats() {
+        return this.getEnableStats();
     }
 
     @Intrinsic
@@ -223,18 +286,18 @@ public abstract class MixinBlock implements BlockBase {
         return this.getMobilityFlag();
     }
 
-    @Override
-    public boolean requiresUpdates() {
-        return false;
+    @Intrinsic
+    public boolean block$requiresUpdates() {
+        return this.requiresUpdates();
     }
 
-    @Override
-    public boolean hasComparatorInputOverride() {
-        return false;
+    @Intrinsic
+    public boolean block$hasComparatorInputOverride() {
+        return this.hasComparatorInputOverride();
     }
 
     @Override
     public int getComparatorInputOverride(World worldIn, Position pos) {
-        return 0;
+        return this.getComparatorInputOverride((net.minecraft.world.World) worldIn, PositionConverter.of(pos));
     }
 }

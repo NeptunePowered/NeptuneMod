@@ -34,7 +34,7 @@ public class NeptuneBlockBooleanProperty extends NeptuneBlockProperty implements
 
     @Override
     public boolean canApply(Boolean value) {
-        return this.canApply(value);
+        return super.canApply(value);
     }
 
     @Override
