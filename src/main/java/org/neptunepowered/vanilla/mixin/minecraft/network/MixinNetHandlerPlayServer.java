@@ -28,6 +28,7 @@ import net.canarymod.api.NetServerHandler;
 import net.canarymod.api.chat.ChatComponent;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.packet.Packet;
+import net.canarymod.hook.player.DisconnectionHook;
 import net.canarymod.hook.player.KickHook;
 import net.canarymod.hook.player.PlayerIdleHook;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -37,6 +38,10 @@ import net.minecraft.network.play.server.S00PacketKeepAlive;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S07PacketRespawn;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
+import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.util.helper.NetHandlerPlayServerHelper;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
@@ -48,6 +53,8 @@ import java.net.SocketAddress;
 
 @Mixin(NetHandlerPlayServer.class)
 public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMixinNetHandlerPlayServer {
+
+    @Shadow private static Logger logger;
 
     @Shadow public NetworkManager netManager;
     @Shadow public EntityPlayerMP playerEntity;
@@ -119,6 +126,40 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
 
         // Kick player
         this.kickPlayerFromServerWithoutHook(reason);
+    }
+
+    /**
+     * Overwrite to fire the DisconnectHook.
+     *
+     * @author jamierocks
+     */
+    @Overwrite
+    public void onDisconnect(IChatComponent reason) {
+        logger.info(this.playerEntity.getName() + " lost connection: " + reason);
+        this.serverController.refreshStatusNextTick();
+        ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.left",
+                new Object[]{this.playerEntity.getDisplayName()});
+        chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.YELLOW);
+
+        // Neptune - start
+        DisconnectionHook hook = (DisconnectionHook) new DisconnectionHook(
+                (Player) this.playerEntity,
+                reason.getUnformattedText(),
+                chatcomponenttranslation.getUnformattedText()).call();
+
+        if (!hook.isHidden()) {
+            this.serverController.getConfigurationManager().sendChatMsg(chatcomponenttranslation);
+        }
+        // Neptune - end
+
+        this.playerEntity.mountEntityAndWakeUp();
+        this.serverController.getConfigurationManager().playerLoggedOut(this.playerEntity);
+
+        if (this.serverController.isSinglePlayer() &&
+                this.playerEntity.getName().equals(this.serverController.getServerOwner())) {
+            logger.info("Stopping singleplayer server as player logged out");
+            this.serverController.initiateShutdown();
+        }
     }
 
     @Override
