@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
 import com.mojang.authlib.GameProfile;
+import net.canarymod.Canary;
 import net.canarymod.api.GameMode;
 import net.canarymod.api.NetServerHandler;
 import net.canarymod.api.PlayerListAction;
@@ -49,6 +50,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
+import net.minecraft.tileentity.TileEntitySign;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.spongepowered.asm.mixin.Implements;
@@ -64,6 +66,12 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Shadow private StatisticsFile statsFile;
     @Shadow public NetHandlerPlayServer playerNetServerHandler;
     @Shadow public ItemInWorldManager theItemInWorldManager;
+
+    @Shadow
+    public abstract void openEditSign(TileEntitySign signTile);
+
+    @Shadow
+    public abstract void closeScreen();
 
     @Override
     public void initPlayerData() {
@@ -167,7 +175,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void openSignEditWindow(Sign sign) {
-
+        this.openEditSign((TileEntitySign) sign);
     }
 
     @Override
@@ -177,7 +185,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void closeWindow() {
-
+        this.closeScreen();
     }
 
     @Override
@@ -377,7 +385,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public boolean isOperator() {
-        return false;
+        return Canary.ops().isOpped(this);
     }
 
     @Override

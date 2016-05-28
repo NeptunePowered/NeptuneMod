@@ -25,10 +25,14 @@ package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
 import net.canarymod.api.entity.living.humanoid.HumanCapabilities;
 import net.minecraft.entity.player.PlayerCapabilities;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(PlayerCapabilities.class)
+@Implements(@Interface(iface = HumanCapabilities.class, prefix = "capabilities$"))
 public abstract class MixinPlayerCapabilities implements HumanCapabilities {
 
     @Shadow public boolean disableDamage;
@@ -37,6 +41,12 @@ public abstract class MixinPlayerCapabilities implements HumanCapabilities {
     @Shadow public boolean isCreativeMode;
     @Shadow private float flySpeed;
     @Shadow private float walkSpeed;
+
+    @Shadow
+    public abstract float getFlySpeed();
+
+    @Shadow
+    public abstract float getWalkSpeed();
 
     @Override
     public boolean isInvulnerable() {
@@ -78,18 +88,20 @@ public abstract class MixinPlayerCapabilities implements HumanCapabilities {
         this.isCreativeMode = instant;
     }
 
-    @Override
-    @Shadow
-    public abstract float getFlySpeed();
+    @Intrinsic
+    public float capabilities$getFlySpeed() {
+        return this.getFlySpeed();
+    }
 
     @Override
     public void setFlySpeed(float speed) {
         this.flySpeed = speed;
     }
 
-    @Override
-    @Shadow
-    public abstract float getWalkSpeed();
+    @Intrinsic
+    public float capabilities$getWalkSpeed() {
+        return this.getWalkSpeed();
+    }
 
     @Override
     public void setWalkSpeed(float speed) {
