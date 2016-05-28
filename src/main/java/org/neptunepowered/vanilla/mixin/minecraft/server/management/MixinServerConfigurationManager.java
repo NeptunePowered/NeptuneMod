@@ -74,6 +74,9 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.WorldInfo;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -86,6 +89,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Mixin(ServerConfigurationManager.class)
+@Implements(@Interface(iface = ConfigurationManager.class, prefix = "config$"))
 public abstract class MixinServerConfigurationManager implements ConfigurationManager {
 
     @Shadow private static Logger logger;
@@ -129,6 +133,9 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
 
     @Shadow
     public abstract EntityPlayerMP getPlayerByUsername(String username);
+
+    @Shadow
+    public abstract int getMaxPlayers();
 
     @Overwrite
     public void playerLoggedOut(EntityPlayerMP playerIn) {
@@ -335,9 +342,10 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         return (List) this.getPlayerList();
     }
 
-    @Override
-    @Shadow
-    public abstract int getMaxPlayers();
+    @Intrinsic
+    public int config$getMaxPlayers() {
+        return this.getMaxPlayers();
+    }
 
     @Override
     public void markBlockNeedsUpdate(int x, int y, int z, DimensionType dimension, String world) {
