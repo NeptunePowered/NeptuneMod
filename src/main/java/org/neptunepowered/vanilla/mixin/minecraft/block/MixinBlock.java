@@ -126,6 +126,24 @@ public abstract class MixinBlock implements BlockBase {
     @Shadow
     public abstract float getBlockHardness(net.minecraft.world.World worldIn, BlockPos pos);
 
+    @Shadow
+    public abstract double getBlockBoundsMinX();
+
+    @Shadow
+    public abstract double getBlockBoundsMaxX();
+
+    @Shadow
+    public abstract double getBlockBoundsMinY();
+
+    @Shadow
+    public abstract double getBlockBoundsMaxY();
+
+    @Shadow
+    public abstract double getBlockBoundsMinZ();
+
+    @Shadow
+    public abstract double getBlockBoundsMaxZ();
+
     @Intrinsic
     public boolean block$isFullBlock() {
         return this.isFullBlock();
@@ -236,34 +254,34 @@ public abstract class MixinBlock implements BlockBase {
         return this.getExplosionResistance((net.minecraft.entity.Entity) exploder);
     }
 
-    @Override
-    public double getBlockBoundsMinX() {
-        return this.minX;
+    @Intrinsic
+    public double block$getBlockBoundsMinX() {
+        return this.getBlockBoundsMinX();
     }
 
-    @Override
-    public double getBlockBoundsMaxX() {
-        return this.maxX;
+    @Intrinsic
+    public double block$getBlockBoundsMaxX() {
+        return this.getBlockBoundsMaxX();
     }
 
-    @Override
-    public double getBlockBoundsMinY() {
-        return this.minY;
+    @Intrinsic
+    public double block$getBlockBoundsMinY() {
+        return this.getBlockBoundsMinY();
     }
 
-    @Override
-    public double getBlockBoundsMaxY() {
-        return this.maxY;
+    @Intrinsic
+    public double block$getBlockBoundsMaxY() {
+        return this.getBlockBoundsMaxY();
     }
 
-    @Override
-    public double getBlockBoundsMinZ() {
-        return this.minZ;
+    @Intrinsic
+    public double block$getBlockBoundsMinZ() {
+        return this.getBlockBoundsMinZ();
     }
 
-    @Override
-    public double getBlockBoundsMaxZ() {
-        return this.maxZ;
+    @Intrinsic
+    public double block$getBlockBoundsMaxZ() {
+        return this.getBlockBoundsMaxZ();
     }
 
     @Intrinsic
