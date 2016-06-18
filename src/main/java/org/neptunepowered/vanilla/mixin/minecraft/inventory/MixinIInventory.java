@@ -27,6 +27,7 @@ import net.canarymod.api.inventory.Inventory;
 import net.canarymod.api.inventory.Item;
 import net.canarymod.api.inventory.ItemType;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -37,18 +38,18 @@ import org.spongepowered.asm.mixin.Mixin;
 public interface MixinIInventory extends IInventory, Inventory {
 
     @Override
-    default void addItem(Item var1){
-
+    default void addItem(Item var1) {
+        this.insertItem(var1);
     }
 
     @Override
     default void addItem(ItemType var1) {
-
+        this.addItem((Item) new ItemStack(net.minecraft.item.Item.getItemById(var1.getId()), 1, var1.getData()));
     }
 
     @Override
     default void addItem(int var1) {
-
+        this.addItem((Item) new ItemStack(net.minecraft.item.Item.getItemById(var1), 1));
     }
 
     @Override
