@@ -129,6 +129,7 @@
         "tileentity.MixinTileEntityComparator",
         "tileentity.MixinTileEntityDaylightDetector",
         "tileentity.MixinTileEntitySign",
+        "tileentity.MixinTileEntitySkull",
         "util.MixinAxisAlignedBB",
         "util.MixinChatComponentText",
         "util.MixinChatStyle",
