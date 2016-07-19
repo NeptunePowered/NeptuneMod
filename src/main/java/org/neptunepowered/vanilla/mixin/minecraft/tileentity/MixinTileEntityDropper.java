@@ -21,41 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.world.storage;
+package org.neptunepowered.vanilla.mixin.minecraft.tileentity;
 
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.storage.SaveHandler;
-import org.apache.logging.log4j.Logger;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
+import net.canarymod.api.world.blocks.Dropper;
+import net.minecraft.tileentity.TileEntityDropper;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.UUID;
+@Mixin(TileEntityDropper.class)
+public abstract class MixinTileEntityDropper extends MixinTileEntityDispenser implements Dropper {
 
-@Mixin(SaveHandler.class)
-public class MixinSaveHandler implements IMixinSaveHandler {
-
-    @Shadow private static Logger logger;
-
-    @Shadow private File playersDirectory;
-
-    @Override
-    public NBTTagCompound readPlayerData(UUID id) {
-        NBTTagCompound nbttagcompound = null;
-
-        try {
-            File file1 = new File(this.playersDirectory, id.toString() + ".dat");
-
-            if (file1.exists() && file1.isFile()) {
-                nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
-            }
-        } catch (Exception ex) {
-            logger.warn("Failed to load player data for " + id.toString(), ex);
-        }
-
-        return nbttagcompound;
-    }
 }

@@ -64,7 +64,7 @@ public abstract class MixinCanaryCommand implements ICommand {
     }
 
     @Override
-    public List getCommandAliases() {
+    public List<String> getCommandAliases() {
         return Lists.newArrayList(this.meta.aliases());
     }
 
@@ -79,7 +79,7 @@ public abstract class MixinCanaryCommand implements ICommand {
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
+    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
         return this.tabComplete((MessageReceiver) sender, args);
     }
 

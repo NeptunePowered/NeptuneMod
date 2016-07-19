@@ -21,41 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.world.storage;
+package org.neptunepowered.vanilla.mixin.minecraft.tileentity;
 
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.storage.SaveHandler;
-import org.apache.logging.log4j.Logger;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
+import net.canarymod.api.world.blocks.LockableTileEntity;
+import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraft.world.LockCode;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.UUID;
+@Mixin(TileEntityLockable.class)
+public abstract class MixinTileEntityLockable extends MixinTileEntity implements LockableTileEntity {
 
-@Mixin(SaveHandler.class)
-public class MixinSaveHandler implements IMixinSaveHandler {
+    @Shadow
+    public abstract LockCode getLockCode();
 
-    @Shadow private static Logger logger;
-
-    @Shadow private File playersDirectory;
+    @Shadow
+    public abstract void setLockCode(LockCode code);
 
     @Override
-    public NBTTagCompound readPlayerData(UUID id) {
-        NBTTagCompound nbttagcompound = null;
+    public String getCode() {
+        return this.getLockCode().getLock();
+    }
 
-        try {
-            File file1 = new File(this.playersDirectory, id.toString() + ".dat");
+    @Override
+    public void setCode(String s) {
+        this.setLockCode(new LockCode(s));
+    }
 
-            if (file1.exists() && file1.isFile()) {
-                nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
-            }
-        } catch (Exception ex) {
-            logger.warn("Failed to load player data for " + id.toString(), ex);
-        }
-
-        return nbttagcompound;
+    @Override
+    public boolean hasCodeSet() {
+        return !this.getLockCode().isEmpty();
     }
 }

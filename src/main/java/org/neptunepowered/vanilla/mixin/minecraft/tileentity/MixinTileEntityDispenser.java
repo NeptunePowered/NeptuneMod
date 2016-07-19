@@ -21,41 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.world.storage;
+package org.neptunepowered.vanilla.mixin.minecraft.tileentity;
 
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.storage.SaveHandler;
-import org.apache.logging.log4j.Logger;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
+import net.canarymod.api.entity.Entity;
+import net.canarymod.api.world.blocks.Dispenser;
+import net.minecraft.tileentity.TileEntityDispenser;
+import org.apache.commons.lang3.NotImplementedException;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.UUID;
-
-@Mixin(SaveHandler.class)
-public class MixinSaveHandler implements IMixinSaveHandler {
-
-    @Shadow private static Logger logger;
-
-    @Shadow private File playersDirectory;
+@Mixin(TileEntityDispenser.class)
+public abstract class MixinTileEntityDispenser extends MixinTileEntityLockable implements Dispenser {
 
     @Override
-    public NBTTagCompound readPlayerData(UUID id) {
-        NBTTagCompound nbttagcompound = null;
+    public Entity activate() {
+        throw new NotImplementedException("activate to not implemented!");
+    }
 
-        try {
-            File file1 = new File(this.playersDirectory, id.toString() + ".dat");
-
-            if (file1.exists() && file1.isFile()) {
-                nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
-            }
-        } catch (Exception ex) {
-            logger.warn("Failed to load player data for " + id.toString(), ex);
-        }
-
-        return nbttagcompound;
+    @Override
+    public Entity dispenseFromSlot(int i) {
+        throw new NotImplementedException("dispenseFromSlot to not implemented!");
     }
 }

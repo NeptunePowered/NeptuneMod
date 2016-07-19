@@ -46,6 +46,9 @@ public abstract class MixinTileEntitySkull extends MixinTileEntity implements Sk
     @Shadow private GameProfile playerProfile;
 
     @Shadow
+    public abstract int getSkullType();
+
+    @Shadow
     public abstract void setSkullRotation(int rotation);
 
     @Shadow
@@ -53,7 +56,7 @@ public abstract class MixinTileEntitySkull extends MixinTileEntity implements Sk
 
     @Intrinsic
     public int skull$getSkullType() {
-        return 0;
+        return this.getSkullType();
     }
 
     @Override
