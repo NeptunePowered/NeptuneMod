@@ -7,6 +7,7 @@
         "block.material.MixinMapColor",
         "block.material.MixinMaterial",
         "block.MixinBlock",
+        "command.server.MixinCommandBlockLogic",
         "command.MixinICommandSender",
         "command.MixinServerCommandManager",
         "crash.MixinCrashReport",
