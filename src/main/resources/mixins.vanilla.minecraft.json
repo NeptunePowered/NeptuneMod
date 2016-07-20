@@ -128,6 +128,7 @@
         "stats.MixinStatBase",
         "tileentity.MixinTileEntity",
         "tileentity.MixinTileEntityBrewingStand",
+        "tileentity.MixinTileEntityChest",
         "tileentity.MixinTileEntityComparator",
         "tileentity.MixinTileEntityDaylightDetector",
         "tileentity.MixinTileEntityDispenser",

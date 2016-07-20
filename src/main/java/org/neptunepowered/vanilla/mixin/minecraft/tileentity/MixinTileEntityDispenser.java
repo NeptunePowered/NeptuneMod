@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.tileentity;
 
 import net.canarymod.api.entity.Entity;
+import net.canarymod.api.inventory.InventoryType;
 import net.canarymod.api.world.blocks.Dispenser;
 import net.minecraft.tileentity.TileEntityDispenser;
 import org.apache.commons.lang3.NotImplementedException;
@@ -40,5 +41,10 @@ public abstract class MixinTileEntityDispenser extends MixinTileEntityLockable i
     @Override
     public Entity dispenseFromSlot(int i) {
         throw new NotImplementedException("dispenseFromSlot to not implemented!");
+    }
+
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.DISPENSER;
     }
 }

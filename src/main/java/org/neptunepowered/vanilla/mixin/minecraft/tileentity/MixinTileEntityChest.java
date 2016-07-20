@@ -21,17 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.world.storage;
+package org.neptunepowered.vanilla.mixin.minecraft.tileentity;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.canarymod.api.inventory.InventoryType;
+import net.canarymod.api.world.blocks.Chest;
+import net.canarymod.api.world.blocks.DoubleChest;
+import net.minecraft.tileentity.TileEntityChest;
+import org.spongepowered.asm.mixin.Mixin;
 
-import java.io.File;
-import java.util.UUID;
+@Mixin(TileEntityChest.class)
+public abstract class MixinTileEntityChest extends MixinTileEntityLockable implements Chest {
 
-public interface IMixinSaveHandler {
+    @Override
+    public boolean hasAttachedChest() {
+        return false;
+    }
 
-    File WORLDS_DIR = new File("worlds");
-    File PLAYERS_DIR = new File(WORLDS_DIR, "players");
+    @Override
+    public DoubleChest getDoubleChest() {
+        return null;
+    }
 
-    NBTTagCompound readPlayerData(UUID uuid);
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.CHEST;
+    }
 }

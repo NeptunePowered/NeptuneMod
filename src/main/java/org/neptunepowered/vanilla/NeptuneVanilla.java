@@ -35,6 +35,7 @@ public class NeptuneVanilla {
     public static void main(String[] args) throws IOException {
         MinecraftServer.main(args);
         new File("config").mkdirs(); // TODO: Please fix this properly
+        new File("worlds", "players").mkdirs();
         initNeptune();
         Canary.setServer((Server) MinecraftServer.getServer());
     }
