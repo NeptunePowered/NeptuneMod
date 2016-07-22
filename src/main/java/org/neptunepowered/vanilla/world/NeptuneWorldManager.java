@@ -55,17 +55,18 @@ import java.util.stream.Collectors;
 
 public class NeptuneWorldManager implements WorldManager {
 
+    private static final File WORLDS_DIR = new File(Canary.getWorkingDirectory(), "worlds");
+
     private final Map<String, World> loadedWorlds = Maps.newHashMap();
     private final List<String> existingWorlds = Lists.newArrayList();
 
     public NeptuneWorldManager() {
-        File worldsDir = new File(Canary.getWorkingDirectory(), "worlds");
-        if (!worldsDir.exists()) {
-            worldsDir.mkdirs();
+        if (!WORLDS_DIR.exists()) {
+            WORLDS_DIR.mkdirs();
             return;
         }
 
-        File[] worlds = worldsDir.listFiles(File::isDirectory);
+        File[] worlds = WORLDS_DIR.listFiles(File::isDirectory);
         if (worlds == null) {
             return;
         }
@@ -132,8 +133,7 @@ public class NeptuneWorldManager implements WorldManager {
         final long seed = worldConfiguration.getWorldSeed().matches("\\d+") ?
                 Long.valueOf(worldConfiguration.getWorldSeed()) : worldConfiguration.getWorldSeed().hashCode();
 
-        final AnvilSaveHandler saveHandler =
-                new AnvilSaveHandler(new File(Canary.getWorkingDirectory(), "worlds"), worldName, true);
+        final AnvilSaveHandler saveHandler = new AnvilSaveHandler(WORLDS_DIR, worldName, true);
 
         final WorldSettings worldSettings = new WorldSettings(
                 seed,
@@ -225,7 +225,7 @@ public class NeptuneWorldManager implements WorldManager {
     public String[] getLoadedWorldsNamesOfDimension(DimensionType dimensionType) {
         List<String> loadedWorlds = this.loadedWorlds.values().stream()
                 .filter(w -> w.getType() == dimensionType)
-                .map(w -> w.getFqName())
+                .map(World::getFqName)
                 .collect(Collectors.toList());
         return loadedWorlds.toArray(new String[loadedWorlds.size()]);
     }

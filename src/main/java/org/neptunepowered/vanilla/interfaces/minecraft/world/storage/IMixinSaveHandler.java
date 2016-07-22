@@ -23,6 +23,7 @@
  */
 package org.neptunepowered.vanilla.interfaces.minecraft.world.storage;
 
+import net.canarymod.Canary;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.io.File;
@@ -30,7 +31,7 @@ import java.util.UUID;
 
 public interface IMixinSaveHandler {
 
-    File WORLDS_DIR = new File("worlds");
+    File WORLDS_DIR = new File(Canary.getWorkingDirectory(), "worlds");
     File PLAYERS_DIR = new File(WORLDS_DIR, "players");
 
     NBTTagCompound readPlayerData(UUID uuid);
