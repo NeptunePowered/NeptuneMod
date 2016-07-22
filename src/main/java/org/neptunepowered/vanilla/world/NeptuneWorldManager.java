@@ -29,6 +29,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.canarymod.Canary;
 import net.canarymod.api.world.DimensionType;
+import net.canarymod.api.world.UnknownWorldException;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.api.world.WorldType;
@@ -84,13 +85,64 @@ public class NeptuneWorldManager implements WorldManager {
     }
 
     @Override
-    public World getWorld(String s, boolean b) {
-        return null;
+    public World getWorld(String name, boolean autoload) {
+        if (name == null || name.isEmpty()) {
+            // assume the world is the default world
+            name = Configuration.getServerConfig().getDefaultWorldName() + "_" + DimensionType.fromId(0).getName();
+        }
+        final String world = name.substring(0, Math.max(0, name.lastIndexOf("_")));
+        final DimensionType type = DimensionType.fromName(name.substring(Math.max(0, name.lastIndexOf("_") + 1)));
+
+        if (type != null) {
+            return this.getWorld(world, type, autoload);
+        }
+
+        if (this.loadedWorlds.containsKey(name)) {
+            return this.loadedWorlds.get(name);
+        } else if (this.loadedWorlds.containsKey(name + "_NORMAL")) {
+            return this.loadedWorlds.get(name + "_NORMAL");
+        } else {
+            if (autoload) {
+                if (existingWorlds.contains(name)) {
+                    return loadWorld(name, DimensionType.NORMAL);
+                }
+                else if (existingWorlds.contains(name + "_NORMAL")) {
+                    return loadWorld(name, DimensionType.NORMAL);
+                }
+                else {
+                    throw new UnknownWorldException("World " + name + " is unknown. Autoload was enabled for this call.");
+                }
+            } else {
+                throw new UnknownWorldException("World " + name + " is not loaded. Autoload was disabled for this call.");
+            }
+        }
     }
 
     @Override
-    public World getWorld(String s, DimensionType dimensionType, boolean b) {
-        return null;
+    public World getWorld(String world, DimensionType type, boolean autoload) {
+        if (world == null || world.isEmpty()) {
+            // assume that the world is the default world
+            world = Configuration.getServerConfig().getDefaultWorldName();
+        }
+        final String worldId = world + "_" + type.getName();
+
+        if (this.worldIsLoaded(worldId)) {
+            return this.loadedWorlds.get(worldId);
+        } else {
+            if (this.worldExists(worldId) && autoload) {
+                Canary.log.debug("World exists but is not loaded. Loading ...");
+                return this.loadWorld(world, type);
+            } else {
+                if (autoload) {
+                    Canary.log.debug("World does not exist, we can autoload, will load!");
+                    this.createWorld(world, type);
+                    return this.loadedWorlds.get(worldId);
+                } else {
+                    throw new UnknownWorldException("Tried to get a none existent world: " + world + " (" + type.toString() +
+                            ") either use autoload or have it pre-created!");
+                }
+            }
+        }
     }
 
     @Override
@@ -193,12 +245,12 @@ public class NeptuneWorldManager implements WorldManager {
 
     @Override
     public boolean worldIsLoaded(String s) {
-        return false;
+        return this.loadedWorlds.containsKey(s);
     }
 
     @Override
     public boolean worldIsLoaded(String name, DimensionType type) {
-        return this.loadedWorlds.containsKey(name + "_" + type.getName());
+        return this.worldIsLoaded(name + "_" + type.getName());
     }
 
     @Override
