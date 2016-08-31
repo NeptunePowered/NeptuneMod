@@ -41,6 +41,9 @@ import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkMana
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.net.InetSocketAddress;
 
@@ -52,67 +55,26 @@ public abstract class MixinNetHandlerHandshakeTCP {
     @Shadow private MinecraftServer server;
     @Shadow private NetworkManager networkManager;
 
-    /**
-     * Overwrite to allow for the {@link ServerListPingHook} and Bungeecord support.
-     *
-     * @author jamierocks
-     */
-    @Overwrite
-    public void processHandshake(C00Handshake packetIn) {
-        IMixinNetworkManager info = (IMixinNetworkManager) this.networkManager;
-        info.setProtocolVersion(packetIn.getProtocolVersion());
-        info.setHostnamePinged(packetIn.ip);
-        info.setPortPinged(packetIn.port);
+    @Inject(method = "processHandshake", at = @At(value = "HEAD"), cancellable = true)
+    public void onProcessHandshake(C00Handshake packetIn, CallbackInfo ci) {
+        if (Configuration.getServerConfig().getBungeecordSupport() && packetIn.getRequestedState().equals(EnumConnectionState.LOGIN)) {
+            String[] split = packetIn.ip.split("\00");
 
-        switch (packetIn.getRequestedState()) {
-            case LOGIN:
-                this.networkManager.setConnectionState(EnumConnectionState.LOGIN);
+            if (split.length >= 3) {
+                packetIn.ip = split[0];
+                ((IMixinNetworkManager) this.networkManager).setRemoteAddress(new InetSocketAddress(split[1],
+                                ((InetSocketAddress) this.networkManager.getRemoteAddress()).getPort()));
+                ((IMixinNetworkManager) this.networkManager).setSpoofedUUID(UUIDTypeAdapter.fromString(split[2]));
 
-                if (packetIn.getProtocolVersion() > 47) {
-                    ChatComponentText chatcomponenttext = new ChatComponentText("Outdated server! I'm still on 1.8.9");
-                    this.networkManager.sendPacket(new S00PacketDisconnect(chatcomponenttext));
-                    this.networkManager.closeChannel(chatcomponenttext);
-                } else if (packetIn.getProtocolVersion() < 47) {
-                    ChatComponentText chatcomponenttext1 = new ChatComponentText("Outdated client! Please use 1.8.9");
-                    this.networkManager.sendPacket(new S00PacketDisconnect(chatcomponenttext1));
-                    this.networkManager.closeChannel(chatcomponenttext1);
-                } else {
-                    this.networkManager.setNetHandler(new NetHandlerLoginServer(this.server, this.networkManager));
-
-                    // Neptune - start (Bungeecord support)
-                    if (Configuration.getServerConfig().getBungeecordSupport()) {
-                        String[] split = packetIn.ip.split("\00");
-                        if (split.length >= 3) {
-                            packetIn.ip = split[0];
-                            ((IMixinNetworkManager) this.networkManager)
-                                    .setRemoteAddress(new InetSocketAddress(split[1],
-                                            ((InetSocketAddress) this.networkManager.getRemoteAddress()).getPort()));
-                            ((IMixinNetworkManager) this.networkManager)
-                                    .setSpoofedUUID(UUIDTypeAdapter.fromString(split[2]));
-
-                            if (split.length == 4) {
-                                ((IMixinNetworkManager) this.networkManager)
-                                        .setSpoofedProfile(gson.fromJson(split[3], Property[].class));
-                            }
-                        }
-                        else {
-                            ChatComponentText chatcomponenttext =
-                                    new ChatComponentText("If you wish to use IP forwarding, please enable it in your"
-                                            + " BungeeCord config as well!");
-                            this.networkManager.sendPacket(new S00PacketDisconnect(chatcomponenttext));
-                            this.networkManager.closeChannel(chatcomponenttext);
-                        }
-                    }
-                    // Neptune - end
+                if (split.length == 4) {
+                    ((IMixinNetworkManager) this.networkManager).setSpoofedProfile(gson.fromJson(split[3], Property[].class));
                 }
-
-                break;
-            case STATUS:
-                this.networkManager.setConnectionState(EnumConnectionState.STATUS);
-                this.networkManager.setNetHandler(new NetHandlerStatusServer(this.server, this.networkManager));
-                break;
-            default:
-                throw new UnsupportedOperationException("Invalid intention " + packetIn.getRequestedState());
+            } else {
+                ChatComponentText chatcomponenttext =
+                        new ChatComponentText("If you wish to use IP forwarding, please enable it in your BungeeCord config as well!");
+                this.networkManager.sendPacket(new S00PacketDisconnect(chatcomponenttext));
+                this.networkManager.closeChannel(chatcomponenttext);
+            }
         }
     }
 }

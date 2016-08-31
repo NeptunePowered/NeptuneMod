@@ -41,7 +41,7 @@ public class MixinNetHandlerLoginServer {
     @Shadow public NetworkManager networkManager;
 
     /**
-     * Overwrite to enable Bungeecord support.
+     * Overwrite to enable BungeeCord support.
      *
      * @author jamierocks
      */

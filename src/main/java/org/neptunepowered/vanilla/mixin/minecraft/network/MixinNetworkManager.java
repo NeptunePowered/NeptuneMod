@@ -36,11 +36,18 @@ import java.util.UUID;
 @Mixin(NetworkManager.class)
 public abstract class MixinNetworkManager extends SimpleChannelInboundHandler implements IMixinNetworkManager {
 
+    @Shadow private SocketAddress socketAddress;
+
+    /*
+     * For ServerListPingHook
+     */
     private int protocolVersion;
     private String hostnamePinged;
     private int portPinged;
 
-    @Shadow private SocketAddress socketAddress;
+    /*
+     * For BungeeCord support
+     */
     private Property[] spoofedProfile;
     private UUID spoofedUUID;
 

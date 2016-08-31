@@ -30,35 +30,23 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.io.IOException;
 
 @Mixin(C00Handshake.class)
 public class MixinC00Handshake {
 
-    @Shadow private int protocolVersion;
-    @Shadow public String ip;
-    @Shadow public int port;
-    @Shadow private EnumConnectionState requestedState;
-
-    /**
-     * Overwrite to enable Bungeecord support.
-     *
-     * @author jamierocks
-     */
-    @Overwrite
-    public void readPacketData(PacketBuffer buf) throws IOException {
-        this.protocolVersion = buf.readVarIntFromBuffer();
-
-        // Neptune - start
+    @Redirect(method = "readPacketData",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketBuffer;"
+                    + "readStringFromBuffer(I)Ljava/lang/String;"))
+    public String onReadPacketData(PacketBuffer buf, int value) {
         if (Configuration.getServerConfig().getBungeecordSupport()) {
-            this.ip = buf.readStringFromBuffer(Short.MAX_VALUE);
+            return buf.readStringFromBuffer(Short.MAX_VALUE);
         } else {
-            this.ip = buf.readStringFromBuffer(255);
+            return buf.readStringFromBuffer(255);
         }
-        // Neptune - end
-
-        this.port = buf.readUnsignedShort();
-        this.requestedState = EnumConnectionState.getById(buf.readVarIntFromBuffer());
     }
+
 }
