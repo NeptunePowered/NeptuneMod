@@ -31,8 +31,10 @@ import net.minecraft.network.status.client.C00PacketServerQuery;
 import net.minecraft.network.status.server.S00PacketServerInfo;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.NetHandlerStatusServer;
+import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkManager;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -43,35 +45,44 @@ import java.util.Arrays;
 @Mixin(NetHandlerStatusServer.class)
 public class MixinNetHandlerStatusServer {
 
+    @Shadow @Final private static IChatComponent EXIT_MESSAGE;
+
     @Shadow private MinecraftServer server;
     @Shadow private NetworkManager networkManager;
+    @Shadow private boolean handled;
 
     @Overwrite
     public void processServerQuery(C00PacketServerQuery packetIn) {
-        ServerListPingHook hook =
-                (ServerListPingHook) new ServerListPingHook((InetSocketAddress) networkManager.getRemoteAddress(),
-                        ((IMixinNetworkManager) networkManager).getProtocolVersion(),
-                        ((IMixinNetworkManager) networkManager).getHostnamePinged(),
-                        ((IMixinNetworkManager) networkManager).getPortPinged(),
-                        new NeptuneChatComponent(server.getServerStatusResponse().getServerDescription()),
-                        server.getServerStatusResponse().getPlayerCountData().getOnlinePlayerCount(),
-                        server.getServerStatusResponse().getPlayerCountData().getMaxPlayers(),
-                        server.getServerStatusResponse().getFavicon(),
-                        Arrays.asList(server.getServerStatusResponse().getPlayerCountData().getPlayers())).call();
-        if (hook.isCanceled()) {
-            networkManager.closeChannel(null);
-            return;
+        if (handled) {
+            this.networkManager.closeChannel(EXIT_MESSAGE);
+        } else {
+            this.handled = true;
+
+            ServerListPingHook hook =
+                    (ServerListPingHook) new ServerListPingHook((InetSocketAddress) this.networkManager.getRemoteAddress(),
+                            ((IMixinNetworkManager) this.networkManager).getProtocolVersion(),
+                            ((IMixinNetworkManager) this.networkManager).getHostnamePinged(),
+                            ((IMixinNetworkManager) this.networkManager).getPortPinged(),
+                            new NeptuneChatComponent(this.server.getServerStatusResponse().getServerDescription()),
+                            this.server.getServerStatusResponse().getPlayerCountData().getOnlinePlayerCount(),
+                            this.server.getServerStatusResponse().getPlayerCountData().getMaxPlayers(),
+                            this.server.getServerStatusResponse().getFavicon(),
+                            Arrays.asList(this.server.getServerStatusResponse().getPlayerCountData().getPlayers())).call();
+            if (hook.isCanceled()) {
+                this.networkManager.closeChannel(null);
+                return;
+            }
+
+            ServerStatusResponse response = new ServerStatusResponse();
+            response.setProtocolVersionInfo(this.server.getServerStatusResponse().getProtocolVersionInfo());
+            ServerStatusResponse.PlayerCountData playerCountData = new ServerStatusResponse.PlayerCountData(hook
+                    .getMaxPlayers(), hook.getCurrentPlayers());
+            playerCountData.setPlayers(hook.getProfiles().toArray(new GameProfile[hook.getProfiles().size()]));
+            response.setPlayerCountData(playerCountData);
+            response.setServerDescription(((NeptuneChatComponent) hook.getMotd()).getHandle());
+            response.setFavicon(hook.getFavicon());
+
+            this.networkManager.sendPacket(new S00PacketServerInfo(response));
         }
-
-        ServerStatusResponse response = new ServerStatusResponse();
-        response.setProtocolVersionInfo(server.getServerStatusResponse().getProtocolVersionInfo());
-        ServerStatusResponse.PlayerCountData playerCountData = new ServerStatusResponse.PlayerCountData(hook
-                .getMaxPlayers(), hook.getCurrentPlayers());
-        playerCountData.setPlayers(hook.getProfiles().toArray(new GameProfile[hook.getProfiles().size()]));
-        response.setPlayerCountData(playerCountData);
-        response.setServerDescription(((NeptuneChatComponent) hook.getMotd()).getHandle());
-        response.setFavicon(hook.getFavicon());
-
-        networkManager.sendPacket(new S00PacketServerInfo(response));
     }
 }
