@@ -97,19 +97,17 @@ public class NeptuneWorldManager implements WorldManager {
             return this.getWorld(world, type, autoload);
         }
 
-        if (this.loadedWorlds.containsKey(name)) {
+        if (this.worldIsLoaded(name)) {
             return this.loadedWorlds.get(name);
-        } else if (this.loadedWorlds.containsKey(name + "_NORMAL")) {
+        } else if (this.worldIsLoaded(name, DimensionType.NORMAL)) {
             return this.loadedWorlds.get(name + "_NORMAL");
         } else {
             if (autoload) {
-                if (existingWorlds.contains(name)) {
+                if (this.worldExists(name)) {
                     return loadWorld(name, DimensionType.NORMAL);
-                }
-                else if (existingWorlds.contains(name + "_NORMAL")) {
+                } else if (this.worldExists(name + "_NORMAL")) {
                     return loadWorld(name, DimensionType.NORMAL);
-                }
-                else {
+                } else {
                     throw new UnknownWorldException("World " + name + " is unknown. Autoload was enabled for this call.");
                 }
             } else {
@@ -130,11 +128,11 @@ public class NeptuneWorldManager implements WorldManager {
             return this.loadedWorlds.get(worldId);
         } else {
             if (this.worldExists(worldId) && autoload) {
-                Canary.log.debug("World exists but is not loaded. Loading ...");
+                log.debug("World exists but is not loaded. Loading ...");
                 return this.loadWorld(world, type);
             } else {
                 if (autoload) {
-                    Canary.log.debug("World does not exist, we can autoload, will load!");
+                    log.debug("World does not exist, we can autoload, will load!");
                     this.createWorld(world, type);
                     return this.loadedWorlds.get(worldId);
                 } else {
@@ -160,10 +158,10 @@ public class NeptuneWorldManager implements WorldManager {
         WorldConfiguration worldConfiguration = WorldConfiguration.create(name, dimensionType);
 
         if (worldConfiguration == null) {
-            Canary.log.debug("World configuration already exists for " + name + "_" + dimensionType.getName());
+            log.debug("World configuration already exists for " + name + "_" + dimensionType.getName());
             worldConfiguration = Configuration.getWorldConfig(name + "_" + dimensionType.getName());
         } else {
-            Canary.log.debug("Updating world configuration for " + name + "_" + dimensionType.getName());
+            log.debug("Updating world configuration for " + name + "_" + dimensionType.getName());
             worldConfiguration.getFile().setLong("world-seed", seed);
             worldConfiguration.getFile().setString("world-type", worldType.toString());
         }
