@@ -35,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
+import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,9 +64,9 @@ public class NeptuneServerTweaker implements ITweaker {
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader loader) {
-        logger.info("Initializing Neptune...");
+        logger.info("Initialising Neptune...");
 
-        // We shouldn't load these through Launchwrapper as they use native dependencies
+        // We shouldn't load these through LaunchWrapper as they use native dependencies
         loader.addClassLoaderExclusion("io.netty.");
 
         // Neptune launch
@@ -103,14 +104,12 @@ public class NeptuneServerTweaker implements ITweaker {
 
         logger.debug("Initializing Mixin environment...");
         MixinBootstrap.init();
-        MixinEnvironment.setCompatibilityLevel(JAVA_8);
+        Mixins.addConfigurations(
+                "mixins.vanilla.canary.json",
+                "mixins.vanilla.minecraft.json");
+        MixinEnvironment.getDefaultEnvironment().setSide(SERVER);
 
-        MixinEnvironment env = MixinEnvironment.getDefaultEnvironment()
-                .addConfiguration("mixins.vanilla.canary.json")
-                .addConfiguration("mixins.vanilla.minecraft.json")
-                .setSide(SERVER);
-
-        logger.info("Initialization finished. Starting Minecraft server...");
+        logger.info("Initialisation finished. Starting Minecraft server...");
     }
 
 

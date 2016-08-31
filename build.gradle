@@ -15,8 +15,8 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-20160116.192356-17'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
-        classpath 'org.spongepowered:mixingradle:0.3-SNAPSHOT'
-        classpath 'gradle.plugin.net.minecrell:licenser:0.1.1'
+        classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
+        classpath 'gradle.plugin.net.minecrell:licenser:0.2.1'
     }
 }
 
@@ -25,11 +25,15 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecrell.licenser'
 
-group = 'org.neptunepowered'
-archivesBaseName = project.name.toLowerCase()
-
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
+
+ext.mcVersion  = '1.8.9'
+ext.apiVersion = '1.2.1-SNAPSHOT'
+
+group = 'org.neptunepowered'
+archivesBaseName = project.name.toLowerCase()
+version = "$mcVersion-$apiVersion"
 
 repositories {
     maven {
@@ -58,11 +62,9 @@ configurations {
     shadow
 }
 
-ext.apiVersion = '1.2.1-SNAPSHOT'
-
 dependencies {
     compile "net.canarymod:CanaryLib:$apiVersion"
-    compile('org.spongepowered:mixin:0.5.1-SNAPSHOT') {
+    compile('org.spongepowered:mixin:0.5.11-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
     }
@@ -80,8 +82,8 @@ license {
 }
 
 minecraft {
-    version = '1.8.9'
-    mappings = 'snapshot_20160216'
+    version = mcVersion
+    mappings = 'snapshot_20160301'
     runDir = 'run'
 
     tweakClass = 'org.neptunepowered.vanilla.launch.NeptuneServerTweaker'
@@ -89,9 +91,6 @@ minecraft {
 
     makeObfSourceJar = false
 }
-
-// Set project version
-version = "$minecraft.version-$apiVersion"
 
 sourceSets {
     main {
@@ -189,5 +188,5 @@ artifacts {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.13'
+    gradleVersion = '2.14.1'
 }

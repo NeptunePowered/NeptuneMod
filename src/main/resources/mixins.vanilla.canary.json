@@ -1,6 +1,8 @@
 {
     "required": true,
+    "minVersion": "0.4.19",
     "package": "org.neptunepowered.vanilla.mixin.canary",
+    "compatibilityLevel": "JAVA_8",
     "refmap": "mixins.vanilla.refmap.json",
     "mixins": [
         "commandsys.MixinCanaryCommand",

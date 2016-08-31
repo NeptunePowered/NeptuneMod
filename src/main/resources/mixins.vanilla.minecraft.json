@@ -2,6 +2,7 @@
     "required": true,
     "minVersion": "0.4.19",
     "package": "org.neptunepowered.vanilla.mixin.minecraft",
+    "compatibilityLevel": "JAVA_8",
     "refmap": "mixins.vanilla.refmap.json",
     "mixins": [
         "block.material.MixinMapColor",
