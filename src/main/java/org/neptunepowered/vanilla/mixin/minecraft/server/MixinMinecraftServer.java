@@ -58,6 +58,9 @@ import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveH
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.neptunepowered.vanilla.wrapper.NeptuneOfflinePlayer;
 import org.neptunepowered.vanilla.wrapper.inventory.recipes.NeptuneRecipe;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -67,6 +70,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Mixin(MinecraftServer.class)
+@Implements(@Interface(iface = Server.class, prefix = "server$"))
 public abstract class MixinMinecraftServer implements Server {
 
     @Shadow public long[] tickTimeArray;
@@ -89,19 +93,32 @@ public abstract class MixinMinecraftServer implements Server {
     @Shadow
     public abstract PlayerProfileCache getPlayerProfileCache();
 
-    @Override
     @Shadow
     public abstract String getHostname();
+
+    /**
+     * Use the Canary configuration.
+     *
+     * @author Jamie Mansfield
+     */
+    @Overwrite
+    public int getMaxPlayers() {
+        return Configuration.getServerConfig().getMaxPlayers();
+    }
+
+    @Intrinsic
+    public String server$getHostname() {
+        return this.getHostname();
+    }
 
     @Override
     public int getNumPlayersOnline() {
         return serverConfigManager.getCurrentPlayerCount();
     }
 
-    @Override
-    @Overwrite
-    public int getMaxPlayers() {
-        return Configuration.getServerConfig().getMaxPlayers();
+    @Intrinsic
+    public int server$getMaxPlayers() {
+        return this.getMaxPlayers();
     }
 
     @Override
@@ -161,17 +178,16 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public Player matchPlayer(String player) {
-        Player lastPlayer = null;
-
         player = player.toLowerCase();
 
+        Player lastPlayer = null;
         for (Player cPlayer : getConfigurationManager().getAllPlayers()) {
             if (cPlayer.getName().toLowerCase().equals(player)) {
                 // Perfect match found
                 lastPlayer = cPlayer;
                 break;
             }
-            if (cPlayer.getName().toLowerCase().indexOf(player) != -1) {
+            if (cPlayer.getName().toLowerCase().contains(player)) {
                 // Partial match
                 if (lastPlayer != null) {
                     // Found multiple
