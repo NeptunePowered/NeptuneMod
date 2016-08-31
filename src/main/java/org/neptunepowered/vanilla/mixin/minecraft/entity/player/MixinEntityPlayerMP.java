@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
+import net.canarymod.ToolBox;
 import net.canarymod.api.GameMode;
 import net.canarymod.api.NetServerHandler;
 import net.canarymod.api.PlayerListAction;
@@ -45,6 +46,7 @@ import net.canarymod.api.world.position.Location;
 import net.canarymod.hook.player.TeleportHook;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
+import net.canarymod.user.UserAndGroupsProvider;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.server.management.ItemInWorldManager;
@@ -58,6 +60,9 @@ import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @Mixin(EntityPlayerMP.class)
 @Implements(@Interface(iface = Player.class, prefix = "player$"))
 public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements Player {
@@ -67,6 +72,10 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Shadow public NetHandlerPlayServer playerNetServerHandler;
     @Shadow public ItemInWorldManager theItemInWorldManager;
 
+    private List<Group> groups;
+    private PermissionProvider permissions;
+    private boolean muted = false;
+
     @Shadow
     public abstract void openEditSign(TileEntitySign signTile);
 
@@ -75,7 +84,33 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void initPlayerData() {
+        final UserAndGroupsProvider provider = Canary.usersAndGroups();
+        final String uuid = this.getUUIDString();
 
+        final boolean isNew = !provider.playerExists(uuid);
+        final String[] data = provider.getPlayerData(uuid);
+        final Group[] subs = provider.getModuleGroupsForPlayer(uuid);
+
+        this.groups = new LinkedList<>();
+        this.groups.add(Canary.usersAndGroups().getGroup(data[1]));
+        for (Group g : subs) {
+            if (g != null) {
+                this.groups.add(g);
+            }
+        }
+
+        this.permissions = Canary.permissionManager().getPlayerProvider(uuid, this.getWorld().getFqName());
+        if (data[0] != null && (!data[0].isEmpty() && !data[0].equals(" "))) {
+            this.setPrefix(ToolBox.stringToNull(data[0]));
+        }
+
+        if (data[2] != null && !data[2].isEmpty()) {
+            muted = Boolean.valueOf(data[2]);
+        }
+
+        if (isNew || provider.nameChanged(this)) {
+            provider.addOrUpdatePlayerData(this);
+        }
     }
 
     @Override
@@ -290,7 +325,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public PermissionProvider getPermissionProvider() {
-        return null;
+        return this.permissions;
     }
 
     @Override
@@ -340,17 +375,17 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public boolean isMuted() {
-        return false;
+        return this.muted;
     }
 
     @Override
     public void setMuted(boolean muted) {
-
+        this.muted = muted;
     }
 
     @Override
     public Group[] getPlayerGroups() {
-        return new Group[0];
+        return this.groups.toArray(new Group[this.groups.size()]);
     }
 
     @Override
@@ -390,27 +425,27 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public boolean isAdmin() {
-        return false;
+        return this.isOperator() || this.hasPermission("canary.super.administrator");
     }
 
     @Override
     public boolean canBuild() {
-        return false;
+        return this.isAdmin() || this.hasPermission("canary.world.build");
     }
 
     @Override
     public void setCanBuild(boolean canModify) {
-
+        this.permissions.addPermission("canary.world.build", canModify);
     }
 
     @Override
     public boolean canIgnoreRestrictions() {
-        return false;
+        return this.isAdmin() || this.hasPermission("canary.super.ignoreRestrictions");
     }
 
     @Override
     public void setCanIgnoreRestrictions(boolean canIgnore) {
-
+        this.permissions.addPermission("canary.super.ignoreRestrictions", canIgnore, -1);
     }
 
     @Override

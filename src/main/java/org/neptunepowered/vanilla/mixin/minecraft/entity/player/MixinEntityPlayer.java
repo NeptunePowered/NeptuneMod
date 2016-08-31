@@ -53,6 +53,8 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
     @Shadow public PlayerCapabilities capabilities;
     @Shadow private ItemStack itemInUse;
 
+    private String prefix = null;
+
     @Shadow
     public abstract IChatComponent shadow$getDisplayName();
 
@@ -66,6 +68,12 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Shadow
     public abstract boolean isUsingItem();
+
+    @Shadow
+    public abstract boolean isPlayerSleeping();
+
+    @Shadow
+    public abstract boolean isPlayerFullyAsleep();
 
     @Inject(method = "trySleep", at = @At(value = "INVOKE"))
     public void onTrySleep(BlockPos bedLocation, CallbackInfoReturnable<EntityPlayer.EnumStatus> callbackInfo) {
@@ -121,12 +129,12 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Override
     public String getPrefix() {
-        return null;
+        return this.prefix;
     }
 
     @Override
     public void setPrefix(String prefix) {
-
+        this.prefix = prefix;
     }
 
     @Intrinsic
@@ -146,12 +154,12 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Override
     public boolean isSleeping() {
-        return false;
+        return this.isPlayerSleeping();
     }
 
     @Override
     public boolean isDeeplySleeping() {
-        return false;
+        return this.isPlayerFullyAsleep();
     }
 
     @Override

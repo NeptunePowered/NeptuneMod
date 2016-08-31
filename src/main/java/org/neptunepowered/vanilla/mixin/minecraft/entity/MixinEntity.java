@@ -34,6 +34,7 @@ import net.canarymod.api.world.World;
 import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -105,6 +106,12 @@ public abstract class MixinEntity implements Entity {
 
     @Shadow
     public abstract String getName();
+
+    @Shadow
+    public abstract void writeToNBT(NBTTagCompound tagCompund);
+
+    @Shadow
+    public abstract void readFromNBT(NBTTagCompound tagCompund);
 
     @Override
     public double getX() {
@@ -228,17 +235,19 @@ public abstract class MixinEntity implements Entity {
 
     @Override
     public Vector3D getMotion() {
-        return null;
+        return new Vector3D(this.motionX, this.motionY, this.motionZ);
     }
 
     @Override
     public Vector3D getForwardVector() {
-        return null;
+        return Vector3D.forward;
     }
 
     @Override
     public void translate(Vector3D factor) {
-
+        this.setX(this.getX() + factor.getX());
+        this.setY(this.getY() + factor.getY());
+        this.setZ(this.getZ() + factor.getZ());
     }
 
     @Intrinsic
@@ -423,12 +432,14 @@ public abstract class MixinEntity implements Entity {
 
     @Override
     public CompoundTag getNBT() {
-        return null;
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return (CompoundTag) tag;
     }
 
     @Override
     public void setNBT(BaseTag tag) {
-
+        this.readFromNBT((NBTTagCompound) tag);
     }
 
     @Intrinsic
