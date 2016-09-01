@@ -23,6 +23,9 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
+import static net.canarymod.Canary.log;
+
+import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
@@ -43,6 +46,10 @@ import net.canarymod.api.statistics.Statistics;
 import net.canarymod.api.world.blocks.Sign;
 import net.canarymod.api.world.position.Direction;
 import net.canarymod.api.world.position.Location;
+import net.canarymod.chat.ChatFormat;
+import net.canarymod.config.Configuration;
+import net.canarymod.hook.command.PlayerCommandHook;
+import net.canarymod.hook.player.ChatHook;
 import net.canarymod.hook.player.TeleportHook;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
@@ -53,6 +60,7 @@ import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
 import net.minecraft.tileentity.TileEntitySign;
+import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.spongepowered.asm.mixin.Implements;
@@ -60,12 +68,18 @@ import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Mixin(EntityPlayerMP.class)
 @Implements(@Interface(iface = Player.class, prefix = "player$"))
 public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements Player {
+
+    private static Pattern BAD_CHAT_PATTERN = Pattern.compile("[\u2302\u00D7\u00AA\u00BA\u00AE\u00AC\u00BD\u00BC\u00A1\u00AB\u00BB]");
+    private static String CHAT_FORMAT = Configuration.getServerConfig().getChatFormat().replace("&", ChatFormat.MARKER.toString());
 
     @Shadow public int ping;
     @Shadow private StatisticsFile statsFile;
@@ -75,6 +89,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     private List<Group> groups;
     private PermissionProvider permissions;
     private boolean muted = false;
+    private HashMap<String, String> defaultChatPattern = Maps.newHashMap();
 
     @Shadow
     public abstract void openEditSign(TileEntitySign signTile);
@@ -114,8 +129,39 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     }
 
     @Override
-    public void chat(String message) {
+    public void chat(final String message) {
+        if (message.length() > 100) {
+            this.kick("Message too long!");
+        }
+        String out = message.trim();
+        Matcher matcher = BAD_CHAT_PATTERN.matcher(out);
 
+        if (matcher.find() && !this.canIgnoreRestrictions()) {
+            out = out.replaceAll(matcher.group(), "");
+        }
+
+        if (out.startsWith("/")) {
+            this.executeCommand(out.split(" "));
+        } else if (isMuted()) {
+            this.notice("You are currently muted!");
+        } else {
+            final String displayName = this.getDisplayName();
+
+            this.defaultChatPattern.put("%name", displayName != null ? displayName : getName());
+            this.defaultChatPattern.put("%message", out);
+            //this.defaultChatPattern.put("%group", this.getGroup().getName());
+
+            ChatHook hook = (ChatHook) new ChatHook(this, CHAT_FORMAT, Canary.getServer().getPlayerList(), this.defaultChatPattern).call();
+            if (hook.isCanceled()) {
+                return;
+            }
+
+            final String formattedMessage = hook.buildSendMessage();
+            for (Player player : hook.getReceiverList()) {
+                player.message(formattedMessage);
+            }
+            log.info(ChatFormat.consoleFormat(formattedMessage));
+        }
     }
 
     @Override
@@ -130,7 +176,31 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public boolean executeCommand(String[] command) {
-        return false;
+        try {
+            PlayerCommandHook commandHook = (PlayerCommandHook) new PlayerCommandHook(this, command).call();
+            if (commandHook.isCanceled()) {
+                return true;
+            }
+
+            String commandName = command[0];
+            if (commandName.startsWith("/")) {
+                commandName = commandName.substring(1);
+            }
+
+            if (Canary.commands().parseCommand(this, commandName, command)) {
+                log.info("Command used by " + getName() + ": " + StringUtils.joinString(command, " ", 0));
+                return true;
+            } else {
+                log.debug("Vanilla Command Execution...");
+                return Canary.getServer().consoleCommand(StringUtils.joinString(command, " ", 0), this);
+            }
+        } catch (Throwable t) {
+            log.error("Exception in command handler!", t);
+            if (this.isAdmin()) {
+                this.message(ChatFormat.RED + "Exception occurred: " + t.getMessage());
+            }
+            return false;
+        }
     }
 
     @Override

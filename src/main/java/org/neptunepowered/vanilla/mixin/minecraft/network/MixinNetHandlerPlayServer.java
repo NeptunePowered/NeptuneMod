@@ -25,15 +25,20 @@ package org.neptunepowered.vanilla.mixin.minecraft.network;
 
 import net.canarymod.Canary;
 import net.canarymod.api.NetServerHandler;
+import net.canarymod.api.PlayerReference;
 import net.canarymod.api.chat.ChatComponent;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.packet.Packet;
+import net.canarymod.config.Configuration;
 import net.canarymod.hook.player.DisconnectionHook;
 import net.canarymod.hook.player.KickHook;
 import net.canarymod.hook.player.PlayerIdleHook;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.PacketThreadUtil;
+import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.network.play.server.S00PacketKeepAlive;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S07PacketRespawn;
@@ -160,6 +165,33 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
             logger.info("Stopping singleplayer server as player logged out");
             this.serverController.initiateShutdown();
         }
+    }
+
+    @Overwrite
+    public void processChatMessage(C01PacketChatMessage packetIn) {
+        PacketThreadUtil.checkThreadAndEnqueue(packetIn, (NetHandlerPlayServer) (Object) this, this.playerEntity.getServerForPlayer());
+
+        if (this.playerEntity.getChatVisibility() == EntityPlayer.EnumChatVisibility.HIDDEN) {
+            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("chat.cannotSend", new Object[0]);
+            chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
+            this.sendPacket(new S02PacketChat(chatcomponenttranslation));
+            return;
+        }
+
+        this.chatSpamThresholdCount += 20;
+
+        final boolean op = Canary.ops().isOpped((PlayerReference) this.playerEntity);
+        final boolean ignore = ((Player) this.playerEntity).canIgnoreRestrictions();
+        final String spamProtectionLevel = Configuration.getServerConfig().getSpamProtectionLevel();
+
+        if (spamProtectionLevel.equalsIgnoreCase("all") || (spamProtectionLevel.equalsIgnoreCase("default") && !(op || ignore))) {
+            if (this.chatSpamThresholdCount > 200) {
+                this.kickPlayerFromServer("disconnect.spam");
+                return;
+            }
+        }
+        this.playerEntity.markPlayerActive();
+        ((Player) this.playerEntity).chat(packetIn.getMessage());
     }
 
     @Override
