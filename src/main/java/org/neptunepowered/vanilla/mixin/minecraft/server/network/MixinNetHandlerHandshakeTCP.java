@@ -27,19 +27,14 @@ import com.google.gson.Gson;
 import com.mojang.authlib.properties.Property;
 import com.mojang.util.UUIDTypeAdapter;
 import net.canarymod.config.Configuration;
-import net.canarymod.hook.system.ServerListPingHook;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.server.S00PacketDisconnect;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.NetHandlerHandshakeTCP;
-import net.minecraft.server.network.NetHandlerLoginServer;
-import net.minecraft.server.network.NetHandlerStatusServer;
 import net.minecraft.util.ChatComponentText;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkManager;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -50,9 +45,8 @@ import java.net.InetSocketAddress;
 @Mixin(NetHandlerHandshakeTCP.class)
 public abstract class MixinNetHandlerHandshakeTCP {
 
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
-    @Shadow private MinecraftServer server;
     @Shadow private NetworkManager networkManager;
 
     @Inject(method = "processHandshake", at = @At(value = "HEAD"), cancellable = true)
@@ -67,7 +61,7 @@ public abstract class MixinNetHandlerHandshakeTCP {
                 ((IMixinNetworkManager) this.networkManager).setSpoofedUUID(UUIDTypeAdapter.fromString(split[2]));
 
                 if (split.length == 4) {
-                    ((IMixinNetworkManager) this.networkManager).setSpoofedProfile(gson.fromJson(split[3], Property[].class));
+                    ((IMixinNetworkManager) this.networkManager).setSpoofedProfile(GSON.fromJson(split[3], Property[].class));
                 }
             } else {
                 ChatComponentText chatcomponenttext =

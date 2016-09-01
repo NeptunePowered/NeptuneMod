@@ -167,6 +167,11 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
         }
     }
 
+    /**
+     * Overwrite to pass chat to Canary.
+     *
+     * @author jamierocks
+     */
     @Overwrite
     public void processChatMessage(C01PacketChatMessage packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, (NetHandlerPlayServer) (Object) this, this.playerEntity.getServerForPlayer());
@@ -224,7 +229,7 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
 
     @Override
     public Player getUser() {
-        return (Player) playerEntity;
+        return (Player) this.playerEntity;
     }
 
     @Override

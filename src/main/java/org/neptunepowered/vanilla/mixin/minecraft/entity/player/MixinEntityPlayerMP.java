@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
 import static net.canarymod.Canary.log;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
@@ -50,16 +51,20 @@ import net.canarymod.chat.ChatFormat;
 import net.canarymod.config.Configuration;
 import net.canarymod.hook.command.PlayerCommandHook;
 import net.canarymod.hook.player.ChatHook;
+import net.canarymod.hook.player.ReturnFromIdleHook;
 import net.canarymod.hook.player.TeleportHook;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
 import net.canarymod.user.UserAndGroupsProvider;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.world.WorldServer;
 import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
@@ -67,10 +72,13 @@ import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,6 +93,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Shadow private StatisticsFile statsFile;
     @Shadow public NetHandlerPlayServer playerNetServerHandler;
     @Shadow public ItemInWorldManager theItemInWorldManager;
+    @Shadow private long playerLastActiveTime;
 
     private List<Group> groups;
     private PermissionProvider permissions;
@@ -97,6 +106,20 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Shadow
     public abstract void closeScreen();
 
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void onConstruction(MinecraftServer server, WorldServer worldIn, GameProfile profile, ItemInWorldManager interactionManager,
+            CallbackInfo info) {
+        this.initPlayerData();
+    }
+
+    @Inject(method = "markPlayerActive", at = @At("INVOKE"))
+    public void onMarkPlayerActive(CallbackInfo info) {
+        final long idleTime = MinecraftServer.getCurrentTimeMillis() - this.playerLastActiveTime;
+        if (idleTime > 10000) {
+            new ReturnFromIdleHook(this, idleTime).call();
+        }
+    }
+
     @Override
     public void initPlayerData() {
         final UserAndGroupsProvider provider = Canary.usersAndGroups();
@@ -106,7 +129,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
         final String[] data = provider.getPlayerData(uuid);
         final Group[] subs = provider.getModuleGroupsForPlayer(uuid);
 
-        this.groups = new LinkedList<>();
+        this.groups = Lists.newLinkedList();
         this.groups.add(Canary.usersAndGroups().getGroup(data[1]));
         for (Group g : subs) {
             if (g != null) {
@@ -133,8 +156,9 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
         if (message.length() > 100) {
             this.kick("Message too long!");
         }
+
         String out = message.trim();
-        Matcher matcher = BAD_CHAT_PATTERN.matcher(out);
+        final Matcher matcher = BAD_CHAT_PATTERN.matcher(out);
 
         if (matcher.find() && !this.canIgnoreRestrictions()) {
             out = out.replaceAll(matcher.group(), "");
@@ -142,14 +166,14 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
         if (out.startsWith("/")) {
             this.executeCommand(out.split(" "));
-        } else if (isMuted()) {
+        } else if (this.isMuted()) {
             this.notice("You are currently muted!");
         } else {
             final String displayName = this.getDisplayName();
 
             this.defaultChatPattern.put("%name", displayName != null ? displayName : getName());
             this.defaultChatPattern.put("%message", out);
-            //this.defaultChatPattern.put("%group", this.getGroup().getName());
+            // this.defaultChatPattern.put("%group", this.getGroup().getName()); // TODO: groups
 
             ChatHook hook = (ChatHook) new ChatHook(this, CHAT_FORMAT, Canary.getServer().getPlayerList(), this.defaultChatPattern).call();
             if (hook.isCanceled()) {
@@ -400,42 +424,84 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public Group getGroup() {
-        return null;
+        return this.groups.get(0);
     }
 
     @Override
     public void setGroup(Group group) {
-
+        this.groups.set(0, group);
+        Canary.usersAndGroups().addOrUpdatePlayerData(this);
+        this.defaultChatPattern.put("%prefix", getPrefix()); // Update Prefix
     }
 
     @Override
     public boolean isOnline() {
-        return false;
+        return Canary.getServer().getPlayer(this.getName()) != null;
     }
 
     @Override
     public void addGroup(Group group) {
-
+        if (!this.groups.contains(group)) {
+            this.groups.add(group);
+            Canary.usersAndGroups().addOrUpdatePlayerData(this);
+        }
     }
 
     @Override
-    public boolean removeGroup(Group g) {
-        return false;
+    public boolean removeGroup(Group group) {
+        boolean success = this.groups.remove(group);
+        if (success) {
+            Canary.usersAndGroups().addOrUpdatePlayerData(this);
+        }
+        return success;
     }
 
     @Override
-    public boolean removeGroup(String g) {
-        return false;
+    public boolean removeGroup(String group) {
+        Group g = Canary.usersAndGroups().getGroup(group);
+        if (g == null) {
+            return false;
+        }
+        return this.removeGroup(g);
     }
 
     @Override
     public boolean isInGroup(Group group, boolean parents) {
+        for (Group g : this.groups) {
+            if (g.getName().equals(group.getName())) {
+                return true;
+            }
+            if (parents) {
+                for (Group parent : g.parentsToList()) {
+                    if (parent.getName().equals(group.getName())) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
     @Override
     public boolean isInGroup(String group, boolean parents) {
+        for (Group g : this.groups) {
+            if (g.getName().equals(group)) {
+                return true;
+            }
+            if (parents) {
+                for (Group parent : g.parentsToList()) {
+                    if (parent.getName().equals(group)) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
+    }
+
+    @Override
+    public UUID getUUID() {
+        return EntityPlayer.getUUID(this.getGameProfile());
     }
 
     @Override
@@ -675,7 +741,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public boolean hasAchievement(Achievements achievement) {
-        return hasAchievement(achievement.getInstance());
+        return this.hasAchievement(achievement.getInstance());
     }
 
     @Override

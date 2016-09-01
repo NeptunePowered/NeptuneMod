@@ -225,12 +225,12 @@ public abstract class MixinEntity implements Entity {
 
     @Override
     public int getID() {
-        return entityId;
+        return this.entityId;
     }
 
     @Override
     public UUID getUUID() {
-        return entityUniqueID;
+        return this.entityUniqueID;
     }
 
     @Override
