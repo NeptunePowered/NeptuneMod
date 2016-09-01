@@ -48,7 +48,7 @@ import net.minecraft.server.MinecraftServer;
 import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.interfaces.minecraft.command.IMixinServerCommandManager;
 import org.neptunepowered.vanilla.wrapper.NeptuneTranslator;
-import org.neptunepowered.vanilla.wrapper.commandsys.NeptunePlayerSelector;
+import org.neptunepowered.vanilla.commandsys.NeptunePlayerSelector;
 import org.neptunepowered.vanilla.wrapper.util.NeptuneJsonNBTUtility;
 
 public class Neptune extends Canary {

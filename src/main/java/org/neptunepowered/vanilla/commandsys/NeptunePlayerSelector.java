@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.commandsys;
+package org.neptunepowered.vanilla.commandsys;
 
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.chat.MessageReceiver;
@@ -41,7 +41,7 @@ public class NeptunePlayerSelector implements PlayerSelector {
 
     @Override
     public Player[] matchPlayers(MessageReceiver caller, String pattern) {
-        List<? extends Entity> matches = net.minecraft.command.PlayerSelector
+        List<? extends EntityPlayerMP> matches = net.minecraft.command.PlayerSelector
                 .matchEntities((ICommandSender) caller, pattern, EntityPlayerMP.class);
         return matches.toArray(new Player[matches.size()]);
     }
@@ -50,4 +50,5 @@ public class NeptunePlayerSelector implements PlayerSelector {
     public boolean matchesMultiplePlayers(String pattern) {
         return net.minecraft.command.PlayerSelector.matchesMultiplePlayers(pattern);
     }
+
 }

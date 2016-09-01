@@ -21,41 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.util;
+package org.neptunepowered.vanilla.mixin.minecraft.item.crafting;
 
-import com.mojang.authlib.GameProfile;
-import net.canarymod.api.nbt.BaseTag;
-import net.canarymod.api.nbt.CompoundTag;
-import net.canarymod.util.JsonNBTUtility;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
+import net.canarymod.api.inventory.Item;
+import net.canarymod.api.inventory.recipes.ShapelessRecipe;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.ShapelessRecipes;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public class NeptuneJsonNBTUtility implements JsonNBTUtility {
+import java.util.List;
 
-    @Override
-    public BaseTag jsonToNBT(String rawJson) {
-        try {
-            return (BaseTag) JsonToNBT.getTagFromJson(rawJson);
-        } catch (NBTException e) {
-            return null;
-        }
-    }
+@Mixin(ShapelessRecipes.class)
+public abstract class MixinShapelessRecipes implements ShapelessRecipe {
+
+    @Shadow @Final public List<ItemStack> recipeItems;
 
     @Override
-    public String baseTagToJSON(BaseTag baseTag) {
-        return null;
-    }
-
-    @Override
-    public GameProfile gameProfileFromNBT(CompoundTag tag) {
-        return NBTUtil.readGameProfileFromNBT((NBTTagCompound) tag);
-    }
-
-    @Override
-    public CompoundTag gameProfileToNBT(GameProfile profile) {
-        return (CompoundTag) NBTUtil.writeGameProfile(new NBTTagCompound(), profile);
+    public List<Item> getRecipeItems() {
+        return (List) this.recipeItems;
     }
 
 }

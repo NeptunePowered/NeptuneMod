@@ -21,38 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.inventory.recipes;
+package org.neptunepowered.vanilla.mixin.minecraft.item.crafting;
 
+import net.canarymod.api.inventory.CraftingMatrix;
 import net.canarymod.api.inventory.Item;
-import net.canarymod.api.inventory.recipes.ShapelessRecipe;
-import net.minecraft.item.crafting.ShapelessRecipes;
+import net.canarymod.api.inventory.recipes.Recipe;
+import net.minecraft.item.crafting.IRecipe;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
+import org.spongepowered.asm.mixin.Mixin;
 
-import java.util.List;
+@Mixin(IRecipe.class)
+@Implements(@Interface(iface = Recipe.class, prefix = "recipe$"))
+public interface MixinIRecipe extends IRecipe, Recipe {
 
-public class NeptuneShapelessRecipe extends NeptuneRecipe implements ShapelessRecipe {
+    @Override
+    default Item getResult() {
+        return (Item) this.getRecipeOutput();
+    }
 
-    public NeptuneShapelessRecipe(ShapelessRecipes handle) {
-        super(handle);
+    @Intrinsic
+    default int recipe$getRecipeSize() {
+        return this.getRecipeSize();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Item> getRecipeItems() {
-        return (List) this.getHandle().recipeItems;
-    }
-
-    @Override
-    public boolean isShapeless() {
-        return true;
-    }
-
-    @Override
-    public boolean isShaped() {
+    default boolean isShapeless() {
         return false;
     }
 
     @Override
-    public ShapelessRecipes getHandle() {
-        return (ShapelessRecipes) super.getHandle();
+    default boolean isShaped() {
+        return false;
     }
+
+    @Override
+    default boolean matchesMatrix(CraftingMatrix var1) {
+        return false;
+    }
+
 }

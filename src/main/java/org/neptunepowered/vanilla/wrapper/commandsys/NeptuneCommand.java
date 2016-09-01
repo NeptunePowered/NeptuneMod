@@ -45,12 +45,7 @@ public class NeptuneCommand extends CanaryCommand {
         super(new DynamicCommandAnnotation(
                         command.getCommandAliases().toArray(new String[command.getCommandAliases().size()]),
                         new String[0], "", "", "", "", new String[0], 0, 0, "", 2), Neptune.minecraftCommandOwner, null,
-                new TabCompleteDispatch() {
-                    @Override
-                    public List<String> complete(MessageReceiver msgrec, String[] args) throws TabCompleteException {
-                        return command.addTabCompletionOptions((ICommandSender) msgrec, args, BlockPos.ORIGIN);
-                    }
-                });
+                (TabCompleteDispatch) command);
         this.command = command;
     }
 

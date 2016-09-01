@@ -340,13 +340,7 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public List<Recipe> getServerRecipes() {
-        List<Recipe> recipes = Lists.newArrayList();
-
-        for (Object recipe : CraftingManager.getInstance().getRecipeList()) {
-            recipes.add(NeptuneRecipe.of((IRecipe) recipe));
-        }
-
-        return recipes;
+        return (List) CraftingManager.getInstance().getRecipeList();
     }
 
     @Override

@@ -21,53 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.inventory.recipes;
+package org.neptunepowered.vanilla.mixin.minecraft.item.crafting;
 
-import net.canarymod.api.inventory.CraftingMatrix;
 import net.canarymod.api.inventory.Item;
-import net.canarymod.api.inventory.recipes.Recipe;
-import net.minecraft.item.crafting.IRecipe;
+import net.canarymod.api.inventory.recipes.ShapedRecipe;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.item.crafting.ShapelessRecipes;
-import org.neptunepowered.vanilla.util.Wrapper;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public abstract class NeptuneRecipe extends Wrapper<IRecipe> implements Recipe {
+@Mixin(ShapedRecipes.class)
+public abstract class MixinShapedRecipes implements ShapedRecipe {
 
-    public NeptuneRecipe(IRecipe handle) {
-        super(handle);
+    @Shadow @Final public int recipeWidth;
+    @Shadow @Final public int recipeHeight;
+    @Shadow @Final public ItemStack[] recipeItems;
+
+    @Override
+    public int getWidth() {
+        return this.recipeWidth;
     }
 
     @Override
-    public Item getResult() {
-        return (Item) this.getHandle().getRecipeOutput();
+    public int getHeight() {
+        return this.recipeHeight;
     }
 
     @Override
-    public int getRecipeSize() {
-        return this.getHandle().getRecipeSize();
+    public Item[] getRecipeItems() {
+        return (Item[]) this.recipeItems;
     }
 
     @Override
-    public boolean matchesMatrix(CraftingMatrix matrix) {
-        return false;
+    public boolean isShaped() {
+        return true;
     }
 
-    public static NeptuneRecipe of(IRecipe recipe) {
-        if (recipe instanceof ShapedRecipes) {
-            return new NeptuneShapedRecipe((ShapedRecipes) recipe);
-        } else if(recipe instanceof ShapelessRecipes) {
-            return new NeptuneShapelessRecipe((ShapelessRecipes) recipe);
-        }
-        return new NeptuneRecipe(recipe) {
-            @Override
-            public boolean isShapeless() {
-                return false;
-            }
-
-            @Override
-            public boolean isShaped() {
-                return false;
-            }
-        };
-    }
 }

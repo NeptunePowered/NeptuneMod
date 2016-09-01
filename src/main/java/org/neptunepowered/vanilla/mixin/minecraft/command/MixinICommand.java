@@ -21,45 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.inventory.recipes;
+package org.neptunepowered.vanilla.mixin.minecraft.command;
 
-import net.canarymod.api.inventory.Item;
-import net.canarymod.api.inventory.recipes.ShapedRecipe;
-import net.minecraft.item.crafting.ShapedRecipes;
+import net.canarymod.chat.MessageReceiver;
+import net.canarymod.commandsys.TabCompleteDispatch;
+import net.canarymod.commandsys.TabCompleteException;
+import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.util.BlockPos;
+import org.spongepowered.asm.mixin.Mixin;
 
-public class NeptuneShapedRecipe extends NeptuneRecipe implements ShapedRecipe {
+import java.util.List;
 
-    public NeptuneShapedRecipe(ShapedRecipes handle) {
-        super(handle);
-    }
-
-    @Override
-    public int getWidth() {
-        return this.getHandle().recipeWidth;
-    }
+@Mixin(ICommand.class)
+public interface MixinICommand extends ICommand, TabCompleteDispatch {
 
     @Override
-    public int getHeight() {
-        return this.getHandle().recipeHeight;
+    default List<String> complete(MessageReceiver msgrec, String[] args) throws TabCompleteException {
+        return this.addTabCompletionOptions((ICommandSender) msgrec, args, BlockPos.ORIGIN);
     }
 
-    @Override
-    public Item[] getRecipeItems() {
-        return (Item[]) this.getHandle().recipeItems;
-    }
-
-    @Override
-    public boolean isShapeless() {
-        return false;
-    }
-
-    @Override
-    public boolean isShaped() {
-        return true;
-    }
-
-    @Override
-    public ShapedRecipes getHandle() {
-        return (ShapedRecipes) super.getHandle();
-    }
 }
