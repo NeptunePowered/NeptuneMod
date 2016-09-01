@@ -139,12 +139,14 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
         this.permissions = Canary.permissionManager().getPlayerProvider(uuid, this.getWorld().getFqName());
         if (data[0] != null && (!data[0].isEmpty() && !data[0].equals(" "))) {
-            this.setPrefix(ToolBox.stringToNull(data[0]));
+            this.prefix = ToolBox.stringToNull(data[0]);
         }
 
         if (data[2] != null && !data[2].isEmpty()) {
-            muted = Boolean.valueOf(data[2]);
+            this.muted = Boolean.valueOf(data[2]);
         }
+
+        defaultChatPattern.put("%prefix", this.getPrefix());
 
         if (isNew || provider.nameChanged(this)) {
             provider.addOrUpdatePlayerData(this);
@@ -173,7 +175,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
             this.defaultChatPattern.put("%name", displayName != null ? displayName : getName());
             this.defaultChatPattern.put("%message", out);
-            // this.defaultChatPattern.put("%group", this.getGroup().getName()); // TODO: groups
+            this.defaultChatPattern.put("%group", this.getGroup().getName());
 
             ChatHook hook = (ChatHook) new ChatHook(this, CHAT_FORMAT, Canary.getServer().getPlayerList(), this.defaultChatPattern).call();
             if (hook.isCanceled()) {
@@ -431,7 +433,18 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     public void setGroup(Group group) {
         this.groups.set(0, group);
         Canary.usersAndGroups().addOrUpdatePlayerData(this);
-        this.defaultChatPattern.put("%prefix", getPrefix()); // Update Prefix
+        this.defaultChatPattern.put("%prefix", this.getPrefix()); // Update Prefix
+    }
+
+    @Override
+    public String getPrefix() {
+        if (this.prefix != null) {
+            return this.prefix;
+        } else if (this.groups.get(0).getPrefix() != null) {
+            return this.groups.get(0).getPrefix();
+        } else {
+            return ChatFormat.WHITE.toString();
+        }
     }
 
     @Override
@@ -772,6 +785,11 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Override
     public String getFqName() {
         return "Player";
+    }
+
+    @Override
+    public boolean isPlayer() {
+        return true;
     }
 
     @Override

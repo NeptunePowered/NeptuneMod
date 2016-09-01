@@ -53,7 +53,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
     @Shadow public PlayerCapabilities capabilities;
     @Shadow private ItemStack itemInUse;
 
-    private String prefix = null;
+    protected String prefix = null;
 
     @Shadow
     public abstract IChatComponent shadow$getDisplayName();

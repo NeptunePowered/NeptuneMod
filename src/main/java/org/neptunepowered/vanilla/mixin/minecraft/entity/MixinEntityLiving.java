@@ -175,4 +175,9 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
     public boolean canAttackEntity(EntityType type) {
         return false;
     }
+
+    @Override
+    public boolean isLiving() {
+        return true;
+    }
 }
