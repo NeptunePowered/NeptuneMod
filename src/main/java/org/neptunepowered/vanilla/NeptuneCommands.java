@@ -59,7 +59,7 @@ public final class NeptuneCommands implements CommandListener {
     }
 
     @TabComplete(commands = { "neptune" })
-    public List<String> playtimeTabComplete(MessageReceiver caller, String[] args) {
+    public List<String> tabComplete(MessageReceiver caller, String[] args) {
         if (args.length == 1) {
             return TabCompleteHelper.matchTo(args, new String[] { "info" });
         }

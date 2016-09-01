@@ -23,7 +23,6 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.server;
 
-import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
@@ -46,7 +45,6 @@ import net.canarymod.chat.MessageReceiver;
 import net.canarymod.config.Configuration;
 import net.canarymod.tasks.ServerTask;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
@@ -57,7 +55,6 @@ import net.minecraft.world.storage.SaveHandler;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.neptunepowered.vanilla.wrapper.NeptuneOfflinePlayer;
-import org.neptunepowered.vanilla.wrapper.inventory.recipes.NeptuneRecipe;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
