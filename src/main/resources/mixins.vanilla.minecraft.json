@@ -9,7 +9,7 @@
         "block.material.MixinMaterial",
         "block.MixinBlock",
         "command.server.MixinCommandBlockLogic",
-        "command.MixinICommand",
+        "command.MixinCommandHandler",
         "command.MixinICommandSender",
         "command.MixinServerCommandManager",
         "crash.MixinCrashReport",

@@ -44,6 +44,8 @@ import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.config.Configuration;
 import net.canarymod.tasks.ServerTask;
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.ServerStatusResponse;
@@ -89,6 +91,9 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Shadow
     public abstract PlayerProfileCache getPlayerProfileCache();
+
+    @Shadow
+    public abstract ICommandManager getCommandManager();
 
     @Shadow
     public abstract String getHostname();
@@ -160,7 +165,7 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public void executeVanillaCommand(MessageReceiver caller, String command) {
-
+        this.getCommandManager().executeCommand((ICommandSender) caller, command);
     }
 
     @Override

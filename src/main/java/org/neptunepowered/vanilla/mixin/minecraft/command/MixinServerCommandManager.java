@@ -23,118 +23,65 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.command;
 
-import com.google.common.collect.Lists;
-import net.canarymod.Canary;
-import net.canarymod.chat.MessageReceiver;
-import net.canarymod.commandsys.CanaryCommand;
-import net.canarymod.commandsys.CommandDependencyException;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.ServerCommandManager;
-import net.minecraft.util.BlockPos;
+import net.minecraft.command.server.CommandBlockLogic;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.rcon.RConConsoleSource;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
-import org.neptunepowered.lib.command.CommandBuilder;
-import org.neptunepowered.vanilla.Neptune;
-import org.neptunepowered.vanilla.interfaces.minecraft.command.IMixinServerCommandManager;
+import net.minecraft.util.IChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(ServerCommandManager.class)
-public class MixinServerCommandManager extends CommandHandler implements IMixinServerCommandManager {
+public class MixinServerCommandManager extends MixinCommandHandler {
 
-    private List<CanaryCommand> earlyRegisterCommands = Lists.newArrayList();
+    @Overwrite
+    public void notifyOperators(ICommandSender sender, ICommand command, int flags, String msgFormat, Object... msgParams) {
+        boolean flag = true;
+        MinecraftServer minecraftserver = MinecraftServer.getServer();
 
-    @Override
-    public Map<String, ICommand> getCommands() {
-        return (Map) Canary.commands().getCommands();
-    }
-
-    @Override
-    public int executeCommand(ICommandSender sender, String command) {
-        command = command.trim();
-        if (command.startsWith("/")) {
-            command = command.substring(1);
-        }
-        String[] args = command.split(" ");
-        String commandName = args[0];
-
-        boolean exists = Canary.commands().parseCommand((MessageReceiver) sender, commandName, args);
-
-        if (!exists) {
-            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.generic.notFound", new Object[0]);
-            chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
-            sender.addChatMessage(chatcomponenttranslation);
+        if (!sender.sendCommandFeedback()) {
+            flag = false;
         }
 
-        return exists ? 1 : 0;
-    }
+        IChatComponent ichatcomponent =
+                new ChatComponentTranslation("chat.type.admin", sender.getName(), new ChatComponentTranslation(msgFormat, msgParams));
+        ichatcomponent.getChatStyle().setColor(EnumChatFormatting.GRAY);
+        ichatcomponent.getChatStyle().setItalic(true);
 
-    @Override
-    public ICommand registerCommand(ICommand command) {
-        CanaryCommand cmd = new CommandBuilder(Neptune.minecraftCommandOwner)
-                .aliases(getCommandAliases(command))
-                .description("")
-                .toolTip("")
-                .executor((messageReceiver, strings) -> {
-                    try {
-                        command.processCommand((ICommandSender) messageReceiver, strings);
-                    } catch (CommandException e) {
-                        Canary.log.error("Failed to execute command: " + command.getCommandName(), e);
+        if (flag) {
+            for (EntityPlayer entityplayer : minecraftserver.getConfigurationManager().getPlayerList()) {
+                if (entityplayer != sender && minecraftserver.getConfigurationManager().canSendCommands(entityplayer.getGameProfile()) && command
+                        .canCommandSenderUseCommand(sender)) {
+                    boolean flag1 = sender instanceof MinecraftServer && MinecraftServer.getServer().shouldBroadcastConsoleToOps();
+                    boolean flag2 = sender instanceof RConConsoleSource && MinecraftServer.getServer().shouldBroadcastRconToOps();
+
+                    if (flag1 || flag2 || !(sender instanceof RConConsoleSource) && !(sender instanceof MinecraftServer)) {
+                        entityplayer.addChatMessage(ichatcomponent);
                     }
-                })
-                .build();
-        if (Canary.instance() != null) {
-            try {
-                Canary.commands().registerCommand(cmd, Neptune.minecraftCommandOwner, false);
-            } catch (CommandDependencyException e) {
-                Canary.log.error("Failed to register command!", e);
-            }
-        } else {
-            earlyRegisterCommands.add(cmd);
-        }
-
-        return super.registerCommand(command);
-    }
-
-    private static String[] getCommandAliases(ICommand command) {
-        final List<String> commandAliases = Lists.newArrayList();
-        commandAliases.add(command.getCommandName());
-        commandAliases.addAll(command.getCommandAliases());
-        return commandAliases.toArray(new String[commandAliases.size()]);
-    }
-
-    @Override
-    public List<ICommand> getPossibleCommands(ICommandSender sender) {
-        return (List) Canary.commands().matchCommandNames((MessageReceiver) sender, "", false);
-    }
-
-    @Override
-    public List<String> getTabCompletionOptions(ICommandSender sender, String command, BlockPos pos) {
-        command = command.trim();
-        if (command.startsWith("/")) {
-            command = command.substring(1);
-        }
-        String[] args = command.split(" ");
-        String commandName = args[0];
-        return Canary.commands().tabComplete((MessageReceiver) sender, commandName, args);
-    }
-
-    @Override
-    public void registerEarlyCommands() {
-        for (Iterator<CanaryCommand> it = earlyRegisterCommands.iterator(); it.hasNext(); ) {
-            CanaryCommand cmd = it.next();
-            it.remove();
-            try {
-                Canary.commands().registerCommand(cmd, Neptune.minecraftCommandOwner, true);
-            } catch (CommandDependencyException e) {
-                Canary.log.error("Failed to register early command!", e);
+                }
             }
         }
+
+        // Neptune - Always log command feedback
+        //if (sender != minecraftserver && minecraftserver.worldServers[0].getGameRules().getBoolean("logAdminCommands")) {
+        minecraftserver.addChatMessage(ichatcomponent);
+        //}
+        // Neptune - end
+
+        boolean flag3 = minecraftserver.worldServers[0].getGameRules().getBoolean("sendCommandFeedback");
+
+        if (sender instanceof CommandBlockLogic) {
+            flag3 = ((CommandBlockLogic) sender).shouldTrackOutput();
+        }
+
+        if ((flags & 1) != 1 && flag3 || sender instanceof MinecraftServer) {
+            sender.addChatMessage(new ChatComponentTranslation(msgFormat, msgParams));
+        }
     }
+
 }
