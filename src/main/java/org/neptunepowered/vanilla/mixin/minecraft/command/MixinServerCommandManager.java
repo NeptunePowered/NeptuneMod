@@ -26,7 +26,9 @@ package org.neptunepowered.vanilla.mixin.minecraft.command;
 import com.google.common.collect.Lists;
 import net.canarymod.Canary;
 import net.canarymod.chat.MessageReceiver;
+import net.canarymod.commandsys.CanaryCommand;
 import net.canarymod.commandsys.CommandDependencyException;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -34,9 +36,9 @@ import net.minecraft.command.ServerCommandManager;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
+import org.neptunepowered.lib.command.CommandBuilder;
 import org.neptunepowered.vanilla.Neptune;
 import org.neptunepowered.vanilla.interfaces.minecraft.command.IMixinServerCommandManager;
-import org.neptunepowered.vanilla.wrapper.commandsys.NeptuneCommand;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.Iterator;
@@ -46,11 +48,11 @@ import java.util.Map;
 @Mixin(ServerCommandManager.class)
 public class MixinServerCommandManager extends CommandHandler implements IMixinServerCommandManager {
 
-    private List<NeptuneCommand> earlyRegisterCommands = Lists.newArrayList();
+    private List<CanaryCommand> earlyRegisterCommands = Lists.newArrayList();
 
     @Override
-    public Map getCommands() {
-        return Canary.commands().getCommands();
+    public Map<String, ICommand> getCommands() {
+        return (Map) Canary.commands().getCommands();
     }
 
     @Override
@@ -75,12 +77,23 @@ public class MixinServerCommandManager extends CommandHandler implements IMixinS
 
     @Override
     public ICommand registerCommand(ICommand command) {
-        NeptuneCommand cmd = new NeptuneCommand(command);
+        CanaryCommand cmd = new CommandBuilder(Neptune.minecraftCommandOwner)
+                .aliases(getCommandAliases(command))
+                .description("")
+                .toolTip("")
+                .executor((messageReceiver, strings) -> {
+                    try {
+                        command.processCommand((ICommandSender) messageReceiver, strings);
+                    } catch (CommandException e) {
+                        Canary.log.error("Failed to execute command: " + command.getCommandName(), e);
+                    }
+                })
+                .build();
         if (Canary.instance() != null) {
             try {
                 Canary.commands().registerCommand(cmd, Neptune.minecraftCommandOwner, false);
             } catch (CommandDependencyException e) {
-                Canary.log.error("Eh, something has broken :(", e);
+                Canary.log.error("Failed to register command!", e);
             }
         } else {
             earlyRegisterCommands.add(cmd);
@@ -89,9 +102,16 @@ public class MixinServerCommandManager extends CommandHandler implements IMixinS
         return super.registerCommand(command);
     }
 
+    private static String[] getCommandAliases(ICommand command) {
+        final List<String> commandAliases = Lists.newArrayList();
+        commandAliases.add(command.getCommandName());
+        commandAliases.addAll(command.getCommandAliases());
+        return commandAliases.toArray(new String[commandAliases.size()]);
+    }
+
     @Override
-    public List getPossibleCommands(ICommandSender sender) {
-        return Canary.commands().matchCommandNames((MessageReceiver) sender, "", false);
+    public List<ICommand> getPossibleCommands(ICommandSender sender) {
+        return (List) Canary.commands().matchCommandNames((MessageReceiver) sender, "", false);
     }
 
     @Override
@@ -107,13 +127,13 @@ public class MixinServerCommandManager extends CommandHandler implements IMixinS
 
     @Override
     public void registerEarlyCommands() {
-        for (Iterator<NeptuneCommand> it = earlyRegisterCommands.iterator(); it.hasNext(); ) {
-            NeptuneCommand cmd = it.next();
+        for (Iterator<CanaryCommand> it = earlyRegisterCommands.iterator(); it.hasNext(); ) {
+            CanaryCommand cmd = it.next();
             it.remove();
             try {
                 Canary.commands().registerCommand(cmd, Neptune.minecraftCommandOwner, true);
             } catch (CommandDependencyException e) {
-                Canary.log.error("Eh, something has broken :(", e);
+                Canary.log.error("Failed to register early command!", e);
             }
         }
     }

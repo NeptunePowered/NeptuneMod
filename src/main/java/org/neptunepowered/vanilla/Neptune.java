@@ -53,12 +53,7 @@ import org.neptunepowered.vanilla.wrapper.util.NeptuneJsonNBTUtility;
 
 public class Neptune extends Canary {
 
-    public static final CommandOwner minecraftCommandOwner = new CommandOwner() {
-        @Override
-        public String getName() {
-            return "Minecraft";
-        }
-    };
+    public static final CommandOwner minecraftCommandOwner = () -> "Minecraft";
 
     private boolean isInitialised = false;
 

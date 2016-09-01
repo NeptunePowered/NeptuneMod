@@ -36,6 +36,15 @@ archivesBaseName = project.name.toLowerCase()
 version = "$mcVersion-$apiVersion"
 
 repositories {
+    mavenCentral()
+    maven {
+        name = 'lex-releases'
+        url = 'http://repo.lexteam.xyz/maven/releases/'
+    }
+    maven {
+        name = 'lex-snapshots'
+        url = 'http://repo.lexteam.xyz/maven/snapshots/'
+    }
     maven {
         name = 'vi-repo'
         url = 'http://repo.visualillusionsent.net/repository/internal'
@@ -63,7 +72,7 @@ configurations {
 }
 
 dependencies {
-    compile "net.canarymod:CanaryLib:$apiVersion"
+    compile "org.neptunepowered:NeptuneLib:$apiVersion"
     compile('org.spongepowered:mixin:0.5.11-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
