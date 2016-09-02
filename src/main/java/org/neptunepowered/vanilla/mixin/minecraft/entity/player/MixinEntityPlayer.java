@@ -36,6 +36,7 @@ import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.FoodStats;
 import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
 import org.spongepowered.asm.mixin.Implements;
@@ -52,6 +53,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements Human {
 
     @Shadow public PlayerCapabilities capabilities;
+    @Shadow protected FoodStats foodStats;
     @Shadow private ItemStack itemInUse;
 
     protected String prefix = null;

@@ -56,6 +56,7 @@ import net.canarymod.hook.player.TeleportHook;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
 import net.canarymod.user.UserAndGroupsProvider;
+import net.canarymod.warp.Warp;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -69,6 +70,7 @@ import net.minecraft.world.WorldServer;
 import net.visualillusionsent.utils.DateUtils;
 import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
+import org.neptunepowered.vanilla.interfaces.minecraft.util.IMixinFoodStats;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -612,42 +614,42 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void addExhaustion(float exhaustion) {
-
+        ((IMixinFoodStats) this.foodStats).setExhaustionLevel(this.getExhaustionLevel() + exhaustion);
     }
 
     @Override
     public void setExhaustion(float exhaustion) {
-
+        ((IMixinFoodStats) this.foodStats).setExhaustionLevel(exhaustion);
     }
 
     @Override
     public float getExhaustionLevel() {
-        return 0;
+        return ((IMixinFoodStats) this.foodStats).getExhaustionLevel();
     }
 
     @Override
     public void addSaturation(float saturation) {
-
+        ((IMixinFoodStats) this.foodStats).setSaturationLevel(this.getSaturationLevel() + saturation);
     }
 
     @Override
     public void setSaturation(float saturation) {
-
+        ((IMixinFoodStats) this.foodStats).setSaturationLevel(saturation);
     }
 
     @Override
     public float getSaturationLevel() {
-        return 0;
+        return this.foodStats.getSaturationLevel();
     }
 
     @Override
     public int getHunger() {
-        return 0;
+        return this.foodStats.getFoodLevel();
     }
 
     @Override
     public void setHunger(int hunger) {
-
+        this.foodStats.setFoodLevel(hunger);
     }
 
     @Override
@@ -692,17 +694,22 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public Location getHome() {
-        return null;
+        Warp home = Canary.warps().getHome(this);
+
+        if (home != null) {
+            return home.getLocation();
+        }
+        return this.getSpawnPosition();
     }
 
     @Override
-    public void setHome(Location loc) {
-
+    public void setHome(Location home) {
+        Canary.warps().setHome(this, home);
     }
 
     @Override
     public boolean hasHome() {
-        return false;
+        return Canary.warps().getHome(this) != null;
     }
 
     @Override

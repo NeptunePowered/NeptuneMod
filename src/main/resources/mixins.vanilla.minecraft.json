@@ -147,6 +147,7 @@
         "util.MixinChatStyle",
         "util.MixinDamageSource",
         "util.MixinEnumChatFormatting",
+        "util.MixinFoodStats",
         "village.MixinMerchantRecipe",
         "village.MixinVillage",
         "world.biome.MixinBiomeGenBase",
