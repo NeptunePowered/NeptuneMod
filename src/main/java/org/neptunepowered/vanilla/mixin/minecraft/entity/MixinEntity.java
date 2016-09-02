@@ -41,6 +41,9 @@ import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.UUID;
@@ -67,6 +70,8 @@ public abstract class MixinEntity implements Entity {
     @Shadow protected UUID entityUniqueID;
     @Shadow private int entityId;
     @Shadow private AxisAlignedBB boundingBox;
+
+    public NBTTagCompound metadata = new NBTTagCompound();
 
     @Shadow
     public abstract void moveEntity(double x, double y, double z);
@@ -108,10 +113,20 @@ public abstract class MixinEntity implements Entity {
     public abstract String getName();
 
     @Shadow
-    public abstract void writeToNBT(NBTTagCompound tagCompund);
+    public abstract void writeToNBT(NBTTagCompound tagCompound);
 
     @Shadow
-    public abstract void readFromNBT(NBTTagCompound tagCompund);
+    public abstract void readFromNBT(NBTTagCompound tagCompound);
+
+    @Inject(method = "Lnet/minecraft/entity/Entity;writeToNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("HEAD"))
+    public void onWriteToNBT(NBTTagCompound tagCompound, CallbackInfo ci) {
+        this.writeCanaryNBT(tagCompound);
+    }
+
+    @Inject(method = "Lnet/minecraft/entity/Entity;readFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("RETURN"))
+    public void onReadFromNBT(NBTTagCompound tagCompound, CallbackInfo ci) {
+        this.readCanaryNBT(tagCompound);
+    }
 
     @Override
     public double getX() {
@@ -454,7 +469,7 @@ public abstract class MixinEntity implements Entity {
 
     @Override
     public CompoundTag getMetaData() {
-        return null;
+        return (CompoundTag) this.metadata;
     }
 
     @Override
@@ -534,6 +549,24 @@ public abstract class MixinEntity implements Entity {
 
     @Override
     public BoundingBox getBoundingBox() {
-        return (BoundingBox) boundingBox;
+        return (BoundingBox) this.boundingBox;
     }
+
+    public NBTTagCompound writeCanaryNBT(NBTTagCompound tagCompound) {
+        // tagCompound.setString("LevelName", this.getWorld().getName()); // TODO: multiworld
+        tagCompound.setTag("Canary", this.metadata);
+        return tagCompound;
+    }
+
+    public void readCanaryNBT(NBTTagCompound tagCompound) {
+        if (tagCompound.hasKey("Canary")) {
+            this.metadata = tagCompound.getCompoundTag("Canary");
+        } else {
+            this.initializeMetaData();
+        }
+    }
+
+    public void initializeMetaData() {
+    }
+
 }

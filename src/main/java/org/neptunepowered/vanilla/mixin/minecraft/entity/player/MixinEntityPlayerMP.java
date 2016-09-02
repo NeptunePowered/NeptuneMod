@@ -65,6 +65,7 @@ import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.world.WorldServer;
+import net.visualillusionsent.utils.DateUtils;
 import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
@@ -795,5 +796,12 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Override
     public EntityType getEntityType() {
         return EntityType.PLAYER;
+    }
+
+    @Override
+    public void initializeMetaData() {
+        this.metadata.setString("FirstJoin", DateUtils.longToDateTime(System.currentTimeMillis()));
+        this.metadata.setString("LastJoin", DateUtils.longToDateTime(System.currentTimeMillis()));
+        this.metadata.setLong("TimePlayed", 1L); // Initialise to 1
     }
 }
