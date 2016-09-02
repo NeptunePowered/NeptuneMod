@@ -39,7 +39,6 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketThreadUtil;
 import net.minecraft.network.play.client.C01PacketChatMessage;
-import net.minecraft.network.play.server.S00PacketKeepAlive;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S07PacketRespawn;
 import net.minecraft.server.MinecraftServer;
@@ -53,6 +52,8 @@ import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.net.SocketAddress;
 
@@ -78,44 +79,15 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
     @Shadow
     public abstract long currentTimeMillis();
 
-    /**
-     * Overwrite to fire {@link PlayerIdleHook}.
-     *
-     * @author jamierocks
-     */
-    @Overwrite
-    public void update() {
-        this.field_147366_g = false;
-        ++this.networkTickCount;
-        this.serverController.theProfiler.startSection("keepAlive");
-
-        if ((long) this.networkTickCount - this.lastSentPingPacket > 40L) {
-            this.lastSentPingPacket = (long) this.networkTickCount;
-            this.lastPingTime = this.currentTimeMillis();
-            this.field_147378_h = (int) this.lastPingTime;
-            this.sendPacket(new S00PacketKeepAlive(this.field_147378_h));
-        }
-
-        this.serverController.theProfiler.endSection();
-
-        if (this.chatSpamThresholdCount > 0) {
-            --this.chatSpamThresholdCount;
-        }
-
-        if (this.itemDropThreshold > 0) {
-            --this.itemDropThreshold;
-        }
-
-        long timeIdle = MinecraftServer.getCurrentTimeMillis() - this.playerEntity.getLastActiveTime();
-        if (this.playerEntity.getLastActiveTime() > 0L && this.serverController.getMaxPlayerIdleMinutes() > 0
-                && timeIdle > (long) (this.serverController.getMaxPlayerIdleMinutes() * 1000 * 60)
-                && !((Player) this.playerEntity).canIgnoreRestrictions()) { // Neptune - check if player is immune
-            // Neptune - start
-            PlayerIdleHook idleHook = (PlayerIdleHook) new PlayerIdleHook((Player) this.playerEntity, timeIdle).call();
+    @Redirect(method = "update", at = @At(value = "INVOKE", target = "net/minecraft/network/NetHandlerPlayServer;"
+            + "kickPlayerFromServer(Ljava/lang/String;)V"))
+    public void handlePlayerIdleHook(NetHandlerPlayServer playServer) {
+        final long timeIdle = MinecraftServer.getCurrentTimeMillis() - playServer.playerEntity.getLastActiveTime();
+        if (!((Player) playServer.playerEntity).canIgnoreRestrictions()) {
+            PlayerIdleHook idleHook = (PlayerIdleHook) new PlayerIdleHook((Player) playServer.playerEntity, timeIdle).call();
             if (!idleHook.isCanceled()) {
                 this.kickPlayerFromServer("You have been idle for too long!");
             }
-            // Neptune - end
         }
     }
 
