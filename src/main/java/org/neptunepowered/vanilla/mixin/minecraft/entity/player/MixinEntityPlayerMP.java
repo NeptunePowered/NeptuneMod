@@ -107,6 +107,9 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Shadow
     public abstract void closeScreen();
 
+    @Shadow
+    public abstract String getPlayerIP();
+
     @Inject(method = "<init>", at = @At("RETURN"))
     public void onConstruction(MinecraftServer server, WorldServer worldIn, GameProfile profile, ItemInWorldManager interactionManager,
             CallbackInfo info) {
@@ -700,7 +703,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public String getIP() {
-        return null;
+        return this.getPlayerIP();
     }
 
     @Override

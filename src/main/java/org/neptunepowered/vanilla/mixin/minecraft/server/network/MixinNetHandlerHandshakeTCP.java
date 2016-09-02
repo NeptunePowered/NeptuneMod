@@ -51,6 +51,11 @@ public abstract class MixinNetHandlerHandshakeTCP {
 
     @Inject(method = "processHandshake", at = @At(value = "HEAD"), cancellable = true)
     public void onProcessHandshake(C00Handshake packetIn, CallbackInfo ci) {
+        IMixinNetworkManager info = (IMixinNetworkManager) this.networkManager;
+        info.setProtocolVersion(packetIn.getProtocolVersion());
+        info.setHostnamePinged(packetIn.ip);
+        info.setPortPinged(packetIn.port);
+
         if (Configuration.getServerConfig().getBungeecordSupport() && packetIn.getRequestedState().equals(EnumConnectionState.LOGIN)) {
             String[] split = packetIn.ip.split("\00");
 

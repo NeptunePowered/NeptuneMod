@@ -30,6 +30,10 @@ import java.util.UUID;
 
 public interface IMixinNetworkManager {
 
+    /*
+     * ServerListPingHook
+     */
+
     int getProtocolVersion();
 
     void setProtocolVersion(int version);
@@ -42,7 +46,9 @@ public interface IMixinNetworkManager {
 
     void setPortPinged(int port);
 
-    // Bungeecord Support
+    /*
+     * BungeeCord Support
+     */
 
     void setRemoteAddress(SocketAddress socketAddress);
 
@@ -53,4 +59,5 @@ public interface IMixinNetworkManager {
     UUID getSpoofedUUID();
 
     void setSpoofedUUID(UUID uuid);
+
 }
