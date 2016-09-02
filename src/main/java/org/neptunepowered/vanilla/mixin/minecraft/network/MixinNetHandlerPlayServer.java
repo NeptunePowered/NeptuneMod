@@ -49,6 +49,7 @@ import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.util.helper.NetHandlerPlayServerHelper;
 import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -60,28 +61,19 @@ import java.net.SocketAddress;
 @Mixin(NetHandlerPlayServer.class)
 public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMixinNetHandlerPlayServer {
 
-    @Shadow private static Logger logger;
+    @Shadow @Final private static Logger logger;
 
-    @Shadow public NetworkManager netManager;
+    @Shadow @Final public NetworkManager netManager;
+    @Shadow @Final private MinecraftServer serverController;
     @Shadow public EntityPlayerMP playerEntity;
-    @Shadow private MinecraftServer serverController;
-    @Shadow private int networkTickCount;
-    @Shadow private boolean field_147366_g;
-    @Shadow private int field_147378_h;
-    @Shadow private long lastPingTime;
-    @Shadow private long lastSentPingPacket;
     @Shadow private int chatSpamThresholdCount;
-    @Shadow private int itemDropThreshold;
 
     @Shadow
     public abstract void sendPacket(final net.minecraft.network.Packet packetIn);
 
-    @Shadow
-    public abstract long currentTimeMillis();
-
-    @Redirect(method = "update", at = @At(value = "INVOKE", target = "net/minecraft/network/NetHandlerPlayServer;"
+    @Redirect(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetHandlerPlayServer;"
             + "kickPlayerFromServer(Ljava/lang/String;)V"))
-    public void handlePlayerIdleHook(NetHandlerPlayServer playServer) {
+    public void handlePlayerIdleHook(NetHandlerPlayServer playServer, String reason) {
         final long timeIdle = MinecraftServer.getCurrentTimeMillis() - playServer.playerEntity.getLastActiveTime();
         if (!((Player) playServer.playerEntity).canIgnoreRestrictions()) {
             PlayerIdleHook idleHook = (PlayerIdleHook) new PlayerIdleHook((Player) playServer.playerEntity, timeIdle).call();
