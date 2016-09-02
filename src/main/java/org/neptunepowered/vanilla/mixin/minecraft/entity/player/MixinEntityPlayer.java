@@ -34,6 +34,7 @@ import net.canarymod.hook.player.BedEnterHook;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
@@ -54,6 +55,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
     @Shadow private ItemStack itemInUse;
 
     protected String prefix = null;
+    private boolean sleepIgnored;
 
     @Shadow
     public abstract IChatComponent shadow$getDisplayName();
@@ -164,12 +166,12 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Override
     public boolean isSleepingIgnored() {
-        return false;
+        return this.sleepIgnored;
     }
 
     @Override
     public void setSleepingIgnored(boolean ignored) {
-
+        this.sleepIgnored = ignored;
     }
 
     @Intrinsic
@@ -181,4 +183,21 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
     public Item getItemInUse() {
         return (Item) this.itemInUse;
     }
+
+    @Override
+    public NBTTagCompound writeCanaryNBT(NBTTagCompound tagCompound) {
+        tagCompound.setBoolean("SleepingIgnored", this.sleepIgnored);
+
+        return super.writeCanaryNBT(tagCompound);
+    }
+
+    @Override
+    public void readCanaryNBT(NBTTagCompound tagCompound) {
+        if (tagCompound.hasKey("SleepingIgnored")) {
+            this.sleepIgnored = tagCompound.getBoolean("SleepingIgnored");
+        }
+
+        super.readCanaryNBT(tagCompound);
+    }
+
 }

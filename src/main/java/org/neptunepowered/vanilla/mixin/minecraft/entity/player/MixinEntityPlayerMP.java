@@ -58,6 +58,7 @@ import net.canarymod.user.Group;
 import net.canarymod.user.UserAndGroupsProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
@@ -100,6 +101,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     private PermissionProvider permissions;
     private boolean muted = false;
     private HashMap<String, String> defaultChatPattern = Maps.newHashMap();
+    private long currentSessionStart = ToolBox.getUnixTimestamp();
 
     @Shadow
     public abstract void openEditSign(TileEntitySign signTile);
@@ -452,6 +454,13 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     }
 
     @Override
+    public void setPrefix(String prefix) {
+        super.setPrefix(prefix);
+        Canary.usersAndGroups().addOrUpdatePlayerData(this);
+        this.defaultChatPattern.put("%prefix", this.getPrefix());
+    }
+
+    @Override
     public boolean isOnline() {
         return Canary.getServer().getPlayer(this.getName()) != null;
     }
@@ -543,12 +552,12 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public String getFirstJoined() {
-        return null;
+        return this.metadata.getString("FirstJoin");
     }
 
     @Override
     public long getTimePlayed() {
-        return 0;
+        return this.metadata.getLong("TimePlayed") + (ToolBox.getUnixTimestamp() - this.currentSessionStart);
     }
 
     @Override
@@ -708,7 +717,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public String getLastJoined() {
-        return null;
+        return this.metadata.getString("LastJoin");
     }
 
     @Override
@@ -799,6 +808,15 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Override
     public EntityType getEntityType() {
         return EntityType.PLAYER;
+    }
+
+    @Override
+    public NBTTagCompound writeCanaryNBT(NBTTagCompound tagCompound) {
+        this.metadata.setLong("TimePlayed", this.metadata.getLong("TimePlayed") + (ToolBox.getUnixTimestamp() - this.currentSessionStart));
+        this.currentSessionStart = ToolBox.getUnixTimestamp(); // Reset time
+        this.metadata.setString("PreviousIP", this.getIP());
+
+        return super.writeCanaryNBT(tagCompound);
     }
 
     @Override
