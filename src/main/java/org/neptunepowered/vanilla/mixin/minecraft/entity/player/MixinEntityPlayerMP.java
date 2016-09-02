@@ -61,6 +61,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.stats.StatBase;
@@ -72,6 +73,7 @@ import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.util.IMixinFoodStats;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
+import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -154,7 +156,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
             this.muted = Boolean.valueOf(data[2]);
         }
 
-        defaultChatPattern.put("%prefix", this.getPrefix());
+        this.defaultChatPattern.put("%prefix", this.getPrefix());
 
         if (isNew || provider.nameChanged(this)) {
             provider.addOrUpdatePlayerData(this);
@@ -274,12 +276,19 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public PlayerListData getPlayerListData(PlayerListAction action) {
-        return null;
+        return new PlayerListData(action, this.getGameProfile(), this.getPing(), this.getMode(), this.getDisplayNameComponent());
     }
 
     @Override
     public void sendPlayerListData(PlayerListData data) {
-
+        final S38PacketPlayerListItem packet = new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.valueOf(data.getAction().name()));
+        packet.players.add(packet.new AddPlayerData(
+                data.getProfile(),                                          // gameProfile
+                data.getPing(),                                             // ping
+                GameModeConverter.of(data.getMode()),                       // gameType
+                ((NeptuneChatComponent) data.getDisplayName()).getHandle()) // displayName
+        );
+        this.playerNetServerHandler.sendPacket(packet);
     }
 
     @Override
@@ -334,7 +343,10 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public String getPreviousIP() {
-        return null;
+        if (this.metadata.hasKey("PreviousIP")) {
+            return this.metadata.getString("PreviousIP");
+        }
+        return "UNKNOWN";
     }
 
     @Override
