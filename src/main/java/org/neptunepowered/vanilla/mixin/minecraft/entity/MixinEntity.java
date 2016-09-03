@@ -437,7 +437,7 @@ public abstract class MixinEntity implements Entity {
 
     @Override
     public void destroy() {
-        setDead();
+        this.setDead();
     }
 
     @Override

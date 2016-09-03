@@ -29,9 +29,7 @@ import net.canarymod.api.world.World;
 import net.canarymod.api.world.blocks.Block;
 import net.canarymod.api.world.position.Location;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathNavigate;
-import net.minecraft.util.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -42,42 +40,39 @@ public abstract class MixinPathNavigate implements PathFinder {
     @Shadow protected double speed;
 
     @Shadow
-    public abstract void shadow$setSpeed(double p_setSpeed_1_);
+    public abstract void setSpeed(double p_setSpeed_1_);
 
     @Shadow
-    public abstract boolean tryMoveToXYZ(double p_tryMoveToXYZ_1_, double p_tryMoveToXYZ_3_, double p_tryMoveToXYZ_5_,
-            double p_tryMoveToXYZ_7_);
-
-    @Shadow
-    public abstract PathEntity getPathToPos(BlockPos p_getPathToPos_1_);
+    public abstract boolean tryMoveToXYZ(double x, double y, double z, double speed);
 
     @Override
     public boolean setPathToXYZ(double x, double y, double z, World world) {
-        return this.tryMoveToXYZ(x, y, z, speed);
+        return this.tryMoveToXYZ(x, y, z, this.speed);
     }
 
     @Override
     public boolean setPathToLocation(Location location) {
-        return this.getPathToPos(new BlockPos(location.getX(), location.getY(), location.getZ())) != null;
+        return this.setPathToXYZ(location.getX(), location.getY(), location.getZ(), location.getWorld());
     }
 
     @Override
     public boolean setPathToEntity(Entity entity) {
-        return false;
+        return this.setPathToLocation(entity.getLocation());
     }
 
     @Override
     public boolean setPathToBlock(Block block) {
-        return false;
+        return this.setPathToLocation(block.getLocation());
     }
 
     @Override
     public void setSpeed(float speed) {
-        this.shadow$setSpeed(speed);
+        this.setSpeed((double) speed);
     }
 
     @Override
     public void setPathSearchRange(float range) {
         this.pathSearchRange.setBaseValue(range);
     }
+
 }
