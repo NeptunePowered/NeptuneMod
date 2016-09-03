@@ -23,27 +23,93 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.command.server;
 
-import net.canarymod.api.CommandBlockLogic;
+import net.canarymod.Canary;
 import net.canarymod.api.world.World;
+import net.canarymod.config.Configuration;
+import net.canarymod.hook.command.CommandBlockCommandHook;
 import net.canarymod.user.Group;
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.server.CommandBlockLogic;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ReportedException;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(net.minecraft.command.server.CommandBlockLogic.class)
-@Implements(@Interface(iface = CommandBlockLogic.class, prefix = "logic$"))
-public abstract class MixinCommandBlockLogic implements CommandBlockLogic {
+@Mixin(CommandBlockLogic.class)
+@Implements(@Interface(iface = net.canarymod.api.CommandBlockLogic.class, prefix = "logic$"))
+public abstract class MixinCommandBlockLogic implements net.canarymod.api.CommandBlockLogic {
 
-    @Shadow
-    public abstract void setCommand(String command);
+    @Shadow private int successCount;
+    @Shadow private IChatComponent lastOutput;
+    @Shadow private String commandStored;
 
     @Shadow
     public abstract String getCommand();
 
     @Shadow
+    public abstract void setCommand(String command);
+
+    @Shadow
     public abstract void setName(String p_145754_1_);
+
+    @Overwrite
+    public void trigger(net.minecraft.world.World worldIn) {
+        if (worldIn.isRemote) {
+            this.successCount = 0;
+        }
+
+        MinecraftServer minecraftserver = MinecraftServer.getServer();
+
+        if (minecraftserver != null && minecraftserver.isAnvilFileSet() && minecraftserver.isCommandBlockEnabled()) {
+            ICommandManager icommandmanager = minecraftserver.getCommandManager();
+
+            try {
+                this.lastOutput = null;
+                // Neptune - Canary commands
+                this.successCount = this.handleCommandExecution(icommandmanager, (CommandBlockLogic) (Object) this, this.commandStored);
+                // Neptune - end
+            } catch (Throwable throwable) {
+                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Executing command block");
+                CrashReportCategory crashreportcategory = crashreport.makeCategory("Command to be executed");
+                crashreportcategory.addCrashSectionCallable("Command", this::getCommand);
+                crashreportcategory.addCrashSectionCallable("Name", this::getName);
+                throw new ReportedException(crashreport);
+            }
+        } else {
+            this.successCount = 0;
+        }
+    }
+
+    public int handleCommandExecution(ICommandManager commandManager, CommandBlockLogic commandBlockLogic, String commandStored) {
+        final String[] args = commandStored.split(" ");
+        String commandName = args[0];
+        if (commandName.startsWith("/")) {
+            commandName = commandName.substring(1);
+        }
+
+        CommandBlockCommandHook commandHook = (CommandBlockCommandHook) new CommandBlockCommandHook(
+                (net.canarymod.api.CommandBlockLogic) commandBlockLogic, args).call();
+
+        if (!commandHook.isCanceled()
+                && (Configuration.getServerConfig().isCommandBlockOpped()
+                || ((net.canarymod.api.CommandBlockLogic) commandBlockLogic).hasPermission("canary.command." + commandName))) {
+            int result = commandManager.executeCommand(commandBlockLogic, commandStored);
+            if (result == 0) {
+                // Minecraft found no command, now its our turn
+                Canary.getServer().consoleCommand(commandStored, (net.canarymod.api.CommandBlockLogic) commandBlockLogic);
+            }
+            return result;
+        }
+
+        return 0;
+    }
 
     @Intrinsic
     public void logic$setCommand(String s) {

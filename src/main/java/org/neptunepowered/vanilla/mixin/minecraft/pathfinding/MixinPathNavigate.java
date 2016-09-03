@@ -53,12 +53,12 @@ public abstract class MixinPathNavigate implements PathFinder {
 
     @Override
     public boolean setPathToXYZ(double x, double y, double z, World world) {
-        return tryMoveToXYZ(x, y, z, speed);
+        return this.tryMoveToXYZ(x, y, z, speed);
     }
 
     @Override
     public boolean setPathToLocation(Location location) {
-        return !(getPathToPos(new BlockPos(location.getX(), location.getY(), location.getZ())) == null);
+        return this.getPathToPos(new BlockPos(location.getX(), location.getY(), location.getZ())) != null;
     }
 
     @Override
@@ -73,11 +73,11 @@ public abstract class MixinPathNavigate implements PathFinder {
 
     @Override
     public void setSpeed(float speed) {
-        shadow$setSpeed(speed);
+        this.shadow$setSpeed(speed);
     }
 
     @Override
     public void setPathSearchRange(float range) {
-        pathSearchRange.setBaseValue(range);
+        this.pathSearchRange.setBaseValue(range);
     }
 }

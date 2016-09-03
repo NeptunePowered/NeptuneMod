@@ -43,6 +43,7 @@ import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.config.Configuration;
+import net.canarymod.hook.command.ConsoleCommandHook;
 import net.canarymod.tasks.ServerTask;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
@@ -150,17 +151,66 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public boolean consoleCommand(String command) {
-        return false;
+        ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(this, command).call();
+        if (commandHook.isCanceled()) {
+            return true;
+        }
+
+        final String[] args = command.split(" ");
+
+        String commandName = args[0];
+        if (commandName.startsWith("/")) {
+            commandName = commandName.substring(1);
+        }
+
+        if (!Canary.commands().parseCommand(this, commandName, args)) {
+            return this.getCommandManager().executeCommand((ICommandSender) this, command) > 0;
+        }
+
+        return true;
     }
 
     @Override
     public boolean consoleCommand(String command, Player player) {
-        return false;
+        ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(player, command).call();
+        if (commandHook.isCanceled()) {
+            return true;
+        }
+
+        final String[] args = command.split(" ");
+
+        String commandName = args[0];
+        if (commandName.startsWith("/")) {
+            commandName = commandName.substring(1);
+        }
+
+        if (!Canary.commands().parseCommand(player, commandName, args)) {
+            if (Canary.ops().isOpped(player) || player.hasPermission("canary.vanilla." + commandName)) {
+                return this.getCommandManager().executeCommand((ICommandSender) player, command) > 0;
+            }
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public boolean consoleCommand(String command, CommandBlockLogic cmdBlockLogic) {
-        return false;
+        ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(cmdBlockLogic, command).call();
+        if (commandHook.isCanceled()) {
+            return true;
+        }
+
+        final String[] args = command.split(" ");
+
+        String commandName = args[0];
+        if (commandName.startsWith("/")) {
+            commandName = commandName.substring(1);
+        }
+
+        // Don't pass to vanilla as that is already handled by CommandBlockLogic
+        // This is only called if Minecraft found no command
+        return Canary.commands().parseCommand(cmdBlockLogic, commandName, args);
     }
 
     @Override
@@ -287,17 +337,30 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public void broadcastMessage(String message) {
-
+        for (Player player : this.getPlayerList()) {
+            player.message(message);
+        }
+        Canary.log.info(message);
     }
 
     @Override
     public void broadcastMessageToOps(String message) {
-
+        for (Player player : this.getPlayerList()) {
+            if (player.isOperator()) {
+                player.message(message);
+            }
+        }
+        Canary.log.info(message);
     }
 
     @Override
     public void broadcastMessageToAdmins(String message) {
-
+        for (Player player : this.getPlayerList()) {
+            if (player.isAdmin()) {
+                player.message(message);
+            }
+        }
+        Canary.log.info(message);
     }
 
     @Override
@@ -317,7 +380,7 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public ConfigurationManager getConfigurationManager() {
-        return (ConfigurationManager) serverConfigManager;
+        return (ConfigurationManager) this.serverConfigManager;
     }
 
     @Override
@@ -332,7 +395,7 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public boolean isRunning() {
-        return serverRunning;
+        return this.serverRunning;
     }
 
     @Override
