@@ -33,4 +33,5 @@ public interface IMixinS23PacketBlockChange {
     BlockPos getBlockPosition();
 
     void setBlockPosition(BlockPos pos);
+
 }

@@ -34,4 +34,5 @@ public interface IMixinSaveHandler {
     File PLAYERS_DIR = new File(WORLDS_DIR, "players");
 
     NBTTagCompound readPlayerData(UUID uuid);
+
 }

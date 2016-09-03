@@ -26,4 +26,5 @@ package org.neptunepowered.vanilla.interfaces.minecraft.network;
 public interface IMixinNetHandlerPlayServer {
 
     void kickPlayerFromServerWithoutHook(String reason);
+
 }

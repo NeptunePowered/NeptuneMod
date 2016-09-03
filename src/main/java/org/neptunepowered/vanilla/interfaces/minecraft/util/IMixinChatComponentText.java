@@ -26,4 +26,5 @@ package org.neptunepowered.vanilla.interfaces.minecraft.util;
 public interface IMixinChatComponentText {
 
     void setText(String text);
+
 }
