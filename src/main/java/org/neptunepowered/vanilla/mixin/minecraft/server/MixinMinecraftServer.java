@@ -58,6 +58,7 @@ import net.minecraft.world.storage.SaveHandler;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.neptunepowered.vanilla.NeptuneOfflinePlayer;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -73,11 +74,11 @@ import java.util.UUID;
 @Implements(@Interface(iface = Server.class, prefix = "server$"))
 public abstract class MixinMinecraftServer implements Server {
 
+    @Shadow @Final private ServerStatusResponse statusResponse;
     @Shadow public long[] tickTimeArray;
     @Shadow private int tickCounter;
     @Shadow private boolean serverRunning;
     @Shadow private ServerConfigurationManager serverConfigManager;
-    @Shadow private ServerStatusResponse statusResponse;
 
     private WorldManager worldManager = new NeptuneWorldManager();
 
@@ -286,32 +287,32 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public PlayerReference matchKnownPlayer(String player) {
-        PlayerReference reference = matchPlayer(player);
+        PlayerReference reference = this.matchPlayer(player);
         if (reference == null) {
-            reference = getOfflinePlayer(player);
+            reference = this.getOfflinePlayer(player);
         }
         return reference;
     }
 
     @Override
     public PlayerReference matchKnownPlayer(UUID uuid) {
-        PlayerReference reference = getPlayerFromUUID(uuid);
+        PlayerReference reference = this.getPlayerFromUUID(uuid);
         if (reference == null) {
-            reference = getOfflinePlayer(uuid);
+            reference = this.getOfflinePlayer(uuid);
         }
         return reference;
     }
 
     @Override
     public Player getPlayer(String player) {
-        return getConfigurationManager().getPlayerByName(player);
+        return this.getConfigurationManager().getPlayerByName(player);
     }
 
     @Override
     public Player getPlayerFromUUID(String uuid) {
         Player player = null;
 
-        for (Player p : getConfigurationManager().getAllPlayers()) {
+        for (Player p : this.getConfigurationManager().getAllPlayers()) {
             if (p.getUUIDString().equals(uuid)) {
                 player = p;
                 break;
@@ -325,7 +326,7 @@ public abstract class MixinMinecraftServer implements Server {
     public Player getPlayerFromUUID(UUID uuid) {
         Player player = null;
 
-        for (Player p : getConfigurationManager().getAllPlayers()) {
+        for (Player p : this.getConfigurationManager().getAllPlayers()) {
             if (p.getUUID().equals(uuid)) {
                 player = p;
                 break;

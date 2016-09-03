@@ -32,6 +32,7 @@ public class Wrapper<T> {
     }
 
     public T getHandle() {
-        return handle;
+        return this.handle;
     }
+
 }

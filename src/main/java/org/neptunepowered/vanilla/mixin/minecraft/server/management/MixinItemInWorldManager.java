@@ -23,12 +23,12 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.server.management;
 
-import net.canarymod.api.GameMode;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.hook.player.GameModeChangeHook;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.world.WorldSettings;
+import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,16 +39,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinItemInWorldManager {
 
     @Shadow public EntityPlayerMP thisPlayerMP;
-    @Shadow private WorldSettings.GameType gameType;
 
     @Inject(method = "setGameType", at = @At("HEAD"))
     public void onSetGameType(WorldSettings.GameType type, CallbackInfo ci) {
-        GameModeChangeHook gameModeChangeHook =
-                (GameModeChangeHook) new GameModeChangeHook((Player) this.thisPlayerMP,
-                        GameMode.fromId(type.getID())).call();
+        GameModeChangeHook gameModeChangeHook = (GameModeChangeHook) new GameModeChangeHook(
+                (Player) this.thisPlayerMP, // player
+                GameModeConverter.of(type)  // gameMode
+        ).call();
 
         if (gameModeChangeHook.isCanceled()) {
             ci.cancel();
         }
     }
+
 }

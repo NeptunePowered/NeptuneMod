@@ -39,4 +39,5 @@ public final class NetHandlerPlayServerHelper {
         Futures.getUnchecked(MinecraftServer.getServer().addScheduledTask(()
                 -> player.playerNetServerHandler.getNetworkManager().checkDisconnected()));
     }
+
 }

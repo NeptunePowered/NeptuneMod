@@ -29,6 +29,7 @@ import com.mojang.authlib.properties.Property;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.network.NetHandlerLoginServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkManager;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -38,7 +39,7 @@ import java.util.UUID;
 @Mixin(NetHandlerLoginServer.class)
 public class MixinNetHandlerLoginServer {
 
-    @Shadow public NetworkManager networkManager;
+    @Shadow @Final public NetworkManager networkManager;
 
     /**
      * Overwrite to enable BungeeCord support.
@@ -64,4 +65,5 @@ public class MixinNetHandlerLoginServer {
 
         return original;
     }
+
 }

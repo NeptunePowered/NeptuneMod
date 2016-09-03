@@ -40,18 +40,21 @@ public abstract class MixinCrashReport {
 
     @Inject(method = "populateEnvironment", at = @At("RETURN"))
     private void onPopulateEnvironment(CallbackInfo ci) {
-        this.theReportCategory.addCrashSectionCallable("Canary Plugins", () -> {
-            StringBuilder result = new StringBuilder(64);
-            for (Plugin plugin : Canary.pluginManager().getPlugins()) {
-                result.append("\n\t\t")
-                        .append(plugin.getName())
-                        .append(" v ")
-                        .append(plugin.getVersion())
-                        .append(" (")
-                        .append(plugin.getPath())
-                        .append(")");
-            }
-            return result.toString();
-        });
+        if (Canary.pluginManager() != null) {
+            this.theReportCategory.addCrashSectionCallable("Canary Plugins", () -> {
+                StringBuilder result = new StringBuilder(64);
+                for (Plugin plugin : Canary.pluginManager().getPlugins()) {
+                    result.append("\n\t\t")
+                            .append(plugin.getName())
+                            .append(" v ")
+                            .append(plugin.getVersion())
+                            .append(" (")
+                            .append(plugin.getPath())
+                            .append(")");
+                }
+                return result.toString();
+            });
+        }
     }
+
 }

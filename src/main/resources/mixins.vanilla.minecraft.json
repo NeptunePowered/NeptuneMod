@@ -66,6 +66,7 @@
         "entity.monster.MixinEntitySlime",
         "entity.monster.MixinEntitySpider",
         "entity.monster.MixinEntityWitch",
+        "entity.monster.MixinEntityZombie",
         "entity.player.MixinEntityPlayer",
         "entity.player.MixinEntityPlayerMP",
         "entity.player.MixinInventoryPlayer",

@@ -47,8 +47,8 @@ public class MixinNetHandlerStatusServer {
 
     @Shadow @Final private static IChatComponent EXIT_MESSAGE;
 
-    @Shadow private MinecraftServer server;
-    @Shadow private NetworkManager networkManager;
+    @Shadow @Final private MinecraftServer server;
+    @Shadow @Final private NetworkManager networkManager;
     @Shadow private boolean handled;
 
     @Overwrite
@@ -85,4 +85,5 @@ public class MixinNetHandlerStatusServer {
             this.networkManager.sendPacket(new S00PacketServerInfo(response));
         }
     }
+
 }

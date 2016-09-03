@@ -70,4 +70,5 @@ public final class MinecraftServerGuiHelper {
         });
         return jframe;
     }
+
 }

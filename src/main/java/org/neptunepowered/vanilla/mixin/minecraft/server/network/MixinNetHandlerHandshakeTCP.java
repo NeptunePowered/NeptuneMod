@@ -34,6 +34,7 @@ import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.server.network.NetHandlerHandshakeTCP;
 import net.minecraft.util.ChatComponentText;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkManager;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,7 +48,7 @@ public abstract class MixinNetHandlerHandshakeTCP {
 
     private static final Gson GSON = new Gson();
 
-    @Shadow private NetworkManager networkManager;
+    @Shadow @Final private NetworkManager networkManager;
 
     @Inject(method = "processHandshake", at = @At(value = "HEAD"), cancellable = true)
     public void onProcessHandshake(C00Handshake packetIn, CallbackInfo ci) {
@@ -76,4 +77,5 @@ public abstract class MixinNetHandlerHandshakeTCP {
             }
         }
     }
+
 }
