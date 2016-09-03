@@ -31,4 +31,9 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(EntityGolem.class)
 public abstract class MixinEntityGolem extends MixinEntityCreature implements Golem {
 
+    @Override
+    public boolean isGolem() {
+        return true;
+    }
+
 }

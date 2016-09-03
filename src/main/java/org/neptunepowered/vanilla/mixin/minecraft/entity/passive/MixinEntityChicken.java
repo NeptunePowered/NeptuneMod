@@ -21,18 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.passive;
 
-import net.minecraft.entity.monster.EntityMob;
-import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLiving;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.living.animal.Chicken;
+import net.minecraft.entity.passive.EntityChicken;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(EntityMob.class)
-public abstract class MixinEntityMob extends MixinEntityLiving implements net.canarymod.api.entity.living.monster.EntityMob {
+@Mixin(EntityChicken.class)
+public abstract class MixinEntityChicken extends MixinEntityAnimal implements Chicken {
+
+    @Shadow public int timeUntilNextEgg;
 
     @Override
-    public boolean isMob() {
-        return true;
+    public int getTimeUntilNextEgg() {
+        return this.timeUntilNextEgg;
+    }
+
+    @Override
+    public void setTimeUntilNextEgg(int i) {
+        this.timeUntilNextEgg = i;
+    }
+
+    @Override
+    public String getFqName() {
+        return "Chicken";
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.CHICKEN;
     }
 
 }

@@ -21,17 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.passive;
 
-import net.minecraft.entity.monster.EntityMob;
-import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLiving;
+import net.canarymod.api.inventory.Item;
+import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.item.ItemStack;
+import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityAgeable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(EntityMob.class)
-public abstract class MixinEntityMob extends MixinEntityLiving implements net.canarymod.api.entity.living.monster.EntityMob {
+@Mixin(EntityAnimal.class)
+public abstract class MixinEntityAnimal extends MixinEntityAgeable implements net.canarymod.api.entity.living.animal.EntityAnimal {
+
+    @Shadow
+    public abstract boolean isBreedingItem(ItemStack stack);
 
     @Override
-    public boolean isMob() {
+    public boolean isBreedingItem(Item item) {
+        return this.isBreedingItem((ItemStack) item);
+    }
+
+    @Override
+    public boolean isAnimal() {
         return true;
     }
 

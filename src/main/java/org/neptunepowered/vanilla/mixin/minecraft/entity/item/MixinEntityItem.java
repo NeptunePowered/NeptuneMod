@@ -121,6 +121,16 @@ public abstract class MixinEntityItem extends MixinEntity implements net.canarym
     }
 
     @Override
+    public String getFqName() {
+        return "Item";
+    }
+
+    @Override
+    public boolean isItem() {
+        return true;
+    }
+
+    @Override
     public EntityType getEntityType() {
         return EntityType.ENTITYITEM;
     }

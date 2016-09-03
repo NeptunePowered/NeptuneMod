@@ -21,18 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.entity.monster;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.passive;
 
-import net.minecraft.entity.monster.EntityMob;
-import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLiving;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.living.animal.Cow;
+import net.minecraft.entity.passive.EntityCow;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(EntityMob.class)
-public abstract class MixinEntityMob extends MixinEntityLiving implements net.canarymod.api.entity.living.monster.EntityMob {
+@Mixin(EntityCow.class)
+public abstract class MixinEntityCow extends MixinEntityAnimal implements Cow {
 
     @Override
-    public boolean isMob() {
-        return true;
+    public String getFqName() {
+        return "Cow";
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.COW;
     }
 
 }
