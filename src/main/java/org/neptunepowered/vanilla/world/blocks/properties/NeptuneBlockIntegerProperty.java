@@ -21,31 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper;
+package org.neptunepowered.vanilla.world.blocks.properties;
 
-import net.canarymod.NativeTranslateBridge;
-import net.minecraft.util.StatCollector;
+import net.canarymod.api.world.blocks.properties.BlockIntegerProperty;
+import net.minecraft.block.properties.PropertyInteger;
 
-public class NeptuneTranslator extends NativeTranslateBridge {
+public class NeptuneBlockIntegerProperty extends NeptuneBlockProperty implements BlockIntegerProperty {
 
-    public static void load() {
-        if ($ == null) {
-            $ = new NeptuneTranslator();
-        }
+    public NeptuneBlockIntegerProperty(PropertyInteger handle) {
+        super(handle);
     }
 
     @Override
-    protected String nativeTranslate(String key) {
-        return StatCollector.translateToLocal(key);
+    public boolean canApply(Integer value) {
+        return super.canApply(value);
     }
 
     @Override
-    protected String nativeTranslate(String key, Object... args) {
-        return StatCollector.translateToLocalFormatted(key, args);
-    }
-
-    @Override
-    protected boolean nativeCanTranslate(String key) {
-        return StatCollector.canTranslate(key);
+    public PropertyInteger getHandle() {
+        return (PropertyInteger) super.getHandle();
     }
 }

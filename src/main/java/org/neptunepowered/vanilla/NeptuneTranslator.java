@@ -21,19 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.world.blocks.properties;
+package org.neptunepowered.vanilla;
 
-import net.canarymod.api.world.blocks.properties.BlockEnumProperty;
-import net.minecraft.block.properties.PropertyEnum;
+import net.canarymod.NativeTranslateBridge;
+import net.minecraft.util.StatCollector;
 
-public class NeptuneBlockEnumProperty extends NeptuneBlockProperty implements BlockEnumProperty {
+public class NeptuneTranslator extends NativeTranslateBridge {
 
-    public NeptuneBlockEnumProperty(PropertyEnum handle) {
-        super(handle);
+    public static void load() {
+        if ($ == null) {
+            $ = new NeptuneTranslator();
+        }
     }
 
     @Override
-    public PropertyEnum getHandle() {
-        return (PropertyEnum) super.getHandle();
+    protected String nativeTranslate(String key) {
+        return StatCollector.translateToLocal(key);
+    }
+
+    @Override
+    protected String nativeTranslate(String key, Object... args) {
+        return StatCollector.translateToLocalFormatted(key, args);
+    }
+
+    @Override
+    protected boolean nativeCanTranslate(String key) {
+        return StatCollector.canTranslate(key);
     }
 }

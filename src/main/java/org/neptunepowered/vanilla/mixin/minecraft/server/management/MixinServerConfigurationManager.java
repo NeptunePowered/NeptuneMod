@@ -24,7 +24,6 @@
 package org.neptunepowered.vanilla.mixin.minecraft.server.management;
 
 import com.mojang.authlib.GameProfile;
-import io.netty.buffer.Unpooled;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
 import net.canarymod.Translator;
@@ -42,38 +41,14 @@ import net.canarymod.config.ServerConfiguration;
 import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.PlayerListHook;
 import net.canarymod.hook.player.PreConnectionHook;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.S01PacketJoinGame;
-import net.minecraft.network.play.server.S05PacketSpawnPosition;
-import net.minecraft.network.play.server.S09PacketHeldItemChange;
-import net.minecraft.network.play.server.S1DPacketEntityEffect;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraft.network.play.server.S39PacketPlayerAbilities;
-import net.minecraft.network.play.server.S3FPacketCustomPayload;
-import net.minecraft.network.play.server.S41PacketServerDifficulty;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.scoreboard.ServerScoreboard;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.BanList;
-import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.ServerConfigurationManager;
-import net.minecraft.server.management.UserListBans;
-import net.minecraft.stats.StatList;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.WorldInfo;
 import org.apache.logging.log4j.Logger;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
+import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -90,8 +65,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @Mixin(ServerConfigurationManager.class)
 @Implements(@Interface(iface = ConfigurationManager.class, prefix = "config$"))

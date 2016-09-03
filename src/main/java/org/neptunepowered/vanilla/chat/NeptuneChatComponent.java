@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.chat;
+package org.neptunepowered.vanilla.chat;
 
 import com.google.common.collect.Lists;
 import net.canarymod.api.chat.ChatComponent;

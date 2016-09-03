@@ -46,8 +46,7 @@ import net.canarymod.user.WhitelistProvider;
 import net.canarymod.warp.WarpProvider;
 import org.neptunepowered.vanilla.commandsys.NeptunePlayerSelector;
 import org.neptunepowered.vanilla.factory.NeptuneFactory;
-import org.neptunepowered.vanilla.wrapper.NeptuneTranslator;
-import org.neptunepowered.vanilla.wrapper.util.NeptuneJsonNBTUtility;
+import org.neptunepowered.vanilla.util.NeptuneJsonNBTUtility;
 
 public class Neptune extends Canary {
 

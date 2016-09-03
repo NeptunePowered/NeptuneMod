@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.world.blocks.properties;
+package org.neptunepowered.vanilla.world.blocks.properties;
 
 import net.canarymod.api.world.blocks.properties.BlockProperty;
 import net.minecraft.block.properties.IProperty;

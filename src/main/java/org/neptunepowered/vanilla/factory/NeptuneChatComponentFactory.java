@@ -33,7 +33,7 @@ import net.canarymod.api.factory.ChatComponentFactory;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
+import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 
 public class NeptuneChatComponentFactory implements ChatComponentFactory {
 

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper;
+package org.neptunepowered.vanilla;
 
 import net.canarymod.api.GameMode;
 import net.canarymod.api.OfflinePlayer;

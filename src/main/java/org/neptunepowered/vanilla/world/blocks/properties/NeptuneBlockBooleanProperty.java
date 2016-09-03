@@ -21,41 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.util;
+package org.neptunepowered.vanilla.world.blocks.properties;
 
-import com.mojang.authlib.GameProfile;
-import net.canarymod.api.nbt.BaseTag;
-import net.canarymod.api.nbt.CompoundTag;
-import net.canarymod.util.JsonNBTUtility;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
+import net.canarymod.api.world.blocks.properties.BlockBooleanProperty;
+import net.minecraft.block.properties.PropertyBool;
 
-public class NeptuneJsonNBTUtility implements JsonNBTUtility {
+public class NeptuneBlockBooleanProperty extends NeptuneBlockProperty implements BlockBooleanProperty {
 
-    @Override
-    public BaseTag jsonToNBT(String rawJson) {
-        try {
-            return (BaseTag) JsonToNBT.getTagFromJson(rawJson);
-        } catch (NBTException e) {
-            return null;
-        }
+    public NeptuneBlockBooleanProperty(PropertyBool handle) {
+        super(handle);
     }
 
     @Override
-    public String baseTagToJSON(BaseTag baseTag) {
-        return null;
+    public boolean canApply(Boolean value) {
+        return super.canApply(value);
     }
 
     @Override
-    public GameProfile gameProfileFromNBT(CompoundTag tag) {
-        return NBTUtil.readGameProfileFromNBT((NBTTagCompound) tag);
+    public PropertyBool getHandle() {
+        return (PropertyBool) super.getHandle();
     }
-
-    @Override
-    public CompoundTag gameProfileToNBT(GameProfile profile) {
-        return (CompoundTag) NBTUtil.writeGameProfile(new NBTTagCompound(), profile);
-    }
-
 }

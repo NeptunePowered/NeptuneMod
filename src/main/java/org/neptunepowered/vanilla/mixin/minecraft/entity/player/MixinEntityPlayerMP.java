@@ -73,7 +73,7 @@ import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.util.IMixinFoodStats;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
+import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;

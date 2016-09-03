@@ -21,24 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.wrapper.world.blocks.properties;
+package org.neptunepowered.vanilla.world.blocks.properties;
 
-import net.canarymod.api.world.blocks.properties.BlockBooleanProperty;
-import net.minecraft.block.properties.PropertyBool;
+import net.canarymod.api.world.blocks.properties.BlockEnumProperty;
+import net.minecraft.block.properties.PropertyEnum;
 
-public class NeptuneBlockBooleanProperty extends NeptuneBlockProperty implements BlockBooleanProperty {
+public class NeptuneBlockEnumProperty extends NeptuneBlockProperty implements BlockEnumProperty {
 
-    public NeptuneBlockBooleanProperty(PropertyBool handle) {
+    public NeptuneBlockEnumProperty(PropertyEnum handle) {
         super(handle);
     }
 
     @Override
-    public boolean canApply(Boolean value) {
-        return super.canApply(value);
-    }
-
-    @Override
-    public PropertyBool getHandle() {
-        return (PropertyBool) super.getHandle();
+    public PropertyEnum getHandle() {
+        return (PropertyEnum) super.getHandle();
     }
 }

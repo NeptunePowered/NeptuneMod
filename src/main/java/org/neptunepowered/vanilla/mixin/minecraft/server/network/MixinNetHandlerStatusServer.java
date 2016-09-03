@@ -33,7 +33,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.NetHandlerStatusServer;
 import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkManager;
-import org.neptunepowered.vanilla.wrapper.chat.NeptuneChatComponent;
+import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
