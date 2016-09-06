@@ -70,6 +70,7 @@
         "entity.passive.MixinEntityAnimal",
         "entity.passive.MixinEntityChicken",
         "entity.passive.MixinEntityCow",
+        "entity.passive.MixinEntityMooshroom",
         "entity.passive.MixinEntityRabbit",
         "entity.player.MixinEntityPlayer",
         "entity.player.MixinEntityPlayerMP",
