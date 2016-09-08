@@ -114,9 +114,9 @@ public class MixinSaveHandler implements IMixinSaveHandler {
      */
     @Overwrite
     public String[] getAvailablePlayerDat() {
-        List<String> availablePlayerData = Arrays.asList(IMixinSaveHandler.PLAYERS_DIR.listFiles((dir, name) -> {
-            return name.endsWith(".dat");
-        })).stream().map(f -> f.getName().replace(".dat", "")).collect(Collectors.toList());
+        List<String> availablePlayerData = Arrays.stream(IMixinSaveHandler.PLAYERS_DIR.listFiles((dir, name) -> name.endsWith(".dat")))
+                .map(f -> f.getName().replace(".dat", ""))
+                .collect(Collectors.toList());
         return availablePlayerData.toArray(new String[availablePlayerData.size()]);
     }
 }

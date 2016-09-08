@@ -59,15 +59,21 @@ import net.canarymod.user.UserAndGroupsProvider;
 import net.canarymod.warp.Warp;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
+import net.minecraft.network.play.server.S39PacketPlayerAbilities;
+import net.minecraft.network.play.server.S45PacketTitle;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldSettings;
 import net.visualillusionsent.utils.DateUtils;
 import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
@@ -299,7 +305,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void updateCapabilities() {
-
+        this.playerNetServerHandler.sendPacket(new S39PacketPlayerAbilities((PlayerCapabilities) this.getCapabilities()));
     }
 
     @Override
@@ -339,7 +345,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void sendChatComponent(ChatComponent chatComponent) {
-
+        this.playerNetServerHandler.sendPacket(new S02PacketChat((IChatComponent) chatComponent));
     }
 
     @Override
@@ -432,12 +438,18 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void showTitle(ChatComponent title) {
-
+        this.showTitle(title, null);
     }
 
     @Override
     public void showTitle(ChatComponent title, ChatComponent subtitle) {
+        if (title != null) {
+            this.playerNetServerHandler.sendPacket(new S45PacketTitle(S45PacketTitle.Type.TITLE, (IChatComponent) title));
 
+            if (subtitle != null) {
+                this.playerNetServerHandler.sendPacket(new S45PacketTitle(S45PacketTitle.Type.SUBTITLE, (IChatComponent) subtitle));
+            }
+        }
     }
 
     @Override
@@ -587,12 +599,12 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public int getModeId() {
-        return 0;
+        return this.theItemInWorldManager.getGameType().getID();
     }
 
     @Override
     public void setModeId(int mode) {
-
+        this.theItemInWorldManager.setGameType(WorldSettings.GameType.getByID(mode));
     }
 
     @Override
