@@ -24,6 +24,8 @@
 package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
 import com.mojang.authlib.GameProfile;
+import net.canarymod.Canary;
+import net.canarymod.api.chat.ChatComponent;
 import net.canarymod.api.entity.EntityItem;
 import net.canarymod.api.entity.living.humanoid.Human;
 import net.canarymod.api.entity.living.humanoid.HumanCapabilities;
@@ -38,6 +40,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.IChatComponent;
+import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -58,9 +61,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     protected String prefix = null;
     private boolean sleepIgnored;
-
-    @Shadow
-    public abstract IChatComponent shadow$getDisplayName();
+    private ChatComponent displayName;
 
     @Shadow
     public GameProfile getGameProfile() {
@@ -93,12 +94,23 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Override
     public String getDisplayName() {
-        return shadow$getDisplayName().getUnformattedText();
+        return this.displayName != null ? this.displayName.getFullText() : null;
     }
 
     @Override
-    public void setDisplayName(String display) {
+    public void setDisplayName(String name) {
+        this.setDisplayNameComponent(name != null && !name.isEmpty() ? Canary.factory().getChatComponentFactory().newChatComponent(name) : null);
+    }
 
+    public void setDisplayNameComponent(ChatComponent displayName) {
+        this.displayName = displayName;
+
+        String serialised = "";
+        if (this.displayName != null) {
+            serialised = IChatComponent.Serializer.componentToJson(((NeptuneChatComponent) displayName).getHandle());
+        }
+
+        this.metadata.setString("displayName", serialised);
     }
 
     @Override

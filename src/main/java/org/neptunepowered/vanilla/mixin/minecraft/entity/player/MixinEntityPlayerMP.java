@@ -148,9 +148,9 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
         this.groups = Lists.newLinkedList();
         this.groups.add(Canary.usersAndGroups().getGroup(data[1]));
-        for (Group g : subs) {
-            if (g != null) {
-                this.groups.add(g);
+        for (Group group : subs) {
+            if (group != null) {
+                this.groups.add(group);
             }
         }
 

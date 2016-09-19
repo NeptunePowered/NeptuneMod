@@ -59,12 +59,12 @@ public abstract class MixinEntityArrow extends MixinEntity implements Arrow {
 
     @Override
     public boolean canPickUp() {
-        return this.canBePickedUp == 1 ? true : false;
+        return this.canBePickedUp == 1;
     }
 
     @Override
     public void setCanPickUp(boolean canPickUp) {
-        this.canBePickedUp = canPickUp == true ? 1 : 0;
+        this.canBePickedUp = canPickUp ? 1 : 0;
     }
 
     @Intrinsic
@@ -126,4 +126,5 @@ public abstract class MixinEntityArrow extends MixinEntity implements Arrow {
     public EntityType getEntityType() {
         return EntityType.ARROW;
     }
+
 }
