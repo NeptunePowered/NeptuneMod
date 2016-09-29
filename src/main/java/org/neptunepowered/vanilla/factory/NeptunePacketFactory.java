@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.factory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.canarymod.api.DataWatcher;
 import net.canarymod.api.chat.ChatComponent;
 import net.canarymod.api.entity.Entity;
@@ -45,10 +46,12 @@ import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S04PacketEntityEquipment;
 import net.minecraft.network.play.server.S05PacketSpawnPosition;
 import net.minecraft.network.play.server.S06PacketUpdateHealth;
+import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 import net.minecraft.network.play.server.S09PacketHeldItemChange;
 import net.minecraft.network.play.server.S0APacketUseBed;
 import net.minecraft.network.play.server.S0BPacketAnimation;
@@ -61,6 +64,7 @@ import net.minecraft.network.play.server.S33PacketUpdateSign;
 import net.minecraft.network.play.server.S36PacketSignEditorOpen;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 
 import java.util.List;
 import java.util.Map;
@@ -71,13 +75,24 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet createPacket(int id, Object... args) throws InvalidPacketConstructionException {
-        // todo: implement
+        if (args == null || args.length < 1) {
+            throw new IllegalArgumentException("Arguments cannot be null or empty!");
+        }
+        switch (id) {
+            case 0:
+                throw new InvalidPacketConstructionException(id, "KeepAlive", "Keep Alive packets should only be handled by the server!");
+            case 1:
+                throw new InvalidPacketConstructionException(id, "JoinGame", "Join Game packets should only be handled by the server!");
+            case 2:
+                // TODO: Check arguments
+                return this.chat((ChatComponent) args[0]);
+        }
         return null;
     }
 
     @Override
     public Packet chat(ChatComponent chatComponent) {
-        return null;
+        return (Packet) new S02PacketChat(((NeptuneChatComponent) chatComponent).getHandle());
     }
 
     @Override
@@ -102,7 +117,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet playerPositionLook(double x, double y, double z, float yaw, float pitch, boolean onGround) {
-        return null;
+        return (Packet) new S08PacketPlayerPosLook(x, y, z, yaw, pitch, Sets.newHashSet());
     }
 
     @Override
