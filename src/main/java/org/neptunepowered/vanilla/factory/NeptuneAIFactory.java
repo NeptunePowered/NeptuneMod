@@ -95,6 +95,8 @@ import net.minecraft.entity.passive.EntityWolf;
 
 public class NeptuneAIFactory implements AIFactory {
 
+    protected NeptuneAIFactory() {}
+
     @Override
     public AIArrowAttack newAIArrowAttack(RangedAttackMob mob, double moveSpeed, int attackTimeModifier,
             int maxRangedAttackTime, int maxAttackDistance) {
@@ -237,4 +239,5 @@ public class NeptuneAIFactory implements AIFactory {
             int targetChanve, boolean shouldCheckSight, boolean nearbyOnly) {
         return null;
     }
+
 }

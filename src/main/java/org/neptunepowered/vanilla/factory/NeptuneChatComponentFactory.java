@@ -37,6 +37,8 @@ import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 
 public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
+    protected NeptuneChatComponentFactory() {}
+
     @Override
     public ChatComponent newChatComponent(String text) {
         return new NeptuneChatComponent(new ChatComponentText(text));
@@ -238,4 +240,5 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
     public HoverEventAction getShowItem() {
         return (HoverEventAction) (Object) net.minecraft.event.HoverEvent.Action.SHOW_ITEM;
     }
+
 }

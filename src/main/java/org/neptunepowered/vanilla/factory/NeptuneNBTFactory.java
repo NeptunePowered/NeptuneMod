@@ -53,6 +53,8 @@ import net.minecraft.nbt.NBTTagString;
 
 public class NeptuneNBTFactory implements NBTFactory {
 
+    protected NeptuneNBTFactory() {}
+
     @Override
     public CompoundTag newCompoundTag(String name) {
         return (CompoundTag) new NBTTagCompound();
@@ -145,4 +147,5 @@ public class NeptuneNBTFactory implements NBTFactory {
             return null;
         }
     }
+
 }

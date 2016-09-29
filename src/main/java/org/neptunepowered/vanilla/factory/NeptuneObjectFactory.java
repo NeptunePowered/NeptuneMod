@@ -38,6 +38,8 @@ import net.minecraft.village.MerchantRecipe;
 
 public class NeptuneObjectFactory implements ObjectFactory {
 
+    public NeptuneObjectFactory() {}
+
     @Override
     public VillagerTrade newVillagerTrade(Item buying, Item selling) {
         return (VillagerTrade) new MerchantRecipe((ItemStack) buying, (ItemStack) selling);
@@ -82,4 +84,5 @@ public class NeptuneObjectFactory implements ObjectFactory {
     public <T extends BlockProperty> T getPropertyInstance(BlockType blockType, String propertyName) {
         return null;
     }
+
 }

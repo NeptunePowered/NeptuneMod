@@ -31,6 +31,8 @@ import net.canarymod.api.inventory.MapData;
 
 public class NeptuneItemFactory implements ItemFactory {
 
+    protected NeptuneItemFactory() {}
+
     @Override
     public Item newItem(int id) {
         return (Item) net.minecraft.item.Item.getItemById(id);
@@ -102,4 +104,5 @@ public class NeptuneItemFactory implements ItemFactory {
     public MapData getMapData(Item item) {
         return null;
     }
+
 }

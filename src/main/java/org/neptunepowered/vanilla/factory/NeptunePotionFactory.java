@@ -29,6 +29,8 @@ import net.canarymod.api.potion.PotionEffectType;
 
 public class NeptunePotionFactory implements PotionFactory {
 
+    protected NeptunePotionFactory() {}
+
     @Override
     public PotionEffect newPotionEffect(int id, int duration, int amplifier) {
         return (PotionEffect) new net.minecraft.potion.PotionEffect(id, duration, amplifier);
@@ -48,4 +50,5 @@ public class NeptunePotionFactory implements PotionFactory {
     public PotionEffect newPotionEffect(PotionEffectType type, int duration, int amplifier, boolean ambient) {
         return newPotionEffect(type.getID(), duration, amplifier, ambient);
     }
+
 }

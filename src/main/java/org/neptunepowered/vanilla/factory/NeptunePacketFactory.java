@@ -67,6 +67,8 @@ import java.util.Map;
 
 public class NeptunePacketFactory implements PacketFactory {
 
+    protected NeptunePacketFactory() {}
+
     @Override
     public Packet createPacket(int id, Object... args) throws InvalidPacketConstructionException {
         // todo: implement
@@ -346,4 +348,5 @@ public class NeptunePacketFactory implements PacketFactory {
     public Packet playerListItem(String name, boolean connected, int ping) {
         return null;
     }
+
 }

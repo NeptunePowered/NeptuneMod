@@ -102,6 +102,8 @@ import net.minecraft.entity.projectile.EntityWitherSkull;
 
 public class NeptuneEntityFactory implements EntityFactory {
 
+    protected NeptuneEntityFactory() {}
+
     @Override
     public Entity newEntity(String name) {
         return null;
@@ -457,4 +459,5 @@ public class NeptuneEntityFactory implements EntityFactory {
     public NonPlayableCharacter newNPC(String name, Location location) {
         return null;
     }
+
 }

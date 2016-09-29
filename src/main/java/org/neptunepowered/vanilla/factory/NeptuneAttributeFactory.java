@@ -62,4 +62,5 @@ public class NeptuneAttributeFactory implements AttributeFactory {
     public Attribute getGenericAttribute(String nativeName) {
         return (Attribute) map.get(nativeName);
     }
+
 }

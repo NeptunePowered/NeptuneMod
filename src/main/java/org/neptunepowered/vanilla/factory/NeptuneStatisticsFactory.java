@@ -30,6 +30,8 @@ import net.minecraft.stats.StatList;
 
 public class NeptuneStatisticsFactory implements StatisticsFactory {
 
+    protected NeptuneStatisticsFactory() {}
+
     @Override
     public Stat getStat(String nmsName) {
         return (Stat) StatList.getOneShotStat(nmsName);
@@ -42,4 +44,5 @@ public class NeptuneStatisticsFactory implements StatisticsFactory {
         }
         return null;
     }
+
 }
