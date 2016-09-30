@@ -68,10 +68,42 @@ import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class NeptunePacketFactory implements PacketFactory {
 
+    private final static String TOO_FEW_ARGUMENTS = "Not enough arguments (Expected: %d Got: %d)",
+                                INVALID_ARGUMENT = "Argument at index: '%d' does not match a valid type. (Expected: '%s' Got: '%s')";
+
     protected NeptunePacketFactory() {}
+
+    private void check(int packetId, String packetName, int minParams, Object[] args, ArgumentPredicate... tests) throws
+            InvalidPacketConstructionException {
+        if (args.length < minParams) {
+            throw new InvalidPacketConstructionException(packetId, packetName, String.format(TOO_FEW_ARGUMENTS, minParams, args.length));
+        }
+
+        for (int test = 0; test < tests.length; test++) {
+            if (!tests[test].test(args[test].getClass())) {
+                throw new InvalidPacketConstructionException(packetId, packetName,
+                        String.format(INVALID_ARGUMENT, test, tests[test].getType(), args[test].getClass().getSimpleName()));
+            }
+        }
+    }
+
+    private <T> ArgumentPredicate<T> test(Class<T> type) {
+        return new ArgumentPredicate<T>() {
+            @Override
+            public Class<T> getType() {
+                return type;
+            }
+
+            @Override
+            public boolean test(T t) {
+                return type.isAssignableFrom(t.getClass());
+            }
+        };
+    }
 
     @Override
     public Packet createPacket(int id, Object... args) throws InvalidPacketConstructionException {
@@ -84,8 +116,11 @@ public class NeptunePacketFactory implements PacketFactory {
             case 1:
                 throw new InvalidPacketConstructionException(id, "JoinGame", "Join Game packets should only be handled by the server!");
             case 2:
-                // TODO: Check arguments
+                this.check(2, "Chat", 1, args, this.test(ChatComponent.class));
                 return this.chat((ChatComponent) args[0]);
+            case 3:
+                this.check(3, "UpdateTime", 2, args, this.test(Long.class), this.test(Long.class));
+                return this.updateTime((Long) args[0], (Long) args[1]);
         }
         return null;
     }
@@ -362,6 +397,12 @@ public class NeptunePacketFactory implements PacketFactory {
     @Override
     public Packet playerListItem(String name, boolean connected, int ping) {
         return null;
+    }
+
+    private interface ArgumentPredicate<T> extends Predicate<T> {
+
+        Class<T> getType();
+
     }
 
 }
