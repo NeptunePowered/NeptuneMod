@@ -31,6 +31,7 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import org.neptunepowered.vanilla.Neptune;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -41,6 +42,8 @@ import java.net.Proxy;
 
 @Mixin(DedicatedServer.class)
 public abstract class MixinDedicatedServer extends MinecraftServer {
+
+    @Shadow private boolean guiIsEnabled;
 
     MixinDedicatedServer(File workDir, Proxy proxy, File profileCacheDir) {
         super(workDir, proxy, profileCacheDir);
@@ -56,9 +59,19 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     }
 
     /**
-     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
-     *
-     * @author jamierocks
+     * @author jamierocks - 30th September 2016
+     * @reason The GUI has long been not recommended for use with Neptune, and on top that it no longer works
+     * with Neptune. It also takes up a considerable amount of resources.
+     */
+    @Overwrite
+    public void setGuiEnabled() {
+        //MinecraftServerGui.createServerGui(this);
+        this.guiIsEnabled = true;
+    }
+
+    /**
+     * @author jamierocks - 26th April 2016
+     * @reason Overwrite to use Canary's {@link Configuration} rather than the original server.properties
      */
     @Overwrite
     public void addServerStatsToSnooper(PlayerUsageSnooper playerSnooper) {
@@ -68,9 +81,8 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     }
 
     /**
-     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
-     *
-     * @author jamierocks
+     * @author jamierocks - 26th April 2016
+     * @reason Overwrite to use Canary's {@link Configuration} rather than the original server.properties
      */
     @Overwrite
     public boolean isSnooperEnabled() {
@@ -78,9 +90,8 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     }
 
     /**
-     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
-     *
-     * @author jamierocks
+     * @author jamierocks - 26th April 2016
+     * @reason Overwrite to use Canary's {@link Configuration} rather than the original server.properties
      */
     @Overwrite
     public boolean isCommandBlockEnabled() {
@@ -98,9 +109,8 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     }
 
     /**
-     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
-     *
-     * @author jamierocks
+     * @author jamierocks - 26th April 2016
+     * @reason Overwrite to use Canary's {@link Configuration} rather than the original server.properties
      */
     @Overwrite
     public int getNetworkCompressionTreshold() {
@@ -108,12 +118,12 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     }
 
     /**
-     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
-     *
-     * @author jamierocks
+     * @author jamierocks - 26th April 2016
+     * @reason Overwrite to use Canary's {@link Configuration} rather than the original server.properties
      */
     @Overwrite
     public long getMaxTickTime() {
         return Configuration.getServerConfig().getMaxTickTime();
     }
+
 }

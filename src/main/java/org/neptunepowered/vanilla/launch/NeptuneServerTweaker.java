@@ -48,12 +48,7 @@ public class NeptuneServerTweaker implements ITweaker {
 
     @Override
     public void acceptOptions(List<String> args, File file, File file1, String s) {
-        if (args.contains("--gui")) {
-            this.args = args.toArray(new String[args.size()]);
-        } else {
-            this.args = args.toArray(new String[args.size() + 1]);
-            this.args[this.args.length - 1] = "--nogui";
-        }
+        this.args = args.toArray(new String[args.size()]);
     }
 
     @Override

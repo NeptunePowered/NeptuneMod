@@ -129,7 +129,6 @@
         "scoreboard.MixinScoreObjective",
         "scoreboard.MixinScorePlayerTeam",
         "server.dedicated.MixinDedicatedServer",
-        "server.gui.MixinMinecraftServerGui",
         "server.management.MixinItemInWorldManager",
         "server.management.MixinServerConfigurationManager",
         "server.network.MixinNetHandlerHandshakeTCP",
