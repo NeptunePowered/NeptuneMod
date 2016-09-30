@@ -87,13 +87,13 @@ public class DeobfuscationTransformer extends Remapper implements IClassTransfor
 
                 String[] parts = StringUtils.split(line, ' ');
                 if (parts.length < 3) {
-                    NeptuneServerTweaker.getLogger().warn("Invalid deobfuscation mapping line: {}", line);
+                    NeptuneServerTweaker.LOGGER.warn("Invalid deobfuscation mapping line: {}", line);
                     return true;
                 }
 
                 MappingType type = MappingType.of(parts[0]);
                 if (type == null) {
-                    NeptuneServerTweaker.getLogger().warn("Invalid deobfuscation mapping type: {}", line);
+                    NeptuneServerTweaker.LOGGER.warn("Invalid deobfuscation mapping type: {}", line);
                     return true;
                 }
 

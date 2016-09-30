@@ -44,6 +44,7 @@ import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.config.Configuration;
 import net.canarymod.hook.command.ConsoleCommandHook;
+import net.canarymod.hook.system.ServerTickHook;
 import net.canarymod.tasks.ServerTask;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
@@ -53,11 +54,12 @@ import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
+import org.neptunepowered.vanilla.NeptuneOfflinePlayer;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
-import org.neptunepowered.vanilla.NeptuneOfflinePlayer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -65,6 +67,9 @@ import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.GraphicsEnvironment;
 import java.util.List;
@@ -81,6 +86,8 @@ public abstract class MixinMinecraftServer implements Server {
     @Shadow private ServerConfigurationManager serverConfigManager;
 
     private WorldManager worldManager = new NeptuneWorldManager();
+    private long previousTick = -1L;
+    private long curTrack;
 
     @Shadow
     public abstract void initiateShutdown();
@@ -99,6 +106,17 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Shadow
     public abstract String getHostname();
+
+    @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"))
+    public void onUpdateTimeLightAndEntities(CallbackInfo ci) {
+        new ServerTickHook(this.previousTick).call();
+        this.curTrack = System.nanoTime();
+    }
+
+    @Inject(method = "updateTimeLightAndEntities", at = @At("RETURN"))
+    public void afterUpdateTimeLightAndEntities(CallbackInfo ci) {
+        this.previousTick = System.nanoTime() - this.curTrack;
+    }
 
     /**
      * Use the Canary configuration.
@@ -486,12 +504,15 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Override
     public int getCurrentTick() {
-        return tickCounter;
+        return this.tickCounter;
     }
 
     @Override
     public float getTicksPerSecond() {
-        return 0;
+        // Thanks to Sponge for this, much nicer than the task that CanaryMod used.
+        double nanoSPerTick = MathHelper.average(this.tickTimeArray);
+        // Cap at 20 TPS
+        return (float) (1000 / Math.max(50, nanoSPerTick / 1000000));
     }
 
     @Override

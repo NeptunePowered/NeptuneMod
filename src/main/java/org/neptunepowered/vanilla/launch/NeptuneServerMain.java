@@ -83,7 +83,7 @@ public class NeptuneServerMain {
             return false;
         }
 
-        // Make sure Launchwrapper is available, or download it otherwise
+        // Make sure LaunchWrapper is available, or download it otherwise
         path = base.resolve(LAUNCHWRAPPER_LOCAL);
         return Files.exists(path) || downloadVerified(LAUNCHWRAPPER_REMOTE, path);
     }

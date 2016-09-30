@@ -46,6 +46,7 @@ import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
 import net.minecraft.network.play.server.S04PacketEntityEquipment;
@@ -56,14 +57,18 @@ import net.minecraft.network.play.server.S09PacketHeldItemChange;
 import net.minecraft.network.play.server.S0APacketUseBed;
 import net.minecraft.network.play.server.S0BPacketAnimation;
 import net.minecraft.network.play.server.S0DPacketCollectItem;
+import net.minecraft.network.play.server.S12PacketEntityVelocity;
+import net.minecraft.network.play.server.S1FPacketSetExperience;
 import net.minecraft.network.play.server.S2BPacketChangeGameState;
 import net.minecraft.network.play.server.S2CPacketSpawnGlobalEntity;
 import net.minecraft.network.play.server.S2EPacketCloseWindow;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.network.play.server.S33PacketUpdateSign;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.network.play.server.S36PacketSignEditorOpen;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import org.apache.commons.lang3.NotImplementedException;
 import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 
 import java.util.List;
@@ -76,34 +81,6 @@ public class NeptunePacketFactory implements PacketFactory {
                                 INVALID_ARGUMENT = "Argument at index: '%d' does not match a valid type. (Expected: '%s' Got: '%s')";
 
     protected NeptunePacketFactory() {}
-
-    private void check(int packetId, String packetName, int minParams, Object[] args, ArgumentPredicate... tests) throws
-            InvalidPacketConstructionException {
-        if (args.length < minParams) {
-            throw new InvalidPacketConstructionException(packetId, packetName, String.format(TOO_FEW_ARGUMENTS, minParams, args.length));
-        }
-
-        for (int test = 0; test < tests.length; test++) {
-            if (!tests[test].test(args[test].getClass())) {
-                throw new InvalidPacketConstructionException(packetId, packetName,
-                        String.format(INVALID_ARGUMENT, test, tests[test].getType(), args[test].getClass().getSimpleName()));
-            }
-        }
-    }
-
-    private <T> ArgumentPredicate<T> test(Class<T> type) {
-        return new ArgumentPredicate<T>() {
-            @Override
-            public Class<T> getType() {
-                return type;
-            }
-
-            @Override
-            public boolean test(T t) {
-                return type.isAssignableFrom(t.getClass());
-            }
-        };
-    }
 
     @Override
     public Packet createPacket(int id, Object... args) throws InvalidPacketConstructionException {
@@ -207,7 +184,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet entityVelocity(int entityID, double motX, double motY, double motZ) {
-        return null;
+        return (Packet) new S12PacketEntityVelocity(entityID, motX, motY, motZ);
     }
 
     @Override
@@ -267,7 +244,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet setExperience(float bar, int level, int totalXp) {
-        return null;
+        return (Packet) new S1FPacketSetExperience(bar, level, totalXp);
     }
 
     @Override
@@ -292,7 +269,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet blockAction(int x, int y, int z, int targetId, int stat1, int stat2) {
-        return null;
+        throw new NotImplementedException("A Minecraft Update has broken this construction!");
     }
 
     @Override
@@ -339,7 +316,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet openWindow(int windowId, int type, String title, int slots, boolean useTitle) {
-        return null;
+        throw new NotImplementedException("A Minecraft Update has broken this construction!");
     }
 
     @Override
@@ -381,7 +358,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet updateTileEntity(int x, int y, int z, int action, CompoundTag compoundTag) {
-        return null;
+        return (Packet) new S35PacketUpdateTileEntity(new BlockPos(x, y, z), action, (NBTTagCompound) compoundTag);
     }
 
     @Override
@@ -396,7 +373,35 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet playerListItem(String name, boolean connected, int ping) {
-        return null;
+        throw new NotImplementedException("A Minecraft Update has broken this construction!");
+    }
+
+    private void check(int packetId, String packetName, int minParams, Object[] args, ArgumentPredicate... tests) throws
+            InvalidPacketConstructionException {
+        if (args.length < minParams) {
+            throw new InvalidPacketConstructionException(packetId, packetName, String.format(TOO_FEW_ARGUMENTS, minParams, args.length));
+        }
+
+        for (int test = 0; test < tests.length; test++) {
+            if (!tests[test].test(args[test].getClass())) {
+                throw new InvalidPacketConstructionException(packetId, packetName,
+                        String.format(INVALID_ARGUMENT, test, tests[test].getType(), args[test].getClass().getSimpleName()));
+            }
+        }
+    }
+
+    private <T> ArgumentPredicate<T> test(Class<T> type) {
+        return new ArgumentPredicate<T>() {
+            @Override
+            public Class<T> getType() {
+                return type;
+            }
+
+            @Override
+            public boolean test(T t) {
+                return type.isAssignableFrom(t.getClass());
+            }
+        };
     }
 
     private interface ArgumentPredicate<T> extends Predicate<T> {

@@ -24,13 +24,11 @@
 package org.neptunepowered.vanilla.launch;
 
 import static com.google.common.io.Resources.getResource;
-import static org.spongepowered.asm.mixin.MixinEnvironment.CompatibilityLevel.JAVA_8;
 import static org.spongepowered.asm.mixin.MixinEnvironment.Side.SERVER;
 
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.launch.MixinBootstrap;
@@ -44,13 +42,9 @@ import java.util.List;
 
 public class NeptuneServerTweaker implements ITweaker {
 
-    private static final Logger logger = LogManager.getLogger("Neptune");
+    public static final Logger LOGGER = LogManager.getLogger("Neptune");
 
     private String[] args;
-
-    public static Logger getLogger() {
-        return logger;
-    }
 
     @Override
     public void acceptOptions(List<String> args, File file, File file1, String s) {
@@ -64,7 +58,7 @@ public class NeptuneServerTweaker implements ITweaker {
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader loader) {
-        logger.info("Initialising Neptune...");
+        LOGGER.info("Initialising Neptune...");
 
         // We shouldn't load these through LaunchWrapper as they use native dependencies
         loader.addClassLoaderExclusion("io.netty.");
@@ -87,29 +81,29 @@ public class NeptuneServerTweaker implements ITweaker {
         loader.addTransformerExclusion("net.canarymod.Translator");
 
         // Check if we're running in de-obfuscated environment already
-        logger.debug("Applying runtime de-obfuscation...");
+        LOGGER.debug("Applying runtime de-obfuscation...");
         if (isObfuscated()) {
-            logger.info("De-obfuscation mappings are provided by MCP (http://www.modcoderpack.com)");
+            LOGGER.info("De-obfuscation mappings are provided by MCP (http://www.modcoderpack.com)");
             Launch.blackboard.put("vanilla.mappings", getResource("mappings.srg"));
             loader.registerTransformer("org.neptunepowered.vanilla.launch.transformer.DeobfuscationTransformer");
-            logger.debug("Runtime de-obfuscation is applied.");
+            LOGGER.debug("Runtime de-obfuscation is applied.");
         } else {
-            logger.debug(
+            LOGGER.debug(
                     "Runtime de-obfuscation was not applied. Neptune is being loaded in a de-obfuscated environment.");
         }
 
-        logger.debug("Applying access transformer...");
+        LOGGER.debug("Applying access transformer...");
         Launch.blackboard.put("vanilla.at", new URL[]{getResource("vanilla_at.cfg")});
         loader.registerTransformer("org.neptunepowered.vanilla.launch.transformer.AccessTransformer");
 
-        logger.debug("Initializing Mixin environment...");
+        LOGGER.debug("Initializing Mixin environment...");
         MixinBootstrap.init();
         Mixins.addConfigurations(
                 "mixins.vanilla.canary.json",
                 "mixins.vanilla.minecraft.json");
         MixinEnvironment.getDefaultEnvironment().setSide(SERVER);
 
-        logger.info("Initialisation finished. Starting Minecraft server...");
+        LOGGER.info("Initialisation finished. Starting Minecraft server...");
     }
 
 

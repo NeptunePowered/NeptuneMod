@@ -60,7 +60,7 @@ public abstract class MixinCommandBlockLogic implements net.canarymod.api.Comman
     public abstract void setName(String p_145754_1_);
 
     @Shadow
-    public abstract net.minecraft.world.World getEntityWorld();;
+    public abstract net.minecraft.world.World getEntityWorld();
 
     @Overwrite
     public void trigger(net.minecraft.world.World worldIn) {

@@ -38,22 +38,19 @@ public class NeptuneAttributeFactory implements AttributeFactory {
     private static Map<String, IAttribute> map = Maps.newHashMap();
 
     static {
-        map.put(SharedMonsterAttributes.maxHealth.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.maxHealth);
-        map.put(SharedMonsterAttributes.followRange.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.followRange);
-        map.put(SharedMonsterAttributes.knockbackResistance.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.knockbackResistance);
-        map.put(SharedMonsterAttributes.movementSpeed.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.movementSpeed);
-        map.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(),
-                SharedMonsterAttributes.attackDamage);
+        registerAttribute(SharedMonsterAttributes.maxHealth);
+        registerAttribute(SharedMonsterAttributes.followRange);
+        registerAttribute(SharedMonsterAttributes.knockbackResistance);
+        registerAttribute(SharedMonsterAttributes.movementSpeed);
+        registerAttribute(SharedMonsterAttributes.attackDamage);
 
-        map.put(EntityZombie.reinforcementChance.getAttributeUnlocalizedName(),
-                EntityZombie.reinforcementChance);
+        registerAttribute(EntityZombie.reinforcementChance);
 
-        map.put(EntityHorse.horseJumpStrength.getAttributeUnlocalizedName(),
-                EntityHorse.horseJumpStrength);
+        registerAttribute(EntityHorse.horseJumpStrength);
+    }
+
+    private static void registerAttribute(IAttribute attribute) {
+        map.put(attribute.getAttributeUnlocalizedName(), attribute);
     }
 
     protected NeptuneAttributeFactory() {}
