@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.world.chunk;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import net.canarymod.api.entity.Entity;
 import net.canarymod.api.world.Biome;
 import net.canarymod.api.world.BiomeType;
@@ -31,23 +32,30 @@ import net.canarymod.api.world.World;
 import net.canarymod.api.world.blocks.TileEntity;
 import net.canarymod.api.world.position.Position;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.chunk.IMixinChunk;
 import org.neptunepowered.vanilla.util.converter.PositionConverter;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Mixin(Chunk.class)
 @Implements(@Interface(iface = net.canarymod.api.world.Chunk.class, prefix = "chunk$"))
-public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
+public abstract class MixinChunk implements net.canarymod.api.world.Chunk, IMixinChunk {
 
+    @Shadow @Final private Map<BlockPos, net.minecraft.tileentity.TileEntity> chunkTileEntityMap;
+    @Shadow @Final private ClassInheritanceMultiMap<net.minecraft.entity.Entity>[] entityLists;
     @Shadow private int xPosition;
     @Shadow private int zPosition;
     @Shadow private boolean isModified;
@@ -217,4 +225,19 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
     public void chunk$relightBlock(int x, int y, int z) {
         this.relightBlock(x, y, z);
     }
+
+    @Override
+    public Set<Entity> getEntities() {
+        Set<Entity> entities = Sets.newHashSet();
+        for (ClassInheritanceMultiMap entityList : this.entityLists) {
+            entities.addAll(entityList);
+        }
+        return entities;
+    }
+
+    @Override
+    public Set<TileEntity> getTileEntities() {
+        return Sets.newHashSet((Collection) this.chunkTileEntityMap.values());
+    }
+
 }

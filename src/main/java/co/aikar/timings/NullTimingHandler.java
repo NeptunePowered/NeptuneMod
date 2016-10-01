@@ -1,7 +1,8 @@
 /*
- * This file is part of NeptuneVanilla, licensed under the MIT License (MIT).
+ * This file is part of Sponge, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) SpongePowered <https://www.spongepowered.org>
+ * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +22,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.world;
+package co.aikar.timings;
 
-import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldInfo;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-
-@Mixin(World.class)
-public abstract class MixinWorld implements IMixinWorld {
-
-    @Shadow protected WorldInfo worldInfo;
-
-    @Shadow
-    public abstract long getSeed();
+public final class NullTimingHandler implements Timing {
 
     @Override
-    public void setWorldInfo(WorldInfo worldInfo) {
-        this.worldInfo = worldInfo;
+    public Timing startTiming() {
+        return this;
+    }
+
+    @Override
+    public void stopTiming() {
+    }
+
+    @Override
+    public void startTimingIfSync() {
+    }
+
+    @Override
+    public void stopTimingIfSync() {
+    }
+
+    @Override
+    public void abort() {
+    }
+
+    @Override
+    public void close() {
     }
 
 }

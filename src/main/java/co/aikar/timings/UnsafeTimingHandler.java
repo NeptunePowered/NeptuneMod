@@ -1,7 +1,8 @@
 /*
- * This file is part of NeptuneVanilla, licensed under the MIT License (MIT).
+ * This file is part of Sponge, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) SpongePowered <https://www.spongepowered.org>
+ * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.world;
+package co.aikar.timings;
 
-import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldInfo;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import net.minecraft.server.MinecraftServer;
 
-@Mixin(World.class)
-public abstract class MixinWorld implements IMixinWorld {
+class UnsafeTimingHandler extends TimingHandler {
 
-    @Shadow protected WorldInfo worldInfo;
-
-    @Shadow
-    public abstract long getSeed();
-
-    @Override
-    public void setWorldInfo(WorldInfo worldInfo) {
-        this.worldInfo = worldInfo;
+    UnsafeTimingHandler(TimingIdentifier id) {
+        super(id);
     }
 
+    private static void checkThread() {
+        if (!MinecraftServer.getServer().isCallingFromMinecraftThread()) {
+            throw new IllegalStateException("Calling Timings from Async Operation");
+        }
+    }
+
+    @Override
+    public TimingHandler startTiming() {
+        checkThread();
+        super.startTiming();
+        return this;
+    }
+
+    @Override
+    public void stopTiming() {
+        checkThread();
+        super.stopTiming();
+    }
 }

@@ -614,4 +614,5 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     public void showTitle(ChatComponent chatComponent, ChatComponent chatComponent1) {
 
     }
+
 }

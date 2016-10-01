@@ -38,4 +38,5 @@ public class MixinWorldInfo implements IMixinWorldInfo {
     public void setDimensionType(DimensionType dimensionType) {
         this.dimension = dimensionType.getId();
     }
+
 }

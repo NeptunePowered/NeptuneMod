@@ -21,25 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.world;
+package org.neptunepowered.vanilla.interfaces.minecraft.world.chunk;
 
-import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldInfo;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import net.canarymod.api.entity.Entity;
+import net.canarymod.api.world.blocks.TileEntity;
 
-@Mixin(World.class)
-public abstract class MixinWorld implements IMixinWorld {
+import java.util.Set;
 
-    @Shadow protected WorldInfo worldInfo;
+public interface IMixinChunk {
 
-    @Shadow
-    public abstract long getSeed();
+    Set<Entity> getEntities();
 
-    @Override
-    public void setWorldInfo(WorldInfo worldInfo) {
-        this.worldInfo = worldInfo;
-    }
+    Set<TileEntity> getTileEntities();
 
 }
