@@ -50,7 +50,7 @@ public class MixinHookExecutor {
             if(this.listeners.containsKey(hook.getClass())) {
                 Iterator iter = this.listeners.get(hook.getClass()).iterator();
 
-                TimingsManager.PLUGIN_EVENT_HANDLER.startTimingIfSync();
+                TimingsManager.PLUGIN_HOOK_HANDLER.startTimingIfSync();
                 while(iter.hasNext()) {
                     RegisteredPluginListener listener = (RegisteredPluginListener)iter.next();
 
@@ -63,7 +63,7 @@ public class MixinHookExecutor {
                         Canary.log.error("Exception while executing Hook: " + hook.getHookName() + " in PluginListener: " + listener.getListener().getClass().getSimpleName() + " (Plugin: " + listener.getPlugin().getName() + ")", var5.getCause());
                     }
                 }
-                TimingsManager.PLUGIN_EVENT_HANDLER.stopTimingIfSync();
+                TimingsManager.PLUGIN_HOOK_HANDLER.stopTimingIfSync();
             }
         }
     }

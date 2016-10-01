@@ -32,7 +32,7 @@ public final class NeptuneTimings {
     }
 
     public static Timing getPluginTimings(Plugin plugin, String context) {
-        return NeptuneTimingsFactory.ofSafe(plugin.getName(), context, TimingsManager.PLUGIN_EVENT_HANDLER);
+        return NeptuneTimingsFactory.ofSafe(plugin.getName(), context, TimingsManager.PLUGIN_HOOK_HANDLER);
     }
 
 }

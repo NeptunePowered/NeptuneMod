@@ -41,9 +41,7 @@ public final class TimingsManager {
             LoadingMap.newHashMap((id) -> (id.protect ? new UnsafeTimingHandler(id) : new TimingHandler(id)), 256, .5F));
     public static final FullServerTickHandler FULL_SERVER_TICK = new FullServerTickHandler();
     public static final TimingHandler TIMINGS_TICK = NeptuneTimingsFactory.ofSafe("Timings Tick", FULL_SERVER_TICK);
-    public static final Timing DATA_GROUP_HANDLER = NeptuneTimingsFactory.ofSafe("Data");
-    public static final Timing MOD_EVENT_HANDLER = NeptuneTimingsFactory.ofSafe("Mod Events");
-    public static final Timing PLUGIN_EVENT_HANDLER = NeptuneTimingsFactory.ofSafe("Plugin Events");
+    public static final Timing PLUGIN_HOOK_HANDLER = NeptuneTimingsFactory.ofSafe("Plugin Hooks");
     public static final Timing PLUGIN_GROUP_HANDLER = NeptuneTimingsFactory.ofSafe("Plugins");
     public static List<String> hiddenConfigs = new ArrayList<>();
     public static boolean privacy = false;
