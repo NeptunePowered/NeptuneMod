@@ -95,7 +95,6 @@
         "event.MixinClickEventAction",
         "event.MixinHoverEvent",
         "event.MixinHoverEventAction",
-        "init.MixinBootstrap",
         "inventory.MixinAnimalChest",
         "inventory.MixinIInventory",
         "inventory.MixinInventoryEnderChest",

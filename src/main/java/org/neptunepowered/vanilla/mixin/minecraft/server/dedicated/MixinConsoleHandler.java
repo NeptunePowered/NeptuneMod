@@ -66,8 +66,9 @@ public abstract class MixinConsoleHandler extends Thread {
                         }
 
                         line = line.trim();
+                        final String lineFinal = line;
                         if (!line.isEmpty()) {
-                            Canary.getServer().consoleCommand(line);
+                            this.server.addScheduledTask(() -> Canary.getServer().consoleCommand(lineFinal));
                         }
                     } catch (IOException e) {
                         Canary.log.error("Exception handling console input", e);
