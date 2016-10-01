@@ -1,8 +1,7 @@
 /*
- * This file is part of Sponge, licensed under the MIT License (MIT).
+ * This file is part of NeptuneVanilla, licensed under the MIT License (MIT).
  *
- * Copyright (c) SpongePowered <https://www.spongepowered.org>
- * Copyright (c) contributors
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package co.aikar.timings;
+package org.neptunepowered.vanilla.interfaces.minecraft.block;
 
-import net.canarymod.plugin.Plugin;
-import net.minecraft.block.Block;
+import co.aikar.timings.Timing;
 
-public final class NeptuneTimings {
+public interface IMixinBlock {
 
-    private NeptuneTimings() {
-    }
-
-    public static Timing getPluginTimings(Plugin plugin, String context) {
-        return NeptuneTimingsFactory.ofSafe(plugin.getName(), context, TimingsManager.PLUGIN_HOOK_HANDLER);
-    }
-
-    public static Timing getBlockTiming(Block block) {
-        return NeptuneTimingsFactory.ofSafe("## Scheduled Block: " + block.getUnlocalizedName());
-    }
+    Timing getTimingsHandler();
 
 }
