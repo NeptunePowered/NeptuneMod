@@ -33,6 +33,7 @@ import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.inventory.Item;
 import net.canarymod.api.inventory.PlayerInventory;
 import net.canarymod.hook.player.BedEnterHook;
+import net.canarymod.hook.player.LevelUpHook;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
@@ -49,6 +50,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityPlayer.class)
@@ -90,6 +92,11 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
                 callbackInfo.setReturnValue(EntityPlayer.EnumStatus.OTHER_PROBLEM);
             }
         }
+    }
+
+    @Inject(method = "addExperienceLevel", at = @At("INVOKE"))
+    public void onAddExperienceLevel(int levels, CallbackInfo ci) {
+        new LevelUpHook((Player) this).call();
     }
 
     @Override

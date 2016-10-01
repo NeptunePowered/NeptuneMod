@@ -84,9 +84,8 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
     }
 
     /**
-     * Overwrite to fire the KickHook.
-     *
-     * @author jamierocks
+     * @author jamierocks - 8th May 2016
+     * @reason Overwrite to fire the KickHook.
      */
     @Overwrite
     public void kickPlayerFromServer(String reason) {
@@ -98,9 +97,8 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
     }
 
     /**
-     * Overwrite to fire the DisconnectHook.
-     *
-     * @author jamierocks
+     * @author jamierocks - 28th May 2016
+     * @reason Overwrite to fire the DisconnectHook.
      */
     @Overwrite
     public void onDisconnect(IChatComponent reason) {
@@ -132,9 +130,8 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
     }
 
     /**
-     * Overwrite to pass chat to Canary.
-     *
-     * @author jamierocks
+     * @author jamierocks - 1st September 2016
+     * @reason Overwrite to pass chat to Canary.
      */
     @Overwrite
     public void processChatMessage(C01PacketChatMessage packetIn) {
@@ -215,4 +212,5 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
     public void kickPlayerFromServerWithoutHook(String reason) {
         NetHandlerPlayServerHelper.kickPlayerFromServer(this.playerEntity, reason);
     }
+
 }

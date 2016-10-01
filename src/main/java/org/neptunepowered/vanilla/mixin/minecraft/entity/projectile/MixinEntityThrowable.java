@@ -37,6 +37,10 @@ public abstract class MixinEntityThrowable extends MixinEntity implements Entity
     @Shadow private EntityLivingBase thrower;
     private float gravity = 0.3f;
 
+    /**
+     * @author jamierocks - 17th May 2015
+     * @reason Allow setting the gravity
+     */
     @Overwrite
     protected float getGravityVelocity() {
         return this.gravity;

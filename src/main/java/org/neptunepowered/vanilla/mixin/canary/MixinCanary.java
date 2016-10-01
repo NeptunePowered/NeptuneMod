@@ -36,9 +36,8 @@ public abstract class MixinCanary {
     @Shadow private static String jarPath;
 
     /**
-     * Overwrite to get the implementation title.
-     *
-     * @author jamierocks
+     * @author jamierocks - 27th October 2015
+     * @reason Overwrite to get the implementation title.
      */
     @Overwrite
     public static String getImplementationTitle() {
@@ -46,9 +45,8 @@ public abstract class MixinCanary {
     }
 
     /**
-     * Overwrite to get the implementation version.
-     *
-     * @author jamierocks
+     * @author jamierocks - 27th October 2015
+     * @reason Overwrite to get the implementation version.
      */
     @Overwrite
     public static String getImplementationVersion() {
@@ -56,10 +54,8 @@ public abstract class MixinCanary {
     }
 
     /**
-     * Overwrite to get the jar path of Canary properly.
-     * <i>Works in both production and dev environments</i>
-     *
-     * @author jamierocks
+     * @author jamierocks - 27th October 2015
+     * @reason Overwrite to get the jar path of Canary properly.
      */
     @Overwrite
     public static String getCanaryJarPath() {
@@ -68,4 +64,5 @@ public abstract class MixinCanary {
         }
         return jarPath;
     }
+
 }
