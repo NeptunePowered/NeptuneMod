@@ -183,6 +183,9 @@ task sourceJar(type: Jar, overwrite: true) {
 javadoc {
     options.encoding = 'UTF-8'
     options.charSet = 'UTF-8'
+
+    // Disable the crazy super-strict doclint tool in Java 8
+    options.addStringOption('Xdoclint:none', '-quiet')
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
