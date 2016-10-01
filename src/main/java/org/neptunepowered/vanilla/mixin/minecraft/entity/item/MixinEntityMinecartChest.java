@@ -1,8 +1,7 @@
 /*
- * This file is part of Sponge, licensed under the MIT License (MIT).
+ * This file is part of NeptuneVanilla, licensed under the MIT License (MIT).
  *
- * Copyright (c) SpongePowered <https://www.spongepowered.org>
- * Copyright (c) contributors
+ * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,27 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package co.aikar.timings;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.item;
 
-import net.canarymod.api.entity.Entity;
-import net.canarymod.plugin.Plugin;
-import net.minecraft.block.Block;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.vehicle.ChestMinecart;
+import net.canarymod.api.inventory.InventoryType;
+import net.minecraft.entity.item.EntityMinecartChest;
+import org.spongepowered.asm.mixin.Mixin;
 
-public final class NeptuneTimings {
+@Mixin(EntityMinecartChest.class)
+public abstract class MixinEntityMinecartChest extends MixinEntityMinecartContainer implements ChestMinecart {
 
-    private NeptuneTimings() {
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.MINECART_CHEST;
     }
 
-    public static Timing getPluginTimings(Plugin plugin, String context) {
-        return NeptuneTimingsFactory.ofSafe(plugin.getName(), context, TimingsManager.PLUGIN_HOOK_HANDLER);
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.CHESTMINECART;
     }
 
-    public static Timing getBlockTiming(Block block) {
-        return NeptuneTimingsFactory.ofSafe("Minecraft", "## Scheduled Block: " + block.getUnlocalizedName());
-    }
-
-    public static Timing getEntityTiming(Entity entity) {
-        return NeptuneTimingsFactory.ofSafe("Minecraft", "## tickEntity - " + entity.getFqName());
+    @Override
+    public String getFqName() {
+        return "ChestMinecart";
     }
 
 }

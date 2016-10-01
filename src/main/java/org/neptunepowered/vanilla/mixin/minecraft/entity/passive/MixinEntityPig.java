@@ -21,40 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.world;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.passive;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldInfo;
-import org.neptunepowered.vanilla.interfaces.minecraft.entity.IMixinEntity;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.living.animal.Pig;
+import net.minecraft.entity.passive.EntityPig;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(World.class)
-public abstract class MixinWorld implements IMixinWorld {
-
-    @Shadow protected WorldInfo worldInfo;
+@Mixin(EntityPig.class)
+@Implements(@Interface(iface = Pig.class, prefix = "pig$"))
+public abstract class MixinEntityPig extends MixinEntityAnimal implements Pig {
 
     @Shadow
-    public abstract long getSeed();
+    public abstract boolean getSaddled();
 
     @Shadow
-    public abstract void updateEntity(Entity ent);
+    public abstract void setSaddled(boolean saddled);
 
     @Override
-    public void setWorldInfo(WorldInfo worldInfo) {
-        this.worldInfo = worldInfo;
+    public boolean isSaddled() {
+        return this.getSaddled();
     }
-    
-    @Redirect(method = "updateEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;"
-            + "updateEntity(Lnet/minecraft/entity/Entity;)V"))
-    public void onTick(World world, Entity entity) {
-        ((IMixinEntity) entity).getTimingsHandler().startTiming();
-        this.updateEntity(entity);
-        ((IMixinEntity) entity).getTimingsHandler().stopTiming();
+
+    @Intrinsic
+    public void pig$setSaddled(boolean b) {
+        this.setSaddled(b);
+    }
+
+    @Override
+    public String getFqName() {
+        return "Pig";
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.PIG;
     }
 
 }

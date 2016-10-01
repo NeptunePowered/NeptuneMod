@@ -21,40 +21,64 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.world;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.passive;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldInfo;
-import org.neptunepowered.vanilla.interfaces.minecraft.entity.IMixinEntity;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
+import net.canarymod.api.DyeColor;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.living.animal.Sheep;
+import net.minecraft.entity.passive.EntitySheep;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(World.class)
-public abstract class MixinWorld implements IMixinWorld {
-
-    @Shadow protected WorldInfo worldInfo;
+@Mixin(EntitySheep.class)
+@Implements(@Interface(iface = Sheep.class, prefix = "sheep$"))
+public abstract class MixinEntitySheep extends MixinEntityAnimal implements Sheep {
 
     @Shadow
-    public abstract long getSeed();
+    public abstract boolean getSheared();
 
     @Shadow
-    public abstract void updateEntity(Entity ent);
+    public abstract void setSheared(boolean sheared);
+
+    @Shadow
+    public abstract void eatGrassBonus();
 
     @Override
-    public void setWorldInfo(WorldInfo worldInfo) {
-        this.worldInfo = worldInfo;
+    public void eatGrass() {
+        this.eatGrassBonus();
     }
-    
-    @Redirect(method = "updateEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;"
-            + "updateEntity(Lnet/minecraft/entity/Entity;)V"))
-    public void onTick(World world, Entity entity) {
-        ((IMixinEntity) entity).getTimingsHandler().startTiming();
-        this.updateEntity(entity);
-        ((IMixinEntity) entity).getTimingsHandler().stopTiming();
+
+    @Override
+    public DyeColor getColor() {
+        return null;
+    }
+
+    @Override
+    public void setColor(DyeColor dyeColor) {
+
+    }
+
+    @Override
+    public boolean isSheared() {
+        return this.getSheared();
+    }
+
+    @Intrinsic
+    public void sheep$setSheared(boolean b) {
+        this.setSheared(b);
+    }
+
+    @Override
+    public String getFqName() {
+        return "Sheep";
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.SHEEP;
     }
 
 }
