@@ -31,16 +31,25 @@ import net.canarymod.api.potion.Potion;
 import net.canarymod.api.potion.PotionEffect;
 import net.canarymod.api.potion.PotionEffectType;
 import net.canarymod.api.world.position.Location;
+import net.canarymod.hook.entity.EntityDeathHook;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.util.DamageSource;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
 @Mixin(EntityLivingBase.class)
+@Implements(@Interface(iface = LivingBase.class, prefix = "livingbase$"))
 public abstract class MixinEntityLivingBase extends MixinEntity implements LivingBase {
 
     @Shadow public int deathTime;
@@ -56,12 +65,41 @@ public abstract class MixinEntityLivingBase extends MixinEntity implements Livin
     public abstract IAttributeInstance getEntityAttribute(IAttribute attribute);
 
     @Shadow
-    @Override
     public abstract float getHealth();
 
     @Shadow
-    @Override
     public abstract void setHealth(float health);
+
+    @Shadow
+    public abstract int getAge();
+
+    @Shadow
+    protected abstract void shadow$kill();
+
+    @Intrinsic
+    public float livingbase$getHealth() {
+        return this.getHealth();
+    }
+
+    @Intrinsic
+    public void livingbase$setHealth(float health) {
+        this.setHealth(health);
+    }
+
+    @Intrinsic
+    public int livingbase$getAge() {
+        return this.getAge();
+    }
+
+    @Intrinsic
+    public void livingbase$kill() {
+        this.shadow$kill();
+    }
+
+    @Inject(method = "onDeath", at = @At("INVOKE"))
+    public void onEntityDeath(DamageSource source, CallbackInfo ci) {
+        new EntityDeathHook(this, (net.canarymod.api.DamageSource) source);
+    }
 
     @Override
     public void increaseHealth(float health) {
@@ -103,18 +141,10 @@ public abstract class MixinEntityLivingBase extends MixinEntity implements Livin
 
     }
 
-    @Shadow
-    @Override
-    public abstract int getAge();
-
     @Override
     public void setAge(int age) {
         this.entityAge = age;
     }
-
-    @Shadow
-    @Override
-    public abstract void kill();
 
     @Override
     public void dealDamage(DamageType type, float damage) {
@@ -260,4 +290,5 @@ public abstract class MixinEntityLivingBase extends MixinEntity implements Livin
     public void setXPDrop(boolean xpDrop) {
 
     }
+
 }
