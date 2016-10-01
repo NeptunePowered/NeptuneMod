@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.server;
 
 import static net.minecraft.server.MinecraftServer.getCurrentTimeMillis;
 
+import co.aikar.timings.TimingsManager;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
@@ -136,6 +137,16 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Inject(method = "updateTimeLightAndEntities", at = @At("RETURN"))
     public void afterUpdateTimeLightAndEntities(CallbackInfo ci) {
         this.previousTick = System.nanoTime() - this.curTrack;
+    }
+
+    @Inject(method = "tick", at = @At(value = "HEAD"))
+    public void onServerTickStart(CallbackInfo ci) {
+        TimingsManager.FULL_SERVER_TICK.startTiming();
+    }
+
+    @Inject(method = "tick", at = @At(value = "RETURN"))
+    public void onServerTickEnd(CallbackInfo ci) {
+        TimingsManager.FULL_SERVER_TICK.stopTiming();
     }
 
     /**

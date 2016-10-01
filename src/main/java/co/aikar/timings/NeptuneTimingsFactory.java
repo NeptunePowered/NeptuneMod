@@ -36,8 +36,6 @@ import org.neptunepowered.lib.config.TimingsConfiguration;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-
 public class NeptuneTimingsFactory implements TimingsFactory {
 
     private final int MAX_HISTORY_FRAMES = 12;
@@ -79,7 +77,7 @@ public class NeptuneTimingsFactory implements TimingsFactory {
     }
 
     @Override
-    public Timing of(Object pluginObj, String name, @Nullable Timing groupHandler) {
+    public Timing of(Object pluginObj, String name, Timing groupHandler) {
         Plugin plugin = checkPlugin(pluginObj);
         return TimingsManager.getHandler(plugin.getName().toLowerCase(), name, groupHandler, true);
     }

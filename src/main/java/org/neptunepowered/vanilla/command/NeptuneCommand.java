@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla;
+package org.neptunepowered.vanilla.command;
 
 import net.canarymod.Canary;
 import net.canarymod.chat.ChatFormat;
@@ -33,9 +33,10 @@ import net.canarymod.commandsys.TabCompleteHelper;
 
 import java.util.List;
 
-public final class NeptuneCommands implements CommandListener {
+public final class NeptuneCommand implements CommandListener {
 
-    @Command(aliases = { "neptune" },
+    @Command(
+            aliases = { "neptune" },
             description = "Neptune command",
             permissions = { "neptune.command.base" },
             toolTip = "/neptune [info]")
@@ -43,7 +44,8 @@ public final class NeptuneCommands implements CommandListener {
         this.infoCommand(caller, args);
     }
 
-    @Command(aliases = { "info" },
+    @Command(
+            aliases = { "info" },
             parent = "neptune",
             description = "info subcommand",
             permissions = { "neptune.command.info" },
@@ -65,4 +67,5 @@ public final class NeptuneCommands implements CommandListener {
         }
         return null;
     }
+
 }
