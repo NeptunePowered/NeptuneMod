@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" packages="org.neptunepowered.vanilla.launch.console">
     <Appenders>
-        <TerminalConsole name="Console" target="SYSTEM_OUT">
+        <TerminalConsole name="Console">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%logger{1}/%level]: %msg%n"/>
         </TerminalConsole>
 
-        <TerminalConsole name="MinecraftConsole" target="SYSTEM_OUT">
+        <TerminalConsole name="MinecraftConsole">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n"/>
         </TerminalConsole>
 

@@ -21,27 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.console;
+package org.neptunepowered.vanilla.mixin.minecraft.init;
 
-import jline.console.completer.Completer;
-import net.canarymod.Canary;
+import net.minecraft.init.Bootstrap;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 
-import java.util.List;
+@Mixin(Bootstrap.class)
+public abstract class MixinBootstrap {
 
-public final class ConsoleCommandCompleter implements Completer {
-
-    @Override
-    public int complete(String buffer, int cursor, List<CharSequence> candidates) {
-        String toComplete = buffer.substring(0, cursor);
-        String[] args = toComplete.split("\\s+");
-
-        List<String> completions = Canary.commands().tabComplete(Canary.getServer(), args[0], args);
-        if (completions == null) {
-            return -1;
-        }
-
-        candidates.addAll(completions);
-        return candidates.size() > 0 ? toComplete.lastIndexOf(' ') + 1 : -1;
+    /**
+     * @author jamierocks - 30th September 2016
+     * @reason Remove STDOUT to logger redirection, already handled by Neptune.
+     */
+    @Overwrite
+    private static void redirectOutputToLog() {
+        // We do that on our own
     }
 
 }
