@@ -38,11 +38,15 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Iterator;
 
-@Mixin(HookExecutor.class)
+@Mixin(value = HookExecutor.class, remap = false)
 public class MixinHookExecutor {
 
     @Shadow @Final public ArrayListMultimap<Class<? extends Hook>, RegisteredPluginListener> listeners;
 
+    /**
+     * @author jamierocks - 1st October 2016
+     * @reason Add relevant timings
+     */
     @Overwrite
     public void callHook(Hook hook) {
         if(!hook.executed()) {

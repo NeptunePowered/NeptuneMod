@@ -32,7 +32,7 @@ import org.neptunepowered.vanilla.interfaces.canary.plugin.IMixinRegisteredPlugi
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(RegisteredPluginListener.class)
+@Mixin(value = RegisteredPluginListener.class, remap = false)
 public class MixinRegisteredPluginListener implements IMixinRegisteredPluginListener {
 
     @Shadow private PluginListener listener;
