@@ -23,6 +23,8 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.server;
 
+import static net.minecraft.server.MinecraftServer.getCurrentTimeMillis;
+
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
@@ -39,6 +41,7 @@ import net.canarymod.api.inventory.recipes.CraftingRecipe;
 import net.canarymod.api.inventory.recipes.Recipe;
 import net.canarymod.api.inventory.recipes.SmeltRecipe;
 import net.canarymod.api.nbt.CompoundTag;
+import net.canarymod.api.world.DimensionType;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
@@ -54,10 +57,14 @@ import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
+import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.NeptuneOfflinePlayer;
+import org.neptunepowered.vanilla.interfaces.minecraft.server.IMixinMinecraftServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.spongepowered.asm.mixin.Final;
@@ -77,8 +84,9 @@ import java.util.UUID;
 
 @Mixin(MinecraftServer.class)
 @Implements(@Interface(iface = Server.class, prefix = "server$"))
-public abstract class MixinMinecraftServer implements Server {
+public abstract class MixinMinecraftServer implements Server, IMixinMinecraftServer {
 
+    @Shadow private static Logger logger;
     @Shadow @Final private ServerStatusResponse statusResponse;
     @Shadow public long[] tickTimeArray;
     @Shadow private int tickCounter;
@@ -106,6 +114,18 @@ public abstract class MixinMinecraftServer implements Server {
 
     @Shadow
     public abstract String getHostname();
+
+    @Shadow
+    protected abstract void setUserMessage(String message);
+
+    @Shadow
+    public abstract boolean isServerRunning();
+
+    @Shadow
+    protected abstract void outputPercentRemaining(String message, int percent);
+
+    @Shadow
+    protected abstract void clearCurrentTask();
 
     @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"))
     public void onUpdateTimeLightAndEntities(CallbackInfo ci) {
@@ -537,4 +557,35 @@ public abstract class MixinMinecraftServer implements Server {
     public String getServerModName() {
         return "NeptuneVanilla";
     }
+
+    @Override
+    public void prepareSpawnArea(WorldServer worldServer) {
+        int i1 = 0;
+        this.setUserMessage("menu.generatingTerrain");
+        logger.info("Preparing start region for level " + worldServer.provider.getDimensionId());
+        BlockPos spawnPoint = worldServer.getSpawnPoint();
+        long k1 = getCurrentTimeMillis();
+
+        for (int l1 = -192; l1 <= 192 && this.isServerRunning(); l1 += 16) {
+            for (int i2 = -192; i2 <= 192 && this.isServerRunning(); i2 += 16) {
+                long j2 = getCurrentTimeMillis();
+
+                if (j2 - k1 > 1000L) {
+                    this.outputPercentRemaining("Preparing spawn area", i1 * 100 / 625);
+                    k1 = j2;
+                }
+
+                ++i1;
+                worldServer.theChunkProviderServer.loadChunk(spawnPoint.getX() + l1 >> 4, spawnPoint.getZ() + i2 >> 4);
+            }
+        }
+
+        this.clearCurrentTask();
+    }
+
+    @Override
+    public void loadWorld(String name, DimensionType dimensionType) {
+
+    }
+
 }

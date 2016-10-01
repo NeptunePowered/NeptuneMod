@@ -23,17 +23,9 @@
  */
 package org.neptunepowered.vanilla.interfaces.minecraft.world.storage;
 
-import net.canarymod.Canary;
-import net.minecraft.nbt.NBTTagCompound;
+import net.canarymod.api.world.DimensionType;
 
-import java.io.File;
-import java.util.UUID;
+public interface IMixinWorldInfo {
 
-public interface IMixinSaveHandler {
-
-    File WORLDS_DIR = new File(Canary.getWorkingDirectory(), "worlds");
-    File PLAYERS_DIR = new File(WORLDS_DIR, "players");
-
-    NBTTagCompound readPlayerData(UUID uuid);
-
+    void setDimensionType(DimensionType dimensionType);
 }

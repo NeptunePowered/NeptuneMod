@@ -21,19 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.world.storage;
+package org.neptunepowered.vanilla.interfaces.minecraft.server;
 
-import net.canarymod.Canary;
-import net.minecraft.nbt.NBTTagCompound;
+import net.canarymod.api.world.DimensionType;
+import net.minecraft.world.WorldServer;
 
-import java.io.File;
-import java.util.UUID;
+public interface IMixinMinecraftServer {
 
-public interface IMixinSaveHandler {
+    void prepareSpawnArea(WorldServer world);
 
-    File WORLDS_DIR = new File(Canary.getWorkingDirectory(), "worlds");
-    File PLAYERS_DIR = new File(WORLDS_DIR, "players");
-
-    NBTTagCompound readPlayerData(UUID uuid);
-
+    void loadWorld(String name, DimensionType dimensionType);
 }

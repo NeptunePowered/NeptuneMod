@@ -21,19 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.world.storage;
+package org.neptunepowered.vanilla.mixin.minecraft.world.storage;
 
-import net.canarymod.Canary;
-import net.minecraft.nbt.NBTTagCompound;
+import net.canarymod.api.world.DimensionType;
+import net.minecraft.world.storage.WorldInfo;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinWorldInfo;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-import java.io.File;
-import java.util.UUID;
+@Mixin(WorldInfo.class)
+public class MixinWorldInfo implements IMixinWorldInfo {
 
-public interface IMixinSaveHandler {
+    @Shadow private int dimension;
 
-    File WORLDS_DIR = new File(Canary.getWorkingDirectory(), "worlds");
-    File PLAYERS_DIR = new File(WORLDS_DIR, "players");
-
-    NBTTagCompound readPlayerData(UUID uuid);
-
+    @Override
+    public void setDimensionType(DimensionType dimensionType) {
+        this.dimension = dimensionType.getId();
+    }
 }

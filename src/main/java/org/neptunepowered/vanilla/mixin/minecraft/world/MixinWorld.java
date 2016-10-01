@@ -21,19 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.world.storage;
+package org.neptunepowered.vanilla.mixin.minecraft.world;
 
-import net.canarymod.Canary;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.WorldInfo;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-import java.io.File;
-import java.util.UUID;
+@Mixin(World.class)
+public abstract class MixinWorld implements IMixinWorld {
 
-public interface IMixinSaveHandler {
+    @Shadow protected WorldInfo worldInfo;
 
-    File WORLDS_DIR = new File(Canary.getWorkingDirectory(), "worlds");
-    File PLAYERS_DIR = new File(WORLDS_DIR, "players");
+    @Shadow
+    public abstract long getSeed();
 
-    NBTTagCompound readPlayerData(UUID uuid);
-
+    @Override
+    public void setWorldInfo(WorldInfo worldInfo) {
+        this.worldInfo = worldInfo;
+    }
 }
