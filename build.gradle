@@ -160,7 +160,7 @@ shadowJar {
     rename 'joined.srg', 'mappings.srg'
 
     dependencies {
-        include dependency('net.canarymod:CanaryLib')
+        include dependency('org.neptunepowered:NeptuneLib')
         include dependency('org.spongepowered:mixin')
 
         // CanaryLib
