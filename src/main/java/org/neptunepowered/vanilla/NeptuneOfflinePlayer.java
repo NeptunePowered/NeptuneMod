@@ -23,6 +23,8 @@
  */
 package org.neptunepowered.vanilla;
 
+import com.google.common.collect.Lists;
+import net.canarymod.Canary;
 import net.canarymod.api.GameMode;
 import net.canarymod.api.OfflinePlayer;
 import net.canarymod.api.inventory.Inventory;
@@ -37,7 +39,9 @@ import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
+import net.canarymod.user.UserAndGroupsProvider;
 
+import java.util.List;
 import java.util.UUID;
 
 public class NeptuneOfflinePlayer implements OfflinePlayer {
@@ -45,11 +49,33 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
     private final String name;
     private final UUID id;
     private final CompoundTag tag;
+    private final PermissionProvider permissionProvider;
+    private List<Group> groups;
+    private String prefix;
+    private boolean isMuted;
 
     public NeptuneOfflinePlayer(String name, UUID id, CompoundTag tag) {
         this.name = name;
         this.id = id;
         this.tag = tag;
+
+        final UserAndGroupsProvider provider = Canary.usersAndGroups();
+        final String uuid = this.getUUIDString();
+
+        this.permissionProvider = Canary.permissionManager().getPlayerProvider(this.name, this.getWorld().getFqName());
+        final String[] data = provider.getPlayerData(uuid);
+        final Group[] subs = provider.getModuleGroupsForPlayer(uuid);
+
+        this.groups = Lists.newLinkedList();
+        this.groups.add(Canary.usersAndGroups().getGroup(data[1]));
+        for (Group group : subs) {
+            if (group != null) {
+                this.groups.add(group);
+            }
+        }
+
+        this.prefix = data[0];
+        this.isMuted = Boolean.parseBoolean(data[2]);
     }
 
     @Override
@@ -64,17 +90,17 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public PermissionProvider getPermissionProvider() {
-        return null;
+        return this.permissionProvider;
     }
 
     @Override
     public Group getGroup() {
-        return null;
+        return this.groups.get(0);
     }
 
     @Override
     public String getPrefix() {
-        return null;
+        return this.prefix;
     }
 
     @Override
@@ -83,13 +109,14 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
     }
 
     @Override
-    public boolean hasPermission(String s) {
-        return false;
+    public boolean hasPermission(String path) {
+        return this.permissionProvider.queryPermission(path);
     }
 
     @Override
     public void setGroup(Group group) {
-
+        this.groups.set(0, group);
+        Canary.usersAndGroups().addOrUpdateOfflinePlayer(this);
     }
 
     @Override
@@ -118,8 +145,9 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
     }
 
     @Override
-    public void setPrefix(String s) {
-
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+        Canary.usersAndGroups().addOrUpdateOfflinePlayer(this);
     }
 
     @Override
@@ -149,12 +177,13 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public boolean isMuted() {
-        return false;
+        return this.isMuted;
     }
 
     @Override
-    public void setMuted(boolean b) {
-
+    public void setMuted(boolean muted) {
+        this.isMuted = muted;
+        Canary.usersAndGroups().addOrUpdateOfflinePlayer(this);
     }
 
     @Override
@@ -426,4 +455,5 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
     public Inventory getEnderChestInventory() {
         return null;
     }
+
 }

@@ -68,9 +68,8 @@ public class MixinSaveHandler implements IMixinSaveHandler {
     }
 
     /**
-     * Use the correct player directory
-     *
-     * @author jamierocks
+     * @author jamierocks - 20th July 2016
+     * @reason Use the correct player directory
      */
     @Overwrite
     public void writePlayerData(EntityPlayer player) {
@@ -92,9 +91,8 @@ public class MixinSaveHandler implements IMixinSaveHandler {
     }
 
     /**
-     * Use the correct player directory
-     *
-     * @author jamierocks
+     * @author jamierocks - 20th July 2016
+     * @reason Use the correct player directory
      */
     @Overwrite
     public NBTTagCompound readPlayerData(EntityPlayer player) {
@@ -108,9 +106,8 @@ public class MixinSaveHandler implements IMixinSaveHandler {
     }
 
     /**
-     * Use the correct player directory
-     *
-     * @author jamierocks
+     * @author jamierocks - 20th July 2016
+     * @reason Use the correct player directory
      */
     @Overwrite
     public String[] getAvailablePlayerDat() {

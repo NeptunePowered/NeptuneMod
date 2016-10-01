@@ -42,9 +42,8 @@ public class MixinNetHandlerLoginServer {
     @Shadow @Final public NetworkManager networkManager;
 
     /**
-     * Overwrite to enable BungeeCord support.
-     *
-     * @author jamierocks
+     * @author jamierocks - 7th May 2016
+     * @reason Overwrite to enable BungeeCord support.
      */
     @Overwrite
     protected GameProfile getOfflineProfile(GameProfile original) {

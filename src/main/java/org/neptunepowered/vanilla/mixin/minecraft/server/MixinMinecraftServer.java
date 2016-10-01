@@ -119,9 +119,8 @@ public abstract class MixinMinecraftServer implements Server {
     }
 
     /**
-     * Use the Canary configuration.
-     *
-     * @author Jamie Mansfield
+     * @author Jamie Mansfield - 26th April 2016
+     * @reason Use the Canary configuration.
      */
     @Overwrite
     public int getMaxPlayers() {
@@ -530,6 +529,10 @@ public abstract class MixinMinecraftServer implements Server {
         return Configuration.getServerConfig().getServerLocale();
     }
 
+    /**
+     * @author jamierocks - 18th May 2015
+     * @reason Set the server mod name
+     */
     @Overwrite
     public String getServerModName() {
         return "NeptuneVanilla";

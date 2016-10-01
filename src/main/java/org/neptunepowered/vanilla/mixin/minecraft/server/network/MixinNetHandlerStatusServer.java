@@ -51,6 +51,10 @@ public class MixinNetHandlerStatusServer {
     @Shadow @Final private NetworkManager networkManager;
     @Shadow private boolean handled;
 
+    /**
+     * @author jamierocks - 5th May 2015
+     * @reason Handle the ServerListPingHook
+     */
     @Overwrite
     public void processServerQuery(C00PacketServerQuery packetIn) {
         if (handled) {
