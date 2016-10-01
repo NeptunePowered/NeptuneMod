@@ -152,9 +152,8 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
     }
 
     /**
-     * This is a hack as so that it's not included on the dev env as it will cause a StackOverflowException :(
-     *
      * @author jamierocks
+     * @reason This is a hack as so that it's not included on the dev env as it will cause a StackOverflowException :(
      */
     @Intrinsic
     public Map<Position, TileEntity> chunk$getTileEntityMap() {

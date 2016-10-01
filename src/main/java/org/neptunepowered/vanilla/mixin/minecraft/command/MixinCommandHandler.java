@@ -44,6 +44,10 @@ public class MixinCommandHandler {
 
     @Shadow @Final private Map<String, ICommand> commandMap;
 
+    /**
+     * @author jamierocks - 15th May 2015
+     * @reason Add Canary tab-completion results
+     */
     @Overwrite
     public List<String> getTabCompletionOptions(ICommandSender sender, String input, BlockPos pos) {
         String[] astring = input.split(" ", -1);

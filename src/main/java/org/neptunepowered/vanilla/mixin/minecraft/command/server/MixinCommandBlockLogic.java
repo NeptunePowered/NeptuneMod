@@ -59,6 +59,10 @@ public abstract class MixinCommandBlockLogic implements net.canarymod.api.Comman
     @Shadow
     public abstract void setName(String p_145754_1_);
 
+    /**
+     * @author jamierocks - 3rd September 2016
+     * @reason Support Canary commands
+     */
     @Overwrite
     public void trigger(net.minecraft.world.World worldIn) {
         if (worldIn.isRemote) {

@@ -47,6 +47,10 @@ public abstract class MixinEntityFireball extends MixinEntity implements Firebal
     @Shadow public EntityLivingBase shootingEntity;
     private float motionFactor = 0.95F;
 
+    /**
+     * @author jamierocks - 25th October 2015
+     * @reason Allow setting the motion factor
+     */
     @Overwrite
     public float getMotionFactor() {
         return this.motionFactor;
@@ -121,4 +125,5 @@ public abstract class MixinEntityFireball extends MixinEntity implements Firebal
     public String getFqName() {
         return "Fireball";
     }
+
 }

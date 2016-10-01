@@ -39,6 +39,10 @@ import org.spongepowered.asm.mixin.Overwrite;
 @Mixin(ServerCommandManager.class)
 public class MixinServerCommandManager extends MixinCommandHandler {
 
+    /**
+     * @author jamierocks - 1st September 2016
+     * @reason Log command feedback
+     */
     @Overwrite
     public void notifyOperators(ICommandSender sender, ICommand command, int flags, String msgFormat, Object... msgParams) {
         boolean flag = true;
