@@ -128,6 +128,7 @@
         "scoreboard.MixinScoreboard",
         "scoreboard.MixinScoreObjective",
         "scoreboard.MixinScorePlayerTeam",
+        "server.dedicated.MixinConsoleHandler",
         "server.dedicated.MixinDedicatedServer",
         "server.management.MixinItemInWorldManager",
         "server.management.MixinServerConfigurationManager",

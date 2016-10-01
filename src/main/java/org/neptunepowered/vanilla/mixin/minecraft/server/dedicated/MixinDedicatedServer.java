@@ -36,17 +36,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.Proxy;
 
 @Mixin(DedicatedServer.class)
 public abstract class MixinDedicatedServer extends MinecraftServer {
 
     @Shadow private boolean guiIsEnabled;
 
-    MixinDedicatedServer(File workDir, Proxy proxy, File profileCacheDir) {
-        super(workDir, proxy, profileCacheDir);
+    MixinDedicatedServer() {
+        super(null, null, null);
     }
 
     @Inject(method = "startServer", at = @At(value = "INVOKE",
@@ -99,9 +97,8 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     }
 
     /**
-     * Overwrite to use Canary's {@link Configuration} rather than the original server.properties
-     *
-     * @author jamierocks
+     * @author jamierocks - 26th April 2016
+     * @reason Overwrite to use Canary's {@link Configuration} rather than the original server.properties
      */
     @Overwrite
     public boolean isAnnouncingPlayerAchievements() {
