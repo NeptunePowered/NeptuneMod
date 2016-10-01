@@ -128,9 +128,8 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     }
 
     /**
-     * Complete overwrite to use Canary internals.
-     *
-     * @author jamierocks
+     * @author jamierocks - 8th May 2016
+     * @reason Complete overwrite to use Canary internals.
      */
     @Overwrite
     public String allowUserToConnect(SocketAddress address, GameProfile profile) {
@@ -207,4 +206,5 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     public void switchDimension(Player player, World world, boolean createPortal) {
 
     }
+
 }

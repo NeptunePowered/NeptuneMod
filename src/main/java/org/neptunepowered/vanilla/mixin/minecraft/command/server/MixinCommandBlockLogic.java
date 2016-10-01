@@ -59,9 +59,6 @@ public abstract class MixinCommandBlockLogic implements net.canarymod.api.Comman
     @Shadow
     public abstract void setName(String p_145754_1_);
 
-    @Shadow
-    public abstract net.minecraft.world.World getEntityWorld();
-
     @Overwrite
     public void trigger(net.minecraft.world.World worldIn) {
         if (worldIn.isRemote) {
@@ -131,7 +128,7 @@ public abstract class MixinCommandBlockLogic implements net.canarymod.api.Comman
 
     @Override
     public World getWorld() {
-        return (World) this.getEntityWorld();
+        return null;
     }
 
     @Intrinsic

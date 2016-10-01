@@ -78,9 +78,10 @@ dependencies {
         exclude module: 'guava'
     }
 
-    compile 'org.ow2.asm:asm-debug-all:5.0.4'
+    compile 'org.ow2.asm:asm-debug-all:5.1'
+    compile 'jline:jline:2.14.2'
 
-    shadow 'org.ow2.asm:asm-all:5.0.4'
+    shadow 'org.ow2.asm:asm-all:5.1'
     shadow 'net.sf.jopt-simple:jopt-simple:4.6'
 }
 
@@ -169,9 +170,10 @@ shadowJar {
         include dependency('com.googlecode.json-simple:json-simple')
         include dependency('org.mcstats.standalone:metrics')
 
-        // Launchwrapper
+        // LaunchWrapper
         include dependency('net.sf.jopt-simple:jopt-simple')
         include dependency('org.ow2.asm:asm-all')
+        include dependency('jline:jline')
     }
 }
 

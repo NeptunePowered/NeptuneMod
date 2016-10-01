@@ -57,6 +57,8 @@ public class NeptuneServerTweaker implements ITweaker {
 
         // We shouldn't load these through LaunchWrapper as they use native dependencies
         loader.addClassLoaderExclusion("io.netty.");
+        loader.addClassLoaderExclusion("jline.");
+        loader.addClassLoaderExclusion("org.fusesource.");
 
         // Neptune launch
         loader.addClassLoaderExclusion("org.neptunepowered.vanilla.launch.");
