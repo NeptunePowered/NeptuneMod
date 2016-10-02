@@ -35,9 +35,13 @@ import net.canarymod.api.inventory.PlayerInventory;
 import net.canarymod.hook.player.BedEnterHook;
 import net.canarymod.hook.player.LevelUpHook;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.Team;
+import net.minecraft.stats.StatBase;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.IChatComponent;
@@ -60,6 +64,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
     @Shadow public PlayerCapabilities capabilities;
     @Shadow protected FoodStats foodStats;
     @Shadow private ItemStack itemInUse;
+    @Shadow public InventoryPlayer inventory;
 
     protected String prefix = null;
     private boolean sleepIgnored;
@@ -81,6 +86,18 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Shadow
     public abstract boolean isPlayerFullyAsleep();
+
+    @Shadow
+    public abstract Team getTeam();
+
+    @Shadow
+    public abstract Scoreboard getWorldScoreboard();
+
+    @Shadow
+    public abstract void triggerAchievement(StatBase achievementIn);
+
+    @Shadow
+    public abstract void func_175145_a(StatBase p_175145_1_);
 
     @Inject(method = "trySleep", at = @At(value = "INVOKE"))
     public void onTrySleep(BlockPos bedLocation, CallbackInfoReturnable<EntityPlayer.EnumStatus> callbackInfo) {

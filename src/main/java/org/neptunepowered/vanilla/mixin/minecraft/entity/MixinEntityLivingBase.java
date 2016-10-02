@@ -36,6 +36,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.util.CombatTracker;
 import net.minecraft.util.DamageSource;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -54,6 +55,7 @@ public abstract class MixinEntityLivingBase extends MixinEntity implements Livin
 
     @Shadow public int deathTime;
     @Shadow protected int entityAge;
+    @Shadow protected int scoreValue;
 
     @Shadow
     public abstract void heal(float healAmount);
@@ -75,6 +77,12 @@ public abstract class MixinEntityLivingBase extends MixinEntity implements Livin
 
     @Shadow
     protected abstract void shadow$kill();
+
+    @Shadow
+    public abstract CombatTracker getCombatTracker();
+
+    @Shadow
+    public abstract EntityLivingBase getAttackingEntity();
 
     @Intrinsic
     public float livingbase$getHealth() {
