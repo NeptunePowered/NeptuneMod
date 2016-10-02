@@ -323,4 +323,9 @@ public abstract class MixinWorld implements IMixinWorld {
         this.theProfiler.endSection();
     }
 
+    @Override
+    public WorldTimingsHandler getTimings() {
+        return this.timings;
+    }
+
 }
