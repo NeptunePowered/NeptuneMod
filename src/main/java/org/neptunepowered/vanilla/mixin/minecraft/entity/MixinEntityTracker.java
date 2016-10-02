@@ -60,6 +60,10 @@ public abstract class MixinEntityTracker implements EntityTracker {
     public abstract void sendToAllTrackingEntity(net.minecraft.entity.Entity entityIn,
             net.minecraft.network.Packet p_151247_2_);
 
+    /**
+     * @author jamierocks - 2nd October 2016
+     * @reason Add timings calls
+     */
     @Overwrite
     public void updateTrackedEntities() {
         List<EntityPlayerMP> list = Lists.newArrayList();

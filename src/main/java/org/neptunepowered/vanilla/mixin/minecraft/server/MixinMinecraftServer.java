@@ -25,7 +25,9 @@ package org.neptunepowered.vanilla.mixin.minecraft.server;
 
 import static net.minecraft.server.MinecraftServer.getCurrentTimeMillis;
 
+import co.aikar.timings.NeptuneTimings;
 import co.aikar.timings.TimingsManager;
+import co.aikar.timings.WorldTimingsHandler;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
@@ -52,20 +54,28 @@ import net.canarymod.hook.system.ServerTickHook;
 import net.canarymod.tasks.ServerTask;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkSystem;
 import net.minecraft.network.ServerStatusResponse;
+import net.minecraft.network.play.server.S03PacketTimeUpdate;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ReportedException;
+import net.minecraft.util.Util;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.NeptuneOfflinePlayer;
 import org.neptunepowered.vanilla.interfaces.minecraft.server.IMixinMinecraftServer;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.spongepowered.asm.mixin.Final;
@@ -81,14 +91,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.GraphicsEnvironment;
 import java.util.List;
+import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.FutureTask;
 
 @Mixin(MinecraftServer.class)
 @Implements(@Interface(iface = Server.class, prefix = "server$"))
 public abstract class MixinMinecraftServer implements Server, IMixinMinecraftServer {
 
     @Shadow private static Logger logger;
+    @Shadow @Final public Profiler theProfiler;
     @Shadow @Final private ServerStatusResponse statusResponse;
+    @Shadow @Final private List<ITickable> playersOnline;
+    @Shadow public WorldServer[] worldServers;
+    @Shadow protected Queue< FutureTask<? >> futureTaskQueue;
+    @Shadow public long[][] timeOfLastDimensionTick;
     @Shadow public long[] tickTimeArray;
     @Shadow private int tickCounter;
     @Shadow private boolean serverRunning;
@@ -128,16 +145,11 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Shadow
     protected abstract void clearCurrentTask();
 
-    @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"))
-    public void onUpdateTimeLightAndEntities(CallbackInfo ci) {
-        new ServerTickHook(this.previousTick).call();
-        this.curTrack = System.nanoTime();
-    }
+    @Shadow
+    public abstract boolean getAllowNether();
 
-    @Inject(method = "updateTimeLightAndEntities", at = @At("RETURN"))
-    public void afterUpdateTimeLightAndEntities(CallbackInfo ci) {
-        this.previousTick = System.nanoTime() - this.curTrack;
-    }
+    @Shadow
+    public abstract NetworkSystem getNetworkSystem();
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
     public void onServerTickStart(CallbackInfo ci) {
@@ -156,6 +168,99 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Overwrite
     public int getMaxPlayers() {
         return Configuration.getServerConfig().getMaxPlayers();
+    }
+
+    /**
+     * @author jamierocks - 2nd October 2016
+     * @reason Add timings calls
+     */
+    @Overwrite
+    public void updateTimeLightAndEntities() {
+        // Neptune - ServerTickHook start
+        new ServerTickHook(this.previousTick).call();
+        this.curTrack = System.nanoTime();
+        // Neptune - ServerTickHook end
+
+        NeptuneTimings.schedulerTimer.startTiming(); // Neptune - timings
+        this.theProfiler.startSection("jobs");
+
+        synchronized (this.futureTaskQueue) {
+            while (!this.futureTaskQueue.isEmpty()) {
+                Util.runTask((FutureTask) this.futureTaskQueue.poll(), logger);
+            }
+        }
+        NeptuneTimings.schedulerTimer.stopTiming(); // Neptune - timings
+
+        this.theProfiler.endStartSection("levels");
+
+        for (int j = 0; j < this.worldServers.length; ++j) {
+            long i = System.nanoTime();
+
+            if (j == 0 || this.getAllowNether()) {
+                WorldServer worldserver = this.worldServers[j];
+                final WorldTimingsHandler timings = ((IMixinWorld) worldserver).getTimings(); // Neptune - timings
+
+                this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
+
+                if (this.tickCounter % 20 == 0) {
+                    this.theProfiler.startSection("timeSync");
+                    this.serverConfigManager.sendPacketToAllPlayersInDimension(
+                            new S03PacketTimeUpdate(worldserver.getTotalWorldTime(), worldserver.getWorldTime(),
+                                    worldserver.getGameRules().getBoolean("doDaylightCycle")), worldserver.provider.getDimensionId());
+                    this.theProfiler.endSection();
+                }
+
+                this.theProfiler.startSection("tick");
+
+                try {
+                    timings.doTick.startTiming(); // Neptune - timings
+                    worldserver.tick();
+                    timings.doTick.stopTiming(); // Neptune - timings
+                } catch (Throwable throwable1) {
+                    CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
+                    worldserver.addWorldInfoToCrashReport(crashreport);
+                    throw new ReportedException(crashreport);
+                }
+
+                try {
+                    timings.tickEntities.startTiming(); // Neptune - timings
+                    worldserver.updateEntities();
+                    timings.tickEntities.stopTiming(); // Neptune - timings
+                } catch (Throwable throwable) {
+                    CrashReport crashreport1 = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
+                    worldserver.addWorldInfoToCrashReport(crashreport1);
+                    throw new ReportedException(crashreport1);
+                }
+
+                this.theProfiler.endSection();
+                this.theProfiler.startSection("tracker");
+                worldserver.getEntityTracker().updateTrackedEntities();
+                this.theProfiler.endSection();
+                this.theProfiler.endSection();
+            }
+
+            this.timeOfLastDimensionTick[j][this.tickCounter % 100] = System.nanoTime() - i;
+        }
+
+        this.theProfiler.endStartSection("connection");
+        NeptuneTimings.connectionTimer.startTiming(); // Neptune - timings
+        this.getNetworkSystem().networkTick();
+        NeptuneTimings.connectionTimer.stopTiming(); // Neptune - timings
+        this.theProfiler.endStartSection("players");
+        NeptuneTimings.playerListTimer.startTiming(); // Neptune - timings
+        this.serverConfigManager.onTick();
+        NeptuneTimings.playerListTimer.stopTiming(); // Neptune - timings
+        this.theProfiler.endStartSection("tickables");
+
+        NeptuneTimings.tickablesTimer.startTiming(); // Neptune - timings
+        for (int k = 0; k < this.playersOnline.size(); ++k) {
+            this.playersOnline.get(k).update();
+        }
+        NeptuneTimings.tickablesTimer.stopTiming(); // Neptune - timings
+
+        this.theProfiler.endSection();
+
+        this.previousTick = System.nanoTime() - this.curTrack; // Neptune - ServerTickHook
     }
 
     @Intrinsic
