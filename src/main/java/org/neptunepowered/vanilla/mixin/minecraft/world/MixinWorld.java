@@ -37,6 +37,7 @@ import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.WorldInfo;
 import org.neptunepowered.vanilla.interfaces.minecraft.entity.IMixinEntity;
+import org.neptunepowered.vanilla.interfaces.minecraft.tileentity.IMixinTileEntity;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -203,6 +204,7 @@ public abstract class MixinWorld implements IMixinWorld {
 
                 if (this.isBlockLoaded(blockpos) && this.worldBorder.contains(blockpos)) {
                     try {
+                        ((IMixinTileEntity) tileentity).getTimingsHandler().startTiming(); // Neptune - Timings
                         ((ITickable) tileentity).update();
                     } catch (Throwable throwable) {
                         CrashReport crashreport2 = CrashReport.makeCrashReport(throwable, "Ticking block entity");
@@ -210,6 +212,11 @@ public abstract class MixinWorld implements IMixinWorld {
                         tileentity.addInfoToCrashReport(crashreportcategory1);
                         throw new ReportedException(crashreport2);
                     }
+                    // Neptune - start
+                    finally {
+                        ((IMixinTileEntity) tileentity).getTimingsHandler().stopTiming();
+                    }
+                    // Neptune - end
                 }
             }
 
@@ -250,6 +257,8 @@ public abstract class MixinWorld implements IMixinWorld {
 
             this.addedTileEntityList.clear();
         }
+
+        TimingHistory.tileEntityTicks += this.tickableTileEntities.size(); // Neptune - Timings
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();

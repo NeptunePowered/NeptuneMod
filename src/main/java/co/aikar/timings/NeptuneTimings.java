@@ -25,6 +25,7 @@
 package co.aikar.timings;
 
 import net.canarymod.api.entity.Entity;
+import net.canarymod.api.world.blocks.TileEntity;
 import net.canarymod.plugin.Plugin;
 import net.minecraft.block.Block;
 
@@ -43,6 +44,10 @@ public final class NeptuneTimings {
 
     public static Timing getEntityTiming(Entity entity) {
         return NeptuneTimingsFactory.ofSafe("Minecraft", "## tickEntity - " + entity.getFqName());
+    }
+
+    public static Timing getTileEntityTiming(TileEntity entity) {
+        return NeptuneTimingsFactory.ofSafe("Minecraft", "## tickTileEntity - " + entity.getClass().getSimpleName());
     }
 
 }
