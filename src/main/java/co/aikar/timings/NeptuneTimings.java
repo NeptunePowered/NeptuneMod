@@ -39,7 +39,7 @@ public final class NeptuneTimings {
     }
 
     public static Timing getBlockTiming(Block block) {
-        return NeptuneTimingsFactory.ofSafe("Minecraft", "## Scheduled Block: " + block.getUnlocalizedName());
+        return NeptuneTimingsFactory.ofSafe("## Scheduled Block: " + block.getUnlocalizedName());
     }
 
     public static Timing getEntityTiming(Entity entity) {

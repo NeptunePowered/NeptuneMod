@@ -57,4 +57,5 @@ public final class DyeColorConverter {
     public static EnumDyeColor of(DyeColor art) {
         return map.inverse().get(art);
     }
+
 }

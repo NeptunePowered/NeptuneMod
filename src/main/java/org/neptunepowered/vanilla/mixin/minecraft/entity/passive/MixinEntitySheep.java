@@ -27,6 +27,8 @@ import net.canarymod.api.DyeColor;
 import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.living.animal.Sheep;
 import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.item.EnumDyeColor;
+import org.neptunepowered.vanilla.util.converter.DyeColorConverter;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -46,6 +48,12 @@ public abstract class MixinEntitySheep extends MixinEntityAnimal implements Shee
     @Shadow
     public abstract void eatGrassBonus();
 
+    @Shadow
+    public abstract EnumDyeColor getFleeceColor();
+
+    @Shadow
+    public abstract void setFleeceColor(EnumDyeColor color);
+
     @Override
     public void eatGrass() {
         this.eatGrassBonus();
@@ -53,12 +61,12 @@ public abstract class MixinEntitySheep extends MixinEntityAnimal implements Shee
 
     @Override
     public DyeColor getColor() {
-        return null;
+        return DyeColorConverter.of(this.getFleeceColor());
     }
 
     @Override
     public void setColor(DyeColor dyeColor) {
-
+        this.setFleeceColor(DyeColorConverter.of(dyeColor));
     }
 
     @Override

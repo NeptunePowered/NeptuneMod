@@ -24,6 +24,8 @@
 package org.neptunepowered.vanilla.mixin.minecraft.world;
 
 import co.aikar.timings.TimingHistory;
+import co.aikar.timings.WorldTimingsHandler;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
@@ -32,9 +34,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ReportedException;
+import net.minecraft.village.VillageCollection;
+import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.WorldInfo;
 import org.neptunepowered.vanilla.interfaces.minecraft.entity.IMixinEntity;
 import org.neptunepowered.vanilla.interfaces.minecraft.tileentity.IMixinTileEntity;
@@ -46,6 +54,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 @Mixin(World.class)
 public abstract class MixinWorld implements IMixinWorld {
@@ -59,8 +68,20 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow @Final private List<TileEntity> addedTileEntityList;
     @Shadow @Final private WorldBorder worldBorder;
     @Shadow @Final public Profiler theProfiler;
+    @Shadow @Final public Random rand;
+    @Shadow @Final public WorldProvider provider;
     @Shadow protected WorldInfo worldInfo;
     @Shadow private boolean processingLoadedTiles;
+    @Shadow protected boolean spawnHostileMobs;
+    @Shadow protected boolean spawnPeacefulMobs;
+    @Shadow protected IChunkProvider chunkProvider;
+    @Shadow protected VillageCollection villageCollectionObj;
+
+    protected WorldTimingsHandler timings = new WorldTimingsHandler((WorldServer) (Object) this);
+
+    @Shadow
+    public void tick() {
+    }
 
     @Shadow
     public abstract long getSeed();
@@ -89,6 +110,33 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow
     public abstract void markBlockForUpdate(BlockPos pos);
 
+    @Shadow
+    public abstract boolean isAreaLoaded(BlockPos from, BlockPos to);
+
+    @Shadow
+    public abstract IBlockState getBlockState(BlockPos pos);
+
+    @Shadow
+    public abstract WorldInfo getWorldInfo();
+
+    @Shadow
+    public abstract EnumDifficulty shadow$getDifficulty();
+
+    @Shadow
+    public abstract GameRules getGameRules();
+
+    @Shadow
+    public abstract int calculateSkylightSubtracted(float p_72967_1_);
+
+    @Shadow
+    public abstract int getSkylightSubtracted();
+
+    @Shadow
+    public abstract void setSkylightSubtracted(int newSkylightSubtracted);
+
+    @Shadow
+    public abstract long getTotalWorldTime();
+
     @Override
     public void setWorldInfo(WorldInfo worldInfo) {
         this.worldInfo = worldInfo;
@@ -103,7 +151,9 @@ public abstract class MixinWorld implements IMixinWorld {
         this.theProfiler.startSection("entities");
         this.theProfiler.startSection("global");
 
-        for (Entity entity : this.weatherEffects) {
+        for (int i = 0; i < this.weatherEffects.size(); ++i)  {
+            Entity entity = this.weatherEffects.get(i);
+
             try {
                 ++entity.ticksExisted;
                 entity.onUpdate();
@@ -121,14 +171,16 @@ public abstract class MixinWorld implements IMixinWorld {
             }
 
             if (entity.isDead) {
-                this.weatherEffects.remove(entity);
+                this.weatherEffects.remove(i--);
             }
         }
 
         this.theProfiler.endStartSection("remove");
+        this.timings.entityRemoval.startTiming(); // Neptune - timings
         this.loadedEntityList.removeAll(this.unloadedEntityList);
 
-        for (Entity entity : this.unloadedEntityList) {
+        for (int k = 0; k < this.unloadedEntityList.size(); ++k) {
+            Entity entity = this.unloadedEntityList.get(k);
             int j = entity.chunkCoordX;
             int l1 = entity.chunkCoordZ;
 
@@ -137,13 +189,15 @@ public abstract class MixinWorld implements IMixinWorld {
             }
         }
 
-        for (Entity entity : this.unloadedEntityList) {
-            this.onEntityRemoved(entity);
+        for (int l = 0; l < this.unloadedEntityList.size(); ++l) {
+            this.onEntityRemoved(this.unloadedEntityList.get(l));
         }
 
         this.unloadedEntityList.clear();
+        this.timings.entityRemoval.stopTiming(); // Neptune - timings
         this.theProfiler.endStartSection("regular");
 
+        this.timings.entityTick.startTiming(); // Neptune - timings
         TimingHistory.entityTicks += this.loadedEntityList.size(); // Neptune - Timings
 
         for (int i1 = 0; i1 < this.loadedEntityList.size(); ++i1) {
@@ -191,8 +245,10 @@ public abstract class MixinWorld implements IMixinWorld {
 
             this.theProfiler.endSection();
         }
+        this.timings.entityTick.stopTiming(); // Neptune - timings
 
         this.theProfiler.endStartSection("blockEntities");
+        this.timings.tileEntityTick.startTiming(); // Neptune - timings
         this.processingLoadedTiles = true;
         Iterator<TileEntity> iterator = this.tickableTileEntities.iterator();
 
@@ -237,8 +293,10 @@ public abstract class MixinWorld implements IMixinWorld {
             this.loadedTileEntityList.removeAll(this.tileEntitiesToBeRemoved);
             this.tileEntitiesToBeRemoved.clear();
         }
+        this.timings.tileEntityTick.stopTiming(); // Neptune - timings
 
         this.theProfiler.endStartSection("pendingBlockEntities");
+        this.timings.tileEntityPending.startTiming(); // Neptune - timings
 
         if (!this.addedTileEntityList.isEmpty()) {
             for (TileEntity tileEntity : this.addedTileEntityList) {
@@ -258,6 +316,7 @@ public abstract class MixinWorld implements IMixinWorld {
             this.addedTileEntityList.clear();
         }
 
+        this.timings.tileEntityPending.stopTiming(); // Neptune - timings
         TimingHistory.tileEntityTicks += this.tickableTileEntities.size(); // Neptune - Timings
 
         this.theProfiler.endSection();
