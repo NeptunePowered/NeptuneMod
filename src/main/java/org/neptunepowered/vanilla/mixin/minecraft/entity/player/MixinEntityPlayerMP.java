@@ -51,12 +51,15 @@ import net.canarymod.chat.ChatFormat;
 import net.canarymod.config.Configuration;
 import net.canarymod.hook.command.PlayerCommandHook;
 import net.canarymod.hook.player.ChatHook;
+import net.canarymod.hook.player.PlayerDeathHook;
 import net.canarymod.hook.player.ReturnFromIdleHook;
 import net.canarymod.hook.player.TeleportHook;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
 import net.canarymod.user.UserAndGroupsProvider;
 import net.canarymod.warp.Warp;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.PlayerCapabilities;
@@ -66,24 +69,32 @@ import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.network.play.server.S39PacketPlayerAbilities;
 import net.minecraft.network.play.server.S45PacketTitle;
+import net.minecraft.scoreboard.IScoreObjectiveCriteria;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.stats.StatBase;
+import net.minecraft.stats.StatList;
 import net.minecraft.stats.StatisticsFile;
 import net.minecraft.tileentity.TileEntitySign;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.visualillusionsent.utils.DateUtils;
 import net.visualillusionsent.utils.StringUtils;
+import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.util.IMixinFoodStats;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
-import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.neptunepowered.vanilla.util.converter.PlayerListActionConverter;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -102,10 +113,11 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     private static Pattern BAD_CHAT_PATTERN = Pattern.compile("[\u2302\u00D7\u00AA\u00BA\u00AE\u00AC\u00BD\u00BC\u00A1\u00AB\u00BB]");
     private static String CHAT_FORMAT = Configuration.getServerConfig().getChatFormat().replace("&", ChatFormat.MARKER.toString());
 
+    @Shadow @Final public MinecraftServer mcServer;
     @Shadow public int ping;
-    @Shadow private StatisticsFile statsFile;
     @Shadow public NetHandlerPlayServer playerNetServerHandler;
     @Shadow public ItemInWorldManager theItemInWorldManager;
+    @Shadow private StatisticsFile statsFile;
     @Shadow private long playerLastActiveTime;
 
     private List<Group> groups;
@@ -135,6 +147,64 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
         if (idleTime > 10000) {
             new ReturnFromIdleHook(this, idleTime).call();
         }
+    }
+
+    /**
+     * @author jamierocks - 2nd October 2016
+     * @reason Overwrite to use Canary's {@link Configuration} rather than the original server.properties
+     *         and fire the {@link PlayerDeathHook}.
+     */
+    @Overwrite
+    public void onDeath(DamageSource cause) {
+        // Neptune - PlayerDeathHook start
+        PlayerDeathHook hook = (PlayerDeathHook) new PlayerDeathHook(
+                this,
+                (net.canarymod.api.DamageSource) cause,
+                new NeptuneChatComponent(this.getCombatTracker().getDeathMessage())
+        ).call();
+        // Neptune - PlayerDeathHook end
+
+        //if (this.worldObj.getGameRules().getBoolean("showDeathMessages")) {
+        if (Configuration.getServerConfig().isDeathMessageEnabled()) { // Neptune - Use Canary configuration
+            Team team = this.getTeam();
+
+            if (team != null && team.getDeathMessageVisibility() != Team.EnumVisible.ALWAYS) {
+                if (team.getDeathMessageVisibility() == Team.EnumVisible.HIDE_FOR_OTHER_TEAMS) {
+                    this.mcServer.getConfigurationManager()
+                            .sendMessageToAllTeamMembers((EntityPlayerMP) (Object) this, ((NeptuneChatComponent) hook.getDeathMessage1()).getHandle());
+                } else if (team.getDeathMessageVisibility() == Team.EnumVisible.HIDE_FOR_OWN_TEAM) {
+                    this.mcServer.getConfigurationManager().sendMessageToTeamOrEvryPlayer(
+                            (EntityPlayerMP) (Object) this, ((NeptuneChatComponent) hook.getDeathMessage1()).getHandle());
+                }
+            } else {
+                this.mcServer.getConfigurationManager().sendChatMsg(((NeptuneChatComponent) hook.getDeathMessage1()).getHandle());
+            }
+        }
+
+        if (!this.worldObj.getGameRules().getBoolean("keepInventory")) {
+            this.inventory.dropAllItems();
+        }
+
+        for (ScoreObjective scoreobjective : this.worldObj.getScoreboard().getObjectivesFromCriteria(IScoreObjectiveCriteria.deathCount)) {
+            Score score = this.getWorldScoreboard().getValueFromObjective(this.getName(), scoreobjective);
+            score.func_96648_a();
+        }
+
+        EntityLivingBase entitylivingbase = this.getAttackingEntity();
+
+        if (entitylivingbase != null) {
+            EntityList.EntityEggInfo entitylist$entityegginfo = EntityList.entityEggs.get(EntityList.getEntityID(entitylivingbase));
+
+            if (entitylist$entityegginfo != null) {
+                this.triggerAchievement(entitylist$entityegginfo.field_151513_e);
+            }
+
+            entitylivingbase.addToPlayerScore((EntityPlayerMP) (Object) this, this.scoreValue);
+        }
+
+        this.triggerAchievement(StatList.deathsStat);
+        this.func_175145_a(StatList.timeSinceDeathStat);
+        this.getCombatTracker().reset();
     }
 
     @Override
