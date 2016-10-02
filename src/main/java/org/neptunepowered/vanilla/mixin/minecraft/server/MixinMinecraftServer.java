@@ -60,6 +60,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkSystem;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.network.play.server.S03PacketTimeUpdate;
+import net.minecraft.profiler.PlayerUsageSnooper;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
@@ -85,13 +86,13 @@ import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.GraphicsEnvironment;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.FutureTask;
 
@@ -101,19 +102,22 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Shadow private static Logger logger;
     @Shadow @Final public Profiler theProfiler;
+    @Shadow @Final private PlayerUsageSnooper usageSnooper;
     @Shadow @Final private ServerStatusResponse statusResponse;
     @Shadow @Final private List<ITickable> playersOnline;
+    @Shadow @Final private Random random;
     @Shadow public WorldServer[] worldServers;
-    @Shadow protected Queue< FutureTask<? >> futureTaskQueue;
     @Shadow public long[][] timeOfLastDimensionTick;
     @Shadow public long[] tickTimeArray;
+    @Shadow protected Queue<FutureTask<?>> futureTaskQueue;
     @Shadow private int tickCounter;
+    @Shadow private boolean startProfiling;
     @Shadow private boolean serverRunning;
     @Shadow private ServerConfigurationManager serverConfigManager;
+    @Shadow private long nanoTimeSinceStatusRefresh;
 
     private WorldManager worldManager = new NeptuneWorldManager();
     private long previousTick = -1L;
-    private long curTrack;
 
     @Shadow
     public abstract void initiateShutdown();
@@ -151,15 +155,11 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Shadow
     public abstract NetworkSystem getNetworkSystem();
 
-    @Inject(method = "tick", at = @At(value = "HEAD"))
-    public void onServerTickStart(CallbackInfo ci) {
-        TimingsManager.FULL_SERVER_TICK.startTiming();
-    }
+    @Shadow
+    public abstract int getCurrentPlayerCount();
 
-    @Inject(method = "tick", at = @At(value = "RETURN"))
-    public void onServerTickEnd(CallbackInfo ci) {
-        TimingsManager.FULL_SERVER_TICK.stopTiming();
-    }
+    @Shadow
+    protected abstract void saveAllWorlds(boolean dontLog);
 
     /**
      * @author Jamie Mansfield - 26th April 2016
@@ -175,10 +175,72 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
      * @reason Add timings calls
      */
     @Overwrite
+    protected void tick() {
+        TimingsManager.FULL_SERVER_TICK.startTiming(); // Neptune - timings
+
+        long i = System.nanoTime();
+        ++this.tickCounter;
+
+        if (this.startProfiling) {
+            this.startProfiling = false;
+            this.theProfiler.profilingEnabled = true;
+            this.theProfiler.clearProfiling();
+        }
+
+        this.theProfiler.startSection("root");
+        this.updateTimeLightAndEntities();
+
+        if (i - this.nanoTimeSinceStatusRefresh >= 5000000000L) {
+            this.nanoTimeSinceStatusRefresh = i;
+            this.statusResponse.setPlayerCountData(new ServerStatusResponse.PlayerCountData(this.getMaxPlayers(), this.getCurrentPlayerCount()));
+            GameProfile[] agameprofile = new GameProfile[Math.min(this.getCurrentPlayerCount(), 12)];
+            int j = MathHelper.getRandomIntegerInRange(this.random, 0, this.getCurrentPlayerCount() - agameprofile.length);
+
+            for (int k = 0; k < agameprofile.length; ++k) {
+                agameprofile[k] = this.serverConfigManager.getPlayerList().get(j + k).getGameProfile();
+            }
+
+            Collections.shuffle(Arrays.asList(agameprofile));
+            this.statusResponse.getPlayerCountData().setPlayers(agameprofile);
+        }
+
+        if (this.tickCounter % 900 == 0) {
+            this.theProfiler.startSection("save");
+            NeptuneTimings.worldSaveTimer.startTiming(); // Neptune - timings
+            this.serverConfigManager.saveAllPlayerData();
+            this.saveAllWorlds(true);
+            NeptuneTimings.worldSaveTimer.stopTiming(); // Neptune - timings
+            this.theProfiler.endSection();
+        }
+
+        this.theProfiler.startSection("tallying");
+        this.tickTimeArray[this.tickCounter % 100] = System.nanoTime() - i;
+        this.theProfiler.endSection();
+        this.theProfiler.startSection("snooper");
+
+        if (!this.usageSnooper.isSnooperRunning() && this.tickCounter > 100) {
+            this.usageSnooper.startSnooper();
+        }
+
+        if (this.tickCounter % 6000 == 0) {
+            this.usageSnooper.addMemoryStatsToSnooper();
+        }
+
+        this.theProfiler.endSection();
+        this.theProfiler.endSection();
+
+        TimingsManager.FULL_SERVER_TICK.stopTiming(); // Neptune - timings
+    }
+
+    /**
+     * @author jamierocks - 2nd October 2016
+     * @reason Add timings calls
+     */
+    @Overwrite
     public void updateTimeLightAndEntities() {
         // Neptune - ServerTickHook start
         new ServerTickHook(this.previousTick).call();
-        this.curTrack = System.nanoTime();
+        long curTrack = System.nanoTime();
         // Neptune - ServerTickHook end
 
         NeptuneTimings.schedulerTimer.startTiming(); // Neptune - timings
@@ -260,7 +322,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
         this.theProfiler.endSection();
 
-        this.previousTick = System.nanoTime() - this.curTrack; // Neptune - ServerTickHook
+        this.previousTick = System.nanoTime() - curTrack; // Neptune - ServerTickHook
     }
 
     @Intrinsic
