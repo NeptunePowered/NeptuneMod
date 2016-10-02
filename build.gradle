@@ -29,7 +29,7 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 ext.mcVersion  = '1.8.9'
-ext.apiVersion = '1.2.1-20161002.103407-7'
+ext.apiVersion = '1.2.1-20161002.122010-8'
 
 group = 'org.neptunepowered'
 archivesBaseName = project.name.toLowerCase()
