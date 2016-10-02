@@ -41,7 +41,7 @@ public final class NeptuneCommand implements CommandListener {
             permissions = { "neptune.command.base" },
             toolTip = "/neptune [info]")
     public void baseCommand(MessageReceiver caller, String[] args) {
-        this.infoCommand(caller, args);
+        Canary.help().getHelp(caller, "neptune");
     }
 
     @Command(

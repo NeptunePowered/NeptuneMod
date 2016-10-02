@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.command;
 
 import co.aikar.timings.NeptuneTimingsFactory;
 import co.aikar.timings.Timings;
+import net.canarymod.Canary;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.commandsys.Command;
 import net.canarymod.commandsys.CommandListener;
@@ -39,9 +40,9 @@ public final class TimingsCommand implements CommandListener {
             aliases = "timings",
             permissions = "neptune.command.timings",
             description = "Manages Neptune Timings data to see performance of the server.",
-            toolTip = "/timings [on/off]")
+            toolTip = "/timings [reset/report/on/off/verbon/verboff/cost]")
     public void timingsCommand(MessageReceiver caller, String[] args) {
-        
+        Canary.help().getHelp(caller, "timings");
     }
 
     @Command(
