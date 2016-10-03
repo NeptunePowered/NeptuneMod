@@ -67,7 +67,9 @@ import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.SpawnerAnimals;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.ChunkProviderServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
+import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -92,6 +94,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     @Shadow @Final private Teleporter worldTeleporter;
     @Shadow private List<NextTickListEntry> pendingTickListEntriesThisTick;
     @Shadow private net.minecraft.entity.EntityTracker theEntityTracker;
+    @Shadow public ChunkProviderServer theChunkProviderServer;
 
     @Shadow
     public abstract void scheduleUpdate(BlockPos pos, net.minecraft.block.Block blockIn, int delay);
@@ -754,17 +757,17 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
 
     @Override
     public GameMode getGameMode() {
-        return null;
+        return GameModeConverter.of(this.worldInfo.getGameType());
     }
 
     @Override
     public void setGameMode(GameMode gameMode) {
-
+        this.worldInfo.setGameType(GameModeConverter.of(gameMode));
     }
 
     @Override
     public void save() {
-
+        this.theChunkProviderServer.saveChunks(true, null);
     }
 
     @Override
