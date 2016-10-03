@@ -21,35 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.passive;
 
-import co.aikar.timings.NeptuneTimingsFactory;
-import co.aikar.timings.Timings;
-import net.canarymod.Canary;
-import net.canarymod.api.Server;
-import net.minecraft.server.MinecraftServer;
-import org.neptunepowered.vanilla.util.ReflectionUtil;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.living.animal.Pig;
+import net.minecraft.entity.passive.EntityPig;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-import java.io.File;
+@Mixin(EntityPig.class)
+@Implements(@Interface(iface = Pig.class, prefix = "pig$"))
+public abstract class MixinEntityPig extends MixinEntityAnimal implements Pig {
 
-public class NeptuneVanilla {
+    @Shadow
+    public abstract boolean getSaddled();
 
-    public static void main(String[] args) throws Exception {
-        initTimings();
-        MinecraftServer.main(args);
-        new File("config").mkdirs(); // TODO: Please fix this properly
-        new File("worlds", "players").mkdirs();
-        initNeptune();
-        Canary.setServer((Server) MinecraftServer.getServer());
+    @Shadow
+    public abstract void setSaddled(boolean saddled);
+
+    @Override
+    public boolean isSaddled() {
+        return this.getSaddled();
     }
 
-    private static void initTimings() throws Exception {
-        NeptuneTimingsFactory timingsFactory = new NeptuneTimingsFactory();
-        ReflectionUtil.setStaticFinal(Timings.class, "factory", timingsFactory);
-        timingsFactory.init();
+    @Intrinsic
+    public void pig$setSaddled(boolean b) {
+        this.setSaddled(b);
     }
 
-    private static void initNeptune() {
-        new Neptune();
+    @Override
+    public String getFqName() {
+        return "Pig";
     }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.PIG;
+    }
+
 }

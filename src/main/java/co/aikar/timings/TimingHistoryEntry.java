@@ -1,7 +1,8 @@
 /*
- * This file is part of NeptuneVanilla, licensed under the MIT License (MIT).
+ * This file is part of Sponge, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) SpongePowered <https://www.spongepowered.org>
+ * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,15 +22,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.world;
+package co.aikar.timings;
 
-import co.aikar.timings.WorldTimingsHandler;
-import net.minecraft.world.storage.WorldInfo;
+import co.aikar.util.JSONUtil;
+import com.google.gson.JsonArray;
 
-public interface IMixinWorld {
+class TimingHistoryEntry {
 
-    void setWorldInfo(WorldInfo worldInfo);
+    final TimingData data;
+    final TimingData[] children;
 
-    WorldTimingsHandler getTimings();
+    TimingHistoryEntry(TimingHandler handler) {
+        this.data = handler.record.clone();
+        this.children = new TimingData[handler.children.size()];
+        int i = 0;
+        for (TimingData child : handler.children.values()) {
+            this.children[i++] = child.clone();
+        }
+    }
 
+    JsonArray export() {
+        JsonArray result = this.data.export();
+        if (this.children.length > 0) {
+            result.add(JSONUtil.mapArray(this.children, TimingData::export));
+        }
+        return result;
+    }
 }

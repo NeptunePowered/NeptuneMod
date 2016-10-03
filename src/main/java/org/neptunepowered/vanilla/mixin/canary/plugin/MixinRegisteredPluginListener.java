@@ -21,35 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla;
+package org.neptunepowered.vanilla.mixin.canary.plugin;
 
-import co.aikar.timings.NeptuneTimingsFactory;
-import co.aikar.timings.Timings;
-import net.canarymod.Canary;
-import net.canarymod.api.Server;
-import net.minecraft.server.MinecraftServer;
-import org.neptunepowered.vanilla.util.ReflectionUtil;
+import co.aikar.timings.NeptuneTimings;
+import co.aikar.timings.Timing;
+import net.canarymod.plugin.Plugin;
+import net.canarymod.plugin.PluginListener;
+import net.canarymod.plugin.RegisteredPluginListener;
+import org.neptunepowered.vanilla.interfaces.canary.plugin.IMixinRegisteredPluginListener;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-import java.io.File;
+@Mixin(value = RegisteredPluginListener.class, remap = false)
+public class MixinRegisteredPluginListener implements IMixinRegisteredPluginListener {
 
-public class NeptuneVanilla {
+    @Shadow private PluginListener listener;
+    @Shadow private Plugin plugin;
 
-    public static void main(String[] args) throws Exception {
-        initTimings();
-        MinecraftServer.main(args);
-        new File("config").mkdirs(); // TODO: Please fix this properly
-        new File("worlds", "players").mkdirs();
-        initNeptune();
-        Canary.setServer((Server) MinecraftServer.getServer());
+    private Timing listenerTimer;
+
+    @Override
+    public Timing getTimingsHandler() {
+        if (this.listenerTimer == null) {
+            this.listenerTimer = NeptuneTimings.getPluginTimings(plugin, listener.getClass().getSimpleName());
+        }
+        return this.listenerTimer;
     }
 
-    private static void initTimings() throws Exception {
-        NeptuneTimingsFactory timingsFactory = new NeptuneTimingsFactory();
-        ReflectionUtil.setStaticFinal(Timings.class, "factory", timingsFactory);
-        timingsFactory.init();
-    }
-
-    private static void initNeptune() {
-        new Neptune();
-    }
 }

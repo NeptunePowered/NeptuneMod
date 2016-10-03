@@ -65,6 +65,10 @@ repositories {
         name = 'mcstats-snapshots'
         url = 'http://repo.mcstats.org/content/repositories/snapshots'
     }
+    maven {
+        name = 'aikar'
+        url = 'https://ci.emc.gs/nexus/content/repositories/aikar/'
+    }
 }
 
 configurations {
@@ -73,6 +77,7 @@ configurations {
 
 dependencies {
     compile "org.neptunepowered:NeptuneLib:$apiVersion"
+    compile 'co.aikar:fastutil-lite:1.0'
     compile('org.spongepowered:mixin:0.5.11-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
@@ -87,7 +92,7 @@ dependencies {
 
 license {
     header file('HEADER.txt')
-    include '**/*.java'
+    exclude 'co/aikar/**'
     newLine = false
 }
 

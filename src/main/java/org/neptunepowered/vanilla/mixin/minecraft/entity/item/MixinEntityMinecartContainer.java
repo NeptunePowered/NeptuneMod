@@ -21,35 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.item;
 
-import co.aikar.timings.NeptuneTimingsFactory;
-import co.aikar.timings.Timings;
-import net.canarymod.Canary;
-import net.canarymod.api.Server;
-import net.minecraft.server.MinecraftServer;
-import org.neptunepowered.vanilla.util.ReflectionUtil;
+import net.canarymod.api.entity.vehicle.ContainerMinecart;
+import net.minecraft.entity.item.EntityMinecartContainer;
+import org.spongepowered.asm.mixin.Mixin;
 
-import java.io.File;
+@Mixin(EntityMinecartContainer.class)
+public abstract class MixinEntityMinecartContainer extends MixinEntityMinecart implements ContainerMinecart {
 
-public class NeptuneVanilla {
-
-    public static void main(String[] args) throws Exception {
-        initTimings();
-        MinecraftServer.main(args);
-        new File("config").mkdirs(); // TODO: Please fix this properly
-        new File("worlds", "players").mkdirs();
-        initNeptune();
-        Canary.setServer((Server) MinecraftServer.getServer());
-    }
-
-    private static void initTimings() throws Exception {
-        NeptuneTimingsFactory timingsFactory = new NeptuneTimingsFactory();
-        ReflectionUtil.setStaticFinal(Timings.class, "factory", timingsFactory);
-        timingsFactory.init();
-    }
-
-    private static void initNeptune() {
-        new Neptune();
-    }
 }

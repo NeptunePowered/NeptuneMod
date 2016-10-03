@@ -44,6 +44,8 @@ import net.canarymod.user.ReservelistProvider;
 import net.canarymod.user.UserAndGroupsProvider;
 import net.canarymod.user.WhitelistProvider;
 import net.canarymod.warp.WarpProvider;
+import org.neptunepowered.vanilla.command.NeptuneCommand;
+import org.neptunepowered.vanilla.command.TimingsCommand;
 import org.neptunepowered.vanilla.commandsys.NeptunePlayerSelector;
 import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.util.NeptuneJsonNBTUtility;
@@ -102,7 +104,14 @@ public class Neptune extends Canary {
             log.error("Failed to set up system commands! The command already exists!", f);
         }
         try {
-            this.commandManager.registerCommands(new NeptuneCommands(), getServer(), true);
+            this.commandManager.registerCommands(new NeptuneCommand(), getServer(), true);
+        } catch (CommandDependencyException e) {
+            log.error("Failed to set up system commands! Dependency resolution failed!", e);
+        } catch (DuplicateCommandException f) {
+            log.error("Failed to set up system commands! The command already exists!", f);
+        }
+        try {
+            this.commandManager.registerCommands(new TimingsCommand(), getServer(), true);
         } catch (CommandDependencyException e) {
             log.error("Failed to set up system commands! Dependency resolution failed!", e);
         } catch (DuplicateCommandException f) {

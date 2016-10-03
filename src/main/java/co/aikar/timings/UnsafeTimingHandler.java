@@ -1,7 +1,8 @@
 /*
- * This file is part of NeptuneVanilla, licensed under the MIT License (MIT).
+ * This file is part of Sponge, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015-2016, Jamie Mansfield <https://github.com/jamierocks>
+ * Copyright (c) SpongePowered <https://www.spongepowered.org>
+ * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,35 +22,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla;
+package co.aikar.timings;
 
-import co.aikar.timings.NeptuneTimingsFactory;
-import co.aikar.timings.Timings;
-import net.canarymod.Canary;
-import net.canarymod.api.Server;
 import net.minecraft.server.MinecraftServer;
-import org.neptunepowered.vanilla.util.ReflectionUtil;
 
-import java.io.File;
+class UnsafeTimingHandler extends TimingHandler {
 
-public class NeptuneVanilla {
-
-    public static void main(String[] args) throws Exception {
-        initTimings();
-        MinecraftServer.main(args);
-        new File("config").mkdirs(); // TODO: Please fix this properly
-        new File("worlds", "players").mkdirs();
-        initNeptune();
-        Canary.setServer((Server) MinecraftServer.getServer());
+    UnsafeTimingHandler(TimingIdentifier id) {
+        super(id);
     }
 
-    private static void initTimings() throws Exception {
-        NeptuneTimingsFactory timingsFactory = new NeptuneTimingsFactory();
-        ReflectionUtil.setStaticFinal(Timings.class, "factory", timingsFactory);
-        timingsFactory.init();
+    private static void checkThread() {
+        if (!MinecraftServer.getServer().isCallingFromMinecraftThread()) {
+            throw new IllegalStateException("Calling Timings from Async Operation");
+        }
     }
 
-    private static void initNeptune() {
-        new Neptune();
+    @Override
+    public TimingHandler startTiming() {
+        checkThread();
+        super.startTiming();
+        return this;
+    }
+
+    @Override
+    public void stopTiming() {
+        checkThread();
+        super.stopTiming();
     }
 }

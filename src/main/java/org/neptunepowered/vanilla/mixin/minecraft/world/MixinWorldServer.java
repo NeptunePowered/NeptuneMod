@@ -23,6 +23,7 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.world;
 
+import co.aikar.timings.Timing;
 import net.canarymod.api.EntityTracker;
 import net.canarymod.api.GameMode;
 import net.canarymod.api.PlayerManager;
@@ -54,19 +55,212 @@ import net.canarymod.api.world.effects.Particle;
 import net.canarymod.api.world.effects.SoundEffect;
 import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ReportedException;
+import net.minecraft.village.VillageSiege;
+import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.NextTickListEntry;
+import net.minecraft.world.SpawnerAnimals;
+import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
+import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Mixin(WorldServer.class)
 @Implements(@Interface(iface = World.class, prefix = "world$"))
 public abstract class MixinWorldServer extends MixinWorld implements World {
 
+    @Shadow @Final private Set<NextTickListEntry> pendingTickListEntriesHashSet;
+    @Shadow @Final private TreeSet<NextTickListEntry> pendingTickListEntriesTreeSet;
+    @Shadow @Final private SpawnerAnimals mobSpawner;
+    @Shadow @Final private net.minecraft.server.management.PlayerManager thePlayerManager;
+    @Shadow @Final protected VillageSiege villageSiege;
+    @Shadow @Final private Teleporter worldTeleporter;
+    @Shadow private List<NextTickListEntry> pendingTickListEntriesThisTick;
     @Shadow private net.minecraft.entity.EntityTracker theEntityTracker;
+
+    @Shadow
+    public abstract void scheduleUpdate(BlockPos pos, net.minecraft.block.Block blockIn, int delay);
+
+    @Shadow
+    public abstract boolean areAllPlayersAsleep();
+
+    @Shadow
+    protected abstract void wakeAllPlayers();
+
+    @Shadow
+    protected abstract void updateBlocks();
+
+    @Shadow
+    private void sendQueuedBlockEvents() {
+    }
+
+    /**
+     * @author jamierocks - 2nd October 2016
+     * @reason Add timings calls
+     */
+    @Overwrite
+    public void tick() {
+        super.tick();
+
+        if (this.getWorldInfo().isHardcoreModeEnabled() && this.shadow$getDifficulty() != EnumDifficulty.HARD) {
+            this.getWorldInfo().setDifficulty(EnumDifficulty.HARD);
+        }
+
+        this.provider.getWorldChunkManager().cleanupCache();
+
+        if (this.areAllPlayersAsleep()) {
+            if (this.getGameRules().getBoolean("doDaylightCycle")) {
+                long i = this.worldInfo.getWorldTime() + 24000L;
+                this.worldInfo.setWorldTime(i - i % 24000L);
+            }
+
+            this.wakeAllPlayers();
+        }
+
+        this.theProfiler.startSection("mobSpawner");
+
+        if (this.getGameRules().getBoolean("doMobSpawning") && this.worldInfo.getTerrainType() != net.minecraft.world.WorldType.DEBUG_WORLD) {
+            this.timings.mobSpawn.startTiming(); // Neptune - timings
+            this.mobSpawner.findChunksForSpawning(
+                    (WorldServer) (Object) this,
+                    this.spawnHostileMobs,
+                    this.spawnPeacefulMobs,
+                    this.worldInfo.getWorldTotalTime() % 400L == 0L);
+            this.timings.mobSpawn.stopTiming(); // Neptune - timings
+        }
+
+        this.timings.doChunkUnload.startTiming(); // Neptune - timings
+        this.theProfiler.endStartSection("chunkSource");
+        this.chunkProvider.unloadQueuedChunks();
+        int j = this.calculateSkylightSubtracted(1.0F);
+
+        if (j != this.getSkylightSubtracted()) {
+            this.setSkylightSubtracted(j);
+        }
+
+        this.worldInfo.setWorldTotalTime(this.worldInfo.getWorldTotalTime() + 1L);
+
+        if (this.getGameRules().getBoolean("doDaylightCycle")) {
+            this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
+        }
+        this.timings.doChunkUnload.stopTiming(); // Neptune - timings
+
+        this.theProfiler.endStartSection("tickPending");
+        this.timings.scheduledBlocks.startTiming(); // Neptune - timings
+        this.tickUpdates(false);
+        this.timings.scheduledBlocks.stopTiming(); // Neptune - timings
+        this.theProfiler.endStartSection("tickBlocks");
+        this.timings.chunkTicks.startTiming(); // Neptune - timings
+        this.updateBlocks();
+        this.timings.chunkTicks.stopTiming(); // Neptune - timings
+        this.theProfiler.endStartSection("chunkMap");
+        this.timings.doChunkMap.startTiming(); // Neptune - timings
+        this.thePlayerManager.updatePlayerInstances();
+        this.timings.doChunkMap.stopTiming(); // Neptune - timings
+        this.theProfiler.endStartSection("village");
+        this.timings.doVillages.startTiming(); // Neptune - timings
+        this.villageCollectionObj.tick();
+        this.villageSiege.tick();
+        this.timings.doVillages.stopTiming(); // Neptune - timings
+        this.theProfiler.endStartSection("portalForcer");
+        this.timings.doPortalForcer.startTiming(); // Neptune - timings
+        this.worldTeleporter.removeStalePortalLocations(this.getTotalWorldTime());
+        this.timings.doPortalForcer.stopTiming(); // Neptune - timings
+        this.theProfiler.endSection();
+        this.timings.doSounds.startTiming(); // Neptune - timings
+        this.sendQueuedBlockEvents();
+        this.timings.doSounds.stopTiming(); // Neptune - timings
+    }
+
+    /**
+     * @author jamierocks - 2nd October 2016
+     * @reason Add timings calls
+     */
+    @Overwrite
+    public boolean tickUpdates(boolean p_72955_1_) {
+        if (this.worldInfo.getTerrainType() == net.minecraft.world.WorldType.DEBUG_WORLD) {
+            return false;
+        } else {
+            int i = this.pendingTickListEntriesTreeSet.size();
+
+            if (i != this.pendingTickListEntriesHashSet.size()) {
+                throw new IllegalStateException("TickNextTick list out of synch");
+            } else {
+                if (i > 1000) {
+                    i = 1000;
+                }
+
+                this.theProfiler.startSection("cleaning");
+                this.timings.scheduledBlocksCleanup.startTiming(); // Neptune - timings
+
+                for (int j = 0; j < i; ++j) {
+                    NextTickListEntry nextticklistentry = this.pendingTickListEntriesTreeSet.first();
+
+                    if (!p_72955_1_ && nextticklistentry.scheduledTime > this.worldInfo.getWorldTotalTime()) {
+                        break;
+                    }
+
+                    this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
+                    this.pendingTickListEntriesHashSet.remove(nextticklistentry);
+                    this.pendingTickListEntriesThisTick.add(nextticklistentry);
+                }
+                this.timings.scheduledBlocksCleanup.stopTiming(); // Neptune - timings
+
+                this.theProfiler.endSection();
+                this.theProfiler.startSection("ticking");
+                this.timings.scheduledBlocksTicking.startTiming(); // Neptune - timings
+                Iterator<NextTickListEntry> iterator = this.pendingTickListEntriesThisTick.iterator();
+
+                while (iterator.hasNext()) {
+                    NextTickListEntry nextticklistentry1 = iterator.next();
+                    iterator.remove();
+                    int k = 0;
+
+                    if (this.isAreaLoaded(nextticklistentry1.position.add(-k, -k, -k), nextticklistentry1.position.add(k, k, k))) {
+                        IBlockState iblockstate = this.getBlockState(nextticklistentry1.position);
+                        final Timing timing = ((IMixinBlock) iblockstate.getBlock()).getTimingsHandler(); // Neptune - timings
+                        timing.startTiming(); // Neptune - timings
+
+                        if (iblockstate.getBlock().getMaterial() != Material.air && net.minecraft.block.Block
+                                .isEqualTo(iblockstate.getBlock(), nextticklistentry1.getBlock())) {
+                            try {
+                                iblockstate.getBlock().updateTick((WorldServer) (Object) this, nextticklistentry1.position, iblockstate, this.rand);
+                            } catch (Throwable throwable) {
+                                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception while ticking a block");
+                                CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being ticked");
+                                CrashReportCategory.addBlockInfo(crashreportcategory, nextticklistentry1.position, iblockstate);
+                                throw new ReportedException(crashreport);
+                            }
+                        }
+
+                        timing.stopTiming(); // Neptune - timings
+                    } else {
+                        this.scheduleUpdate(nextticklistentry1.position, nextticklistentry1.getBlock(), 0);
+                    }
+                }
+                this.timings.scheduledBlocksTicking.stopTiming(); // Neptune - timings
+
+                this.theProfiler.endSection();
+                this.pendingTickListEntriesThisTick.clear();
+                return !this.pendingTickListEntriesTreeSet.isEmpty();
+            }
+        }
+    }
 
     @Override
     public void setNanoTick(int i, long l) {
@@ -444,8 +638,8 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     }
 
     @Override
-    public void setThundering(boolean b) {
-        this.worldInfo.setThundering(b);
+    public float getThunderStrength() {
+        return 0;
     }
 
     @Override
@@ -454,28 +648,18 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     }
 
     @Override
-    public float getThunderStrength() {
-        return 0;
-    }
-
-    @Override
     public void setThunderTime(int i) {
         this.worldInfo.setThunderTime(i);
     }
 
     @Override
-    public void setRaining(boolean b) {
-        this.worldInfo.setRaining(b);
+    public float getRainStrength() {
+        return 0;
     }
 
     @Override
     public void setRainStrength(float v) {
 
-    }
-
-    @Override
-    public float getRainStrength() {
-        return 0;
     }
 
     @Override
@@ -489,8 +673,18 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     }
 
     @Override
+    public void setRaining(boolean b) {
+        this.worldInfo.setRaining(b);
+    }
+
+    @Override
     public boolean isThundering() {
         return this.worldInfo.isThundering();
+    }
+
+    @Override
+    public void setThundering(boolean b) {
+        this.worldInfo.setThundering(b);
     }
 
     @Override
@@ -614,4 +808,5 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     public void showTitle(ChatComponent chatComponent, ChatComponent chatComponent1) {
 
     }
+
 }

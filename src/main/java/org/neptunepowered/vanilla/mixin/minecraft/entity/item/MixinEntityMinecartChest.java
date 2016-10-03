@@ -21,35 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.item;
 
-import co.aikar.timings.NeptuneTimingsFactory;
-import co.aikar.timings.Timings;
-import net.canarymod.Canary;
-import net.canarymod.api.Server;
-import net.minecraft.server.MinecraftServer;
-import org.neptunepowered.vanilla.util.ReflectionUtil;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.vehicle.ChestMinecart;
+import net.canarymod.api.inventory.InventoryType;
+import net.minecraft.entity.item.EntityMinecartChest;
+import org.spongepowered.asm.mixin.Mixin;
 
-import java.io.File;
+@Mixin(EntityMinecartChest.class)
+public abstract class MixinEntityMinecartChest extends MixinEntityMinecartContainer implements ChestMinecart {
 
-public class NeptuneVanilla {
-
-    public static void main(String[] args) throws Exception {
-        initTimings();
-        MinecraftServer.main(args);
-        new File("config").mkdirs(); // TODO: Please fix this properly
-        new File("worlds", "players").mkdirs();
-        initNeptune();
-        Canary.setServer((Server) MinecraftServer.getServer());
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.MINECART_CHEST;
     }
 
-    private static void initTimings() throws Exception {
-        NeptuneTimingsFactory timingsFactory = new NeptuneTimingsFactory();
-        ReflectionUtil.setStaticFinal(Timings.class, "factory", timingsFactory);
-        timingsFactory.init();
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.CHESTMINECART;
     }
 
-    private static void initNeptune() {
-        new Neptune();
+    @Override
+    public String getFqName() {
+        return "ChestMinecart";
     }
+
 }

@@ -55,10 +55,10 @@ public abstract class MixinBiomeGenBase implements Biome {
     public abstract int getIntRainfall();
 
     @Shadow
-    public abstract BiomeGenBase setTemperatureRainfall(float p_76732_1_, float p_76732_2_);
+    protected abstract BiomeGenBase setTemperatureRainfall(float p_76732_1_, float p_76732_2_);
 
     @Shadow
-    public abstract BiomeGenBase setColor(int p_76739_1_);
+    protected abstract BiomeGenBase setColor(int p_76739_1_);
 
     @Shadow
     public abstract boolean canRain();
