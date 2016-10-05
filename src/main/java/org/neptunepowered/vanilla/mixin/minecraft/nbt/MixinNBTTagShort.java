@@ -44,4 +44,5 @@ public abstract class MixinNBTTagShort extends NBTBase.NBTPrimitive {
     public void tag$setValue(short value) {
         data = value;
     }
+
 }

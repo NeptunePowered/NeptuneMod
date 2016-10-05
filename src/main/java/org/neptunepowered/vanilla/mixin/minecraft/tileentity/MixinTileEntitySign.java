@@ -34,6 +34,7 @@ import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -42,7 +43,7 @@ import java.util.List;
 @Mixin(TileEntitySign.class)
 public abstract class MixinTileEntitySign extends MixinTileEntity implements Sign {
 
-    @Shadow public IChatComponent[] signText;
+    @Shadow @Final public IChatComponent[] signText;
     @Shadow private boolean isEditable;
     @Shadow private EntityPlayer player;
 
@@ -145,4 +146,5 @@ public abstract class MixinTileEntitySign extends MixinTileEntity implements Sig
     public void setOwner(Player player) {
         this.player = (EntityPlayer) player;
     }
+
 }

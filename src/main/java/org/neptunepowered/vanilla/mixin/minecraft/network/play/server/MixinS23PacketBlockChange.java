@@ -36,8 +36,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(S23PacketBlockChange.class)
 public abstract class MixinS23PacketBlockChange implements BlockChangePacket {
 
-    @Shadow private BlockPos blockPosition;
-    @Shadow private IBlockState blockState;
+    @Shadow public BlockPos blockPosition;
+    @Shadow public IBlockState blockState;
 
     @Override
     public int getX() {
@@ -118,4 +118,5 @@ public abstract class MixinS23PacketBlockChange implements BlockChangePacket {
     public void setBlock(Block block) {
 
     }
+
 }

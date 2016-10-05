@@ -41,4 +41,5 @@ public abstract class MixinEntityExpBottle extends MixinEntityThrowable implemen
     public EntityType getEntityType() {
         return EntityType.XPBOTTLE;
     }
+
 }

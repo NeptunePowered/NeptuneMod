@@ -64,4 +64,5 @@ public abstract class MixinEntityLightningBolt extends MixinEntityWeatherEffect 
     public EntityType getEntityType() {
         return EntityType.LIGHTNINGBOLT;
     }
+
 }

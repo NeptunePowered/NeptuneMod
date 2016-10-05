@@ -40,4 +40,5 @@ public abstract class MixinEntitySmallFireball extends MixinEntityFireball imple
     public EntityType getEntityType() {
         return EntityType.SMALLFIREBALL;
     }
+
 }

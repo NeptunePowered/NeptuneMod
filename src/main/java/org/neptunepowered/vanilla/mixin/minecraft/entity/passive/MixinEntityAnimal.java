@@ -33,8 +33,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EntityAnimal.class)
 public abstract class MixinEntityAnimal extends MixinEntityAgeable implements net.canarymod.api.entity.living.animal.EntityAnimal {
 
-    @Shadow
-    public abstract boolean isBreedingItem(ItemStack stack);
+    @Shadow public abstract boolean isBreedingItem(ItemStack stack);
 
     @Override
     public boolean isBreedingItem(Item item) {

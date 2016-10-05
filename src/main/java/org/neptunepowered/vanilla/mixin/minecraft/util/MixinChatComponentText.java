@@ -32,10 +32,11 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ChatComponentText.class)
 public abstract class MixinChatComponentText extends ChatComponentStyle implements IMixinChatComponentText {
 
-    @Shadow private String text;
+    @Shadow public String text;
 
     @Override
     public void setText(String text) {
         this.text = text;
     }
+
 }

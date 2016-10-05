@@ -28,6 +28,7 @@ import net.canarymod.api.world.BiomeType;
 import net.canarymod.api.world.World;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.biome.BiomeGenBase;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -40,28 +41,17 @@ import java.util.Random;
 @Implements(@Interface(iface = Biome.class, prefix = "biome$"))
 public abstract class MixinBiomeGenBase implements Biome {
 
+    @Shadow @Final public int biomeID;
     @Shadow public float temperature;
-    @Shadow public int biomeID;
     @Shadow protected boolean enableSnow;
     @Shadow protected boolean enableRain;
 
-    @Shadow
-    public abstract void decorate(net.minecraft.world.World worldIn, Random p_180624_2_, BlockPos p_180624_3_);
-
-    @Shadow
-    public abstract float getSpawningChance();
-
-    @Shadow
-    public abstract int getIntRainfall();
-
-    @Shadow
-    protected abstract BiomeGenBase setTemperatureRainfall(float p_76732_1_, float p_76732_2_);
-
-    @Shadow
-    protected abstract BiomeGenBase setColor(int p_76739_1_);
-
-    @Shadow
-    public abstract boolean canRain();
+    @Shadow public abstract void decorate(net.minecraft.world.World worldIn, Random p_180624_2_, BlockPos p_180624_3_);
+    @Shadow public abstract float getSpawningChance();
+    @Shadow public abstract int getIntRainfall();
+    @Shadow protected abstract BiomeGenBase setTemperatureRainfall(float p_76732_1_, float p_76732_2_);
+    @Shadow protected abstract BiomeGenBase setColor(int p_76739_1_);
+    @Shadow public abstract boolean canRain();
 
     @Override
     public boolean canSpawnLightning() {
@@ -127,4 +117,5 @@ public abstract class MixinBiomeGenBase implements Biome {
     public void setColor(String hexColor) {
         this.setColor(Integer.parseInt(hexColor.replaceFirst("#", ""), 16));
     }
+
 }

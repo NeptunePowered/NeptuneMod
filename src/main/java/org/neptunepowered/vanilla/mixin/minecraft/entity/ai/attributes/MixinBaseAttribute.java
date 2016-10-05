@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.entity.ai.attributes;
 
 import net.canarymod.api.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.BaseAttribute;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -35,7 +36,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = Attribute.class, prefix = "attribute$"))
 public abstract class MixinBaseAttribute implements Attribute {
 
-    @Shadow private String unlocalizedName;
+    @Shadow @Final private String unlocalizedName;
     @Shadow private boolean shouldWatch;
 
     @Shadow public abstract BaseAttribute shadow$setShouldWatch(boolean shouldWatchIn);
@@ -60,4 +61,5 @@ public abstract class MixinBaseAttribute implements Attribute {
     public Attribute setShouldWatch(boolean watch) {
         return (Attribute) this.shadow$setShouldWatch(watch);
     }
+
 }

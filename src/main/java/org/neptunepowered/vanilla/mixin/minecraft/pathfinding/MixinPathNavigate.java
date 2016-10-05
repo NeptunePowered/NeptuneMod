@@ -39,11 +39,8 @@ public abstract class MixinPathNavigate implements PathFinder {
     @Shadow public IAttributeInstance pathSearchRange;
     @Shadow protected double speed;
 
-    @Shadow
-    public abstract void setSpeed(double p_setSpeed_1_);
-
-    @Shadow
-    public abstract boolean tryMoveToXYZ(double x, double y, double z, double speed);
+    @Shadow public abstract void setSpeed(double p_setSpeed_1_);
+    @Shadow public abstract boolean tryMoveToXYZ(double x, double y, double z, double speed);
 
     @Override
     public boolean setPathToXYZ(double x, double y, double z, World world) {

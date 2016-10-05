@@ -44,8 +44,7 @@ public abstract class MixinChatStyle implements ChatStyle {
     @Shadow private net.minecraft.event.ClickEvent chatClickEvent;
     @Shadow private net.minecraft.event.HoverEvent chatHoverEvent;
 
-    @Shadow
-    public abstract net.minecraft.util.ChatStyle createShallowCopy();
+    @Shadow public abstract net.minecraft.util.ChatStyle createShallowCopy();
 
     @Override
     public ChatFormatting getColor() {
@@ -153,4 +152,5 @@ public abstract class MixinChatStyle implements ChatStyle {
     public ChatStyle clone() {
         return (ChatStyle) createShallowCopy();
     }
+
 }

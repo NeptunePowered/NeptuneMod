@@ -44,14 +44,9 @@ public abstract class MixinTileEntity implements TileEntity, IMixinTileEntity {
 
     private Timing timing;
 
-    @Shadow
-    public abstract void updateContainingBlockInfo();
-
-    @Shadow
-    public abstract void readFromNBT(NBTTagCompound compound);
-
-    @Shadow
-    public abstract void writeToNBT(NBTTagCompound compound);
+    @Shadow public abstract void updateContainingBlockInfo();
+    @Shadow public abstract void readFromNBT(NBTTagCompound compound);
+    @Shadow public abstract void writeToNBT(NBTTagCompound compound);
 
     @Override
     public Block getBlock() {

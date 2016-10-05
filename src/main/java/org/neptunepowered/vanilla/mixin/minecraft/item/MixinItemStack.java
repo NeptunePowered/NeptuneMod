@@ -45,32 +45,15 @@ public abstract class MixinItemStack implements Item {
     @Shadow private net.minecraft.item.Item item;
     @Shadow private int itemDamage;
 
-    @Shadow
-    public abstract boolean isItemEnchantable();
-
-    @Shadow
-    public abstract boolean isItemEnchanted();
-
-    @Shadow
-    public abstract ItemStack copy();
-
-    @Shadow
-    public abstract void clearCustomName();
-
-    @Shadow
-    public abstract ItemStack setStackDisplayName(String displayName);
-
-    @Shadow
-    public abstract boolean hasDisplayName();
-
-    @Shadow
-    public abstract String getDisplayName();
-
-    @Shadow
-    public abstract int getRepairCost();
-
-    @Shadow
-    public abstract void setRepairCost(int cost);
+    @Shadow public abstract boolean isItemEnchantable();
+    @Shadow public abstract boolean isItemEnchanted();
+    @Shadow public abstract ItemStack copy();
+    @Shadow public abstract void clearCustomName();
+    @Shadow public abstract ItemStack setStackDisplayName(String displayName);
+    @Shadow public abstract boolean hasDisplayName();
+    @Shadow public abstract String getDisplayName();
+    @Shadow public abstract int getRepairCost();
+    @Shadow public abstract void setRepairCost(int cost);
 
     @Override
     public int getId() {
@@ -276,4 +259,5 @@ public abstract class MixinItemStack implements Item {
     public boolean equalsIgnoreSize(Item item) {
         return false;
     }
+
 }

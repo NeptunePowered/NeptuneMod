@@ -28,6 +28,7 @@ import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.scoreboard.Scoreboard;
 import net.canarymod.api.scoreboard.Team;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -41,35 +42,20 @@ import java.util.Set;
 @Implements(@Interface(iface = Team.class, prefix = "team$"))
 public abstract class MixinScorePlayerTeam extends net.minecraft.scoreboard.Team implements Team {
 
-    @Shadow private net.minecraft.scoreboard.Scoreboard theScoreboard;
-    @Shadow private Set<String> membershipSet;
-    @Shadow private String registeredName;
+    @Shadow @Final private net.minecraft.scoreboard.Scoreboard theScoreboard;
+    @Shadow @Final private Set<String> membershipSet;
+    @Shadow @Final private String registeredName;
     @Shadow private boolean canSeeFriendlyInvisibles;
     @Shadow private String teamNameSPT;
 
-    @Shadow
-    public abstract String getColorPrefix();
-
-    @Shadow
-    public abstract void setNamePrefix(String prefix);
-
-    @Shadow
-    public abstract String getColorSuffix();
-
-    @Shadow
-    public abstract void setNameSuffix(String suffix);
-
-    @Shadow
-    public abstract void setSeeFriendlyInvisiblesEnabled(boolean friendlyInvisibles);
-
-    @Shadow
-    public abstract void setTeamName(String name);
-
-    @Shadow
-    public abstract boolean getAllowFriendlyFire();
-
-    @Shadow
-    public abstract void setAllowFriendlyFire(boolean bool);
+    @Shadow public abstract String getColorPrefix();
+    @Shadow public abstract void setNamePrefix(String prefix);
+    @Shadow public abstract String getColorSuffix();
+    @Shadow public abstract void setNameSuffix(String suffix);
+    @Shadow public abstract void setSeeFriendlyInvisiblesEnabled(boolean friendlyInvisibles);
+    @Shadow public abstract void setTeamName(String name);
+    @Shadow public abstract boolean getAllowFriendlyFire();
+    @Shadow public abstract void setAllowFriendlyFire(boolean bool);
 
     @Override
     public String getProtocolName() {
@@ -155,4 +141,5 @@ public abstract class MixinScorePlayerTeam extends net.minecraft.scoreboard.Team
     public void setSeeFriendlyInvisibles(boolean bool) {
         this.setSeeFriendlyInvisiblesEnabled(bool);
     }
+
 }

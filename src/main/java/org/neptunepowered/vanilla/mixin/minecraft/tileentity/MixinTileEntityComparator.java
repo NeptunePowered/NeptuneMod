@@ -35,11 +35,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = Comparator.class, prefix = "comparator$"))
 public abstract class MixinTileEntityComparator extends MixinTileEntity implements Comparator {
 
-    @Shadow
-    public abstract int getOutputSignal();
-
-    @Shadow
-    public abstract void setOutputSignal(int p_145995_1_);
+    @Shadow public abstract int getOutputSignal();
+    @Shadow public abstract void setOutputSignal(int p_145995_1_);
 
     @Intrinsic
     public int comparator$getOutputSignal() {
@@ -50,4 +47,5 @@ public abstract class MixinTileEntityComparator extends MixinTileEntity implemen
     public void comparator$setOutputSignal(int i) {
         this.setOutputSignal(i);
     }
+
 }

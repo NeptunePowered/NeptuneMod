@@ -36,8 +36,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = Guardian.class, prefix = "guardian$"))
 public abstract class MixinEntityGuardian extends MixinEntityMob implements Guardian {
 
-    @Shadow
-    public abstract boolean isElder();
+    @Shadow public abstract boolean isElder();
 
     @Intrinsic
     public boolean guardian$isElder() {
@@ -53,4 +52,5 @@ public abstract class MixinEntityGuardian extends MixinEntityMob implements Guar
     public EntityType getEntityType() {
         return EntityType.GUARDIAN;
     }
+
 }

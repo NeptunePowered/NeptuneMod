@@ -36,8 +36,7 @@ public abstract class MixinInventoryPlayer implements PlayerInventory {
 
     @Shadow public int currentItem;
 
-    @Shadow
-    public abstract ItemStack getCurrentItem();
+    @Shadow public abstract ItemStack getCurrentItem();
 
     @Override
     public Item getHelmetSlot() {
@@ -103,4 +102,5 @@ public abstract class MixinInventoryPlayer implements PlayerInventory {
     public InventoryType getInventoryType() {
         return InventoryType.PLAYER;
     }
+
 }

@@ -24,14 +24,15 @@
 package org.neptunepowered.vanilla.mixin.minecraft.entity.ai.attributes;
 
 import net.canarymod.api.attributes.RangedAttribute;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(net.minecraft.entity.ai.attributes.RangedAttribute.class)
 public abstract class MixinRangedAttribute extends MixinBaseAttribute implements RangedAttribute {
 
-    @Shadow private double minimumValue;
-    @Shadow private double maximumValue;
+    @Shadow @Final private double minimumValue;
+    @Shadow @Final private double maximumValue;
 
     @Shadow public abstract net.minecraft.entity.ai.attributes.RangedAttribute shadow$setDescription(String desc);
     @Shadow public abstract double clampValue(double p_111109_1_);
@@ -55,4 +56,5 @@ public abstract class MixinRangedAttribute extends MixinBaseAttribute implements
     public double getMinValue() {
         return this.minimumValue;
     }
+
 }

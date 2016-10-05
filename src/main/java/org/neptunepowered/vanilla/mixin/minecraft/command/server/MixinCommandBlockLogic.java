@@ -50,14 +50,9 @@ public abstract class MixinCommandBlockLogic implements net.canarymod.api.Comman
     @Shadow private IChatComponent lastOutput;
     @Shadow private String commandStored;
 
-    @Shadow
-    public abstract String getCommand();
-
-    @Shadow
-    public abstract void setCommand(String command);
-
-    @Shadow
-    public abstract void setName(String p_145754_1_);
+    @Shadow public abstract String getCommand();
+    @Shadow public abstract void setCommand(String command);
+    @Shadow public abstract void setName(String p_145754_1_);
 
     /**
      * @author jamierocks - 3rd September 2016
@@ -149,4 +144,5 @@ public abstract class MixinCommandBlockLogic implements net.canarymod.api.Comman
     public void setGroup(Group group) {
 
     }
+
 }

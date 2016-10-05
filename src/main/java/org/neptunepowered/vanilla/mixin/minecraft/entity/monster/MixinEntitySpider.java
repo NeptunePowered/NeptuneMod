@@ -40,4 +40,5 @@ public abstract class MixinEntitySpider extends MixinEntityMob implements Spider
     public EntityType getEntityType() {
         return EntityType.SPIDER;
     }
+
 }

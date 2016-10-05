@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.potion;
 
 import net.canarymod.api.potion.PotionEffectType;
 import net.minecraft.potion.Potion;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -35,20 +36,13 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = net.canarymod.api.potion.Potion.class, prefix = "potion$"))
 public abstract class MixinPotion implements net.canarymod.api.potion.Potion {
 
-    @Shadow public int id;
-    @Shadow private boolean isBadEffect;
+    @Shadow @Final public int id;
+    @Shadow @Final private boolean isBadEffect;
 
-    @Shadow
-    public abstract String getName();
-
-    @Shadow
-    public abstract double getEffectiveness();
-
-    @Shadow
-    public abstract boolean isUsable();
-
-    @Shadow
-    public abstract boolean isInstant();
+    @Shadow public abstract String getName();
+    @Shadow public abstract double getEffectiveness();
+    @Shadow public abstract boolean isUsable();
+    @Shadow public abstract boolean isInstant();
 
     @Override
     public int getID() {
@@ -84,4 +78,5 @@ public abstract class MixinPotion implements net.canarymod.api.potion.Potion {
     public boolean potion$isInstant() {
         return this.isInstant();
     }
+
 }

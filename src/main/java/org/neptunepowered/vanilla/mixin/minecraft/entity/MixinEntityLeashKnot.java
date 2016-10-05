@@ -40,4 +40,5 @@ public abstract class MixinEntityLeashKnot extends MixinEntityHanging implements
     public EntityType getEntityType() {
         return EntityType.LEASHKNOT;
     }
+
 }

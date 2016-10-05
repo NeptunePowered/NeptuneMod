@@ -92,21 +92,14 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     @Shadow @Final private net.minecraft.server.management.PlayerManager thePlayerManager;
     @Shadow @Final protected VillageSiege villageSiege;
     @Shadow @Final private Teleporter worldTeleporter;
+    @Shadow @Final private net.minecraft.entity.EntityTracker theEntityTracker;
     @Shadow private List<NextTickListEntry> pendingTickListEntriesThisTick;
-    @Shadow private net.minecraft.entity.EntityTracker theEntityTracker;
     @Shadow public ChunkProviderServer theChunkProviderServer;
 
-    @Shadow
-    public abstract void scheduleUpdate(BlockPos pos, net.minecraft.block.Block blockIn, int delay);
-
-    @Shadow
-    public abstract boolean areAllPlayersAsleep();
-
-    @Shadow
-    protected abstract void wakeAllPlayers();
-
-    @Shadow
-    protected abstract void updateBlocks();
+    @Shadow public abstract void scheduleUpdate(BlockPos pos, net.minecraft.block.Block blockIn, int delay);
+    @Shadow public abstract boolean areAllPlayersAsleep();
+    @Shadow protected abstract void wakeAllPlayers();
+    @Shadow protected abstract void updateBlocks();
 
     @Shadow
     private void sendQueuedBlockEvents() {

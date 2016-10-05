@@ -95,4 +95,5 @@ public abstract class MixinMaterial implements BlockMaterial {
     public boolean isTranslucent() {
         return this.isTranslucent;
     }
+
 }

@@ -40,14 +40,9 @@ public abstract class MixinMerchantRecipe implements VillagerTrade {
     @Shadow private ItemStack itemToSell;
     @Shadow private int maxTradeUses;
 
-    @Shadow
-    public abstract NBTTagCompound writeToTags();
-
-    @Shadow
-    public abstract void readFromTags(NBTTagCompound p_77390_1_);
-
-    @Shadow
-    public abstract boolean isRecipeDisabled();
+    @Shadow public abstract NBTTagCompound writeToTags();
+    @Shadow public abstract void readFromTags(NBTTagCompound p_77390_1_);
+    @Shadow public abstract boolean isRecipeDisabled();
 
     @Override
     public Item getBuyingOne() {
@@ -108,4 +103,5 @@ public abstract class MixinMerchantRecipe implements VillagerTrade {
     public void readFromTag(CompoundTag tag) {
         readFromTags((NBTTagCompound) tag);
     }
+
 }

@@ -33,6 +33,7 @@ import net.minecraft.entity.EntityTrackerEntry;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.WorldServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -47,18 +48,12 @@ import java.util.Set;
 @Implements(@Interface(iface = EntityTracker.class, prefix = "entitytracker$"))
 public abstract class MixinEntityTracker implements EntityTracker {
 
-    @Shadow private WorldServer theWorld;
+    @Shadow @Final private WorldServer theWorld;
     @Shadow private Set<EntityTrackerEntry> trackedEntities;
 
-    @Shadow
-    public abstract void trackEntity(net.minecraft.entity.Entity p_72786_1_);
-
-    @Shadow
-    public abstract void untrackEntity(net.minecraft.entity.Entity entityIn);
-
-    @Shadow
-    public abstract void sendToAllTrackingEntity(net.minecraft.entity.Entity entityIn,
-            net.minecraft.network.Packet p_151247_2_);
+    @Shadow public abstract void trackEntity(net.minecraft.entity.Entity p_72786_1_);
+    @Shadow public abstract void untrackEntity(net.minecraft.entity.Entity entityIn);
+    @Shadow public abstract void sendToAllTrackingEntity(net.minecraft.entity.Entity entityIn, net.minecraft.network.Packet p_151247_2_);
 
     /**
      * @author jamierocks - 2nd October 2016

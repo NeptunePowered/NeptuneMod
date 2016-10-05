@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.util;
 
 import net.canarymod.api.chat.ChatFormatting;
 import net.minecraft.util.EnumChatFormatting;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -35,16 +36,11 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = ChatFormatting.class, prefix = "chat$"))
 public abstract class MixinEnumChatFormatting implements ChatFormatting {
 
-    @Shadow public char formattingCode;
+    @Shadow @Final public char formattingCode;
 
-    @Shadow
-    public abstract boolean isFancyStyling();
-
-    @Shadow
-    public abstract String getFriendlyName();
-
-    @Shadow
-    public abstract boolean isColor();
+    @Shadow public abstract boolean isFancyStyling();
+    @Shadow public abstract String getFriendlyName();
+    @Shadow public abstract boolean isColor();
 
     @Override
     public char getFormattingCode() {
@@ -65,4 +61,5 @@ public abstract class MixinEnumChatFormatting implements ChatFormatting {
     public String getName() {
         return this.getFriendlyName();
     }
+
 }

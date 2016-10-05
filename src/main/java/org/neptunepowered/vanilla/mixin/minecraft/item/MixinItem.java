@@ -37,14 +37,9 @@ public abstract class MixinItem implements BaseItem {
 
     @Shadow protected int maxStackSize;
 
-    @Shadow
-    protected abstract Item shadow$setMaxDamage(int maxDamageIn);
-
-    @Shadow
-    public abstract int getMaxDamage();
-
-    @Shadow
-    public abstract boolean isDamageable();
+    @Shadow public abstract Item shadow$setMaxDamage(int maxDamageIn);
+    @Shadow public abstract int getMaxDamage();
+    @Shadow public abstract boolean isDamageable();
 
     @Override
     public int getMaxStackSize() {
@@ -65,4 +60,5 @@ public abstract class MixinItem implements BaseItem {
     public boolean item$isDamageable() {
         return this.isDamageable();
     }
+
 }

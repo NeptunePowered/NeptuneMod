@@ -124,47 +124,20 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     private WorldManager worldManager = new NeptuneWorldManager();
     private long previousTick = -1L;
 
-    @Shadow
-    public abstract void initiateShutdown();
-
-    @Shadow
-    public abstract String getMinecraftVersion();
-
-    @Shadow
-    public abstract String[] getAllUsernames();
-
-    @Shadow
-    public abstract PlayerProfileCache getPlayerProfileCache();
-
-    @Shadow
-    public abstract ICommandManager getCommandManager();
-
-    @Shadow
-    public abstract String getHostname();
-
-    @Shadow
-    protected abstract void setUserMessage(String message);
-
-    @Shadow
-    public abstract boolean isServerRunning();
-
-    @Shadow
-    protected abstract void outputPercentRemaining(String message, int percent);
-
-    @Shadow
-    protected abstract void clearCurrentTask();
-
-    @Shadow
-    public abstract boolean getAllowNether();
-
-    @Shadow
-    public abstract NetworkSystem getNetworkSystem();
-
-    @Shadow
-    public abstract int getCurrentPlayerCount();
-
-    @Shadow
-    protected abstract void saveAllWorlds(boolean dontLog);
+    @Shadow public abstract void initiateShutdown();
+    @Shadow public abstract String getMinecraftVersion();
+    @Shadow public abstract String[] getAllUsernames();
+    @Shadow public abstract PlayerProfileCache getPlayerProfileCache();
+    @Shadow public abstract ICommandManager getCommandManager();
+    @Shadow public abstract String getHostname();
+    @Shadow protected abstract void setUserMessage(String message);
+    @Shadow public abstract boolean isServerRunning();
+    @Shadow protected abstract void outputPercentRemaining(String message, int percent);
+    @Shadow protected abstract void clearCurrentTask();
+    @Shadow public abstract boolean getAllowNether();
+    @Shadow public abstract NetworkSystem getNetworkSystem();
+    @Shadow public abstract int getCurrentPlayerCount();
+    @Shadow protected abstract void saveAllWorlds(boolean dontLog);
 
     /**
      * @author Jamie Mansfield - 26th April 2016

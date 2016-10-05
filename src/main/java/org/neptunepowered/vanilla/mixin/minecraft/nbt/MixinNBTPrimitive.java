@@ -34,23 +34,12 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = PrimitiveTag.class, prefix = "tag$"))
 public abstract class MixinNBTPrimitive extends NBTBase {
 
-    @Shadow
-    public abstract long getLong();
-
-    @Shadow
-    public abstract int getInt();
-
-    @Shadow
-    public abstract short getShort();
-
-    @Shadow
-    public abstract byte getByte();
-
-    @Shadow
-    public abstract double getDouble();
-
-    @Shadow
-    public abstract float getFloat();
+    @Shadow public abstract long getLong();
+    @Shadow public abstract int getInt();
+    @Shadow public abstract short getShort();
+    @Shadow public abstract byte getByte();
+    @Shadow public abstract double getDouble();
+    @Shadow public abstract float getFloat();
 
     public long tag$getLongValue() {
         return getLong();
@@ -75,4 +64,5 @@ public abstract class MixinNBTPrimitive extends NBTBase {
     public float tag$getFloatValue() {
         return getFloat();
     }
+
 }

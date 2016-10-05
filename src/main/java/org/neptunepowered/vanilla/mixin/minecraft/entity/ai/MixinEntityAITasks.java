@@ -57,4 +57,5 @@ public abstract class MixinEntityAITasks implements AIManager {
     public AIBase getTask(Class<? extends AIBase> ai) {
         return null;
     }
+
 }

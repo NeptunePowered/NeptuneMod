@@ -34,6 +34,7 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNavigate;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -44,41 +45,22 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = net.canarymod.api.entity.living.EntityLiving.class, prefix = "entity$"))
 public abstract class MixinEntityLiving extends MixinEntityLivingBase implements net.canarymod.api.entity.living.EntityLiving {
 
+    @Shadow @Final protected EntityAITasks tasks;
+    @Shadow @Final protected EntityAITasks targetTasks;
     @Shadow protected float[] equipmentDropChances;
     @Shadow private boolean persistenceRequired;
     @Shadow private ItemStack[] equipment;
-    @Shadow protected EntityAITasks tasks;
-    @Shadow protected EntityAITasks targetTasks;
 
-    @Shadow
-    public abstract EntityLivingBase shadow$getAttackTarget();
-
-    @Shadow
-    public abstract void setAttackTarget(EntityLivingBase entitylivingbaseIn);
-
-    @Shadow
-    public abstract EntityMoveHelper getMoveHelper();
-
-    @Shadow
-    public abstract ItemStack getHeldItem();
-
-    @Shadow
-    public abstract ItemStack[] getInventory();
-
-    @Shadow
-    public abstract ItemStack shadow$getEquipmentInSlot(int slotIn);
-
-    @Shadow
-    public abstract PathNavigate getNavigator();
-
-    @Shadow
-    public abstract void playLivingSound();
-
-    @Shadow
-    public abstract boolean canPickUpLoot();
-
-    @Shadow
-    public abstract void setCanPickUpLoot(boolean loot);
+    @Shadow public abstract EntityLivingBase shadow$getAttackTarget();
+    @Shadow public abstract void setAttackTarget(EntityLivingBase entitylivingbaseIn);
+    @Shadow public abstract EntityMoveHelper getMoveHelper();
+    @Shadow public abstract ItemStack getHeldItem();
+    @Shadow public abstract ItemStack[] getInventory();
+    @Shadow public abstract ItemStack shadow$getEquipmentInSlot(int slotIn);
+    @Shadow public abstract PathNavigate getNavigator();
+    @Shadow public abstract void playLivingSound();
+    @Shadow public abstract boolean canPickUpLoot();
+    @Shadow public abstract void setCanPickUpLoot(boolean loot);
 
     @Override
     public void moveEntityToXYZ(double x, double y, double z, float speed) {
@@ -180,4 +162,5 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
     public boolean isLiving() {
         return true;
     }
+
 }

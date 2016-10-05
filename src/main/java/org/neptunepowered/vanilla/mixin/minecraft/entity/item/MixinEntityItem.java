@@ -42,23 +42,12 @@ public abstract class MixinEntityItem extends MixinEntity implements net.canarym
     @Shadow private int delayBeforeCanPickup;
     @Shadow private int health;
 
-    @Shadow
-    public abstract ItemStack getEntityItem();
-
-    @Shadow
-    public abstract void setEntityItemStack(ItemStack stack);
-
-    @Shadow
-    public abstract String getOwner();
-
-    @Shadow
-    public abstract void setOwner(String owner);
-
-    @Shadow
-    public abstract String getThrower();
-
-    @Shadow
-    public abstract void setThrower(String thrower);
+    @Shadow public abstract ItemStack getEntityItem();
+    @Shadow public abstract void setEntityItemStack(ItemStack stack);
+    @Shadow public abstract String getOwner();
+    @Shadow public abstract void setOwner(String owner);
+    @Shadow public abstract String getThrower();
+    @Shadow public abstract void setThrower(String thrower);
 
     @Override
     public void setAge(short age) {
@@ -134,4 +123,5 @@ public abstract class MixinEntityItem extends MixinEntity implements net.canarym
     public EntityType getEntityType() {
         return EntityType.ENTITYITEM;
     }
+
 }

@@ -315,4 +315,5 @@ public interface MixinIInventory extends IInventory, Inventory {
     default boolean canInsertItems(Item var1) {
         return false;
     }
+
 }

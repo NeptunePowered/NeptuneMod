@@ -32,11 +32,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EntitySkeleton.class)
 public abstract class MixinEntitySkeleton extends MixinEntityMob implements Skeleton {
 
-    @Shadow
-    public abstract int getSkeletonType();
-
-    @Shadow
-    public abstract void setSkeletonType(int p_82201_1_);
+    @Shadow public abstract int getSkeletonType();
+    @Shadow public abstract void setSkeletonType(int p_82201_1_);
 
     @Override
     public boolean isWitherSkeleton() {
@@ -57,4 +54,5 @@ public abstract class MixinEntitySkeleton extends MixinEntityMob implements Skel
     public EntityType getEntityType() {
         return this.isWitherSkeleton() ? EntityType.WITHERSKELETON : EntityType.SKELETON;
     }
+
 }

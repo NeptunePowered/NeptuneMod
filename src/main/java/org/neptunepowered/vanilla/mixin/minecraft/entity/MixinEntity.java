@@ -77,50 +77,21 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
     public NBTTagCompound metadata = new NBTTagCompound();
     private Timing timing;
 
-    @Shadow
-    public abstract void moveEntity(double x, double y, double z);
-
-    @Shadow
-    public abstract void setDead();
-
-    @Shadow
-    protected abstract boolean getFlag(int flag);
-
-    @Shadow
-    public abstract float getEyeHeight();
-
-    @Shadow
-    public abstract boolean isSprinting();
-
-    @Shadow
-    public abstract void setSprinting(boolean sprinting);
-
-    @Shadow
-    public abstract boolean isSneaking();
-
-    @Shadow
-    public abstract void setSneaking(boolean sneaking);
-
-    @Shadow
-    public abstract boolean isInvisible();
-
-    @Shadow
-    public abstract void setInvisible(boolean invisible);
-
-    @Shadow
-    public abstract boolean isInWater();
-
-    @Shadow
-    public abstract boolean isInLava();
-
-    @Shadow
-    public abstract String getName();
-
-    @Shadow
-    public abstract void writeToNBT(NBTTagCompound tagCompound);
-
-    @Shadow
-    public abstract void readFromNBT(NBTTagCompound tagCompound);
+    @Shadow public abstract void moveEntity(double x, double y, double z);
+    @Shadow public abstract void setDead();
+    @Shadow protected abstract boolean getFlag(int flag);
+    @Shadow public abstract float getEyeHeight();
+    @Shadow public abstract boolean isSprinting();
+    @Shadow public abstract void setSprinting(boolean sprinting);
+    @Shadow public abstract boolean isSneaking();
+    @Shadow public abstract void setSneaking(boolean sneaking);
+    @Shadow public abstract boolean isInvisible();
+    @Shadow public abstract void setInvisible(boolean invisible);
+    @Shadow public abstract boolean isInWater();
+    @Shadow public abstract boolean isInLava();
+    @Shadow public abstract String getName();
+    @Shadow public abstract void writeToNBT(NBTTagCompound tagCompound);
+    @Shadow public abstract void readFromNBT(NBTTagCompound tagCompound);
 
     @Inject(method = "Lnet/minecraft/entity/Entity;writeToNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("HEAD"))
     public void onWriteToNBT(NBTTagCompound tagCompound, CallbackInfo ci) {

@@ -57,32 +57,15 @@ public abstract class MixinEntityLivingBase extends MixinEntity implements Livin
     @Shadow protected int entityAge;
     @Shadow protected int scoreValue;
 
-    @Shadow
-    public abstract void heal(float healAmount);
-
-    @Shadow
-    public abstract float shadow$getMaxHealth();
-
-    @Shadow
-    public abstract IAttributeInstance getEntityAttribute(IAttribute attribute);
-
-    @Shadow
-    public abstract float getHealth();
-
-    @Shadow
-    public abstract void setHealth(float health);
-
-    @Shadow
-    public abstract int getAge();
-
-    @Shadow
-    protected abstract void shadow$kill();
-
-    @Shadow
-    public abstract CombatTracker getCombatTracker();
-
-    @Shadow
-    public abstract EntityLivingBase getAttackingEntity();
+    @Shadow public abstract void heal(float healAmount);
+    @Shadow public abstract float shadow$getMaxHealth();
+    @Shadow public abstract IAttributeInstance getEntityAttribute(IAttribute attribute);
+    @Shadow public abstract float getHealth();
+    @Shadow public abstract void setHealth(float health);
+    @Shadow public abstract int getAge();
+    @Shadow protected abstract void shadow$kill();
+    @Shadow public abstract CombatTracker getCombatTracker();
+    @Shadow public abstract EntityLivingBase getAttackingEntity();
 
     @Intrinsic
     public float livingbase$getHealth() {

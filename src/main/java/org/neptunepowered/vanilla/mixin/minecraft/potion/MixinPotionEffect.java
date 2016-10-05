@@ -38,20 +38,11 @@ public abstract class MixinPotionEffect implements PotionEffect {
 
     @Shadow private boolean isAmbient;
 
-    @Shadow
-    public abstract String getEffectName();
-
-    @Shadow
-    public abstract int getPotionID();
-
-    @Shadow
-    public abstract int getDuration();
-
-    @Shadow
-    public abstract int getAmplifier();
-
-    @Shadow
-    public abstract void performEffect(EntityLivingBase entityIn);
+    @Shadow public abstract String getEffectName();
+    @Shadow public abstract int getPotionID();
+    @Shadow public abstract int getDuration();
+    @Shadow public abstract int getAmplifier();
+    @Shadow public abstract void performEffect(EntityLivingBase entityIn);
 
     @Intrinsic
     public int effect$getPotionID() {
@@ -82,4 +73,5 @@ public abstract class MixinPotionEffect implements PotionEffect {
     public void performEffect(LivingBase entity) {
         this.performEffect((EntityLivingBase) entity);
     }
+
 }

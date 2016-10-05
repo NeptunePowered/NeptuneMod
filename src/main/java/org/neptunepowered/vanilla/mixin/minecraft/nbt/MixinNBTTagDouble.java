@@ -44,4 +44,5 @@ public abstract class MixinNBTTagDouble extends NBTBase.NBTPrimitive {
     public void tag$setValue(double value) {
         data = value;
     }
+
 }

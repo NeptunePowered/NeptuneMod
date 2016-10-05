@@ -95,4 +95,5 @@ public abstract class MixinEntityXPOrb extends MixinEntity implements XPOrb {
     public EntityType getEntityType() {
         return EntityType.XPORB;
     }
+
 }

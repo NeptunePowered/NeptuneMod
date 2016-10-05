@@ -33,11 +33,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(EntitySlime.class)
 public abstract class MixinEntitySlime extends MixinEntityLiving implements Slime {
 
-    @Shadow
-    public abstract int getSlimeSize();
-
-    @Shadow
-    protected abstract void setSlimeSize(int size);
+    @Shadow public abstract int getSlimeSize();
+    @Shadow protected abstract void setSlimeSize(int size);
 
     @Override
     public Size getSize() {
@@ -58,4 +55,5 @@ public abstract class MixinEntitySlime extends MixinEntityLiving implements Slim
     public EntityType getEntityType() {
         return EntityType.SLIME;
     }
+
 }

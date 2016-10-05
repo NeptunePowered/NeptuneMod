@@ -46,4 +46,5 @@ public abstract class MixinTileEntityChest extends MixinTileEntityLockable imple
     public InventoryType getInventoryType() {
         return InventoryType.CHEST;
     }
+
 }

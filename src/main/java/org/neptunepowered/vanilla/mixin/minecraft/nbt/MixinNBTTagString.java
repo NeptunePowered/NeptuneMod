@@ -44,4 +44,5 @@ public abstract class MixinNBTTagString extends NBTBase {
     public void tag$setValue(String value) {
         data = value;
     }
+
 }

@@ -25,13 +25,14 @@ package org.neptunepowered.vanilla.mixin.minecraft.stats;
 
 import net.canarymod.api.statistics.Stat;
 import net.minecraft.stats.StatBase;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(StatBase.class)
 public abstract class MixinStatBase implements Stat {
 
-    @Shadow public String statId;
+    @Shadow @Final public String statId;
     @Shadow public boolean isIndependent;
 
     @Shadow
@@ -51,4 +52,5 @@ public abstract class MixinStatBase implements Stat {
     public boolean isIndependent() {
         return isIndependent;
     }
+
 }

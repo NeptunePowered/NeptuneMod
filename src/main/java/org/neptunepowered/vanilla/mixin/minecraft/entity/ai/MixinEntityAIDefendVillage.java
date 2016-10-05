@@ -24,7 +24,6 @@
 package org.neptunepowered.vanilla.mixin.minecraft.entity.ai;
 
 import net.canarymod.api.ai.AIDefendVillage;
-import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIDefendVillage;
 import net.minecraft.entity.ai.EntityAITarget;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,7 +31,8 @@ import org.spongepowered.asm.mixin.Mixin;
 @Mixin(EntityAIDefendVillage.class)
 public abstract class MixinEntityAIDefendVillage extends EntityAITarget implements AIDefendVillage {
 
-    MixinEntityAIDefendVillage(EntityCreature creature, boolean checkSight) {
-        super(creature, checkSight);
+    MixinEntityAIDefendVillage() {
+        super(null, false);
     }
+
 }

@@ -24,21 +24,20 @@
 package org.neptunepowered.vanilla.mixin.minecraft.stats;
 
 import net.minecraft.stats.Achievement;
-import net.minecraft.stats.IStatType;
 import net.minecraft.stats.StatBase;
-import net.minecraft.util.IChatComponent;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Achievement.class)
 public abstract class MixinAchievement extends StatBase implements net.canarymod.api.statistics.Achievement {
 
-    @Shadow public Achievement parentAchievement;
-    @Shadow private String achievementDescription;
+    @Shadow @Final public Achievement parentAchievement;
+    @Shadow @Final private String achievementDescription;
     @Shadow private boolean isSpecial;
 
-    MixinAchievement(String p_i45307_1_, IChatComponent p_i45307_2_, IStatType p_i45307_3_) {
-        super(p_i45307_1_, p_i45307_2_, p_i45307_3_);
+    MixinAchievement() {
+        super(null, null, null);
     }
 
     @Override
@@ -55,4 +54,5 @@ public abstract class MixinAchievement extends StatBase implements net.canarymod
     public boolean isSpecial() {
         return isSpecial;
     }
+
 }

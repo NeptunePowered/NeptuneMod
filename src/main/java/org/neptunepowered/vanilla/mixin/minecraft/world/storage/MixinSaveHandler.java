@@ -29,6 +29,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.SaveHandler;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,11 +43,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Mixin(SaveHandler.class)
-public class MixinSaveHandler implements IMixinSaveHandler {
+public abstract class MixinSaveHandler implements IMixinSaveHandler {
 
-    @Shadow private static Logger logger;
+    @Shadow @Final private static Logger logger;
 
-    @Shadow private File playersDirectory;
+    @Shadow @Final private File playersDirectory;
 
     @Override
     public NBTTagCompound readPlayerData(UUID id) {

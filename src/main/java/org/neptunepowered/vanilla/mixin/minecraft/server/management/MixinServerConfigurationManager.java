@@ -73,20 +73,13 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     @Shadow @Final private static Logger logger;
     @Shadow @Final private static SimpleDateFormat dateFormat;
 
-    @Shadow public List<EntityPlayerMP> playerEntityList;
+    @Shadow @Final public List<EntityPlayerMP> playerEntityList;
     @Shadow protected int maxPlayers;
 
-    @Shadow
-    public abstract int getCurrentPlayerCount();
-
-    @Shadow
-    public abstract List<EntityPlayerMP> getPlayerList();
-
-    @Shadow
-    public abstract EntityPlayerMP getPlayerByUsername(String username);
-
-    @Shadow
-    public abstract int getMaxPlayers();
+    @Shadow public abstract int getCurrentPlayerCount();
+    @Shadow public abstract List<EntityPlayerMP> getPlayerList();
+    @Shadow public abstract EntityPlayerMP getPlayerByUsername(String username);
+    @Shadow public abstract int getMaxPlayers();
 
     @Redirect(method = "playerLoggedOut",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/ServerConfigurationManager;"

@@ -44,4 +44,5 @@ public abstract class MixinNBTTagFloat extends NBTBase.NBTPrimitive {
     public void tag$setValue(float value) {
         data = value;
     }
+
 }

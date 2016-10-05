@@ -24,19 +24,14 @@
 package org.neptunepowered.vanilla.mixin.minecraft.network.handshake.client;
 
 import net.canarymod.config.Configuration;
-import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.handshake.client.C00Handshake;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.io.IOException;
-
 @Mixin(C00Handshake.class)
-public class MixinC00Handshake {
+public abstract class MixinC00Handshake {
 
     @Redirect(method = "readPacketData",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/network/PacketBuffer;"

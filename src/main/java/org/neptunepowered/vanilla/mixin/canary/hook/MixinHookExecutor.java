@@ -39,7 +39,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.Iterator;
 
 @Mixin(value = HookExecutor.class, remap = false)
-public class MixinHookExecutor {
+public abstract class MixinHookExecutor {
 
     @Shadow @Final public ArrayListMultimap<Class<? extends Hook>, RegisteredPluginListener> listeners;
 

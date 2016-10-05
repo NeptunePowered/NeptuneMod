@@ -105,4 +105,5 @@ public abstract class MixinNetworkManager extends SimpleChannelInboundHandler im
     public void setSpoofedUUID(UUID uuid) {
         this.spoofedUUID = uuid;
     }
+
 }

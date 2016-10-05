@@ -69,4 +69,5 @@ public interface MixinIAttributeInstance extends IAttributeInstance {
     default double modifier$getValue() {
         return this.getAttributeValue();
     }
+
 }

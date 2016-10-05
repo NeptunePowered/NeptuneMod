@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.util;
 
 import net.canarymod.api.BoundingBox;
 import net.minecraft.util.AxisAlignedBB;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -35,42 +36,23 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = BoundingBox.class, prefix = "box$"))
 public abstract class MixinAxisAlignedBB implements BoundingBox {
 
-    @Shadow public double minX;
-    @Shadow public double minY;
-    @Shadow public double minZ;
-    @Shadow public double maxX;
-    @Shadow public double maxY;
-    @Shadow public double maxZ;
+    @Shadow @Final public double minX;
+    @Shadow @Final public double minY;
+    @Shadow @Final public double minZ;
+    @Shadow @Final public double maxX;
+    @Shadow @Final public double maxY;
+    @Shadow @Final public double maxZ;
 
-    @Shadow
-    public abstract AxisAlignedBB shadow$contract(double x, double y, double z);
-
-    @Shadow
-    public abstract AxisAlignedBB addCoord(double x, double y, double z);
-
-    @Shadow
-    public abstract AxisAlignedBB shadow$offset(double x, double y, double z);
-
-    @Shadow
-    public abstract AxisAlignedBB shadow$expand(double x, double y, double z);
-
-    @Shadow
-    public abstract AxisAlignedBB union(AxisAlignedBB other);
-
-    @Shadow
-    public abstract double calculateXOffset(AxisAlignedBB other, double offsetX);
-
-    @Shadow
-    public abstract double calculateYOffset(AxisAlignedBB other, double offsetY);
-
-    @Shadow
-    public abstract double calculateZOffset(AxisAlignedBB other, double offsetZ);
-
-    @Shadow
-    public abstract boolean intersectsWith(AxisAlignedBB other);
-
-    @Shadow
-    public abstract double getAverageEdgeLength();
+    @Shadow public abstract AxisAlignedBB shadow$contract(double x, double y, double z);
+    @Shadow public abstract AxisAlignedBB addCoord(double x, double y, double z);
+    @Shadow public abstract AxisAlignedBB shadow$offset(double x, double y, double z);
+    @Shadow public abstract AxisAlignedBB shadow$expand(double x, double y, double z);
+    @Shadow public abstract AxisAlignedBB union(AxisAlignedBB other);
+    @Shadow public abstract double calculateXOffset(AxisAlignedBB other, double offsetX);
+    @Shadow public abstract double calculateYOffset(AxisAlignedBB other, double offsetY);
+    @Shadow public abstract double calculateZOffset(AxisAlignedBB other, double offsetZ);
+    @Shadow public abstract boolean intersectsWith(AxisAlignedBB other);
+    @Shadow public abstract double getAverageEdgeLength();
 
     @Override
     public double getMinX() {
@@ -151,4 +133,5 @@ public abstract class MixinAxisAlignedBB implements BoundingBox {
     public double box$getAverageEdgeLength() {
         return this.getAverageEdgeLength();
     }
+
 }

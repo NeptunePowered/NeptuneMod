@@ -36,8 +36,7 @@ public abstract class MixinEntityHanging extends MixinEntity implements HangingE
     @Shadow private int tickCounter1;
     @Shadow public EnumFacing facingDirection;
 
-    @Shadow
-    public abstract boolean onValidSurface();
+    @Shadow public abstract boolean onValidSurface();
 
     @Override
     public int getHangingDirection() {
@@ -68,4 +67,5 @@ public abstract class MixinEntityHanging extends MixinEntity implements HangingE
     public EntityType getEntityType() {
         return EntityType.GENERIC_HANGING;
     }
+
 }

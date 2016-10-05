@@ -36,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemInWorldManager.class)
-public class MixinItemInWorldManager {
+public abstract class MixinItemInWorldManager {
 
     @Shadow public EntityPlayerMP thisPlayerMP;
 

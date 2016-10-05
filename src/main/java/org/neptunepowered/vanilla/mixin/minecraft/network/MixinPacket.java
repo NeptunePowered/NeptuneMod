@@ -38,4 +38,5 @@ public interface MixinPacket extends net.minecraft.network.Packet, Packet {
     default int getPacketId() {
         return 0;
     }
+
 }

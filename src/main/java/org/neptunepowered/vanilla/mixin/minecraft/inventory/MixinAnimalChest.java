@@ -42,4 +42,5 @@ public abstract class MixinAnimalChest implements AnimalInventory {
     public InventoryType getInventoryType() {
         return InventoryType.ANIMAL;
     }
+
 }

@@ -33,11 +33,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(BlockJukebox.TileEntityJukebox.class)
 public abstract class MixinTileEntityJukebox extends MixinTileEntity implements Jukebox {
 
-    @Shadow
-    public abstract ItemStack getRecord();
-
-    @Shadow
-    public abstract void setRecord(ItemStack recordStack);
+    @Shadow public abstract ItemStack getRecord();
+    @Shadow public abstract void setRecord(ItemStack recordStack);
 
     @Override
     public Item getDisc() {
@@ -48,4 +45,5 @@ public abstract class MixinTileEntityJukebox extends MixinTileEntity implements 
     public void setDisc(Item item) {
         this.setRecord((ItemStack) item);
     }
+
 }

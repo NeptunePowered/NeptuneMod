@@ -24,14 +24,15 @@
 package org.neptunepowered.vanilla.mixin.minecraft.block.material;
 
 import net.canarymod.api.world.blocks.MapColor;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(net.minecraft.block.material.MapColor.class)
 public abstract class MixinMapColor implements MapColor {
 
-    @Shadow public int colorValue;
-    @Shadow public int colorIndex;
+    @Shadow @Final public int colorValue;
+    @Shadow @Final public int colorIndex;
 
     @Override
     public int getIndex() {
@@ -42,4 +43,5 @@ public abstract class MixinMapColor implements MapColor {
     public int getValue() {
         return this.colorValue;
     }
+
 }

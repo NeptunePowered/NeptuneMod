@@ -35,11 +35,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = Ageable.class, prefix = "ageable$"))
 public abstract class MixinEntityAgeable extends MixinEntityCreature implements Ageable {
 
-    @Shadow
-    public abstract void setGrowingAge(int age);
-
-    @Shadow
-    public abstract int getGrowingAge();
+    @Shadow public abstract void setGrowingAge(int age);
+    @Shadow public abstract int getGrowingAge();
 
     @Intrinsic
     public void ageable$setGrowingAge(int i) {

@@ -40,4 +40,5 @@ public abstract class MixinEntityCaveSpider extends MixinEntitySpider implements
     public EntityType getEntityType() {
         return EntityType.CAVESPIDER;
     }
+
 }

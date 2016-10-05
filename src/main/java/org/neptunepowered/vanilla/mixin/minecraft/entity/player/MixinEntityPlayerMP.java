@@ -114,10 +114,10 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     private static String CHAT_FORMAT = Configuration.getServerConfig().getChatFormat().replace("&", ChatFormat.MARKER.toString());
 
     @Shadow @Final public MinecraftServer mcServer;
+    @Shadow @Final public ItemInWorldManager theItemInWorldManager;
+    @Shadow @Final private StatisticsFile statsFile;
     @Shadow public int ping;
     @Shadow public NetHandlerPlayServer playerNetServerHandler;
-    @Shadow public ItemInWorldManager theItemInWorldManager;
-    @Shadow private StatisticsFile statsFile;
     @Shadow private long playerLastActiveTime;
 
     private List<Group> groups;
@@ -126,14 +126,9 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     private HashMap<String, String> defaultChatPattern = Maps.newHashMap();
     private long currentSessionStart = ToolBox.getUnixTimestamp();
 
-    @Shadow
-    public abstract void openEditSign(TileEntitySign signTile);
-
-    @Shadow
-    public abstract void closeScreen();
-
-    @Shadow
-    public abstract String getPlayerIP();
+    @Shadow public abstract void openEditSign(TileEntitySign signTile);
+    @Shadow public abstract void closeScreen();
+    @Shadow public abstract String getPlayerIP();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void onConstruction(MinecraftServer server, WorldServer worldIn, GameProfile profile, ItemInWorldManager interactionManager,
@@ -927,4 +922,5 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
         this.metadata.setString("LastJoin", DateUtils.longToDateTime(System.currentTimeMillis()));
         this.metadata.setLong("TimePlayed", 1L); // Initialise to 1
     }
+
 }

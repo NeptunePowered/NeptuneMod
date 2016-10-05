@@ -48,4 +48,5 @@ public abstract class MixinEntityEndermite extends MixinEntityMob implements End
     public EntityType getEntityType() {
         return EntityType.ENDERMITE;
     }
+
 }

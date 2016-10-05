@@ -45,20 +45,11 @@ public abstract class MixinDamageSource implements DamageSource {
     @Shadow private float hungerDamage;
     @Shadow private boolean damageIsAbsolute;
 
-    @Shadow
-    public abstract IChatComponent getDeathMessage(EntityLivingBase p_151519_1_);
-
-    @Shadow
-    public abstract net.minecraft.entity.Entity getEntity();
-
-    @Shadow
-    public abstract boolean isFireDamage();
-
-    @Shadow
-    public abstract boolean isProjectile();
-
-    @Shadow
-    public abstract float getHungerDamage();
+    @Shadow public abstract IChatComponent getDeathMessage(EntityLivingBase p_151519_1_);
+    @Shadow public abstract net.minecraft.entity.Entity getEntity();
+    @Shadow public abstract boolean isFireDamage();
+    @Shadow public abstract boolean isProjectile();
+    @Shadow public abstract float getHungerDamage();
 
     @Override
     public boolean validInCreativeMode() {
@@ -124,4 +115,5 @@ public abstract class MixinDamageSource implements DamageSource {
     public boolean isCritical() {
         return false;
     }
+
 }

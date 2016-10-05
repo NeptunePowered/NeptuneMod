@@ -35,16 +35,17 @@ public abstract class MixinTileEntityDispenser extends MixinTileEntityLockable i
 
     @Override
     public Entity activate() {
-        throw new NotImplementedException("activate to not implemented!");
+        throw new NotImplementedException("activate is not implemented!");
     }
 
     @Override
     public Entity dispenseFromSlot(int i) {
-        throw new NotImplementedException("dispenseFromSlot to not implemented!");
+        throw new NotImplementedException("dispenseFromSlot is not implemented!");
     }
 
     @Override
     public InventoryType getInventoryType() {
         return InventoryType.DISPENSER;
     }
+
 }

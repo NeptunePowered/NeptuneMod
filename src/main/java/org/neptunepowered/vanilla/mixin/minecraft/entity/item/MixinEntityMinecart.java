@@ -39,17 +39,10 @@ public abstract class MixinEntityMinecart extends MixinEntity implements Minecar
 
     @Shadow private boolean isInReverse;
 
-    @Shadow
-    public abstract void setRollingAmplitude(int p_70497_1_);
-
-    @Shadow
-    public abstract int getRollingAmplitude();
-
-    @Shadow
-    public abstract void setRollingDirection(int p_70494_1_);
-
-    @Shadow
-    public abstract int getRollingDirection();
+    @Shadow public abstract void setRollingAmplitude(int p_70497_1_);
+    @Shadow public abstract int getRollingAmplitude();
+    @Shadow public abstract void setRollingDirection(int p_70494_1_);
+    @Shadow public abstract int getRollingDirection();
 
     @Override
     public boolean isInReverse() {

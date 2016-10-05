@@ -44,4 +44,5 @@ public abstract class MixinNBTTagIntArray extends NBTBase {
     public void tag$setValue(int[] value) {
         intArray = value;
     }
+
 }

@@ -38,23 +38,12 @@ public abstract class MixinEntityZombie extends MixinEntityMob implements Zombie
 
     @Shadow private int conversionTime;
 
-    @Shadow
-    public abstract boolean isVillager();
-
-    @Shadow
-    public abstract void setVillager(boolean villager);
-
-    @Shadow
-    public abstract boolean isChild();
-
-    @Shadow
-    public abstract void setChild(boolean childZombie);
-
-    @Shadow
-    public abstract boolean isConverting();
-
-    @Shadow
-    public abstract void convertToVillager();
+    @Shadow public abstract boolean isVillager();
+    @Shadow public abstract void setVillager(boolean villager);
+    @Shadow public abstract boolean isChild();
+    @Shadow public abstract void setChild(boolean childZombie);
+    @Shadow public abstract boolean isConverting();
+    @Shadow public abstract void convertToVillager();
 
     @Intrinsic
     public boolean zombie$isVillager() {

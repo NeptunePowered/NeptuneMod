@@ -70,34 +70,19 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
     private boolean sleepIgnored;
     private ChatComponent displayName;
 
+    @Shadow public abstract boolean isBlocking();
+    @Shadow public abstract boolean isUsingItem();
+    @Shadow public abstract boolean isPlayerSleeping();
+    @Shadow public abstract boolean isPlayerFullyAsleep();
+    @Shadow public abstract Team getTeam();
+    @Shadow public abstract Scoreboard getWorldScoreboard();
+    @Shadow public abstract void triggerAchievement(StatBase achievementIn);
+    @Shadow public abstract void func_175145_a(StatBase p_175145_1_);
+
     @Shadow
     public GameProfile getGameProfile() {
         return null;
     }
-
-    @Shadow
-    public abstract boolean isBlocking();
-
-    @Shadow
-    public abstract boolean isUsingItem();
-
-    @Shadow
-    public abstract boolean isPlayerSleeping();
-
-    @Shadow
-    public abstract boolean isPlayerFullyAsleep();
-
-    @Shadow
-    public abstract Team getTeam();
-
-    @Shadow
-    public abstract Scoreboard getWorldScoreboard();
-
-    @Shadow
-    public abstract void triggerAchievement(StatBase achievementIn);
-
-    @Shadow
-    public abstract void func_175145_a(StatBase p_175145_1_);
 
     @Inject(method = "trySleep", at = @At(value = "INVOKE"))
     public void onTrySleep(BlockPos bedLocation, CallbackInfoReturnable<EntityPlayer.EnumStatus> callbackInfo) {

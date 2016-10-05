@@ -40,4 +40,5 @@ public abstract class MixinEntityEgg extends MixinEntityThrowable implements Chi
     public EntityType getEntityType() {
         return EntityType.CHICKENEGG;
     }
+
 }

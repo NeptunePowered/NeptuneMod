@@ -37,7 +37,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
 @Mixin(ServerCommandManager.class)
-public class MixinServerCommandManager extends MixinCommandHandler {
+public abstract class MixinServerCommandManager extends MixinCommandHandler {
 
     /**
      * @author jamierocks - 1st September 2016

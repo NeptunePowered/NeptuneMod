@@ -36,6 +36,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.util.BlockPos;
 import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
 import org.neptunepowered.vanilla.util.converter.PositionConverter;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -48,7 +49,7 @@ import java.util.Random;
 @Implements(@Interface(iface = BlockBase.class, prefix = "block$"))
 public abstract class MixinBlock implements BlockBase, IMixinBlock {
 
-    @Shadow protected Material blockMaterial;
+    @Shadow @Final protected Material blockMaterial;
     @Shadow protected boolean needsRandomTick;
     @Shadow protected double minX;
     @Shadow protected double minY;
@@ -59,95 +60,36 @@ public abstract class MixinBlock implements BlockBase, IMixinBlock {
 
     private Timing timing;
 
-    @Shadow
-    public abstract boolean isFullBlock();
-
-    @Shadow
-    public abstract int getLightOpacity();
-
-    @Shadow
-    public abstract int getLightValue();
-
-    @Shadow
-    public abstract boolean getUseNeighborBrightness();
-
-    @Shadow
-    public abstract boolean isNormalCube();
-
-    @Shadow
-    public abstract boolean isFullCube();
-
-    @Shadow
-    public abstract boolean hasTileEntity();
-
-    @Shadow
-    public abstract boolean isOpaqueCube();
-
-    @Shadow
-    public abstract boolean isCollidable();
-
-    @Shadow
-    public abstract int getMobilityFlag();
-
-    @Shadow
-    public abstract boolean isBlockNormalCube();
-
-    @Shadow
-    public abstract boolean isVisuallyOpaque();
-
-    @Shadow
-    public abstract int getRenderType();
-
-    @Shadow
-    public abstract String getLocalizedName();
-
-    @Shadow
-    public abstract boolean canProvidePower();
-
-    @Shadow
-    public abstract boolean getEnableStats();
-
-    @Shadow
-    public abstract boolean requiresUpdates();
-
-    @Shadow
-    public abstract boolean hasComparatorInputOverride();
-
-    @Shadow
-    public abstract int quantityDropped(Random random);
-
-    @Shadow
-    public abstract int tickRate(net.minecraft.world.World worldIn);
-
-    @Shadow
-    public abstract int getComparatorInputOverride(net.minecraft.world.World worldIn, BlockPos pos);
-
-    @Shadow
-    public abstract float getExplosionResistance(net.minecraft.entity.Entity exploder);
-
-    @Shadow
-    public abstract boolean isReplaceable(net.minecraft.world.World worldIn, BlockPos pos);
-
-    @Shadow
-    public abstract float getBlockHardness(net.minecraft.world.World worldIn, BlockPos pos);
-
-    @Shadow
-    public abstract double getBlockBoundsMinX();
-
-    @Shadow
-    public abstract double getBlockBoundsMaxX();
-
-    @Shadow
-    public abstract double getBlockBoundsMinY();
-
-    @Shadow
-    public abstract double getBlockBoundsMaxY();
-
-    @Shadow
-    public abstract double getBlockBoundsMinZ();
-
-    @Shadow
-    public abstract double getBlockBoundsMaxZ();
+    @Shadow public abstract boolean isFullBlock();
+    @Shadow public abstract int getLightOpacity();
+    @Shadow public abstract int getLightValue();
+    @Shadow public abstract boolean getUseNeighborBrightness();
+    @Shadow public abstract boolean isNormalCube();
+    @Shadow public abstract boolean isFullCube();
+    @Shadow public abstract boolean hasTileEntity();
+    @Shadow public abstract boolean isOpaqueCube();
+    @Shadow public abstract boolean isCollidable();
+    @Shadow public abstract int getMobilityFlag();
+    @Shadow public abstract boolean isBlockNormalCube();
+    @Shadow public abstract boolean isVisuallyOpaque();
+    @Shadow public abstract int getRenderType();
+    @Shadow public abstract String getLocalizedName();
+    @Shadow public abstract boolean canProvidePower();
+    @Shadow public abstract boolean getEnableStats();
+    @Shadow public abstract boolean requiresUpdates();
+    @Shadow public abstract boolean hasComparatorInputOverride();
+    @Shadow public abstract int quantityDropped(Random random);
+    @Shadow public abstract int tickRate(net.minecraft.world.World worldIn);
+    @Shadow public abstract int getComparatorInputOverride(net.minecraft.world.World worldIn, BlockPos pos);
+    @Shadow public abstract float getExplosionResistance(net.minecraft.entity.Entity exploder);
+    @Shadow public abstract boolean isReplaceable(net.minecraft.world.World worldIn, BlockPos pos);
+    @Shadow public abstract float getBlockHardness(net.minecraft.world.World worldIn, BlockPos pos);
+    @Shadow public abstract double getBlockBoundsMinX();
+    @Shadow public abstract double getBlockBoundsMaxX();
+    @Shadow public abstract double getBlockBoundsMinY();
+    @Shadow public abstract double getBlockBoundsMaxY();
+    @Shadow public abstract double getBlockBoundsMinZ();
+    @Shadow public abstract double getBlockBoundsMaxZ();
 
     @Intrinsic
     public boolean block$isFullBlock() {

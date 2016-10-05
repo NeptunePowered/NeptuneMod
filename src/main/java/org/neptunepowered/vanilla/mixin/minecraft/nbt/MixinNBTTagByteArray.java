@@ -44,4 +44,5 @@ public abstract class MixinNBTTagByteArray extends NBTBase {
     public void tag$setValue(byte[] value) {
         data = value;
     }
+
 }

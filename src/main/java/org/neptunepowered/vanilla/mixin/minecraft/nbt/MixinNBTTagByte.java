@@ -44,4 +44,5 @@ public abstract class MixinNBTTagByte extends NBTBase.NBTPrimitive {
     public void tag$setValue(byte value) {
         data = value;
     }
+
 }

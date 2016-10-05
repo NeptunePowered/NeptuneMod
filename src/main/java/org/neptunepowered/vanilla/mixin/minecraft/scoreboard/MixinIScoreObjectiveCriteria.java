@@ -51,4 +51,5 @@ public interface MixinIScoreObjectiveCriteria extends IScoreObjectiveCriteria, S
     default boolean criteria$isReadOnly() {
         return this.isReadOnly();
     }
+
 }

@@ -37,4 +37,5 @@ public abstract class MixinProjectile implements Projectile, IProjectile {
             float rotationPitch) {
         setThrowableHeading(motionX, motionY, motionZ, rotationYaw, rotationPitch);
     }
+
 }

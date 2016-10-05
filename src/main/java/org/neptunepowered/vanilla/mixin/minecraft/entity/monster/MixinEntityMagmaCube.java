@@ -40,4 +40,5 @@ public abstract class MixinEntityMagmaCube extends MixinEntitySlime implements M
     public EntityType getEntityType() {
         return EntityType.MAGMACUBE;
     }
+
 }

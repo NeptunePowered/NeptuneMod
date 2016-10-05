@@ -39,14 +39,9 @@ public abstract class MixinEntityIronGolem extends MixinEntityGolem implements I
 
     @Shadow private net.minecraft.village.Village villageObj;
 
-    @Shadow
-    public abstract boolean isPlayerCreated();
-
-    @Shadow
-    public abstract void setPlayerCreated(boolean b);
-
-    @Shadow
-    public abstract void setHoldingRose(boolean b);
+    @Shadow public abstract boolean isPlayerCreated();
+    @Shadow public abstract void setPlayerCreated(boolean b);
+    @Shadow public abstract void setHoldingRose(boolean b);
 
     @Override
     public Village getVillage() {
@@ -97,4 +92,5 @@ public abstract class MixinEntityIronGolem extends MixinEntityGolem implements I
     public EntityType getEntityType() {
         return EntityType.IRONGOLEM;
     }
+
 }

@@ -40,4 +40,5 @@ public abstract class MixinEntitySnowball extends MixinEntityThrowable implement
     public EntityType getEntityType() {
         return EntityType.SNOWBALL;
     }
+
 }

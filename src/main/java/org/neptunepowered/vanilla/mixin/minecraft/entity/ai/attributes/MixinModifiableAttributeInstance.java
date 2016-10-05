@@ -28,6 +28,7 @@ import net.canarymod.api.attributes.AttributeModifier;
 import net.canarymod.api.attributes.ModifiedAttribute;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -40,7 +41,7 @@ import java.util.UUID;
 @Implements(@Interface(iface = ModifiedAttribute.class, prefix = "attribute$"))
 public abstract class MixinModifiableAttributeInstance implements ModifiedAttribute {
 
-    @Shadow private IAttribute genericAttribute;
+    @Shadow @Final private IAttribute genericAttribute;
 
     @Shadow public abstract net.minecraft.entity.ai.attributes.AttributeModifier shadow$getModifier(UUID uuid);
     @Shadow public abstract void applyModifier(net.minecraft.entity.ai.attributes.AttributeModifier modifier);
@@ -83,4 +84,5 @@ public abstract class MixinModifiableAttributeInstance implements ModifiedAttrib
     public double getValue() {
         return this.getAttributeValue();
     }
+
 }

@@ -26,6 +26,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.scoreboard;
 import net.canarymod.api.scoreboard.ScoreObjective;
 import net.canarymod.api.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Score;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -34,26 +35,15 @@ import java.util.List;
 @Mixin(Score.class)
 public abstract class MixinScore implements net.canarymod.api.scoreboard.Score {
 
-    @Shadow private net.minecraft.scoreboard.Scoreboard theScoreboard;
-    @Shadow private net.minecraft.scoreboard.ScoreObjective theScoreObjective;
+    @Shadow @Final private net.minecraft.scoreboard.Scoreboard theScoreboard;
+    @Shadow @Final private net.minecraft.scoreboard.ScoreObjective theScoreObjective;
 
-    @Shadow
-    public abstract void increseScore(int amount);
-
-    @Shadow
-    public abstract void decreaseScore(int amount);
-
-    @Shadow
-    public abstract int getScorePoints();
-
-    @Shadow
-    public abstract void setScorePoints(int points);
-
-    @Shadow
-    public abstract void func_96651_a(List p_96651_1_);
-
-    @Shadow
-    public abstract String getPlayerName();
+    @Shadow public abstract void increseScore(int amount);
+    @Shadow public abstract void decreaseScore(int amount);
+    @Shadow public abstract int getScorePoints();
+    @Shadow public abstract void setScorePoints(int points);
+    @Shadow public abstract void func_96651_a(List p_96651_1_);
+    @Shadow public abstract String getPlayerName();
 
     @Override
     public String getName() {
@@ -99,4 +89,5 @@ public abstract class MixinScore implements net.canarymod.api.scoreboard.Score {
     public void update() {
         // TODO: look into this
     }
+
 }

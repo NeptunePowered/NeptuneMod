@@ -79,63 +79,28 @@ public abstract class MixinWorld implements IMixinWorld {
 
     protected WorldTimingsHandler timings = new WorldTimingsHandler((WorldServer) (Object) this);
 
+    @Shadow public abstract long getSeed();
+    @Shadow public abstract void updateEntity(Entity ent);
+    @Shadow protected abstract boolean isChunkLoaded(int x, int z, boolean allowEmpty);
+    @Shadow public abstract Chunk getChunkFromChunkCoords(int chunkX, int chunkZ);
+    @Shadow protected abstract void onEntityRemoved(Entity entityIn);
+    @Shadow public abstract boolean isBlockLoaded(BlockPos pos);
+    @Shadow public abstract Chunk getChunkFromBlockCoords(BlockPos pos);
+    @Shadow public abstract boolean addTileEntity(TileEntity tile);
+    @Shadow public abstract void markBlockForUpdate(BlockPos pos);
+    @Shadow public abstract boolean isAreaLoaded(BlockPos from, BlockPos to);
+    @Shadow public abstract IBlockState getBlockState(BlockPos pos);
+    @Shadow public abstract WorldInfo getWorldInfo();
+    @Shadow public abstract EnumDifficulty shadow$getDifficulty();
+    @Shadow public abstract GameRules getGameRules();
+    @Shadow public abstract int calculateSkylightSubtracted(float p_72967_1_);
+    @Shadow public abstract int getSkylightSubtracted();
+    @Shadow public abstract void setSkylightSubtracted(int newSkylightSubtracted);
+    @Shadow public abstract long getTotalWorldTime();
+
     @Shadow
     public void tick() {
     }
-
-    @Shadow
-    public abstract long getSeed();
-
-    @Shadow
-    public abstract void updateEntity(Entity ent);
-
-    @Shadow
-    protected abstract boolean isChunkLoaded(int x, int z, boolean allowEmpty);
-
-    @Shadow
-    public abstract Chunk getChunkFromChunkCoords(int chunkX, int chunkZ);
-
-    @Shadow
-    protected abstract void onEntityRemoved(Entity entityIn);
-
-    @Shadow
-    public abstract boolean isBlockLoaded(BlockPos pos);
-
-    @Shadow
-    public abstract Chunk getChunkFromBlockCoords(BlockPos pos);
-
-    @Shadow
-    public abstract boolean addTileEntity(TileEntity tile);
-
-    @Shadow
-    public abstract void markBlockForUpdate(BlockPos pos);
-
-    @Shadow
-    public abstract boolean isAreaLoaded(BlockPos from, BlockPos to);
-
-    @Shadow
-    public abstract IBlockState getBlockState(BlockPos pos);
-
-    @Shadow
-    public abstract WorldInfo getWorldInfo();
-
-    @Shadow
-    public abstract EnumDifficulty shadow$getDifficulty();
-
-    @Shadow
-    public abstract GameRules getGameRules();
-
-    @Shadow
-    public abstract int calculateSkylightSubtracted(float p_72967_1_);
-
-    @Shadow
-    public abstract int getSkylightSubtracted();
-
-    @Shadow
-    public abstract void setSkylightSubtracted(int newSkylightSubtracted);
-
-    @Shadow
-    public abstract long getTotalWorldTime();
 
     @Override
     public void setWorldInfo(WorldInfo worldInfo) {

@@ -28,6 +28,7 @@ import net.canarymod.api.chat.HoverEvent;
 import net.canarymod.api.chat.HoverEventAction;
 import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,8 +38,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = HoverEvent.class, prefix = "event$"))
 public abstract class MixinHoverEvent implements HoverEvent {
 
-    @Shadow private net.minecraft.event.HoverEvent.Action action;
-    @Shadow private IChatComponent value;
+    @Shadow @Final private net.minecraft.event.HoverEvent.Action action;
+    @Shadow @Final private IChatComponent value;
 
     @Override
     public HoverEventAction getAction() {
@@ -49,4 +50,5 @@ public abstract class MixinHoverEvent implements HoverEvent {
     public ChatComponent getValue() {
         return new NeptuneChatComponent(value);
     }
+
 }

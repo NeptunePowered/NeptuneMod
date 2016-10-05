@@ -32,11 +32,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(TileEntityLockable.class)
 public abstract class MixinTileEntityLockable extends MixinTileEntity implements LockableTileEntity {
 
-    @Shadow
-    public abstract LockCode getLockCode();
-
-    @Shadow
-    public abstract void setLockCode(LockCode code);
+    @Shadow public abstract LockCode getLockCode();
+    @Shadow public abstract void setLockCode(LockCode code);
 
     @Override
     public String getCode() {
@@ -52,4 +49,5 @@ public abstract class MixinTileEntityLockable extends MixinTileEntity implements
     public boolean hasCodeSet() {
         return !this.getLockCode().isEmpty();
     }
+
 }

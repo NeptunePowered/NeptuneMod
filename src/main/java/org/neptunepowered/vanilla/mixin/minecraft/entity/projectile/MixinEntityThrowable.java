@@ -35,6 +35,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public abstract class MixinEntityThrowable extends MixinEntity implements EntityThrowable {
 
     @Shadow private EntityLivingBase thrower;
+
     private float gravity = 0.3f;
 
     /**
@@ -60,4 +61,5 @@ public abstract class MixinEntityThrowable extends MixinEntity implements Entity
     public void setGravity(float velocity) {
         this.gravity = velocity;
     }
+
 }

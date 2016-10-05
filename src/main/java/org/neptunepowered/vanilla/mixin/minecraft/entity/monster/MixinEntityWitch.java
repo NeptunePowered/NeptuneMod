@@ -36,11 +36,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = Witch.class, prefix = "witch$"))
 public abstract class MixinEntityWitch extends MixinEntityMob implements Witch {
 
-    @Shadow
-    public abstract boolean getAggressive();
-
-    @Shadow
-    public abstract void setAggressive(boolean aggressive);
+    @Shadow public abstract boolean getAggressive();
+    @Shadow public abstract void setAggressive(boolean aggressive);
 
     @Override
     public boolean isAgressive() {
@@ -61,4 +58,5 @@ public abstract class MixinEntityWitch extends MixinEntityMob implements Witch {
     public EntityType getEntityType() {
         return EntityType.WITCH;
     }
+
 }

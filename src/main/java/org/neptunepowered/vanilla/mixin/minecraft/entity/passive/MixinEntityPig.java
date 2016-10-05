@@ -36,11 +36,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = Pig.class, prefix = "pig$"))
 public abstract class MixinEntityPig extends MixinEntityAnimal implements Pig {
 
-    @Shadow
-    public abstract boolean getSaddled();
-
-    @Shadow
-    public abstract void setSaddled(boolean saddled);
+    @Shadow public abstract boolean getSaddled();
+    @Shadow public abstract void setSaddled(boolean saddled);
 
     @Override
     public boolean isSaddled() {

@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.entity.ai.attributes;
 
 import net.canarymod.api.attributes.AttributeModifier;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -36,7 +37,7 @@ import java.util.UUID;
 @Implements(@Interface(iface = AttributeModifier.class, prefix = "modifier$"))
 public abstract class MixinAttributeModifier implements AttributeModifier {
 
-    @Shadow private UUID id;
+    @Shadow @Final private UUID id;
 
     @Shadow public abstract net.minecraft.entity.ai.attributes.AttributeModifier shadow$setSaved(boolean saved);
     @Shadow public abstract String getName();
@@ -73,4 +74,5 @@ public abstract class MixinAttributeModifier implements AttributeModifier {
     public AttributeModifier setSaved(boolean saved) {
         return (AttributeModifier) this.shadow$setSaved(saved);
     }
+
 }

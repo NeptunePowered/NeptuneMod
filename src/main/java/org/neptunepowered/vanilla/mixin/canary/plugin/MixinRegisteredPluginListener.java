@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = RegisteredPluginListener.class, remap = false)
-public class MixinRegisteredPluginListener implements IMixinRegisteredPluginListener {
+public abstract class MixinRegisteredPluginListener implements IMixinRegisteredPluginListener {
 
     @Shadow private PluginListener listener;
     @Shadow private Plugin plugin;

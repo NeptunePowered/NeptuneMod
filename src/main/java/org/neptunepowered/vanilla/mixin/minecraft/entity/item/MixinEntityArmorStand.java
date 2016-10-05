@@ -48,53 +48,22 @@ public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implem
     @Shadow private net.minecraft.util.Rotations leftLegRotation;
     @Shadow private net.minecraft.util.Rotations rightLegRotation;
 
-    @Shadow
-    public abstract ItemStack[] getInventory();
-
-    @Shadow
-    public abstract void setCurrentItemOrArmor(int slotIn, ItemStack stack);
-
-    @Shadow
-    public abstract boolean getShowArms();
-
-    @Shadow
-    public abstract boolean hasNoGravity();
-
-    @Shadow
-    public abstract void setNoGravity(boolean p_175425_1_);
-
-    @Shadow
-    public abstract boolean hasNoBasePlate();
-
-    @Shadow
-    public abstract void setNoBasePlate(boolean p_175426_1_);
-
-    @Shadow
-    public abstract void setHeadRotation(net.minecraft.util.Rotations p_175415_1_);
-
-    @Shadow
-    public abstract void setBodyRotation(net.minecraft.util.Rotations p_175424_1_);
-
-    @Shadow
-    public abstract void setLeftArmRotation(net.minecraft.util.Rotations p_175405_1_);
-
-    @Shadow
-    public abstract void setRightArmRotation(net.minecraft.util.Rotations p_175428_1_);
-
-    @Shadow
-    public abstract void setLeftLegRotation(net.minecraft.util.Rotations p_175417_1_);
-
-    @Shadow
-    public abstract void setRightLegRotation(net.minecraft.util.Rotations p_175427_1_);
-
-    @Shadow
-    public abstract boolean isSmall();
-
-    @Shadow
-    public abstract void setSmall(boolean small);
-
-    @Shadow
-    public abstract void setShowArms(boolean set);
+    @Shadow public abstract ItemStack[] getInventory();
+    @Shadow public abstract void setCurrentItemOrArmor(int slotIn, ItemStack stack);
+    @Shadow public abstract boolean getShowArms();
+    @Shadow public abstract boolean hasNoGravity();
+    @Shadow public abstract void setNoGravity(boolean p_175425_1_);
+    @Shadow public abstract boolean hasNoBasePlate();
+    @Shadow public abstract void setNoBasePlate(boolean p_175426_1_);
+    @Shadow public abstract void setHeadRotation(net.minecraft.util.Rotations p_175415_1_);
+    @Shadow public abstract void setBodyRotation(net.minecraft.util.Rotations p_175424_1_);
+    @Shadow public abstract void setLeftArmRotation(net.minecraft.util.Rotations p_175405_1_);
+    @Shadow public abstract void setRightArmRotation(net.minecraft.util.Rotations p_175428_1_);
+    @Shadow public abstract void setLeftLegRotation(net.minecraft.util.Rotations p_175417_1_);
+    @Shadow public abstract void setRightLegRotation(net.minecraft.util.Rotations p_175427_1_);
+    @Shadow public abstract boolean isSmall();
+    @Shadow public abstract void setSmall(boolean small);
+    @Shadow public abstract void setShowArms(boolean set);
 
     @Override
     public Item[] getAllEquipment() {
@@ -223,4 +192,5 @@ public abstract class MixinEntityArmorStand extends MixinEntityLivingBase implem
     public EntityType getEntityType() {
         return EntityType.ARMORSTAND;
     }
+
 }

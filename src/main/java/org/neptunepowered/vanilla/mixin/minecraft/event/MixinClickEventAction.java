@@ -31,11 +31,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ClickEvent.Action.class)
 public abstract class MixinClickEventAction implements ClickEventAction {
 
-    @Shadow
-    public abstract boolean shouldAllowInChat();
-
-    @Shadow
-    public abstract String getCanonicalName();
+    @Shadow public abstract boolean shouldAllowInChat();
+    @Shadow public abstract String getCanonicalName();
 
     @Override
     public boolean allowedInChat() {
@@ -46,4 +43,5 @@ public abstract class MixinClickEventAction implements ClickEventAction {
     public String getName() {
         return this.getCanonicalName();
     }
+
 }

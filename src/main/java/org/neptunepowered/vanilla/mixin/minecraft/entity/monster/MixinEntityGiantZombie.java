@@ -40,4 +40,5 @@ public abstract class MixinEntityGiantZombie extends MixinEntityMob implements G
     public EntityType getEntityType() {
         return EntityType.GIANTZOMBIE;
     }
+
 }

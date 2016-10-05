@@ -56,15 +56,15 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk, IMixi
 
     @Shadow @Final private Map<BlockPos, net.minecraft.tileentity.TileEntity> chunkTileEntityMap;
     @Shadow @Final private ClassInheritanceMultiMap<net.minecraft.entity.Entity>[] entityLists;
-    @Shadow private int xPosition;
-    @Shadow private int zPosition;
+    @Shadow @Final public int xPosition;
+    @Shadow @Final public int zPosition;
+    @Shadow @Final private int[] precipitationHeightMap;
+    @Shadow @Final private net.minecraft.world.World worldObj;
     @Shadow private boolean isModified;
     @Shadow private boolean isTerrainPopulated;
     @Shadow private boolean hasEntities;
     @Shadow private long lastSaveTime;
-    @Shadow private int[] precipitationHeightMap;
-    @Shadow private byte[] blockBiomeArray;
-    @Shadow private net.minecraft.world.World worldObj;
+    @Shadow public byte[] blockBiomeArray;
 
     @Shadow
     public abstract BiomeGenBase getBiome(BlockPos pos, WorldChunkManager chunkManager);

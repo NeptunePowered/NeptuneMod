@@ -43,23 +43,12 @@ public abstract class MixinVillage implements Village {
     @Shadow private int numVillagers;
     @Shadow private int numIronGolems;
 
-    @Shadow
-    public abstract int getReputationForPlayer(String p_82684_1_);
-
-    @Shadow
-    public abstract int setReputationForPlayer(String p_82688_1_, int p_82688_2_);
-
-    @Shadow
-    public abstract boolean isPlayerReputationTooLow(String p_82687_1_);
-
-    @Shadow
-    public abstract boolean isMatingSeason();
-
-    @Shadow
-    public abstract void endMatingSeason();
-
-    @Shadow
-    public abstract boolean isAnnihilated();
+    @Shadow public abstract int getReputationForPlayer(String p_82684_1_);
+    @Shadow public abstract int setReputationForPlayer(String p_82688_1_, int p_82688_2_);
+    @Shadow public abstract boolean isPlayerReputationTooLow(String p_82687_1_);
+    @Shadow public abstract boolean isMatingSeason();
+    @Shadow public abstract void endMatingSeason();
+    @Shadow public abstract boolean isAnnihilated();
 
     @Override
     public void setReputationForPlayer(Player player, int rep) {
@@ -115,4 +104,5 @@ public abstract class MixinVillage implements Village {
     public boolean village$isAnnihilated() {
         return this.isAnnihilated();
     }
+
 }

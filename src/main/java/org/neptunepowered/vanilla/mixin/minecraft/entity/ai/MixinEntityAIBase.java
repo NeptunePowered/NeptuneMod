@@ -71,4 +71,5 @@ public abstract class MixinEntityAIBase implements AIBase {
     public void ai$updateTask() {
         this.updateTask();
     }
+
 }

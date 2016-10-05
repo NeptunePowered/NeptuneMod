@@ -34,6 +34,7 @@ import net.canarymod.api.world.World;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -44,23 +45,13 @@ import java.util.Map;
 @Mixin(Scoreboard.class)
 public abstract class MixinScoreboard implements net.canarymod.api.scoreboard.Scoreboard {
 
-    @Shadow private Map teams;
+    @Shadow @Final private Map<String, ScorePlayerTeam> teams;
 
-    @Shadow
-    public abstract net.minecraft.scoreboard.ScoreObjective addScoreObjective(String name,
-            IScoreObjectiveCriteria criteria);
-
-    @Shadow
-    public abstract net.minecraft.scoreboard.ScoreObjective getObjective(String name);
-
-    @Shadow
-    public abstract void removeObjective(net.minecraft.scoreboard.ScoreObjective p_96519_1_);
-
-    @Shadow
-    public abstract Collection<net.minecraft.scoreboard.ScoreObjective> shadow$getScoreObjectives();
-
-    @Shadow
-    public abstract ScorePlayerTeam shadow$getTeam(String p_96508_1_);
+    @Shadow public abstract net.minecraft.scoreboard.ScoreObjective addScoreObjective(String name, IScoreObjectiveCriteria criteria);
+    @Shadow public abstract net.minecraft.scoreboard.ScoreObjective getObjective(String name);
+    @Shadow public abstract void removeObjective(net.minecraft.scoreboard.ScoreObjective p_96519_1_);
+    @Shadow public abstract Collection<net.minecraft.scoreboard.ScoreObjective> shadow$getScoreObjectives();
+    @Shadow public abstract ScorePlayerTeam shadow$getTeam(String p_96508_1_);
 
     @Override
     public List<ScoreObjective> getScoreObjectives() {
@@ -100,7 +91,7 @@ public abstract class MixinScoreboard implements net.canarymod.api.scoreboard.Sc
 
     @Override
     public List<Team> getTeams() {
-        return Lists.newArrayList(this.teams.values());
+        return (List) Lists.newArrayList(this.teams.values());
     }
 
     @Override
@@ -187,4 +178,5 @@ public abstract class MixinScoreboard implements net.canarymod.api.scoreboard.Sc
     public Team addTeam(String name) throws IllegalArgumentException {
         return null;
     }
+
 }

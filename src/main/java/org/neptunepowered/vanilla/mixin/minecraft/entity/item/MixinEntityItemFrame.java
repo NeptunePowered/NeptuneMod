@@ -41,17 +41,10 @@ public abstract class MixinEntityItemFrame extends MixinEntityHanging implements
 
     @Shadow private float itemDropChance;
 
-    @Shadow
-    public abstract ItemStack getDisplayedItem();
-
-    @Shadow
-    public abstract void setDisplayedItem(ItemStack p_82334_1_);
-
-    @Shadow
-    public abstract int shadow$getRotation();
-
-    @Shadow
-    public abstract void setItemRotation(int rot);
+    @Shadow public abstract ItemStack getDisplayedItem();
+    @Shadow public abstract void setDisplayedItem(ItemStack p_82334_1_);
+    @Shadow public abstract int shadow$getRotation();
+    @Shadow public abstract void setItemRotation(int rot);
 
     @Override
     public Item getItemInFrame() {
@@ -92,4 +85,5 @@ public abstract class MixinEntityItemFrame extends MixinEntityHanging implements
     public EntityType getEntityType() {
         return EntityType.ITEMFRAME;
     }
+
 }

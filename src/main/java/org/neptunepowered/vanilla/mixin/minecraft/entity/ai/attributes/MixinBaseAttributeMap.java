@@ -42,14 +42,9 @@ import java.util.Collection;
 @Implements(@Interface(iface = AttributeMap.class, prefix = "map$"))
 public abstract class MixinBaseAttributeMap implements AttributeMap {
 
-    @Shadow
-    public abstract void applyAttributeModifiers(Multimap p_111147_1_);
-
-    @Shadow
-    public abstract void removeAttributeModifiers(Multimap p_111148_1_);
-
-    @Shadow
-    public abstract Collection<IAttributeInstance> shadow$getAllAttributes();
+    @Shadow public abstract void applyAttributeModifiers(Multimap p_111147_1_);
+    @Shadow public abstract void removeAttributeModifiers(Multimap p_111148_1_);
+    @Shadow public abstract Collection<IAttributeInstance> shadow$getAllAttributes();
 
     @Override
     public ModifiedAttribute getModifiedAttribute(Attribute attribute) {
@@ -85,4 +80,5 @@ public abstract class MixinBaseAttributeMap implements AttributeMap {
     public void applyModifiers(Multimap<String, AttributeModifier> map) {
         this.applyAttributeModifiers(map);
     }
+
 }

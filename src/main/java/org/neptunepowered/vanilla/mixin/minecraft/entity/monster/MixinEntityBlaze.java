@@ -36,11 +36,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = Blaze.class, prefix = "blaze$"))
 public abstract class MixinEntityBlaze extends MixinEntityMob implements Blaze {
 
-    @Shadow
-    public abstract void setOnFire(boolean onFire);
-
-    @Shadow
-    public abstract boolean isBurning();
+    @Shadow public abstract void setOnFire(boolean onFire);
+    @Shadow public abstract boolean isBurning();
 
     @Intrinsic
     public boolean blaze$isBurning() {
@@ -61,4 +58,5 @@ public abstract class MixinEntityBlaze extends MixinEntityMob implements Blaze {
     public EntityType getEntityType() {
         return EntityType.BLAZE;
     }
+
 }

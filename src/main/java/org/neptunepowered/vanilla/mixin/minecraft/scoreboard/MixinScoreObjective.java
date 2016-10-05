@@ -30,6 +30,7 @@ import net.canarymod.api.scoreboard.Scoreboard;
 import net.canarymod.api.world.World;
 import net.minecraft.scoreboard.IScoreObjectiveCriteria;
 import net.minecraft.scoreboard.ScoreObjective;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -40,15 +41,12 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = net.canarymod.api.scoreboard.ScoreObjective.class, prefix = "objective$"))
 public abstract class MixinScoreObjective implements net.canarymod.api.scoreboard.ScoreObjective {
 
-    @Shadow private net.minecraft.scoreboard.Scoreboard theScoreboard;
-    @Shadow private IScoreObjectiveCriteria objectiveCriteria;
-    @Shadow private String name;
+    @Shadow @Final private net.minecraft.scoreboard.Scoreboard theScoreboard;
+    @Shadow @Final private IScoreObjectiveCriteria objectiveCriteria;
+    @Shadow @Final private String name;
 
-    @Shadow
-    public abstract String getDisplayName();
-
-    @Shadow
-    public abstract void setDisplayName(String nameIn);
+    @Shadow public abstract String getDisplayName();
+    @Shadow public abstract void setDisplayName(String nameIn);
 
     @Override
     public String getProtocolName() {
@@ -89,4 +87,5 @@ public abstract class MixinScoreObjective implements net.canarymod.api.scoreboar
     public Scoreboard getScoreboard() {
         return (Scoreboard) this.theScoreboard;
     }
+    
 }

@@ -30,11 +30,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(net.minecraft.event.HoverEvent.Action.class)
 public abstract class MixinHoverEventAction implements HoverEventAction {
 
-    @Shadow
-    public abstract boolean shouldAllowInChat();
-
-    @Shadow
-    public abstract String getCanonicalName();
+    @Shadow public abstract boolean shouldAllowInChat();
+    @Shadow public abstract String getCanonicalName();
 
     @Override
     public boolean allowedInChat() {
@@ -45,4 +42,5 @@ public abstract class MixinHoverEventAction implements HoverEventAction {
     public String getName() {
         return this.getCanonicalName();
     }
+
 }

@@ -75,4 +75,5 @@ public abstract class MixinEntityPainting extends MixinEntityHanging implements 
     public EntityType getEntityType() {
         return EntityType.PAINTING;
     }
+
 }

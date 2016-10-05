@@ -39,20 +39,11 @@ import org.spongepowered.asm.mixin.Shadow;
 @Implements(@Interface(iface = Sheep.class, prefix = "sheep$"))
 public abstract class MixinEntitySheep extends MixinEntityAnimal implements Sheep {
 
-    @Shadow
-    public abstract boolean getSheared();
-
-    @Shadow
-    public abstract void setSheared(boolean sheared);
-
-    @Shadow
-    public abstract void eatGrassBonus();
-
-    @Shadow
-    public abstract EnumDyeColor getFleeceColor();
-
-    @Shadow
-    public abstract void setFleeceColor(EnumDyeColor color);
+    @Shadow public abstract boolean getSheared();
+    @Shadow public abstract void setSheared(boolean sheared);
+    @Shadow public abstract void eatGrassBonus();
+    @Shadow public abstract EnumDyeColor getFleeceColor();
+    @Shadow public abstract void setFleeceColor(EnumDyeColor color);
 
     @Override
     public void eatGrass() {

@@ -42,11 +42,8 @@ public abstract class MixinPlayerCapabilities implements HumanCapabilities {
     @Shadow private float flySpeed;
     @Shadow private float walkSpeed;
 
-    @Shadow
-    public abstract float getFlySpeed();
-
-    @Shadow
-    public abstract float getWalkSpeed();
+    @Shadow public abstract float getFlySpeed();
+    @Shadow public abstract float getWalkSpeed();
 
     @Override
     public boolean isInvulnerable() {
@@ -107,4 +104,5 @@ public abstract class MixinPlayerCapabilities implements HumanCapabilities {
     public void setWalkSpeed(float speed) {
         this.walkSpeed = speed;
     }
+
 }

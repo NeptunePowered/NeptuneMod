@@ -45,17 +45,10 @@ public abstract class MixinEntityArrow extends MixinEntity implements Arrow {
     @Shadow private int ticksInGround;
     @Shadow private int ticksInAir;
 
-    @Shadow
-    public abstract boolean getIsCritical();
-
-    @Shadow
-    public abstract double getDamage();
-
-    @Shadow
-    public abstract void setDamage(double damage);
-
-    @Shadow
-    public abstract void setIsCritical(boolean critical);
+    @Shadow public abstract boolean getIsCritical();
+    @Shadow public abstract double getDamage();
+    @Shadow public abstract void setDamage(double damage);
+    @Shadow public abstract void setIsCritical(boolean critical);
 
     @Override
     public boolean canPickUp() {

@@ -42,4 +42,5 @@ public abstract class MixinInventoryEnderChest implements EnderChestInventory {
     public InventoryType getInventoryType() {
         return InventoryType.CHEST;
     }
+
 }

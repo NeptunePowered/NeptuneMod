@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 @Mixin(CommandHandler.class)
-public class MixinCommandHandler {
+public abstract class MixinCommandHandler {
 
     @Shadow @Final private Map<String, ICommand> commandMap;
 
