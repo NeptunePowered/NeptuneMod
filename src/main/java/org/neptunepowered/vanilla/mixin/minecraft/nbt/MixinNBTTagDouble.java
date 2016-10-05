@@ -24,25 +24,23 @@
 package org.neptunepowered.vanilla.mixin.minecraft.nbt;
 
 import net.canarymod.api.nbt.DoubleTag;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagDouble;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NBTTagDouble.class)
-@Implements(@Interface(iface = DoubleTag.class, prefix = "tag$"))
-public abstract class MixinNBTTagDouble extends NBTBase.NBTPrimitive {
+public abstract class MixinNBTTagDouble extends MixinNBTPrimitive<DoubleTag> implements DoubleTag {
 
     @Shadow private double data;
 
-    public double tag$getValue() {
-        return data;
+    @Override
+    public double getValue() {
+        return this.data;
     }
 
-    public void tag$setValue(double value) {
-        data = value;
+    @Override
+    public void setValue(double value) {
+        this.data = value;
     }
 
 }

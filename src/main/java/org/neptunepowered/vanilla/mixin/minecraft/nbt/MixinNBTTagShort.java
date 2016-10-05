@@ -24,25 +24,23 @@
 package org.neptunepowered.vanilla.mixin.minecraft.nbt;
 
 import net.canarymod.api.nbt.ShortTag;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagShort;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NBTTagShort.class)
-@Implements(@Interface(iface = ShortTag.class, prefix = "tag$"))
-public abstract class MixinNBTTagShort extends NBTBase.NBTPrimitive {
+public abstract class MixinNBTTagShort extends MixinNBTPrimitive<ShortTag> implements ShortTag {
 
     @Shadow private short data;
 
-    public short tag$getValue() {
-        return data;
+    @Override
+    public short getValue() {
+        return this.data;
     }
 
-    public void tag$setValue(short value) {
-        data = value;
+    @Override
+    public void setValue(short value) {
+        this.data = value;
     }
 
 }

@@ -25,14 +25,11 @@ package org.neptunepowered.vanilla.mixin.minecraft.nbt;
 
 import net.canarymod.api.nbt.PrimitiveTag;
 import net.minecraft.nbt.NBTBase;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NBTBase.NBTPrimitive.class)
-@Implements(@Interface(iface = PrimitiveTag.class, prefix = "tag$"))
-public abstract class MixinNBTPrimitive extends NBTBase {
+public abstract class MixinNBTPrimitive<T> extends MixinNBTBase<T> implements PrimitiveTag<T> {
 
     @Shadow public abstract long getLong();
     @Shadow public abstract int getInt();
@@ -41,28 +38,34 @@ public abstract class MixinNBTPrimitive extends NBTBase {
     @Shadow public abstract double getDouble();
     @Shadow public abstract float getFloat();
 
-    public long tag$getLongValue() {
-        return getLong();
+    @Override
+    public long getLongValue() {
+        return this.getLong();
     }
 
-    public int tag$getIntValue() {
-        return getInt();
+    @Override
+    public int getIntValue() {
+        return this.getInt();
     }
 
-    public short tag$getShortValue() {
-        return getShort();
+    @Override
+    public short getShortValue() {
+        return this.getShort();
     }
 
-    public byte tag$getByteValue() {
-        return getByte();
+    @Override
+    public byte getByteValue() {
+        return this.getByte();
     }
 
-    public double tag$getDoubleValue() {
-        return getDouble();
+    @Override
+    public double getDoubleValue() {
+        return this.getDouble();
     }
 
-    public float tag$getFloatValue() {
-        return getFloat();
+    @Override
+    public float getFloatValue() {
+        return this.getFloat();
     }
 
 }

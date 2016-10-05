@@ -26,13 +26,18 @@ package org.neptunepowered.vanilla.mixin.minecraft.nbt;
 import net.canarymod.api.nbt.BaseTag;
 import net.canarymod.api.nbt.NBTTagType;
 import net.minecraft.nbt.NBTBase;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NBTBase.class)
-public abstract class MixinNBTBase implements BaseTag {
+@Implements(@Interface(iface = BaseTag.class, prefix = "tag$"))
+public abstract class MixinNBTBase<T> implements BaseTag<T> {
 
     @Shadow public abstract byte getId();
+    @Shadow public abstract NBTBase shadow$copy();
 
     @Override
     public byte getTypeId() {
@@ -42,6 +47,11 @@ public abstract class MixinNBTBase implements BaseTag {
     @Override
     public NBTTagType getType() {
         return NBTTagType.getTypeFromId(getId());
+    }
+
+    @Intrinsic
+    public T tag$copy() {
+        return (T) this.shadow$copy();
     }
 
 }

@@ -31,17 +31,17 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 @Mixin(NBTTagCompound.class)
 @Implements(@Interface(iface = CompoundTag.class, prefix = "tag$"))
-public abstract class MixinNBTTagCompound extends NBTBase {
+public abstract class MixinNBTTagCompound extends MixinNBTBase<CompoundTag> implements CompoundTag {
 
     @Shadow private Map<String, NBTBase> tagMap;
 
@@ -59,125 +59,170 @@ public abstract class MixinNBTTagCompound extends NBTBase {
     @Shadow public abstract void setBoolean(String key, boolean value);
     @Shadow public abstract NBTBase getTag(String key);
     @Shadow public abstract boolean hasKey(String key, int type);
-    @Shadow public abstract NBTTagCompound getCompoundTag(String key);
+    @Shadow public abstract NBTTagCompound shadow$getCompoundTag(String key);
+    @Shadow public abstract byte getByte(String key);
+    @Shadow public abstract short getShort(String key);
+    @Shadow public abstract long getLong(String key);
+    @Shadow public abstract float getFloat(String key);
+    @Shadow public abstract double getDouble(String key);
+    @Shadow public abstract String getString(String key);
+    @Shadow public abstract byte[] getByteArray(String key);
+    @Shadow public abstract int[] getIntArray(String key);
+    @Shadow public abstract boolean getBoolean(String key);
 
-    public Collection<BaseTag> tag$values() {
-        Collection<BaseTag> values = new ArrayList<BaseTag>();
-        for (NBTBase tag : tagMap.values()) {
-            values.add((BaseTag) tag);
-        }
-        return values;
+    @Override
+    public Collection<BaseTag> values() {
+        return (Collection) this.tagMap.values();
     }
 
-    public Set<String> tag$keySet() {
-        return tagMap.keySet();
+    @Override
+    public Set<String> keySet() {
+        return this.tagMap.keySet();
     }
 
-    public void tag$put(String key, BaseTag value) {
-        setTag(key, (NBTBase) value);
+    @Override
+    public void put(String key, BaseTag value) {
+        this.setTag(key, (NBTBase) value);
     }
 
-    public void tag$put(String key, byte value) {
-        setByte(key, value);
+    @Override
+    public void put(String key, byte value) {
+        this.setByte(key, value);
     }
 
-    public void tag$put(String key, short value) {
-        setShort(key, value);
+    @Override
+    public void put(String key, short value) {
+        this.setShort(key, value);
     }
 
-    public void tag$put(String key, int value) {
-        setInteger(key, value);
+    @Override
+    public void put(String key, int value) {
+        this.setInteger(key, value);
     }
 
-    public void tag$put(String key, long value) {
-        setLong(key, value);
+    @Override
+    public void put(String key, long value) {
+        this.setLong(key, value);
     }
 
-    public void tag$put(String key, float value) {
-        setFloat(key, value);
+    @Override
+    public void put(String key, float value) {
+        this.setFloat(key, value);
     }
 
-    public void tag$put(String key, double value) {
-        setDouble(key, value);
+    @Override
+    public void put(String key, double value) {
+        this.setDouble(key, value);
     }
 
-    public void tag$put(String key, String value) {
-        setString(key, value);
+    @Override
+    public void put(String key, String value) {
+        this.setString(key, value);
     }
 
-    public void tag$put(String key, byte[] value) {
-        setByteArray(key, value);
+    @Override
+    public void put(String key, byte[] value) {
+        this.setByteArray(key, value);
     }
 
-    public void tag$put(String key, int[] value) {
-        setIntArray(key, value);
+    @Override
+    public void put(String key, int[] value) {
+        this.setIntArray(key, value);
     }
 
-    public void tag$put(String key, CompoundTag value) {
-        setTag(key, (NBTTagCompound) value);
+    @Override
+    public void put(String key, CompoundTag value) {
+        this.setTag(key, (NBTTagCompound) value);
     }
 
-    public void tag$put(String key, boolean value) {
-        setBoolean(key, value);
+    @Override
+    public void put(String key, boolean value) {
+        this.setBoolean(key, value);
     }
 
-    public BaseTag tag$get(String key) {
-        return (BaseTag) getTag(key);
+    @Override
+    public BaseTag get(String key) {
+        return (BaseTag) this.getTag(key);
     }
 
-    public boolean tag$containsKey(String key) {
+    @Override
+    public boolean containsKey(String key) {
         return this.tagMap.containsKey(key);
     }
 
-    public boolean tag$containsKey(String key, NBTTagType type) {
+    @Override
+    public boolean containsKey(String key, NBTTagType type) {
         return type != NBTTagType.UNKNOWN && hasKey(key, type == NBTTagType.ANY_NUMERIC ? 99 : type.ordinal());
     }
 
-    @Shadow(prefix = "tag$")
-    public abstract byte tag$getByte(String key);
-
-    @Shadow(prefix = "tag$")
-    public abstract short tag$getShort(String key);
-
-    public int tag$getInt(String key) {
-        return getInteger(key);
+    @Intrinsic
+    public byte tag$getByte(String key) {
+        return this.getByte(key);
     }
 
-    @Shadow(prefix = "tag$")
-    public abstract long tag$getLong(String key);
-
-    @Shadow(prefix = "tag$")
-    public abstract float tag$getFloat(String key);
-
-    @Shadow(prefix = "tag$")
-    public abstract double tag$getDouble(String key);
-
-    @Shadow(prefix = "tag$")
-    public abstract String tag$getString(String key);
-
-    @Shadow(prefix = "tag$")
-    public abstract byte[] tag$getByteArray(String key);
-
-    @Shadow(prefix = "tag$")
-    public abstract int[] tag$getIntArray(String key);
-
-    public CompoundTag tag$getCompoundTag(String key) {
-        return (CompoundTag) getCompoundTag(key);
+    @Intrinsic
+    public short tag$getShort(String key) {
+        return this.getShort(key);
     }
 
-    public <E extends BaseTag> ListTag<E> tag$getListTag(String key) {
+    @Override
+    public int getInt(String key) {
+        return this.getInteger(key);
+    }
+
+    @Intrinsic
+    public long tag$getLong(String key) {
+        return this.getLong(key);
+    }
+
+    @Intrinsic
+    public float tag$getFloat(String key) {
+        return this.getFloat(key);
+    }
+
+    @Intrinsic
+    public double tag$getDouble(String key) {
+        return this.getDouble(key);
+    }
+
+    @Intrinsic
+    public String tag$getString(String key) {
+        return this.getString(key);
+    }
+
+    @Intrinsic
+    public byte[] tag$getByteArray(String key) {
+        return this.getByteArray(key);
+    }
+
+    @Intrinsic
+    public int[] tag$getIntArray(String key) {
+        return this.getIntArray(key);
+    }
+
+    @Intrinsic
+    public CompoundTag key$getCompoundTag(String key) {
+        return (CompoundTag) this.shadow$getCompoundTag(key);
+    }
+
+    @Override
+    public <E extends BaseTag> ListTag<E> getListTag(String key) {
         return null;
     }
 
-    @Shadow(prefix = "tag$")
-    public abstract boolean tag$getBoolean(String key);
-
-    public void tag$remove(String key) {
-        tagMap.remove(key);
+    @Intrinsic
+    public boolean tag$getBoolean(String key) {
+        return this.getBoolean(key);
     }
 
-    public boolean tag$isEmpty() {
-        return tagMap.isEmpty();
+    @Override
+    public void remove(String key) {
+        this.tagMap.remove(key);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.tagMap.isEmpty();
     }
 
 }

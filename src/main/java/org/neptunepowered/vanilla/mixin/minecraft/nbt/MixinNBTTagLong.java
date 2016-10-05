@@ -24,25 +24,23 @@
 package org.neptunepowered.vanilla.mixin.minecraft.nbt;
 
 import net.canarymod.api.nbt.LongTag;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagLong;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NBTTagLong.class)
-@Implements(@Interface(iface = LongTag.class, prefix = "tag$"))
-public abstract class MixinNBTTagLong extends NBTBase.NBTPrimitive {
+public abstract class MixinNBTTagLong extends MixinNBTPrimitive<LongTag> implements LongTag {
 
     @Shadow private long data;
 
-    public long tag$getValue() {
-        return data;
+    @Override
+    public long getValue() {
+        return this.data;
     }
 
-    public void tag$setValue(long value) {
-        data = value;
+    @Override
+    public void setValue(long value) {
+        this.data = value;
     }
 
 }

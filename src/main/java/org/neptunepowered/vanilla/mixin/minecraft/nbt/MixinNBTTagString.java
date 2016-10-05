@@ -24,25 +24,23 @@
 package org.neptunepowered.vanilla.mixin.minecraft.nbt;
 
 import net.canarymod.api.nbt.StringTag;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagString;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(NBTTagString.class)
-@Implements(@Interface(iface = StringTag.class, prefix = "tag$"))
-public abstract class MixinNBTTagString extends NBTBase {
+public abstract class MixinNBTTagString extends MixinNBTBase<StringTag> implements StringTag {
 
     @Shadow private String data;
 
-    public String tag$getValue() {
-        return data;
+    @Override
+    public String getValue() {
+        return this.data;
     }
 
-    public void tag$setValue(String value) {
-        data = value;
+    @Override
+    public void setValue(String value) {
+        this.data = value;
     }
 
 }
