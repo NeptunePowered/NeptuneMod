@@ -52,4 +52,5 @@ public class NeptuneVanilla {
     private static void initNeptune() {
         new Neptune();
     }
+
 }

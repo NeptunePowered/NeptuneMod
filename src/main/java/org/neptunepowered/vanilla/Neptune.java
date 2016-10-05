@@ -28,7 +28,6 @@ import net.canarymod.bansystem.BanManager;
 import net.canarymod.commandsys.CommandDependencyException;
 import net.canarymod.commandsys.CommandList;
 import net.canarymod.commandsys.CommandManager;
-import net.canarymod.commandsys.CommandOwner;
 import net.canarymod.commandsys.DuplicateCommandException;
 import net.canarymod.database.DatabaseLoader;
 import net.canarymod.help.HelpManager;
@@ -52,8 +51,6 @@ import org.neptunepowered.vanilla.util.NeptuneJsonNBTUtility;
 
 public class Neptune extends Canary {
 
-    public static final CommandOwner minecraftCommandOwner = () -> "Minecraft";
-
     private boolean isInitialised = false;
 
     public Neptune() {
@@ -76,26 +73,26 @@ public class Neptune extends Canary {
         this.playerSelector = new NeptunePlayerSelector(); // player selector
         this.pluginManager = new DefaultPluginManager();
 
-        pluginManager.scanForPlugins(); // Scan for plugins
+        this.pluginManager.scanForPlugins(); // Scan for plugins
     }
 
-    public void initPermissions() {
+    private void initPermissions() {
         this.permissionManager = new PermissionManager();
     }
 
-    public void initUserAndGroupsManager() {
+    private void initUserAndGroupsManager() {
         this.userAndGroupsProvider = new UserAndGroupsProvider();
     }
 
-    public void initKits() {
+    private void initKits() {
         this.kitProvider = new KitProvider();
     }
 
-    public void initWarps() {
+    private void initWarps() {
         this.warpProvider = new WarpProvider();
     }
 
-    public void registerCanaryCommands() {
+    private void registerCanaryCommands() {
         try {
             this.commandManager.registerCommands(new CommandList(), getServer(), true);
         } catch (CommandDependencyException e) {
@@ -106,20 +103,20 @@ public class Neptune extends Canary {
         try {
             this.commandManager.registerCommands(new NeptuneCommand(), getServer(), true);
         } catch (CommandDependencyException e) {
-            log.error("Failed to set up system commands! Dependency resolution failed!", e);
+            log.error("Failed to set up Neptune commands! Dependency resolution failed!", e);
         } catch (DuplicateCommandException f) {
-            log.error("Failed to set up system commands! The command already exists!", f);
+            log.error("Failed to set up Neptune commands! The command already exists!", f);
         }
         try {
             this.commandManager.registerCommands(new TimingsCommand(), getServer(), true);
         } catch (CommandDependencyException e) {
-            log.error("Failed to set up system commands! Dependency resolution failed!", e);
+            log.error("Failed to set up Timings commands! Dependency resolution failed!", e);
         } catch (DuplicateCommandException f) {
-            log.error("Failed to set up system commands! The command already exists!", f);
+            log.error("Failed to set up Timings commands! The command already exists!", f);
         }
     }
 
-    public void initMOTDListener() {
+    private void initMOTDListener() {
         motd().registerMOTDListener(new CanaryMessageOfTheDayListener(), getServer(), false);
     }
 
@@ -136,4 +133,5 @@ public class Neptune extends Canary {
         this.initMOTDListener();
         isInitialised = true;
     }
+
 }

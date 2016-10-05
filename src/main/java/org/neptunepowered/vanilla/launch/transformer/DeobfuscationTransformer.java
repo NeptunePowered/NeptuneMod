@@ -45,9 +45,9 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.commons.RemappingClassAdapter;
-import org.objectweb.asm.commons.RemappingMethodAdapter;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 
@@ -382,7 +382,7 @@ public class DeobfuscationTransformer extends Remapper implements IClassTransfor
 
         private final String identifier;
 
-        private MappingType(String identifier) {
+        MappingType(String identifier) {
             this.identifier = identifier;
         }
 
@@ -392,7 +392,7 @@ public class DeobfuscationTransformer extends Remapper implements IClassTransfor
 
     }
 
-    private class RemappingAdapter extends RemappingClassAdapter {
+    private class RemappingAdapter extends ClassRemapper {
 
         public RemappingAdapter(ClassVisitor cv) {
             super(cv, DeobfuscationTransformer.this);
@@ -410,8 +410,8 @@ public class DeobfuscationTransformer extends Remapper implements IClassTransfor
         }
 
         @Override
-        protected MethodVisitor createRemappingMethodAdapter(int access, String newDesc, MethodVisitor mv) {
-            return new RemappingMethodAdapter(access, newDesc, mv, RemappingAdapter.this.remapper) {
+        protected MethodVisitor createMethodRemapper(MethodVisitor mv) {
+            return new MethodRemapper(mv, RemappingAdapter.this.remapper) {
 
                 @Override
                 public void visitFieldInsn(int opcode, String owner, String name, String desc) {
