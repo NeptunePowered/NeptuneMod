@@ -28,6 +28,7 @@ import static net.minecraft.server.MinecraftServer.getCurrentTimeMillis;
 import co.aikar.timings.NeptuneTimings;
 import co.aikar.timings.TimingsManager;
 import co.aikar.timings.WorldTimingsHandler;
+import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
@@ -55,7 +56,10 @@ import net.canarymod.tasks.ServerTask;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.crash.CrashReport;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkSystem;
 import net.minecraft.network.ServerStatusResponse;
@@ -91,6 +95,7 @@ import java.awt.GraphicsEnvironment;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.UUID;
@@ -100,16 +105,16 @@ import java.util.concurrent.FutureTask;
 @Implements(@Interface(iface = Server.class, prefix = "server$"))
 public abstract class MixinMinecraftServer implements Server, IMixinMinecraftServer {
 
-    @Shadow private static Logger logger;
+    @Shadow @Final private static Logger logger;
     @Shadow @Final public Profiler theProfiler;
     @Shadow @Final private PlayerUsageSnooper usageSnooper;
     @Shadow @Final private ServerStatusResponse statusResponse;
     @Shadow @Final private List<ITickable> playersOnline;
     @Shadow @Final private Random random;
+    @Shadow @Final public long[] tickTimeArray;
+    @Shadow @Final protected Queue<FutureTask<?>> futureTaskQueue;
     @Shadow public WorldServer[] worldServers;
     @Shadow public long[][] timeOfLastDimensionTick;
-    @Shadow public long[] tickTimeArray;
-    @Shadow protected Queue<FutureTask<?>> futureTaskQueue;
     @Shadow private int tickCounter;
     @Shadow private boolean startProfiling;
     @Shadow private boolean serverRunning;
@@ -631,12 +636,18 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public void addSmeltingRecipe(SmeltRecipe recipe) {
-
+        FurnaceRecipes.instance().addSmelting(Item.getItemById(recipe.getItemIDFrom()), (ItemStack) recipe.getResult(), recipe.getXP());
     }
 
     @Override
     public List<SmeltRecipe> getServerSmeltRecipes() {
-        return null;
+        final List<SmeltRecipe> smeltRecipes = Lists.newArrayList();
+
+        for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
+            smeltRecipes.add(new SmeltRecipe((net.canarymod.api.inventory.Item) entry.getKey(), (net.canarymod.api.inventory.Item) entry.getValue()));
+        }
+
+        return smeltRecipes;
     }
 
     @Override
