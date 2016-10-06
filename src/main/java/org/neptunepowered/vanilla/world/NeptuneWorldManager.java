@@ -56,7 +56,9 @@ import java.util.stream.Collectors;
 
 public class NeptuneWorldManager implements WorldManager {
 
-    private static final File WORLDS_DIR = new File(Canary.getWorkingDirectory(), "worlds");
+    public static final File WORLDS_DIR = new File(Canary.getWorkingDirectory(), "worlds");
+    public static final File WORLDS_BACKUP_DIR = new File(Canary.getWorkingDirectory(), "worldsbackup");
+    public static final File PLAYERS_DIR = new File(NeptuneWorldManager.WORLDS_DIR, "players");
 
     private final Map<String, World> loadedWorlds = Maps.newHashMap();
     private final List<String> existingWorlds = Lists.newArrayList();
@@ -67,13 +69,13 @@ public class NeptuneWorldManager implements WorldManager {
             return;
         }
 
-        File[] worlds = WORLDS_DIR.listFiles(File::isDirectory);
+        final File[] worlds = WORLDS_DIR.listFiles(File::isDirectory);
         if (worlds == null) {
             return;
         }
 
         for (File world : worlds) {
-            File[] dimensions = world.listFiles(pathname -> pathname.isDirectory() && pathname.getName().contains("_"));
+            final File[] dimensions = world.listFiles(pathname -> pathname.isDirectory() && pathname.getName().contains("_"));
             if (dimensions == null) {
                 continue;
             }
@@ -222,8 +224,14 @@ public class NeptuneWorldManager implements WorldManager {
     }
 
     @Override
-    public boolean destroyWorld(String s) {
-        return false;
+    public boolean destroyWorld(String name) {
+        final File worldDir = new File(WORLDS_DIR, name.replaceAll("_.+", "") + "/" + name);
+        final File backupDir = new File(WORLDS_BACKUP_DIR, name + "(" + System.currentTimeMillis() + ")");
+        final boolean success = backupDir.mkdirs() && worldDir.renameTo(new File(backupDir, worldDir.getName()));
+        if (success) {
+            this.existingWorlds.remove(name);
+        }
+        return success;
     }
 
     @Override
@@ -279,4 +287,5 @@ public class NeptuneWorldManager implements WorldManager {
                 .collect(Collectors.toList());
         return loadedWorlds.toArray(new String[loadedWorlds.size()]);
     }
+
 }

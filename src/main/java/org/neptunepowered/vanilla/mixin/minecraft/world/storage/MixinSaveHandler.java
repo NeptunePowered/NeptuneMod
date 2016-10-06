@@ -29,6 +29,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.SaveHandler;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
+import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -54,7 +55,7 @@ public abstract class MixinSaveHandler implements IMixinSaveHandler {
         NBTTagCompound nbttagcompound = null;
 
         try {
-            File file1 = new File(IMixinSaveHandler.PLAYERS_DIR, id.toString() + ".dat");
+            File file1 = new File(NeptuneWorldManager.PLAYERS_DIR, id.toString() + ".dat");
 
             if (file1.exists() && file1.isFile()) {
                 nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
@@ -77,8 +78,8 @@ public abstract class MixinSaveHandler implements IMixinSaveHandler {
         try {
             NBTTagCompound nbttagcompound = new NBTTagCompound();
             player.writeToNBT(nbttagcompound);
-            File file1 = new File(IMixinSaveHandler.PLAYERS_DIR, player.getUniqueID().toString() + ".dat.tmp");
-            File file2 = new File(IMixinSaveHandler.PLAYERS_DIR, player.getUniqueID().toString() + ".dat");
+            File file1 = new File(NeptuneWorldManager.PLAYERS_DIR, player.getUniqueID().toString() + ".dat.tmp");
+            File file2 = new File(NeptuneWorldManager.PLAYERS_DIR, player.getUniqueID().toString() + ".dat");
             CompressedStreamTools.writeCompressed(nbttagcompound, new FileOutputStream(file1));
 
             if (file2.exists()) {
@@ -112,7 +113,7 @@ public abstract class MixinSaveHandler implements IMixinSaveHandler {
      */
     @Overwrite
     public String[] getAvailablePlayerDat() {
-        List<String> availablePlayerData = Arrays.stream(IMixinSaveHandler.PLAYERS_DIR.listFiles((dir, name) -> name.endsWith(".dat")))
+        List<String> availablePlayerData = Arrays.stream(NeptuneWorldManager.PLAYERS_DIR.listFiles((dir, name) -> name.endsWith(".dat")))
                 .map(f -> f.getName().replace(".dat", ""))
                 .collect(Collectors.toList());
         return availablePlayerData.toArray(new String[availablePlayerData.size()]);

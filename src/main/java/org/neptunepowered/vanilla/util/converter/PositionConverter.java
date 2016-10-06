@@ -35,4 +35,5 @@ public final class PositionConverter {
     public static BlockPos of(Position canary) {
         return new BlockPos(canary.getX(), canary.getY(), canary.getZ());
     }
+
 }

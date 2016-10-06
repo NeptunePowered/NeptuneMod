@@ -67,4 +67,5 @@ public final class ArtConverter {
     public static EntityPainting.EnumArt of(Painting.ArtType art) {
         return map.inverse().get(art);
     }
+    
 }

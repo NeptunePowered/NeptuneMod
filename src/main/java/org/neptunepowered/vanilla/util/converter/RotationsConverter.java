@@ -34,4 +34,5 @@ public final class RotationsConverter {
     public static net.minecraft.util.Rotations of(Rotations canary) {
         return new net.minecraft.util.Rotations(canary.getX(), canary.getY(), canary.getZ());
     }
+
 }

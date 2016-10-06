@@ -45,4 +45,5 @@ public final class GameModeConverter {
     public static WorldSettings.GameType of(GameMode art) {
         return map.inverse().get(art);
     }
+
 }

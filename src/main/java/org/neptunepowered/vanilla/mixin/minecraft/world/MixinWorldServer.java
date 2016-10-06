@@ -585,7 +585,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
 
     @Override
     public PlayerManager getPlayerManager() {
-        return null;
+        return (PlayerManager) this.thePlayerManager;
     }
 
     @Override
