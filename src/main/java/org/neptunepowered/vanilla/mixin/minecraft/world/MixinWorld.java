@@ -35,11 +35,13 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ReportedException;
 import net.minecraft.village.VillageCollection;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -55,6 +57,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 @Mixin(World.class)
 public abstract class MixinWorld implements IMixinWorld {
@@ -76,6 +79,8 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow protected boolean spawnPeacefulMobs;
     @Shadow protected IChunkProvider chunkProvider;
     @Shadow protected VillageCollection villageCollectionObj;
+    @Shadow protected Set<ChunkCoordIntPair> activeChunkSet;
+    @Shadow protected int updateLCG;
 
     protected WorldTimingsHandler timings = new WorldTimingsHandler((WorldServer) (Object) this);
 
@@ -97,9 +102,21 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow public abstract int getSkylightSubtracted();
     @Shadow public abstract void setSkylightSubtracted(int newSkylightSubtracted);
     @Shadow public abstract long getTotalWorldTime();
+    @Shadow protected abstract void playMoodSoundAndCheckLight(int p_147467_1_, int p_147467_2_, Chunk chunkIn);
+    @Shadow public abstract boolean isRainingAt(BlockPos strikePosition);
+    @Shadow public abstract BlockPos getPrecipitationHeight(BlockPos pos);
+    @Shadow public abstract boolean canBlockFreezeNoWater(BlockPos pos);
+    @Shadow public abstract boolean setBlockState(BlockPos pos, IBlockState state);
+    @Shadow public abstract boolean canSnowAt(BlockPos pos, boolean checkLight);
+    @Shadow public abstract BiomeGenBase getBiomeGenForCoords(final BlockPos pos);
 
     @Shadow
     public void tick() {
+    }
+
+    @Shadow
+    protected void updateBlocks() {
+
     }
 
     @Override

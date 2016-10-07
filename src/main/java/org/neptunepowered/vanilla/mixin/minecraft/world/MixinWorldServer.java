@@ -59,14 +59,18 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.entity.effect.EntityLightningBolt;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ReportedException;
 import net.minecraft.village.VillageSiege;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.SpawnerAnimals;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
@@ -99,7 +103,8 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     @Shadow public abstract void scheduleUpdate(BlockPos pos, net.minecraft.block.Block blockIn, int delay);
     @Shadow public abstract boolean areAllPlayersAsleep();
     @Shadow protected abstract void wakeAllPlayers();
-    @Shadow protected abstract void updateBlocks();
+    @Shadow protected abstract BlockPos adjustPosToNearbyEntity(BlockPos pos);
+    @Shadow public abstract boolean addWeatherEffect(net.minecraft.entity.Entity entityIn);
 
     @Shadow
     private void sendQueuedBlockEvents() {
@@ -254,6 +259,105 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
                 this.theProfiler.endSection();
                 this.pendingTickListEntriesThisTick.clear();
                 return !this.pendingTickListEntriesTreeSet.isEmpty();
+            }
+        }
+    }
+
+    /**
+     * @author jamierocks - 7th October 2016
+     * @reason Add timings calls
+     */
+    @Overwrite
+    protected void updateBlocks() {
+        super.updateBlocks();
+
+        if (this.worldInfo.getTerrainType() == net.minecraft.world.WorldType.DEBUG_WORLD) {
+            for (ChunkCoordIntPair chunkcoordintpair1 : this.activeChunkSet) {
+                this.getChunkFromChunkCoords(chunkcoordintpair1.chunkXPos, chunkcoordintpair1.chunkZPos).func_150804_b(false);
+            }
+        } else {
+            int i = 0;
+            int j = 0;
+
+            for (ChunkCoordIntPair chunkcoordintpair : this.activeChunkSet) {
+                int k = chunkcoordintpair.chunkXPos * 16;
+                int l = chunkcoordintpair.chunkZPos * 16;
+                this.theProfiler.startSection("getChunk");
+                net.minecraft.world.chunk.Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
+                this.playMoodSoundAndCheckLight(k, l, chunk);
+                this.theProfiler.endStartSection("tickChunk");
+                chunk.func_150804_b(false);
+                this.theProfiler.endStartSection("thunder");
+
+                if (this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering()) {
+                    this.updateLCG = this.updateLCG * 3 + 1013904223;
+                    int i1 = this.updateLCG >> 2;
+                    BlockPos blockpos = this.adjustPosToNearbyEntity(new BlockPos(k + (i1 & 15), 0, l + (i1 >> 8 & 15)));
+
+                    if (this.isRainingAt(blockpos)) {
+                        this.addWeatherEffect(new EntityLightningBolt(
+                                (net.minecraft.world.World) (Object) this,
+                                (double) blockpos.getX(),
+                                (double) blockpos.getY(),
+                                (double) blockpos.getZ()
+                        ));
+                    }
+                }
+
+                this.theProfiler.endStartSection("iceandsnow");
+
+                if (this.rand.nextInt(16) == 0) {
+                    this.updateLCG = this.updateLCG * 3 + 1013904223;
+                    int k2 = this.updateLCG >> 2;
+                    BlockPos blockpos2 = this.getPrecipitationHeight(new BlockPos(k + (k2 & 15), 0, l + (k2 >> 8 & 15)));
+                    BlockPos blockpos1 = blockpos2.down();
+
+                    if (this.canBlockFreezeNoWater(blockpos1)) {
+                        this.setBlockState(blockpos1, Blocks.ice.getDefaultState());
+                    }
+
+                    if (this.isRaining() && this.canSnowAt(blockpos2, true)) {
+                        this.setBlockState(blockpos2, Blocks.snow_layer.getDefaultState());
+                    }
+
+                    if (this.isRaining() && this.getBiomeGenForCoords(blockpos1).canRain()) {
+                        this.getBlockState(blockpos1).getBlock().fillWithRain((net.minecraft.world.World) (Object) this, blockpos1);
+                    }
+                }
+
+                this.theProfiler.endStartSection("tickBlocks");
+                int l2 = this.getGameRules().getInt("randomTickSpeed");
+
+                this.timings.chunkTicksBlocks.startTiming(); // Neptune - timings
+                if (l2 > 0) {
+                    for (ExtendedBlockStorage extendedblockstorage : chunk.getBlockStorageArray()) {
+                        if (extendedblockstorage != null && extendedblockstorage.getNeedsRandomTick()) {
+                            for (int j1 = 0; j1 < l2; ++j1) {
+                                this.updateLCG = this.updateLCG * 3 + 1013904223;
+                                int k1 = this.updateLCG >> 2;
+                                int l1 = k1 & 15;
+                                int i2 = k1 >> 8 & 15;
+                                int j2 = k1 >> 16 & 15;
+                                ++j;
+                                IBlockState iblockstate = extendedblockstorage.get(l1, j2, i2);
+                                net.minecraft.block.Block block = iblockstate.getBlock();
+
+                                if (block.getTickRandomly()) {
+                                    ++i;
+                                    block.randomTick(
+                                            (net.minecraft.world.World) (Object) this,
+                                            new BlockPos(l1 + k, j2 + extendedblockstorage.getYLocation(), i2 + l),
+                                            iblockstate,
+                                            this.rand
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+                this.timings.chunkTicksBlocks.stopTiming(); // Neptune - timings
+
+                this.theProfiler.endSection();
             }
         }
     }

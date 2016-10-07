@@ -242,6 +242,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
                 this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
 
+                NeptuneTimings.timeUpdateTimer.startTiming(); // Neptune - timings
                 if (this.tickCounter % 20 == 0) {
                     this.theProfiler.startSection("timeSync");
                     this.serverConfigManager.sendPacketToAllPlayersInDimension(
@@ -249,6 +250,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
                                     worldserver.getGameRules().getBoolean("doDaylightCycle")), worldserver.provider.getDimensionId());
                     this.theProfiler.endSection();
                 }
+                NeptuneTimings.timeUpdateTimer.stopTiming(); // Neptune - timings
 
                 this.theProfiler.startSection("tick");
 
@@ -345,8 +347,10 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public boolean consoleCommand(String command) {
+        NeptuneTimings.serverCommandTimer.startTiming();
         ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(this, command).call();
         if (commandHook.isCanceled()) {
+            NeptuneTimings.serverCommandTimer.stopTiming();
             return true;
         }
 
@@ -358,9 +362,11 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         }
 
         if (!Canary.commands().parseCommand(this, commandName, args)) {
+            NeptuneTimings.serverCommandTimer.stopTiming();
             return this.getCommandManager().executeCommand((ICommandSender) this, command) > 0;
         }
 
+        NeptuneTimings.serverCommandTimer.stopTiming();
         return true;
     }
 
