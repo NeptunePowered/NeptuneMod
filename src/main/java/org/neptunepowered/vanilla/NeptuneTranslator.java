@@ -48,4 +48,5 @@ public class NeptuneTranslator extends NativeTranslateBridge {
     protected boolean nativeCanTranslate(String key) {
         return StatCollector.canTranslate(key);
     }
+
 }

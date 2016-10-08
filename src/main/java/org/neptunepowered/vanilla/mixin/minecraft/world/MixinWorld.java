@@ -41,6 +41,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.Chunk;
@@ -109,6 +110,7 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow public abstract boolean setBlockState(BlockPos pos, IBlockState state);
     @Shadow public abstract boolean canSnowAt(BlockPos pos, boolean checkLight);
     @Shadow public abstract BiomeGenBase getBiomeGenForCoords(final BlockPos pos);
+    @Shadow public abstract WorldType shadow$getWorldType();
 
     @Shadow
     public void tick() {

@@ -644,17 +644,17 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
 
     @Override
     public Difficulty getDifficulty() {
-        return null;
+        return Difficulty.fromId(this.shadow$getDifficulty().getDifficultyId());
     }
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-
+        this.getWorldInfo().setDifficulty(EnumDifficulty.getDifficultyEnum(difficulty.getId()));
     }
 
     @Override
     public WorldType getWorldType() {
-        return null;
+        return WorldType.fromString(this.shadow$getWorldType().getWorldTypeName());
     }
 
     @Override
