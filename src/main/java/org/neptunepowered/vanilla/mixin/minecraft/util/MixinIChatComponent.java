@@ -24,19 +24,42 @@
 package org.neptunepowered.vanilla.mixin.minecraft.util;
 
 import net.canarymod.api.chat.ChatComponent;
-import net.minecraft.util.ChatComponentStyle;
-import net.minecraft.util.ChatComponentText;
+import net.canarymod.api.chat.ChatStyle;
+import net.minecraft.util.IChatComponent;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(ChatComponentText.class)
-public abstract class MixinChatComponentText extends ChatComponentStyle {
+@Mixin(IChatComponent.class)
+@Implements(@Interface(iface = ChatComponent.class, prefix = "component$"))
+public interface MixinIChatComponent extends IChatComponent {
 
-    @Shadow public String text;
+    default ChatComponent component$setChatStyle(ChatStyle chatStyle) {
+        return (ChatComponent) this.setChatStyle((net.minecraft.util.ChatStyle) chatStyle);
+    }
 
-    public ChatComponent setText(String text) {
-        this.text = text;
+    default ChatComponent component$setText(String s) {
         return (ChatComponent) this;
+    }
+
+    default ChatComponent component$appendSibling(ChatComponent chatComponent) {
+        return (ChatComponent) this.appendSibling((IChatComponent) chatComponent);
+    }
+
+    default String component$getText() {
+        return this.getUnformattedText();
+    }
+
+    default String component$getFullText() {
+        return this.getUnformattedTextForChat();
+    }
+
+    default String component$serialize() {
+        return IChatComponent.Serializer.componentToJson(this);
+    }
+
+    default ChatComponent component$clone() {
+        return (ChatComponent) this.createCopy();
     }
 
 }

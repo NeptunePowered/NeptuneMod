@@ -48,7 +48,6 @@ import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldSettings;
 import org.apache.logging.log4j.Logger;
-import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -93,8 +92,8 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
                 packet.action = S38PacketPlayerListItem.Action.valueOf(PlayerListAction.REMOVE_PLAYER.name());
                 WorldSettings.GameType gameType =
                         WorldSettings.GameType.getByID(playerListHook.getData().getMode().getId());
-                IChatComponent iChatComponent = playerListHook.getData().displayNameSet() ? ((NeptuneChatComponent)
-                        playerListHook.getData().getDisplayName()).getHandle() : null;
+                IChatComponent iChatComponent = playerListHook.getData().displayNameSet() ?
+                        (IChatComponent) playerListHook.getData().getDisplayName() : null;
                 packet.players.add(packet.new AddPlayerData(playerListHook.getData()
                         .getProfile(), playerListHook.getData().getPing(), gameType, iChatComponent));
                 playerMP.playerNetServerHandler.sendPacket(packet);

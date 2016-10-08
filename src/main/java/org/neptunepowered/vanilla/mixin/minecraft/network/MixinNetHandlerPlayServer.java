@@ -48,7 +48,6 @@ import net.minecraft.util.IChatComponent;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.util.helper.NetHandlerPlayServerHelper;
-import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -200,7 +199,7 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
 
     @Override
     public void sendMessage(ChatComponent chatComponent) {
-        this.sendPacket(new S02PacketChat(((NeptuneChatComponent) chatComponent).getHandle()));
+        this.sendPacket(new S02PacketChat((IChatComponent) chatComponent));
     }
 
     @Override

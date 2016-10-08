@@ -45,7 +45,6 @@ import net.minecraft.stats.StatBase;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.IChatComponent;
-import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -116,7 +115,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
         String serialised = "";
         if (this.displayName != null) {
-            serialised = IChatComponent.Serializer.componentToJson(((NeptuneChatComponent) displayName).getHandle());
+            serialised = IChatComponent.Serializer.componentToJson((IChatComponent) displayName);
         }
 
         this.metadata.setString("displayName", serialised);

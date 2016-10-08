@@ -33,7 +33,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -60,10 +59,10 @@ public abstract class MixinTileEntitySign extends MixinTileEntity implements Sig
 
     @Override
     public ChatComponent[] getLines() {
-        List<ChatComponent> chatComponents = Lists.newArrayList();
+        final List<ChatComponent> chatComponents = Lists.newArrayList();
 
         for (IChatComponent chatComponent : this.signText) {
-            chatComponents.add(new NeptuneChatComponent(chatComponent));
+            chatComponents.add((ChatComponent) chatComponent);
         }
 
         return chatComponents.toArray(new ChatComponent[chatComponents.size()]);
@@ -92,7 +91,7 @@ public abstract class MixinTileEntitySign extends MixinTileEntity implements Sig
     public void setComponents(ChatComponent[] chatComponents) {
         int i = 0;
         for (ChatComponent line : chatComponents) {
-            this.signText[i] = ((NeptuneChatComponent) line).getHandle();
+            this.signText[i] = (IChatComponent) line;
             i++;
         }
     }
@@ -104,7 +103,7 @@ public abstract class MixinTileEntitySign extends MixinTileEntity implements Sig
 
     @Override
     public void setComponentOnLine(ChatComponent chatComponent, int i) {
-        this.signText[i] = ((NeptuneChatComponent) chatComponent).getHandle();
+        this.signText[i] = (IChatComponent) chatComponent;
     }
 
     @Override

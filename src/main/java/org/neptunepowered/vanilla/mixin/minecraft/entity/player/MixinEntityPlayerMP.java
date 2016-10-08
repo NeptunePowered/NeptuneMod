@@ -86,7 +86,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.visualillusionsent.utils.DateUtils;
 import net.visualillusionsent.utils.StringUtils;
-import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.util.IMixinFoodStats;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
@@ -156,7 +155,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
         PlayerDeathHook hook = (PlayerDeathHook) new PlayerDeathHook(
                 this,
                 (net.canarymod.api.DamageSource) cause,
-                new NeptuneChatComponent(this.getCombatTracker().getDeathMessage())
+                (ChatComponent) this.getCombatTracker().getDeathMessage()
         ).call();
         // Neptune - PlayerDeathHook end
 
@@ -167,13 +166,13 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
             if (team != null && team.getDeathMessageVisibility() != Team.EnumVisible.ALWAYS) {
                 if (team.getDeathMessageVisibility() == Team.EnumVisible.HIDE_FOR_OTHER_TEAMS) {
                     this.mcServer.getConfigurationManager()
-                            .sendMessageToAllTeamMembers((EntityPlayerMP) (Object) this, ((NeptuneChatComponent) hook.getDeathMessage1()).getHandle());
+                            .sendMessageToAllTeamMembers((EntityPlayerMP) (Object) this, (IChatComponent) hook.getDeathMessage1());
                 } else if (team.getDeathMessageVisibility() == Team.EnumVisible.HIDE_FOR_OWN_TEAM) {
                     this.mcServer.getConfigurationManager().sendMessageToTeamOrEvryPlayer(
-                            (EntityPlayerMP) (Object) this, ((NeptuneChatComponent) hook.getDeathMessage1()).getHandle());
+                            (EntityPlayerMP) (Object) this, (IChatComponent) hook.getDeathMessage1());
                 }
             } else {
-                this.mcServer.getConfigurationManager().sendChatMsg(((NeptuneChatComponent) hook.getDeathMessage1()).getHandle());
+                this.mcServer.getConfigurationManager().sendChatMsg((IChatComponent) hook.getDeathMessage1());
             }
         }
 
@@ -361,10 +360,10 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     public void sendPlayerListData(PlayerListData data) {
         final S38PacketPlayerListItem packet = new S38PacketPlayerListItem(PlayerListActionConverter.of(data.getAction()));
         packet.players.add(packet.new AddPlayerData(
-                data.getProfile(),                                          // gameProfile
-                data.getPing(),                                             // ping
-                GameModeConverter.of(data.getMode()),                       // gameType
-                ((NeptuneChatComponent) data.getDisplayName()).getHandle()) // displayName
+                data.getProfile(),                      // gameProfile
+                data.getPing(),                         // ping
+                GameModeConverter.of(data.getMode()),   // gameType
+                (IChatComponent) data.getDisplayName()) // displayName
         );
         this.playerNetServerHandler.sendPacket(packet);
     }

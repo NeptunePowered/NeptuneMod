@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.server.network;
 
 import com.mojang.authlib.GameProfile;
+import net.canarymod.api.chat.ChatComponent;
 import net.canarymod.hook.system.ServerListPingHook;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
@@ -33,7 +34,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.NetHandlerStatusServer;
 import net.minecraft.util.IChatComponent;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetworkManager;
-import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -67,7 +67,7 @@ public class MixinNetHandlerStatusServer {
                             ((IMixinNetworkManager) this.networkManager).getProtocolVersion(),
                             ((IMixinNetworkManager) this.networkManager).getHostnamePinged(),
                             ((IMixinNetworkManager) this.networkManager).getPortPinged(),
-                            new NeptuneChatComponent(this.server.getServerStatusResponse().getServerDescription()),
+                            (ChatComponent) this.server.getServerStatusResponse().getServerDescription(),
                             this.server.getServerStatusResponse().getPlayerCountData().getOnlinePlayerCount(),
                             this.server.getServerStatusResponse().getPlayerCountData().getMaxPlayers(),
                             this.server.getServerStatusResponse().getFavicon(),
@@ -83,7 +83,7 @@ public class MixinNetHandlerStatusServer {
                     .getMaxPlayers(), hook.getCurrentPlayers());
             playerCountData.setPlayers(hook.getProfiles().toArray(new GameProfile[hook.getProfiles().size()]));
             response.setPlayerCountData(playerCountData);
-            response.setServerDescription(((NeptuneChatComponent) hook.getMotd()).getHandle());
+            response.setServerDescription((IChatComponent) hook.getMotd());
             response.setFavicon(hook.getFavicon());
 
             this.networkManager.sendPacket(new S00PacketServerInfo(response));

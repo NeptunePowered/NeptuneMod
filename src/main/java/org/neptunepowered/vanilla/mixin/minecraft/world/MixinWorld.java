@@ -29,6 +29,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -70,6 +71,7 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow @Final public List<TileEntity> loadedTileEntityList;
     @Shadow @Final public List<TileEntity> tickableTileEntities;
     @Shadow @Final private List<TileEntity> addedTileEntityList;
+    @Shadow @Final public List<EntityPlayer> playerEntities;
     @Shadow @Final private WorldBorder worldBorder;
     @Shadow @Final public Profiler theProfiler;
     @Shadow @Final public Random rand;

@@ -160,6 +160,7 @@
         "util.MixinDamageSource",
         "util.MixinEnumChatFormatting",
         "util.MixinFoodStats",
+        "util.MixinIChatComponent",
         "village.MixinMerchantRecipe",
         "village.MixinVillage",
         "world.biome.MixinBiomeGenBase",

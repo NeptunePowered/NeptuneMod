@@ -55,6 +55,10 @@ import net.canarymod.api.world.effects.Particle;
 import net.canarymod.api.world.effects.SoundEffect;
 import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
+import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.BlockOldLeaf;
+import net.minecraft.block.BlockOldLog;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.crash.CrashReport;
@@ -72,8 +76,22 @@ import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
+import net.minecraft.world.gen.feature.WorldGenBigMushroom;
+import net.minecraft.world.gen.feature.WorldGenBigTree;
+import net.minecraft.world.gen.feature.WorldGenCanopyTree;
+import net.minecraft.world.gen.feature.WorldGenForest;
+import net.minecraft.world.gen.feature.WorldGenMegaJungle;
+import net.minecraft.world.gen.feature.WorldGenMegaPineTree;
+import net.minecraft.world.gen.feature.WorldGenSavannaTree;
+import net.minecraft.world.gen.feature.WorldGenShrub;
+import net.minecraft.world.gen.feature.WorldGenSwamp;
+import net.minecraft.world.gen.feature.WorldGenTaiga1;
+import net.minecraft.world.gen.feature.WorldGenTaiga2;
+import net.minecraft.world.gen.feature.WorldGenTrees;
+import net.minecraft.world.gen.feature.WorldGenerator;
 import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
+import org.neptunepowered.vanilla.util.converter.PositionConverter;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -89,6 +107,13 @@ import java.util.TreeSet;
 @Mixin(WorldServer.class)
 @Implements(@Interface(iface = World.class, prefix = "world$"))
 public abstract class MixinWorldServer extends MixinWorld implements World {
+
+    private static final IBlockState JUNGLE_LOG = Blocks.log.getDefaultState()
+            .withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
+    private static final IBlockState JUNGLE_LEAF = Blocks.leaves.getDefaultState()
+            .withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.JUNGLE).withProperty(BlockLeaves.CHECK_DECAY, false);
+    private static final IBlockState OAK_LEAF = Blocks.leaves.getDefaultState()
+            .withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.OAK).withProperty(BlockLeaves.CHECK_DECAY, false);
 
     @Shadow @Final private Set<NextTickListEntry> pendingTickListEntriesHashSet;
     @Shadow @Final private TreeSet<NextTickListEntry> pendingTickListEntriesTreeSet;
@@ -419,7 +444,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
 
     @Override
     public List<Player> getPlayerList() {
-        return null;
+        return (List) this.playerEntities;
     }
 
     @Override
@@ -464,12 +489,12 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
 
     @Override
     public Location getSpawnLocation() {
-        return null;
+        return new Location(this.getWorldInfo().getSpawnX(), this.getWorldInfo().getSpawnY(), this.getWorldInfo().getSpawnZ());
     }
 
     @Override
     public void setSpawnLocation(Location location) {
-
+        this.getWorldInfo().setSpawn(PositionConverter.of(location));
     }
 
     @Override
@@ -896,17 +921,72 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
 
     @Override
     public boolean generateTree(Position position, TreeType treeType) {
-        return false;
+        final WorldGenerator treeGen;
+
+        switch (treeType) {
+            case BIGOAK:
+                treeGen = new WorldGenBigTree(true);
+                break;
+            case SWAMPOAK:
+                treeGen = new WorldGenSwamp();
+                break;
+            case DARKOAK:
+                treeGen = new WorldGenCanopyTree(true);
+                break;
+            case BIRCH:
+                treeGen = new WorldGenForest(true, false);
+                break;
+            case TALLBIRCH:
+                treeGen = new WorldGenForest(true, true);
+                break;
+            case SPRUCE:
+                treeGen = new WorldGenTaiga2(true);
+                break;
+            case TALLSPRUCE:
+                treeGen = new WorldGenTaiga1();
+                break;
+            case MEGASPRUCE:
+                treeGen = new WorldGenMegaPineTree(false, this.rand.nextBoolean());
+                break;
+            case JUNGLE:
+                treeGen = new WorldGenTrees(true, 4 + this.rand.nextInt(7), JUNGLE_LOG, JUNGLE_LEAF, false);
+                break;
+            case TALLJUNGLE:
+                treeGen = new WorldGenTrees(true, 4 + this.rand.nextInt(7), JUNGLE_LOG, JUNGLE_LEAF, true);
+                break;
+            case JUNGLEBUSH:
+                treeGen = new WorldGenShrub(JUNGLE_LOG, OAK_LEAF);
+                break;
+            case MEGAJUNGLE:
+                treeGen = new WorldGenMegaJungle(true, 10, 20, JUNGLE_LOG, JUNGLE_LEAF);
+                break;
+            case ACACIA:
+                treeGen = new WorldGenSavannaTree(true);
+                break;
+            case REDMUSHROOM:
+                treeGen = new WorldGenBigMushroom(Blocks.red_mushroom_block);
+                break;
+            case BROWNMUSHROOM:
+                treeGen = new WorldGenBigMushroom(Blocks.brown_mushroom_block);
+                break;
+            default:
+                treeGen = new WorldGenTrees(true);
+                break;
+        }
+
+        return treeGen.generate((net.minecraft.world.World) (Object) this, this.rand, PositionConverter.of(position));
     }
 
     @Override
-    public void showTitle(ChatComponent chatComponent) {
-
+    public void showTitle(ChatComponent title) {
+        this.showTitle(title, null);
     }
 
     @Override
-    public void showTitle(ChatComponent chatComponent, ChatComponent chatComponent1) {
-
+    public void showTitle(ChatComponent title, ChatComponent subtitle) {
+        for (Player player : this.getPlayerList()) {
+            player.showTitle(title, subtitle);
+        }
     }
 
 }

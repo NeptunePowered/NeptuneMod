@@ -33,7 +33,6 @@ import net.canarymod.api.factory.ChatComponentFactory;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
-import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 
 public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
@@ -41,7 +40,7 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ChatComponent newChatComponent(String text) {
-        return new NeptuneChatComponent(new ChatComponentText(text));
+        return (ChatComponent) new ChatComponentText(text);
     }
 
     @Override
@@ -56,7 +55,7 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public ChatComponent deserialize(String json) {
-        return new NeptuneChatComponent(IChatComponent.Serializer.jsonToComponent(json));
+        return (ChatComponent) IChatComponent.Serializer.jsonToComponent(json);
     }
 
     @Override
@@ -218,7 +217,7 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
     @Override
     public HoverEvent newHoverEvent(HoverEventAction action, ChatComponent value) {
         return (HoverEvent) new net.minecraft.event.HoverEvent((net.minecraft.event.HoverEvent.Action) (Object) action,
-                ((NeptuneChatComponent) value).getHandle());
+                (IChatComponent) value);
     }
 
     @Override

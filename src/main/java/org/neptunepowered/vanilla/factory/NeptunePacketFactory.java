@@ -68,8 +68,8 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.network.play.server.S36PacketSignEditorOpen;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.NotImplementedException;
-import org.neptunepowered.vanilla.chat.NeptuneChatComponent;
 
 import java.util.List;
 import java.util.Map;
@@ -104,7 +104,7 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet chat(ChatComponent chatComponent) {
-        return (Packet) new S02PacketChat(((NeptuneChatComponent) chatComponent).getHandle());
+        return (Packet) new S02PacketChat((IChatComponent) chatComponent);
     }
 
     @Override
