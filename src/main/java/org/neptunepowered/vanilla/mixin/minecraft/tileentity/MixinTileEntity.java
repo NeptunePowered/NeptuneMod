@@ -34,6 +34,9 @@ import net.minecraft.util.BlockPos;
 import org.neptunepowered.vanilla.interfaces.minecraft.tileentity.IMixinTileEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(net.minecraft.tileentity.TileEntity.class)
 public abstract class MixinTileEntity implements TileEntity, IMixinTileEntity {
@@ -43,61 +46,69 @@ public abstract class MixinTileEntity implements TileEntity, IMixinTileEntity {
     @Shadow protected BlockPos pos;
 
     private Timing timing;
+    private NBTTagCompound canaryMeta = new NBTTagCompound();
 
-    @Shadow public abstract void updateContainingBlockInfo();
-    @Shadow public abstract void readFromNBT(NBTTagCompound compound);
     @Shadow public abstract void writeToNBT(NBTTagCompound compound);
+    @Shadow public abstract void readFromNBT(NBTTagCompound compound);
+
+    @Inject(method = "readFromNBT", at = @At("RETURN"))
+    public void onReadFromNBT(NBTTagCompound tag, CallbackInfo ci) {
+        if (tag.hasKey("Canary")) {
+            this.canaryMeta = tag.getCompoundTag("Canary");
+        }
+    }
 
     @Override
     public Block getBlock() {
-        return (Block) blockType;
+        return (Block) this.blockType;
     }
 
     @Override
     public int getX() {
-        return pos.getX();
+        return this.pos.getX();
     }
 
     @Override
     public int getY() {
-        return pos.getY();
+        return this.pos.getY();
     }
 
     @Override
     public int getZ() {
-        return pos.getZ();
+        return this.pos.getZ();
     }
 
     @Override
     public World getWorld() {
-        return (World) worldObj;
+        return (World) this.worldObj;
     }
 
     @Override
     public void update() {
-        updateContainingBlockInfo();
+        this.worldObj.markBlockForUpdate(new BlockPos(this.getX(), this.getY(), this.getZ()));
     }
 
     @Override
     public CompoundTag getDataTag() {
-        return null;
+        final NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return (CompoundTag) tag;
     }
 
     @Override
     public CompoundTag getMetaTag() {
-        return null;
+        return (CompoundTag) this.canaryMeta;
     }
 
     @Override
     public CompoundTag writeToTag(CompoundTag tag) {
-        NBTTagCompound mcTag = (NBTTagCompound) tag;
-        writeToNBT(mcTag);
-        return (CompoundTag) mcTag;
+        this.writeToNBT((NBTTagCompound) tag);
+        return tag;
     }
 
     @Override
     public void readFromTag(CompoundTag tag) {
-        readFromNBT((NBTTagCompound) tag);
+        this.readFromNBT((NBTTagCompound) tag);
     }
 
     @Override

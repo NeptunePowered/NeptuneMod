@@ -48,7 +48,7 @@ public abstract class MixinTileEntitySign extends MixinTileEntity implements Sig
 
     @Override
     public String[] getText() {
-        List<String> lines = Lists.newArrayList();
+        final List<String> lines = Lists.newArrayList();
 
         for (IChatComponent chatComponent : this.signText) {
             lines.add(chatComponent.getUnformattedText());
