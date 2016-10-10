@@ -50,6 +50,9 @@ public final class DyeColorConverter {
                     .put(EnumDyeColor.BLACK, DyeColor.BLACK)
                     .build();
 
+    private DyeColorConverter() {
+    }
+
     public static DyeColor of(EnumDyeColor artType) {
         return map.get(artType);
     }

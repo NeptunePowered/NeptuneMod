@@ -27,6 +27,9 @@ import net.canarymod.api.world.position.Rotations;
 
 public final class RotationsConverter {
 
+    private RotationsConverter() {
+    }
+
     public static Rotations of(net.minecraft.util.Rotations minecraft) {
         return new Rotations(minecraft.getX(), minecraft.getY(), minecraft.getZ());
     }

@@ -31,6 +31,9 @@ import java.lang.reflect.Modifier;
  */
 public final class ReflectionUtil {
 
+    private ReflectionUtil() {
+    }
+
     /**
      * Sets the value of a <code>static final</code> field in the given class.
      *
@@ -39,7 +42,7 @@ public final class ReflectionUtil {
      * @param object The new value
      * @throws Exception If something goes wrong
      */
-    public static void setStaticFinal(Class clazz, String field, Object object) throws Exception {
+    public static void setStaticFinalField(Class clazz, String field, Object object) throws Exception {
         try {
             Field instanceField = clazz.getDeclaredField(field);
             instanceField.setAccessible(true);

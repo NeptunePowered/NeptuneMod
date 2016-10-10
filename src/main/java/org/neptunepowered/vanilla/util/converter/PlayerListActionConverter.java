@@ -39,6 +39,9 @@ public final class PlayerListActionConverter {
                     .put(S38PacketPlayerListItem.Action.REMOVE_PLAYER, PlayerListAction.REMOVE_PLAYER)
                     .build();
 
+    private PlayerListActionConverter() {
+    }
+
     public static PlayerListAction of(S38PacketPlayerListItem.Action action) {
         return map.get(action);
     }

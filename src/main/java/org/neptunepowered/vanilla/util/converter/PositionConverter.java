@@ -28,6 +28,9 @@ import net.minecraft.util.BlockPos;
 
 public final class PositionConverter {
 
+    private PositionConverter() {
+    }
+
     public static Position of(BlockPos minecraft) {
         return new Position(minecraft.getX(), minecraft.getY(), minecraft.getZ());
     }

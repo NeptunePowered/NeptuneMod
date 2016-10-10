@@ -31,6 +31,9 @@ import net.minecraft.util.ChatComponentText;
 
 public final class NetHandlerPlayServerHelper {
 
+    private NetHandlerPlayServerHelper() {
+    }
+
     public static void kickPlayerFromServer(EntityPlayerMP player, String reason) {
         final ChatComponentText component = new ChatComponentText(reason);
         player.playerNetServerHandler.getNetworkManager().sendPacket(new S40PacketDisconnect(component),

@@ -26,9 +26,12 @@ package org.neptunepowered.vanilla;
 import net.canarymod.NativeTranslateBridge;
 import net.minecraft.util.StatCollector;
 
-public class NeptuneTranslator extends NativeTranslateBridge {
+final class NeptuneTranslator extends NativeTranslateBridge {
 
-    public static void load() {
+    private NeptuneTranslator() {
+    }
+
+    static void load() {
         if ($ == null) {
             $ = new NeptuneTranslator();
         }

@@ -38,6 +38,9 @@ public final class GameModeConverter {
                     .put(WorldSettings.GameType.SPECTATOR, GameMode.SPECTATOR)
                     .build();
 
+    private GameModeConverter() {
+    }
+
     public static GameMode of(WorldSettings.GameType artType) {
         return map.get(artType);
     }

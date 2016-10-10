@@ -45,7 +45,7 @@ public class NeptuneVanilla {
 
     private static void initTimings() throws Exception {
         NeptuneTimingsFactory timingsFactory = new NeptuneTimingsFactory();
-        ReflectionUtil.setStaticFinal(Timings.class, "factory", timingsFactory);
+        ReflectionUtil.setStaticFinalField(Timings.class, "factory", timingsFactory);
         timingsFactory.init();
     }
 

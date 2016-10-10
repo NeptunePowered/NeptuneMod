@@ -60,6 +60,9 @@ public final class ArtConverter {
                     .put(EntityPainting.EnumArt.DONKEY_KONG, Painting.ArtType.DonkeyKong)
                     .build();
 
+    private ArtConverter() {
+    }
+
     public static Painting.ArtType of(EntityPainting.EnumArt artType) {
         return map.get(artType);
     }
