@@ -28,7 +28,7 @@ import net.minecraft.block.properties.PropertyBool;
 
 public class NeptuneBlockBooleanProperty extends NeptuneBlockProperty implements BlockBooleanProperty {
 
-    public NeptuneBlockBooleanProperty(PropertyBool handle) {
+    protected NeptuneBlockBooleanProperty(PropertyBool handle) {
         super(handle);
     }
 
@@ -41,4 +41,5 @@ public class NeptuneBlockBooleanProperty extends NeptuneBlockProperty implements
     public PropertyBool getHandle() {
         return (PropertyBool) super.getHandle();
     }
+
 }

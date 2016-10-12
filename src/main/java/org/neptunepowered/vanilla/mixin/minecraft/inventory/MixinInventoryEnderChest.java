@@ -26,21 +26,29 @@ package org.neptunepowered.vanilla.mixin.minecraft.inventory;
 import net.canarymod.api.entity.living.humanoid.Human;
 import net.canarymod.api.inventory.EnderChestInventory;
 import net.canarymod.api.inventory.InventoryType;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryEnderChest;
+import org.neptunepowered.vanilla.interfaces.minecraft.inventory.IMixinInventoryEnderChest;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(InventoryEnderChest.class)
-public abstract class MixinInventoryEnderChest implements EnderChestInventory {
+public abstract class MixinInventoryEnderChest implements EnderChestInventory, IMixinInventoryEnderChest {
+
+    private EntityPlayer player;
 
     @Override
     public Human getInventoryOwner() {
-        // TODO: look into how to do this
-        return null;
+        return (Human) this.player;
     }
 
     @Override
     public InventoryType getInventoryType() {
         return InventoryType.CHEST;
+    }
+
+    @Override
+    public void setOwner(EntityPlayer player) {
+        this.player = player;
     }
 
 }

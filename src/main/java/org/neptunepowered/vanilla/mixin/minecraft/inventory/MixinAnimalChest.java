@@ -26,21 +26,29 @@ package org.neptunepowered.vanilla.mixin.minecraft.inventory;
 import net.canarymod.api.entity.living.animal.EntityAnimal;
 import net.canarymod.api.inventory.AnimalInventory;
 import net.canarymod.api.inventory.InventoryType;
+import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.inventory.AnimalChest;
+import org.neptunepowered.vanilla.interfaces.minecraft.inventory.IMixinAnimalChest;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(AnimalChest.class)
-public abstract class MixinAnimalChest implements AnimalInventory {
+public abstract class MixinAnimalChest implements AnimalInventory, IMixinAnimalChest {
+
+    private EntityHorse owner;
 
     @Override
     public EntityAnimal getOwner() {
-        // TODO: look into how to do this
-        return null;
+        return (EntityAnimal) this.owner;
     }
 
     @Override
     public InventoryType getInventoryType() {
         return InventoryType.ANIMAL;
+    }
+
+    @Override
+    public void setOwner(EntityHorse horse) {
+        this.owner = horse;
     }
 
 }

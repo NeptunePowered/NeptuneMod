@@ -46,37 +46,37 @@ public abstract class MixinMerchantRecipe implements VillagerTrade {
 
     @Override
     public Item getBuyingOne() {
-        return (Item) itemToBuy;
+        return (Item) this.itemToBuy;
     }
 
     @Override
     public void setBuyingOne(Item item) {
-        itemToBuy = (ItemStack) item;
+        this.itemToBuy = (ItemStack) item;
     }
 
     @Override
     public Item getBuyingTwo() {
-        return (Item) secondItemToBuy;
+        return (Item) this.secondItemToBuy;
     }
 
     @Override
     public void setBuyingTwo(Item item) {
-        secondItemToBuy = (ItemStack) item;
+        this.secondItemToBuy = (ItemStack) item;
     }
 
     @Override
     public boolean requiresTwoItems() {
-        return secondItemToBuy != null;
+        return this.secondItemToBuy != null;
     }
 
     @Override
     public Item getSelling() {
-        return (Item) itemToSell;
+        return (Item) this.itemToSell;
     }
 
     @Override
     public void setSelling(Item item) {
-        itemToSell = (ItemStack) item;
+        this.itemToSell = (ItemStack) item;
     }
 
     @Override
@@ -86,22 +86,22 @@ public abstract class MixinMerchantRecipe implements VillagerTrade {
 
     @Override
     public void increaseMaxUses(int increase) {
-        maxTradeUses += increase;
+        this.maxTradeUses += increase;
     }
 
     @Override
     public boolean isUsedUp() {
-        return isRecipeDisabled();
+        return this.isRecipeDisabled();
     }
 
     @Override
     public CompoundTag getDataAsTag() {
-        return (CompoundTag) writeToTags();
+        return (CompoundTag) this.writeToTags();
     }
 
     @Override
     public void readFromTag(CompoundTag tag) {
-        readFromTags((NBTTagCompound) tag);
+        this.readFromTags((NBTTagCompound) tag);
     }
 
 }

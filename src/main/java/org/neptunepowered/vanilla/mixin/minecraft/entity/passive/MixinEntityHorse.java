@@ -21,20 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.world.blocks.properties;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.passive;
 
-import net.canarymod.api.world.blocks.properties.BlockEnumProperty;
-import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.inventory.AnimalChest;
+import org.neptunepowered.vanilla.interfaces.minecraft.inventory.IMixinAnimalChest;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public class NeptuneBlockEnumProperty extends NeptuneBlockProperty implements BlockEnumProperty {
+@Mixin(EntityHorse.class)
+public abstract class MixinEntityHorse extends MixinEntityAnimal {
 
-    protected NeptuneBlockEnumProperty(PropertyEnum handle) {
-        super(handle);
-    }
+    @Shadow private AnimalChest horseChest;
 
-    @Override
-    public PropertyEnum getHandle() {
-        return (PropertyEnum) super.getHandle();
+    @Inject(method = "initHorseChest", at = @At("RETURN"))
+    public void onInitHorseChest(CallbackInfo ci) {
+        ((IMixinAnimalChest) this.horseChest).setOwner((EntityHorse) (Object) this);
     }
 
 }

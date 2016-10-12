@@ -47,8 +47,58 @@ import java.util.stream.Collectors;
 public abstract class MixinSaveHandler implements IMixinSaveHandler {
 
     @Shadow @Final private static Logger logger;
-
     @Shadow @Final private File playersDirectory;
+
+    /**
+     * @author jamierocks - 20th July 2016
+     * @reason Use the correct player directory
+     */
+    @Overwrite
+    public void writePlayerData(EntityPlayer player) {
+        try {
+            final NBTTagCompound nbttagcompound = new NBTTagCompound();
+            player.writeToNBT(nbttagcompound);
+
+            final File file1 = new File(NeptuneWorldManager.PLAYERS_DIR, player.getUniqueID().toString() + ".dat.tmp");
+            final File file2 = new File(NeptuneWorldManager.PLAYERS_DIR, player.getUniqueID().toString() + ".dat");
+            CompressedStreamTools.writeCompressed(nbttagcompound, new FileOutputStream(file1));
+
+            if (file2.exists()) {
+                file2.delete();
+            }
+
+            file1.renameTo(file2);
+        } catch (Exception ex) {
+            logger.warn("Failed to save player data for " + player.getName(), ex);
+        }
+    }
+
+    /**
+     * @author jamierocks - 20th July 2016
+     * @reason Use the correct player directory
+     */
+    @Overwrite
+    public NBTTagCompound readPlayerData(EntityPlayer player) {
+        final NBTTagCompound nbttagcompound = this.readPlayerData(player.getUniqueID());
+
+        if (nbttagcompound != null) {
+            player.readFromNBT(nbttagcompound);
+        }
+
+        return nbttagcompound;
+    }
+
+    /**
+     * @author jamierocks - 20th July 2016
+     * @reason Use the correct player directory
+     */
+    @Overwrite
+    public String[] getAvailablePlayerDat() {
+        final List<String> availablePlayerData = Arrays.stream(NeptuneWorldManager.PLAYERS_DIR.listFiles((dir, name) -> name.endsWith(".dat")))
+                .map(f -> f.getName().replace(".dat", ""))
+                .collect(Collectors.toList());
+        return availablePlayerData.toArray(new String[availablePlayerData.size()]);
+    }
 
     @Override
     public NBTTagCompound readPlayerData(UUID id) {
@@ -67,56 +117,6 @@ public abstract class MixinSaveHandler implements IMixinSaveHandler {
         }
 
         return nbttagcompound;
-    }
-
-    /**
-     * @author jamierocks - 20th July 2016
-     * @reason Use the correct player directory
-     */
-    @Overwrite
-    public void writePlayerData(EntityPlayer player) {
-        try {
-            NBTTagCompound nbttagcompound = new NBTTagCompound();
-            player.writeToNBT(nbttagcompound);
-            File file1 = new File(NeptuneWorldManager.PLAYERS_DIR, player.getUniqueID().toString() + ".dat.tmp");
-            File file2 = new File(NeptuneWorldManager.PLAYERS_DIR, player.getUniqueID().toString() + ".dat");
-            CompressedStreamTools.writeCompressed(nbttagcompound, new FileOutputStream(file1));
-
-            if (file2.exists()) {
-                file2.delete();
-            }
-
-            file1.renameTo(file2);
-        } catch (Exception var5) {
-            logger.warn("Failed to save player data for " + player.getName());
-        }
-    }
-
-    /**
-     * @author jamierocks - 20th July 2016
-     * @reason Use the correct player directory
-     */
-    @Overwrite
-    public NBTTagCompound readPlayerData(EntityPlayer player) {
-        NBTTagCompound nbttagcompound = this.readPlayerData(player.getUniqueID());
-
-        if (nbttagcompound != null) {
-            player.readFromNBT(nbttagcompound);
-        }
-
-        return nbttagcompound;
-    }
-
-    /**
-     * @author jamierocks - 20th July 2016
-     * @reason Use the correct player directory
-     */
-    @Overwrite
-    public String[] getAvailablePlayerDat() {
-        List<String> availablePlayerData = Arrays.stream(NeptuneWorldManager.PLAYERS_DIR.listFiles((dir, name) -> name.endsWith(".dat")))
-                .map(f -> f.getName().replace(".dat", ""))
-                .collect(Collectors.toList());
-        return availablePlayerData.toArray(new String[availablePlayerData.size()]);
     }
 
 }

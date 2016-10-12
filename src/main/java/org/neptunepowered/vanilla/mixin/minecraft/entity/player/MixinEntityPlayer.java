@@ -37,6 +37,7 @@ import net.canarymod.hook.player.LevelUpHook;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraft.inventory.InventoryEnderChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.Scoreboard;
@@ -45,6 +46,8 @@ import net.minecraft.stats.StatBase;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.World;
+import org.neptunepowered.vanilla.interfaces.minecraft.inventory.IMixinInventoryEnderChest;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -60,6 +63,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Implements(@Interface(iface = Human.class, prefix = "human$"))
 public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements Human {
 
+    @Shadow private InventoryEnderChest theInventoryEnderChest;
     @Shadow public PlayerCapabilities capabilities;
     @Shadow protected FoodStats foodStats;
     @Shadow private ItemStack itemInUse;
@@ -77,10 +81,13 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
     @Shadow public abstract Scoreboard getWorldScoreboard();
     @Shadow public abstract void triggerAchievement(StatBase achievementIn);
     @Shadow public abstract void func_175145_a(StatBase p_175145_1_);
-
-    @Shadow
-    public GameProfile getGameProfile() {
+    @Shadow public GameProfile getGameProfile() {
         return null;
+    }
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void onConstruction(World worldIn, GameProfile gameProfileIn, CallbackInfo info) {
+        ((IMixinInventoryEnderChest) this.theInventoryEnderChest).setOwner((EntityPlayer) (Object) this);
     }
 
     @Inject(method = "trySleep", at = @At(value = "INVOKE"))
@@ -220,6 +227,10 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
         }
 
         super.readCanaryNBT(tagCompound);
+    }
+
+    public InventoryEnderChest getEnderChest() {
+        return this.theInventoryEnderChest;
     }
 
 }

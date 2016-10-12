@@ -113,20 +113,8 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow public abstract boolean canSnowAt(BlockPos pos, boolean checkLight);
     @Shadow public abstract BiomeGenBase getBiomeGenForCoords(final BlockPos pos);
     @Shadow public abstract WorldType shadow$getWorldType();
-
-    @Shadow
-    public void tick() {
-    }
-
-    @Shadow
-    protected void updateBlocks() {
-
-    }
-
-    @Override
-    public void setWorldInfo(WorldInfo worldInfo) {
-        this.worldInfo = worldInfo;
-    }
+    @Shadow public void tick() {}
+    @Shadow protected void updateBlocks() {}
 
     /**
      * @author jamierocks - 2nd October 2016
@@ -307,6 +295,11 @@ public abstract class MixinWorld implements IMixinWorld {
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();
+    }
+
+    @Override
+    public void setWorldInfo(WorldInfo worldInfo) {
+        this.worldInfo = worldInfo;
     }
 
     @Override

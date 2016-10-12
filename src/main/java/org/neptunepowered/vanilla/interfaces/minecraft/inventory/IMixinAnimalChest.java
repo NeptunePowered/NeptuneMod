@@ -21,20 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.world.blocks.properties;
+package org.neptunepowered.vanilla.interfaces.minecraft.inventory;
 
-import net.canarymod.api.world.blocks.properties.BlockEnumProperty;
-import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.entity.passive.EntityHorse;
 
-public class NeptuneBlockEnumProperty extends NeptuneBlockProperty implements BlockEnumProperty {
+public interface IMixinAnimalChest {
 
-    protected NeptuneBlockEnumProperty(PropertyEnum handle) {
-        super(handle);
-    }
-
-    @Override
-    public PropertyEnum getHandle() {
-        return (PropertyEnum) super.getHandle();
-    }
+    void setOwner(EntityHorse horse);
 
 }

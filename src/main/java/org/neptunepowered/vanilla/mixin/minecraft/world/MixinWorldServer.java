@@ -130,10 +130,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     @Shadow protected abstract void wakeAllPlayers();
     @Shadow protected abstract BlockPos adjustPosToNearbyEntity(BlockPos pos);
     @Shadow public abstract boolean addWeatherEffect(net.minecraft.entity.Entity entityIn);
-
-    @Shadow
-    private void sendQueuedBlockEvents() {
-    }
+    @Shadow private void sendQueuedBlockEvents() {}
 
     /**
      * @author jamierocks - 2nd October 2016

@@ -73,6 +73,7 @@
         "entity.passive.MixinEntityAnimal",
         "entity.passive.MixinEntityChicken",
         "entity.passive.MixinEntityCow",
+        "entity.passive.MixinEntityHorse",
         "entity.passive.MixinEntityMooshroom",
         "entity.passive.MixinEntityPig",
         "entity.passive.MixinEntityRabbit",

@@ -281,7 +281,7 @@ public class NeptuneWorldManager implements WorldManager {
 
     @Override
     public String[] getLoadedWorldsNamesOfDimension(DimensionType dimensionType) {
-        List<String> loadedWorlds = this.loadedWorlds.values().stream()
+        final List<String> loadedWorlds = this.loadedWorlds.values().stream()
                 .filter(w -> w.getType() == dimensionType)
                 .map(World::getFqName)
                 .collect(Collectors.toList());

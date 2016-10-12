@@ -28,7 +28,7 @@ import net.minecraft.block.properties.PropertyInteger;
 
 public class NeptuneBlockIntegerProperty extends NeptuneBlockProperty implements BlockIntegerProperty {
 
-    public NeptuneBlockIntegerProperty(PropertyInteger handle) {
+    protected NeptuneBlockIntegerProperty(PropertyInteger handle) {
         super(handle);
     }
 
@@ -41,4 +41,5 @@ public class NeptuneBlockIntegerProperty extends NeptuneBlockProperty implements
     public PropertyInteger getHandle() {
         return (PropertyInteger) super.getHandle();
     }
+
 }

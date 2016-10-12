@@ -35,7 +35,7 @@ import java.util.Collection;
 
 public class NeptuneBlockProperty extends Wrapper<IProperty> implements BlockProperty {
 
-    public NeptuneBlockProperty(IProperty handle) {
+    protected NeptuneBlockProperty(IProperty handle) {
         super(handle);
     }
 
@@ -71,4 +71,5 @@ public class NeptuneBlockProperty extends Wrapper<IProperty> implements BlockPro
         }
         return new NeptuneBlockProperty(property);
     }
+
 }

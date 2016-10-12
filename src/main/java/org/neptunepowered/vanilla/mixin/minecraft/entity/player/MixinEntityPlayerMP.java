@@ -894,7 +894,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public Inventory getEnderChestInventory() {
-        return null;
+        return (Inventory) this.getEnderChest();
     }
 
     @Override

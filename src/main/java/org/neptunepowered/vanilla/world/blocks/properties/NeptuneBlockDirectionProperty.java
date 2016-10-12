@@ -30,7 +30,7 @@ import net.minecraft.util.EnumFacing;
 
 public class NeptuneBlockDirectionProperty extends NeptuneBlockEnumProperty implements BlockDirectionProperty {
 
-    public NeptuneBlockDirectionProperty(PropertyDirection handle) {
+    protected NeptuneBlockDirectionProperty(PropertyDirection handle) {
         super(handle);
     }
 
@@ -69,4 +69,5 @@ public class NeptuneBlockDirectionProperty extends NeptuneBlockEnumProperty impl
     public PropertyDirection getHandle() {
         return (PropertyDirection) super.getHandle();
     }
+
 }
