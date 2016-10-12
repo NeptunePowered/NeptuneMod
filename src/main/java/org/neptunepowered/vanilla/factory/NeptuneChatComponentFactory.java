@@ -216,8 +216,7 @@ public class NeptuneChatComponentFactory implements ChatComponentFactory {
 
     @Override
     public HoverEvent newHoverEvent(HoverEventAction action, ChatComponent value) {
-        return (HoverEvent) new net.minecraft.event.HoverEvent((net.minecraft.event.HoverEvent.Action) (Object) action,
-                (IChatComponent) value);
+        return (HoverEvent) new net.minecraft.event.HoverEvent((net.minecraft.event.HoverEvent.Action) (Object) action, (IChatComponent) value);
     }
 
     @Override

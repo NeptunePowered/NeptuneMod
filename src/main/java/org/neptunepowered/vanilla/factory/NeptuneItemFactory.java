@@ -40,14 +40,14 @@ public class NeptuneItemFactory implements ItemFactory {
 
     @Override
     public Item newItem(int id, int damage) {
-        net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(id);
+        final net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(id);
         item.setMaxDamage(damage);
         return (Item) item;
     }
 
     @Override
     public Item newItem(int id, int damage, int stackSize) {
-        net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(id);
+        final net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(id);
         item.setMaxDamage(damage);
         item.setMaxStackSize(stackSize);
         return (Item) item;
@@ -55,21 +55,21 @@ public class NeptuneItemFactory implements ItemFactory {
 
     @Override
     public Item newItem(ItemType type) {
-        net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(type.getId());
+        final net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(type.getId());
         item.setMaxDamage(type.getData());
         return (Item) item;
     }
 
     @Override
     public Item newItem(ItemType type, int damage) {
-        net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(type.getId());
+        final net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(type.getId());
         item.setMaxDamage(damage);
         return (Item) item;
     }
 
     @Override
     public Item newItem(ItemType type, int damage, int stackSize) {
-        net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(type.getId());
+        final net.minecraft.item.Item item = net.minecraft.item.Item.getItemById(type.getId());
         item.setMaxDamage(damage);
         item.setMaxStackSize(stackSize);
         return (Item) item;

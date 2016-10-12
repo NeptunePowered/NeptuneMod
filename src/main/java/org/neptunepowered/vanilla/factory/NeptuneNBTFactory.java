@@ -114,27 +114,27 @@ public class NeptuneNBTFactory implements NBTFactory {
     public BaseTag newTagFromType(NBTTagType type, Object value) {
         switch (type) {
             case BYTE:
-                return newByteTag((Byte) value);
+                return this.newByteTag((Byte) value);
             case BYTE_ARRAY:
-                return newByteArrayTag((byte[]) value);
+                return this.newByteArrayTag((byte[]) value);
             case COMPOUND:
-                return newCompoundTag((String) value);
+                return this.newCompoundTag((String) value);
             case DOUBLE:
-                return newDoubleTag((Double) value);
+                return this.newDoubleTag((Double) value);
             case FLOAT:
-                return newFloatTag((Float) value);
+                return this.newFloatTag((Float) value);
             case INT:
-                return newIntTag((Integer) value);
+                return this.newIntTag((Integer) value);
             case INT_ARRAY:
-                return newIntArrayTag((int[]) value);
+                return this.newIntArrayTag((int[]) value);
             case LIST:
-                return newListTag();
+                return this.newListTag();
             case LONG:
-                return newLongTag((Long) value);
+                return this.newLongTag((Long) value);
             case SHORT:
-                return newShortTag((Short) value);
+                return this.newShortTag((Short) value);
             case STRING:
-                return newStringTag((String) value);
+                return this.newStringTag((String) value);
         }
         return null;
     }

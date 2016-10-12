@@ -43,12 +43,12 @@ public class NeptunePotionFactory implements PotionFactory {
 
     @Override
     public PotionEffect newPotionEffect(PotionEffectType type, int duration, int amplifier) {
-        return newPotionEffect(type.getID(), duration, amplifier);
+        return this.newPotionEffect(type.getID(), duration, amplifier);
     }
 
     @Override
     public PotionEffect newPotionEffect(PotionEffectType type, int duration, int amplifier, boolean ambient) {
-        return newPotionEffect(type.getID(), duration, amplifier, ambient);
+        return this.newPotionEffect(type.getID(), duration, amplifier, ambient);
     }
 
 }

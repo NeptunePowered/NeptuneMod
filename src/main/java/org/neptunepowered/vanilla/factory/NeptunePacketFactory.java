@@ -341,14 +341,13 @@ public class NeptunePacketFactory implements PacketFactory {
 
     @Override
     public Packet updateSign(int x, int y, int z, String[] text) {
-        List<ChatComponentText> texts = Lists.newArrayList();
+        final List<ChatComponentText> texts = Lists.newArrayList();
 
         for (String t : text) {
             texts.add(new ChatComponentText(t));
         }
 
-        return (Packet)
-                new S33PacketUpdateSign(null, new BlockPos(x, y, z), texts.toArray(new ChatComponentText[texts.size()]));
+        return (Packet) new S33PacketUpdateSign(null, new BlockPos(x, y, z), texts.toArray(new ChatComponentText[texts.size()]));
     }
 
     @Override

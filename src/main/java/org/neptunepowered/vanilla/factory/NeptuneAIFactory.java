@@ -64,20 +64,24 @@ import net.canarymod.api.entity.living.monster.EntityMob;
 import net.canarymod.api.entity.living.monster.RangedAttackMob;
 import net.canarymod.api.factory.AIFactory;
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIArrowAttack;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
+import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIBeg;
 import net.minecraft.entity.ai.EntityAIBreakDoor;
 import net.minecraft.entity.ai.EntityAIControlledByPlayer;
 import net.minecraft.entity.ai.EntityAICreeperSwell;
 import net.minecraft.entity.ai.EntityAIDefendVillage;
 import net.minecraft.entity.ai.EntityAIEatGrass;
+import net.minecraft.entity.ai.EntityAIFindEntityNearest;
 import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAIFleeSun;
 import net.minecraft.entity.ai.EntityAIFollowGolem;
 import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.ai.EntityAIHarvestFarmland;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookAtTradePlayer;
 import net.minecraft.entity.ai.EntityAILookAtVillager;
@@ -87,6 +91,7 @@ import net.minecraft.entity.ai.EntityAIMoveIndoors;
 import net.minecraft.entity.ai.EntityAIMoveThroughVillage;
 import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
 import net.minecraft.entity.ai.EntityAIMoveTowardsTarget;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.passive.EntityTameable;
@@ -100,22 +105,23 @@ public class NeptuneAIFactory implements AIFactory {
     @Override
     public AIArrowAttack newAIArrowAttack(RangedAttackMob mob, double moveSpeed, int attackTimeModifier,
             int maxRangedAttackTime, int maxAttackDistance) {
-        return (AIArrowAttack) new EntityAIArrowAttack(null, moveSpeed, attackTimeModifier, maxRangedAttackTime,
-                maxAttackDistance);
+        return (AIArrowAttack) new EntityAIArrowAttack(null, moveSpeed, attackTimeModifier, maxRangedAttackTime, maxAttackDistance);
     }
 
     @Override
     public AIAttackOnCollide newAIAttackOnCollide(EntityMob creature, Class<? extends LivingBase> targetClass,
             double moveSpeed, boolean persistant) {
         return (AIAttackOnCollide) new EntityAIAttackOnCollide(
-                (EntityCreature) creature, (Class <? extends net.minecraft.entity.Entity>) targetClass,
-                moveSpeed, persistant);
+                (EntityCreature) creature,
+                (Class<? extends net.minecraft.entity.Entity>) targetClass,
+                moveSpeed,
+                persistant
+        );
     }
 
     @Override
-    public AIAvoidEntity newAIAvoidEntity(EntityMob mob, Predicate predicate, float radius, double farSpeed,
-            double nearSpeed) {
-        return null; // TODO: ?
+    public AIAvoidEntity newAIAvoidEntity(EntityMob mob, Predicate predicate, float radius, double farSpeed, double nearSpeed) {
+        return (AIAvoidEntity) new EntityAIAvoidEntity((EntityCreature) mob, mob.getClass(), predicate, radius, farSpeed, nearSpeed);
     }
 
     @Override
@@ -150,13 +156,15 @@ public class NeptuneAIFactory implements AIFactory {
 
     @Override
     public AIFindEntityNearest newAIFindEntityNearest(EntityLiving entityLiving, Class<? extends Entity> entityClass) {
-        return null;
+        return (AIFindEntityNearest) new EntityAIFindEntityNearest(
+                (net.minecraft.entity.EntityLiving) entityLiving,
+                (Class<? extends EntityLivingBase>) entityClass
+        );
     }
 
     @Override
     public AIFindEntityNearestPlayer newAIFindEntityNearestPlayer(EntityLiving entityLiving) {
-        return (AIFindEntityNearestPlayer) new EntityAIFindEntityNearestPlayer(
-                (net.minecraft.entity.EntityLiving) entityLiving);
+        return (AIFindEntityNearestPlayer) new EntityAIFindEntityNearestPlayer((net.minecraft.entity.EntityLiving) entityLiving);
     }
 
     @Override
@@ -186,7 +194,7 @@ public class NeptuneAIFactory implements AIFactory {
 
     @Override
     public AIHurtByTarget newAIHurtByTarget(EntityMob entity, boolean callForHelp, Class<? extends Entity>... targets) {
-        return null;
+        return (AIHurtByTarget) new EntityAIHurtByTarget((EntityCreature) entity, callForHelp, targets);
     }
 
     @Override
@@ -237,7 +245,8 @@ public class NeptuneAIFactory implements AIFactory {
     @Override
     public AINearestAttackableTarget newAINearestAttackableTarget(EntityMob entity, Class<? extends Entity> target,
             int targetChanve, boolean shouldCheckSight, boolean nearbyOnly) {
-        return null;
+        return (AINearestAttackableTarget) new EntityAINearestAttackableTarget((EntityCreature) entity, target, targetChanve,
+                shouldCheckSight, nearbyOnly, null);
     }
 
 }

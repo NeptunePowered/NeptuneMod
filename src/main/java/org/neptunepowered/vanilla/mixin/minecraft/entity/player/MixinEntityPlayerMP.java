@@ -430,52 +430,53 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void hidePlayer(Player player) {
-
+        this.getWorld().getEntityTracker().hidePlayer(player, this);
     }
 
     @Override
     public void hideFrom(Player player) {
-
+        this.getWorld().getEntityTracker().hidePlayer(this, player);
     }
 
     @Override
     public void hidePlayerGlobal() {
-
+        this.getWorld().getEntityTracker().hidePlayerGlobal(this);
     }
 
     @Override
     public void hideFromAll() {
-
+        this.getWorld().getEntityTracker().hidePlayerGlobal(this);
     }
 
     @Override
     public void showPlayer(Player player) {
-
+        this.getWorld().getEntityTracker().showPlayer(player, this);
     }
 
     @Override
     public void showTo(Player player) {
+        this.getWorld().getEntityTracker().showPlayer(this, player);
 
     }
 
     @Override
     public void showPlayerGlobal() {
-
+        this.getWorld().getEntityTracker().showPlayerGlobal(this);
     }
 
     @Override
     public void showToAll() {
-
+        this.getWorld().getEntityTracker().showPlayerGlobal(this);
     }
 
     @Override
     public boolean isPlayerHidden(Player player, Player isHidden) {
-        return false;
+        return this.isHiddenFrom(player);
     }
 
     @Override
     public boolean isHiddenFrom(Player player) {
-        return false;
+        return this.getWorld().getEntityTracker().isPlayerHidden(player, this);
     }
 
     @Override
@@ -583,11 +584,8 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public boolean removeGroup(String group) {
-        Group g = Canary.usersAndGroups().getGroup(group);
-        if (g == null) {
-            return false;
-        }
-        return this.removeGroup(g);
+        final Group g = Canary.usersAndGroups().getGroup(group);
+        return g != null && this.removeGroup(g);
     }
 
     @Override
