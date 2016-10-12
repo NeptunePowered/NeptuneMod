@@ -51,6 +51,7 @@ import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.config.Configuration;
 import net.canarymod.hook.command.ConsoleCommandHook;
+import net.canarymod.hook.system.PermissionCheckHook;
 import net.canarymod.hook.system.ServerTickHook;
 import net.canarymod.tasks.ServerTask;
 import net.minecraft.command.ICommandManager;
@@ -138,6 +139,15 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Shadow public abstract NetworkSystem getNetworkSystem();
     @Shadow public abstract int getCurrentPlayerCount();
     @Shadow protected abstract void saveAllWorlds(boolean dontLog);
+
+    /**
+     * @author jamierocks - 18th May 2015
+     * @reason Set the server mod name
+     */
+    @Overwrite
+    public String getServerModName() {
+        return "NeptuneVanilla";
+    }
 
     /**
      * @author Jamie Mansfield - 26th April 2016
@@ -713,17 +723,19 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     }
 
     @Override
-    public String getLocale() {
-        return Configuration.getServerConfig().getServerLocale();
+    public boolean hasPermission(String node) {
+        final PermissionCheckHook hook = (PermissionCheckHook) new PermissionCheckHook(node, this, false).call();
+        return hook.getResult();
     }
 
-    /**
-     * @author jamierocks - 18th May 2015
-     * @reason Set the server mod name
-     */
-    @Overwrite
-    public String getServerModName() {
-        return "NeptuneVanilla";
+    @Override
+    public boolean safeHasPermission(String permission) {
+        return true;
+    }
+
+    @Override
+    public String getLocale() {
+        return Configuration.getServerConfig().getServerLocale();
     }
 
     @Override

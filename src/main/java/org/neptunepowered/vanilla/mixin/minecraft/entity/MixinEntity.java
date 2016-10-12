@@ -74,7 +74,7 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
     @Shadow private int entityId;
     @Shadow private AxisAlignedBB boundingBox;
 
-    public NBTTagCompound metadata = new NBTTagCompound();
+    protected NBTTagCompound metadata = new NBTTagCompound();
     private Timing timing;
 
     @Shadow public abstract void moveEntity(double x, double y, double z);

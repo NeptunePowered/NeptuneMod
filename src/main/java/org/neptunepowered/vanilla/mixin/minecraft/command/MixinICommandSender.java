@@ -31,9 +31,6 @@ import net.canarymod.chat.MessageReceiver;
 import net.canarymod.chat.ReceiverType;
 import net.canarymod.exceptions.InvalidInstanceException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.command.server.CommandBlockLogic;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.util.ChatComponentText;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -46,74 +43,72 @@ public interface MixinICommandSender extends ICommandSender, MessageReceiver {
 
     @Intrinsic
     default String messagereceiver$getName() {
-        return getName();
+        return this.getName();
     }
 
     @Override
     default void notice(String message) {
-        message(ChatFormat.RED + message);
+        this.message(ChatFormat.RED + message);
     }
 
     @Override
     default void notice(CharSequence message) {
-        notice(message.toString());
+        this.notice(message.toString());
     }
 
     @Override
     default void notice(CharSequence... messages) {
         for (CharSequence message : messages) {
-            notice(message);
+            this.notice(message);
         }
     }
 
     @Override
     default void notice(Iterable<? extends CharSequence> messages) {
         for (CharSequence message : messages) {
-            notice(message);
+            this.notice(message);
         }
     }
 
     @Override
     default void message(String message) {
-        addChatMessage(new ChatComponentText(message));
+        this.addChatMessage(new ChatComponentText(message));
     }
 
     @Override
     default void message(CharSequence message) {
-        message(message.toString());
+        this.message(message.toString());
     }
 
     @Override
     default void message(CharSequence... messages) {
         for (CharSequence message : messages) {
-            message(message);
+            this.message(message);
         }
     }
 
     @Override
     default void message(Iterable<? extends CharSequence> messages) {
         for (CharSequence message : messages) {
-            message(message);
+            this.message(message);
         }
     }
 
     @Override
     default void message(ChatComponent... chatComponents) {
         for (ChatComponent message : chatComponents) {
-            message(message.getText());
+            this.message(message.getText());
         }
     }
 
     @Override
     default boolean hasPermission(String node) {
-        //PermissionCheckHook hook = (PermissionCheckHook) new PermissionCheckHook(node, this, false).call();
-        //return hook.getResult();
-        return true; // Testing
+        return false; // Should never come down to this
     }
 
     @Override
     default boolean safeHasPermission(String permission) {
-        return true; // Testing
+        return false; // Should never come down to this
     }
 
     @Override
@@ -153,7 +148,7 @@ public interface MixinICommandSender extends ICommandSender, MessageReceiver {
 
     @Override
     default String getLocale() {
-        return null;
+        return "en_US"; // default locale
     }
 
 }

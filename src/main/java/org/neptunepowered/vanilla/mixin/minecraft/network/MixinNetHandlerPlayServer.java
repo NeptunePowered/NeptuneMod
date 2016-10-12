@@ -104,7 +104,7 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
         logger.info(this.playerEntity.getName() + " lost connection: " + reason);
         this.serverController.refreshStatusNextTick();
         ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.left",
-                new Object[]{this.playerEntity.getDisplayName()});
+                this.playerEntity.getDisplayName());
         chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.YELLOW);
 
         // Neptune - start
@@ -137,7 +137,7 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, (NetHandlerPlayServer) (Object) this, this.playerEntity.getServerForPlayer());
 
         if (this.playerEntity.getChatVisibility() == EntityPlayer.EnumChatVisibility.HIDDEN) {
-            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("chat.cannotSend", new Object[0]);
+            ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("chat.cannotSend");
             chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
             this.sendPacket(new S02PacketChat(chatcomponenttranslation));
             return;

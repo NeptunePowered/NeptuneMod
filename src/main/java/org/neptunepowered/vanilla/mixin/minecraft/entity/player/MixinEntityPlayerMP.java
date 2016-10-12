@@ -55,6 +55,7 @@ import net.canarymod.hook.player.ChatHook;
 import net.canarymod.hook.player.PlayerDeathHook;
 import net.canarymod.hook.player.ReturnFromIdleHook;
 import net.canarymod.hook.player.TeleportHook;
+import net.canarymod.hook.system.PermissionCheckHook;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
 import net.canarymod.user.UserAndGroupsProvider;
@@ -116,6 +117,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Shadow @Final public MinecraftServer mcServer;
     @Shadow @Final public ItemInWorldManager theItemInWorldManager;
     @Shadow @Final private StatisticsFile statsFile;
+    @Shadow private String translator;
     @Shadow public int ping;
     @Shadow public NetHandlerPlayServer playerNetServerHandler;
     @Shadow private long playerLastActiveTime;
@@ -789,7 +791,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public Location getHome() {
-        Warp home = Canary.warps().getHome(this);
+        final Warp home = Canary.warps().getHome(this);
 
         if (home != null) {
             return home.getLocation();
@@ -895,6 +897,70 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Override
     public Inventory getEnderChestInventory() {
         return null;
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        if (this.isOperator()) {
+            return true;
+        }
+
+        final PermissionCheckHook hook = new PermissionCheckHook(permission, this, false);
+        // If player has the permission set, use its personal permissions
+        if (this.permissions.pathExists(permission)) {
+            hook.setResult(this.permissions.queryPermission(permission));
+            Canary.hooks().callHook(hook);
+            return hook.getResult();
+        } else if (this.groups.size() == 1) { // Only main group is set
+            hook.setResult(this.groups.get(0).hasPermission(permission));
+            Canary.hooks().callHook(hook);
+            return hook.getResult();
+        }
+
+        // Check sub groups
+        for (int i = 1; i < this.groups.size(); i++) {
+            // First group that
+            if (this.groups.get(i).getPermissionProvider().pathExists(permission)) {
+                hook.setResult(this.groups.get(i).hasPermission(permission));
+                Canary.hooks().callHook(hook);
+                return hook.getResult();
+            }
+        }
+
+        // No subgroup has permission defined, use what base group has to say
+        hook.setResult(this.groups.get(0).hasPermission(permission));
+        Canary.hooks().callHook(hook);
+        return hook.getResult();
+    }
+
+    @Override
+    public boolean safeHasPermission(String permission) {
+        if (this.isOperator()) {
+            return true;
+        }
+
+        // If player has the permission set, use its personal permissions
+        if (this.permissions.pathExists(permission)) {
+            return this.permissions.queryPermission(permission);
+        } else if (this.groups.size() == 1) { // Only main group is set
+            return this.groups.get(0).hasPermission(permission);
+        }
+
+        // Check sub groups
+        for (int i = 1; i < this.groups.size(); i++) {
+            // First group that
+            if (this.groups.get(i).getPermissionProvider().pathExists(permission)) {
+                return this.groups.get(i).hasPermission(permission);
+            }
+        }
+
+        // No subgroup has permission defined, use what base group has to say
+        return this.groups.get(0).hasPermission(permission);
+    }
+
+    @Override
+    public String getLocale() {
+        return this.translator;
     }
 
     @Override

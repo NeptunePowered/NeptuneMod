@@ -28,10 +28,14 @@ import net.canarymod.api.chat.ChatStyle;
 import net.canarymod.api.chat.ClickEvent;
 import net.canarymod.api.chat.HoverEvent;
 import net.minecraft.util.EnumChatFormatting;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(net.minecraft.util.ChatStyle.class)
+@Implements(@Interface(iface = ChatStyle.class, prefix = "style$"))
 public abstract class MixinChatStyle implements ChatStyle {
 
     @Shadow private net.minecraft.util.ChatStyle parentStyle;
@@ -45,48 +49,51 @@ public abstract class MixinChatStyle implements ChatStyle {
     @Shadow private net.minecraft.event.HoverEvent chatHoverEvent;
 
     @Shadow public abstract net.minecraft.util.ChatStyle createShallowCopy();
+    @Shadow public abstract boolean isEmpty();
 
     @Override
     public ChatFormatting getColor() {
-        return (ChatFormatting) (Object) color;
+        return (ChatFormatting) (Object) this.color;
     }
 
     @Override
     public boolean isBold() {
-        return bold;
+        return this.bold;
     }
 
     @Override
     public boolean isItalic() {
-        return italic;
+        return this.italic;
     }
 
     @Override
     public boolean isStrikethrough() {
-        return strikethrough;
+        return this.strikethrough;
     }
 
     @Override
     public boolean isUnderlined() {
-        return underlined;
+        return this.underlined;
     }
 
     @Override
     public boolean isObfuscated() {
-        return obfuscated;
+        return this.obfuscated;
     }
 
-    @Shadow
-    public abstract boolean isEmpty();
+    @Intrinsic
+    public boolean style$isEmpty() {
+        return this.isEmpty();
+    }
 
     @Override
     public ClickEvent getChatClickEvent() {
-        return (ClickEvent) chatClickEvent;
+        return (ClickEvent) this.chatClickEvent;
     }
 
     @Override
     public HoverEvent getChatHoverEvent() {
-        return (HoverEvent) chatHoverEvent;
+        return (HoverEvent) this.chatHoverEvent;
     }
 
     @Override
@@ -139,18 +146,18 @@ public abstract class MixinChatStyle implements ChatStyle {
 
     @Override
     public ChatStyle setParentStyle(ChatStyle chatStyle) {
-        parentStyle = (net.minecraft.util.ChatStyle) chatStyle;
+        this.parentStyle = (net.minecraft.util.ChatStyle) chatStyle;
         return this;
     }
 
     @Override
     public ChatStyle getParentStyle() {
-        return (ChatStyle) parentStyle;
+        return (ChatStyle) this.parentStyle;
     }
 
     @Override
     public ChatStyle clone() {
-        return (ChatStyle) createShallowCopy();
+        return (ChatStyle) this.createShallowCopy();
     }
 
 }

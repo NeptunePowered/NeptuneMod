@@ -85,7 +85,7 @@ public abstract class MixinTileEntity implements TileEntity, IMixinTileEntity {
 
     @Override
     public void update() {
-        this.worldObj.markBlockForUpdate(new BlockPos(this.getX(), this.getY(), this.getZ()));
+        this.worldObj.markBlockForUpdate(this.pos);
     }
 
     @Override
