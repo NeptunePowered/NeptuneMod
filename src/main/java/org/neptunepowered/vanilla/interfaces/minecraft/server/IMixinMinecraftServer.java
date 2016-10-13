@@ -31,4 +31,5 @@ public interface IMixinMinecraftServer {
     void prepareSpawnArea(WorldServer world);
 
     void loadWorld(String name, DimensionType dimensionType);
+
 }

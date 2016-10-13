@@ -21,17 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.network.play.server;
+package org.neptunepowered.vanilla.mixin.minecraft.tileentity;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.canarymod.api.inventory.Hopper;
+import net.canarymod.api.world.World;
+import net.minecraft.tileentity.IHopper;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Mixin;
 
-public interface IMixinS23PacketBlockChange {
+@Mixin(IHopper.class)
+@Implements(@Interface(iface = Hopper.class, prefix = "hopper$"))
+public interface MixinIHopper extends IHopper {
 
-    IBlockState getBlockState();
+    default World hopper$getWorld() {
+        return (World) this.getWorld();
+    }
 
-    BlockPos getBlockPosition();
+    default double hopper$getPosX() {
+        return this.getXPos();
+    }
 
-    void setBlockPosition(BlockPos pos);
+    default double hopper$getPosY() {
+        return this.getYPos();
+    }
+
+    default double hopper$getPosZ() {
+        return this.getZPos();
+    }
+
+    default int hopper$getTranferCooldown() {
+        return 0;
+    }
+
+    default void hopper$setTransferCooldown(int var1) {
+
+    }
 
 }

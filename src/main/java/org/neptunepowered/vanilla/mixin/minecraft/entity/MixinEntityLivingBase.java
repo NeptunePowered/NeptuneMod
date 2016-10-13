@@ -67,6 +67,11 @@ public abstract class MixinEntityLivingBase extends MixinEntity implements Livin
     @Shadow public abstract CombatTracker getCombatTracker();
     @Shadow public abstract EntityLivingBase getAttackingEntity();
 
+    @Inject(method = "onDeath", at = @At("INVOKE"))
+    public void onEntityDeath(DamageSource source, CallbackInfo ci) {
+        new EntityDeathHook(this, (net.canarymod.api.DamageSource) source);
+    }
+
     @Intrinsic
     public float livingbase$getHealth() {
         return this.getHealth();
@@ -85,11 +90,6 @@ public abstract class MixinEntityLivingBase extends MixinEntity implements Livin
     @Intrinsic
     public void livingbase$kill() {
         this.shadow$kill();
-    }
-
-    @Inject(method = "onDeath", at = @At("INVOKE"))
-    public void onEntityDeath(DamageSource source, CallbackInfo ci) {
-        new EntityDeathHook(this, (net.canarymod.api.DamageSource) source);
     }
 
     @Override

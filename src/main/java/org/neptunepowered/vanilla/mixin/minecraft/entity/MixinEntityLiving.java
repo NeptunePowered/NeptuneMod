@@ -70,7 +70,7 @@ public abstract class MixinEntityLiving extends MixinEntityLivingBase implements
 
     @Intrinsic
     public void entity$playLivingSound() {
-        this.playLivingSound();;
+        this.playLivingSound();
     }
 
     @Override

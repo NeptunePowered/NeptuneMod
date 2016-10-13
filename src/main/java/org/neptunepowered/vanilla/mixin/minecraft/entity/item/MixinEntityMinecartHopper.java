@@ -21,12 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.minecraft.world.storage;
+package org.neptunepowered.vanilla.mixin.minecraft.entity.item;
 
-import net.canarymod.api.world.DimensionType;
+import net.minecraft.entity.item.EntityMinecartHopper;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-public interface IMixinWorldInfo {
+@Mixin(EntityMinecartHopper.class)
+public abstract class MixinEntityMinecartHopper extends MixinEntityMinecartContainer {
 
-    void setDimensionType(DimensionType dimensionType);
+    @Shadow private int transferTicker;
+
+    public int getTranferCooldown() {
+        return this.transferTicker;
+    }
+
+    public void setTransferCooldown(int var1) {
+        this.transferTicker = var1;
+    }
 
 }

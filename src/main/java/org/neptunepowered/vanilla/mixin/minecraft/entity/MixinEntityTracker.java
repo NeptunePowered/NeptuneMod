@@ -43,6 +43,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mixin(net.minecraft.entity.EntityTracker.class)
 @Implements(@Interface(iface = EntityTracker.class, prefix = "entitytracker$"))
@@ -61,9 +62,9 @@ public abstract class MixinEntityTracker implements EntityTracker {
      */
     @Overwrite
     public void updateTrackedEntities() {
-        List<EntityPlayerMP> list = Lists.newArrayList();
+        final List<EntityPlayerMP> list = Lists.newArrayList();
 
-        ((IMixinWorld) this.theWorld).getTimings().tracker1.startTiming();
+        ((IMixinWorld) this.theWorld).getTimings().tracker1.startTiming(); // Neptune - timings
         for (EntityTrackerEntry entitytrackerentry : this.trackedEntities) {
             entitytrackerentry.updatePlayerList(this.theWorld.playerEntities);
 
@@ -71,9 +72,9 @@ public abstract class MixinEntityTracker implements EntityTracker {
                 list.add((EntityPlayerMP) entitytrackerentry.trackedEntity);
             }
         }
-        ((IMixinWorld) this.theWorld).getTimings().tracker1.stopTiming();
+        ((IMixinWorld) this.theWorld).getTimings().tracker1.stopTiming(); // Neptune - timings
 
-        ((IMixinWorld) this.theWorld).getTimings().tracker2.startTiming();
+        ((IMixinWorld) this.theWorld).getTimings().tracker2.startTiming(); // Neptune - timings
         for (int i = 0; i < ((List) list).size(); ++i) {
             EntityPlayerMP entityplayermp = list.get(i);
 
@@ -83,7 +84,7 @@ public abstract class MixinEntityTracker implements EntityTracker {
                 }
             }
         }
-        ((IMixinWorld) this.theWorld).getTimings().tracker2.stopTiming();
+        ((IMixinWorld) this.theWorld).getTimings().tracker2.stopTiming(); // Neptune - timings
     }
 
     @Override
@@ -138,7 +139,7 @@ public abstract class MixinEntityTracker implements EntityTracker {
 
     @Override
     public List<Entity> getTrackedEntities() {
-        return null;
+        return this.trackedEntities.stream().map(entry -> (Entity) entry.trackedEntity).collect(Collectors.toList());
     }
 
     @Override
