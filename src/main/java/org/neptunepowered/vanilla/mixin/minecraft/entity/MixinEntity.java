@@ -36,6 +36,7 @@ import net.canarymod.api.world.World;
 import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.api.world.position.Vector3D;
+import net.minecraft.entity.DataWatcher;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import org.neptunepowered.vanilla.interfaces.minecraft.entity.IMixinEntity;
@@ -73,6 +74,7 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
     @Shadow protected UUID entityUniqueID;
     @Shadow private int entityId;
     @Shadow private AxisAlignedBB boundingBox;
+    @Shadow protected DataWatcher dataWatcher;
 
     protected NBTTagCompound metadata = new NBTTagCompound();
     private Timing timing;
