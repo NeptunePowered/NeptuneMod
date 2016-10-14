@@ -49,25 +49,25 @@ public abstract class MixinHookExecutor {
      */
     @Overwrite
     public void callHook(Hook hook) {
-        if(!hook.executed()) {
+        if (!hook.executed()) {
             hook.hasExecuted();
-            if(this.listeners.containsKey(hook.getClass())) {
+            if (this.listeners.containsKey(hook.getClass())) {
                 Iterator iter = this.listeners.get(hook.getClass()).iterator();
 
-                TimingsManager.PLUGIN_HOOK_HANDLER.startTimingIfSync();
-                while(iter.hasNext()) {
-                    RegisteredPluginListener listener = (RegisteredPluginListener)iter.next();
+                TimingsManager.PLUGIN_HOOK_HANDLER.startTimingIfSync(); // Neptune - timings
+                while (iter.hasNext()) {
+                    RegisteredPluginListener listener = (RegisteredPluginListener) iter.next();
 
                     try {
-                        ((IMixinRegisteredPluginListener) listener).getTimingsHandler().startTimingIfSync();
+                        ((IMixinRegisteredPluginListener) listener).getTimingsHandler().startTimingIfSync(); // Neptune - timings
                         listener.execute(hook);
-                        ((IMixinRegisteredPluginListener) listener).getTimingsHandler().stopTimingIfSync();
-                    } catch (HookExecutionException var5) {
-                        ((IMixinRegisteredPluginListener) listener).getTimingsHandler().stopTimingIfSync();
-                        Canary.log.error("Exception while executing Hook: " + hook.getHookName() + " in PluginListener: " + listener.getListener().getClass().getSimpleName() + " (Plugin: " + listener.getPlugin().getName() + ")", var5.getCause());
+                        ((IMixinRegisteredPluginListener) listener).getTimingsHandler().stopTimingIfSync(); // Neptune - timings
+                    } catch (HookExecutionException ex) {
+                        ((IMixinRegisteredPluginListener) listener).getTimingsHandler().stopTimingIfSync(); // Neptune - timings
+                        Canary.log.error("Exception while executing Hook: " + hook.getHookName() + " in PluginListener: " + listener.getListener().getClass().getSimpleName() + " (Plugin: " + listener.getPlugin().getName() + ")", ex);
                     }
                 }
-                TimingsManager.PLUGIN_HOOK_HANDLER.stopTimingIfSync();
+                TimingsManager.PLUGIN_HOOK_HANDLER.stopTimingIfSync(); // Neptune - timings
             }
         }
     }

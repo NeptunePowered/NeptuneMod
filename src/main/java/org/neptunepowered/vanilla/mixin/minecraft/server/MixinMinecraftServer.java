@@ -724,7 +724,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public boolean hasPermission(String node) {
-        final PermissionCheckHook hook = (PermissionCheckHook) new PermissionCheckHook(node, this, false).call();
+        final PermissionCheckHook hook = (PermissionCheckHook) new PermissionCheckHook(node, this, true).call();
         return hook.getResult();
     }
 

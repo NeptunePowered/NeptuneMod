@@ -43,7 +43,7 @@ public abstract class MixinRegisteredPluginListener implements IMixinRegisteredP
     @Override
     public Timing getTimingsHandler() {
         if (this.listenerTimer == null) {
-            this.listenerTimer = NeptuneTimings.getPluginTimings(plugin, listener.getClass().getSimpleName());
+            this.listenerTimer = NeptuneTimings.getPluginTimings(this.plugin, this.listener.getClass().getSimpleName());
         }
         return this.listenerTimer;
     }

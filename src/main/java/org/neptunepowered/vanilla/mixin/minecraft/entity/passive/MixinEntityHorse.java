@@ -23,6 +23,8 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.entity.passive;
 
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.living.animal.Horse;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.inventory.AnimalChest;
 import org.neptunepowered.vanilla.interfaces.minecraft.inventory.IMixinAnimalChest;
@@ -37,9 +39,33 @@ public abstract class MixinEntityHorse extends MixinEntityAnimal {
 
     @Shadow private AnimalChest horseChest;
 
+    @Shadow public abstract int getHorseType();
+
     @Inject(method = "initHorseChest", at = @At("RETURN"))
     public void onInitHorseChest(CallbackInfo ci) {
         ((IMixinAnimalChest) this.horseChest).setOwner((EntityHorse) (Object) this);
+    }
+
+    @Override
+    public String getFqName() {
+        return "Horse";
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        switch (Horse.HorseType.values()[this.getHorseType()]) {
+            case DONKEY:
+                return EntityType.DONKEY;
+            case MULE:
+                return EntityType.MULE;
+            case ZOMBIE:
+                return EntityType.ZOMBIEHORSE;
+            case SKELETON:
+                return EntityType.SKELETONHORSE;
+            case HORSE:
+            default:
+                return EntityType.HORSE;
+        }
     }
 
 }
