@@ -346,7 +346,33 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public Direction getCardinalDirection() {
-        return null;
+        double degrees = (getRotation() - 180) % 360;
+
+        if (degrees < 0) {
+            degrees += 360.0;
+        }
+
+        if (0 <= degrees && degrees < 22.5) {
+            return Direction.NORTH;
+        } else if (22.5 <= degrees && degrees < 67.5) {
+            return Direction.NORTHEAST;
+        } else if (67.5 <= degrees && degrees < 112.5) {
+            return Direction.EAST;
+        } else if (112.5 <= degrees && degrees < 157.5) {
+            return Direction.SOUTHEAST;
+        } else if (157.5 <= degrees && degrees < 202.5) {
+            return Direction.SOUTH;
+        } else if (202.5 <= degrees && degrees < 247.5) {
+            return Direction.SOUTHWEST;
+        } else if (247.5 <= degrees && degrees < 292.5) {
+            return Direction.WEST;
+        } else if (292.5 <= degrees && degrees < 337.5) {
+            return Direction.NORTHWEST;
+        } else if (337.5 <= degrees && degrees < 360.0) {
+            return Direction.NORTH;
+        } else {
+            return Direction.ERROR;
+        }
     }
 
     @Override
