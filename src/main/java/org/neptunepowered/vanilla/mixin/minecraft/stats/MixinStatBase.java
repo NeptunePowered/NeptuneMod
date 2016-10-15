@@ -40,17 +40,17 @@ public abstract class MixinStatBase implements Stat {
 
     @Override
     public String getId() {
-        return statId;
+        return this.statId;
     }
 
     @Override
     public String getName() {
-        return shadow$toString();
+        return this.shadow$toString();
     }
 
     @Override
     public boolean isIndependent() {
-        return isIndependent;
+        return this.isIndependent;
     }
 
 }

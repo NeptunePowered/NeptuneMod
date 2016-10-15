@@ -101,6 +101,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -824,32 +825,34 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void setStat(Stat stat, int value) {
-
+        this.statsFile.unlockAchievement((EntityPlayerMP) (Object) this, (StatBase) stat, value);
     }
 
     @Override
     public void setStat(Statistics stat, int value) {
-
+        this.setStat(stat.getInstance(), value);
     }
 
     @Override
     public void increaseStat(Stat stat, int value) {
-
+        if (value < 0) return;
+        this.statsFile.increaseStat((EntityPlayerMP) (Object) this, (StatBase) stat, value);
     }
 
     @Override
     public void increaseStat(Statistics stat, int value) {
-
+        this.increaseStat(stat.getInstance(), value);
     }
 
     @Override
     public void decreaseStat(Stat stat, int value) {
-
+        if (value < 0) return;
+        this.setStat(stat, this.getStat(stat) - value);
     }
 
     @Override
     public void decreaseStat(Statistics stat, int value) {
-
+        this.decreaseStat(stat.getInstance(), value);
     }
 
     @Override
@@ -859,7 +862,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public int getStat(Statistics stat) {
-        return getStat(stat.getInstance());
+        return this.getStat(stat.getInstance());
     }
 
     @Override
@@ -874,22 +877,34 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void removeAchievement(Achievement achievement) {
+        // Ensure all children achievements are removed
+        Arrays.stream(Achievements.values())
+                .map(Achievements::getInstance).map(Achievement::getParent)
+                .filter(achievement::equals).filter(this::hasAchievement)
+                .forEach(this::removeAchievement);
 
+        this.statsFile.unlockAchievement((EntityPlayerMP) (Object) this, (StatBase) achievement, 0);
     }
 
     @Override
     public void removeAchievement(Achievements achievement) {
-
+        this.removeAchievement(achievement.getInstance());
     }
 
     @Override
     public void awardAchievement(Achievement achievement) {
+        // Ensure all parent achievements are awarded
+        if (!this.hasAchievement(achievement.getParent())) {
+            this.awardAchievement(achievement.getParent());
+        }
 
+        this.statsFile.unlockAchievement((EntityPlayerMP) (Object) this, (StatBase) achievement, 1);
+        this.statsFile.sendAchievements((EntityPlayerMP) (Object) this);
     }
 
     @Override
     public void awardAchievement(Achievements achievement) {
-
+        this.awardAchievement(achievement.getInstance());
     }
 
     @Override

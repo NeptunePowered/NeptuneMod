@@ -42,17 +42,17 @@ public abstract class MixinAchievement extends StatBase implements net.canarymod
 
     @Override
     public String getDescription() {
-        return achievementDescription;
+        return this.achievementDescription;
     }
 
     @Override
     public net.canarymod.api.statistics.Achievement getParent() {
-        return (net.canarymod.api.statistics.Achievement) parentAchievement;
+        return (net.canarymod.api.statistics.Achievement) this.parentAchievement;
     }
 
     @Override
     public boolean isSpecial() {
-        return isSpecial;
+        return this.isSpecial;
     }
 
 }
