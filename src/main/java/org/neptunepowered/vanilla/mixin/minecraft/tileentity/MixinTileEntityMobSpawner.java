@@ -21,21 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.entity;
+package org.neptunepowered.vanilla.mixin.minecraft.tileentity;
 
-import net.canarymod.api.entity.Projectile;
-import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityThrowable;
+import net.canarymod.api.MobSpawnerLogic;
+import net.canarymod.api.world.blocks.MobSpawner;
+import net.minecraft.tileentity.MobSpawnerBaseLogic;
+import net.minecraft.tileentity.TileEntityMobSpawner;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin({EntityArrow.class, EntityThrowable.class})
-public abstract class MixinProjectile implements Projectile, IProjectile {
+@Mixin(TileEntityMobSpawner.class)
+public abstract class MixinTileEntityMobSpawner extends MixinTileEntity implements MobSpawner {
+
+    @Shadow @Final private MobSpawnerBaseLogic spawnerLogic;
 
     @Override
-    public void setProjectileHeading(double motionX, double motionY, double motionZ, float rotationYaw,
-            float rotationPitch) {
-        this.setThrowableHeading(motionX, motionY, motionZ, rotationYaw, rotationPitch);
+    public MobSpawnerLogic getLogic() {
+        return (MobSpawnerLogic) this.spawnerLogic;
     }
 
 }
