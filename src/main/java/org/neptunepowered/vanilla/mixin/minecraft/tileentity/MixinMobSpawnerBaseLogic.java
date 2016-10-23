@@ -26,17 +26,19 @@ package org.neptunepowered.vanilla.mixin.minecraft.tileentity;
 import com.google.common.collect.Lists;
 import net.canarymod.api.MobSpawnerEntry;
 import net.canarymod.api.MobSpawnerLogic;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
-import org.spongepowered.asm.mixin.Final;
+import org.neptunepowered.vanilla.NeptuneMobSpawnerEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Mixin(MobSpawnerBaseLogic.class)
 public abstract class MixinMobSpawnerBaseLogic implements MobSpawnerLogic {
 
-    @Shadow @Final private List<MobSpawnerBaseLogic.WeightedRandomMinecart> minecartToSpawn;
     @Shadow private String mobID;
     @Shadow private int spawnDelay;
     @Shadow private int minSpawnDelay;
@@ -45,6 +47,9 @@ public abstract class MixinMobSpawnerBaseLogic implements MobSpawnerLogic {
     @Shadow private int maxNearbyEntities;
     @Shadow private int activatingRangeFromPlayer;
     @Shadow private int spawnRange;
+
+    @Shadow public abstract void writeToNBT(NBTTagCompound nbt);
+    @Shadow public abstract void readFromNBT(NBTTagCompound nbt);
 
     @Override
     public String getSpawnId() {
@@ -129,29 +134,62 @@ public abstract class MixinMobSpawnerBaseLogic implements MobSpawnerLogic {
     @Override
     public String[] getSpawns() {
         final List<String> spawns = Lists.newArrayList();
-        this.minecartToSpawn.stream()
-                .map(MobSpawnerBaseLogic.WeightedRandomMinecart::toNBT).map(n -> n.getTagList("SpawnPotentials", 8))
-                .forEach(l -> {
-                    for (int i = 0; i < l.tagCount(); i++) {
-                        spawns.add(l.getCompoundTagAt(i).getString("id"));
-                    }
-                });
+        final NBTTagCompound tagCompound = new NBTTagCompound();
+        this.writeToNBT(tagCompound);
+
+        if (tagCompound.hasKey("SpawnPotentials")) {
+            final NBTTagList tagList = tagCompound.getTagList("SpawnPotentials", 8);
+
+            for (int i = 0; i < tagList.tagCount(); i++) {
+                spawns.add(tagList.getCompoundTagAt(i).getString("Type"));
+            }
+        }
+
         return spawns.toArray(new String[spawns.size()]);
     }
 
     @Override
     public void setSpawnedEntities(MobSpawnerEntry... mobSpawnerEntries) {
+        final NBTTagList spawnPotentials = new NBTTagList();
 
+        for (MobSpawnerEntry spawnerEntry : mobSpawnerEntries) {
+            spawnPotentials.appendTag((NBTTagCompound) spawnerEntry.getSpawnPotentialsTag());
+        }
+
+        final NBTTagCompound tagCompound = new NBTTagCompound();
+        this.writeToNBT(tagCompound);
+
+        if (tagCompound.hasKey("SpawnPotentials")) {
+            tagCompound.removeTag("SpawnPotentials");
+        }
+        tagCompound.setTag("SpawnPotentials", spawnPotentials);
+
+        this.readFromNBT(tagCompound);
     }
 
     @Override
     public void addSpawnedEntities(MobSpawnerEntry... mobSpawnerEntries) {
-
+        final List<MobSpawnerEntry> entries = Lists.newArrayList();
+        entries.addAll(Arrays.asList(this.getSpawnedEntities()));
+        entries.addAll(Arrays.asList(mobSpawnerEntries));
+        this.setSpawnedEntities(entries.toArray(new MobSpawnerEntry[entries.size()]));
     }
 
     @Override
     public MobSpawnerEntry[] getSpawnedEntities() {
-        return new MobSpawnerEntry[0];
+        final List<MobSpawnerEntry> entries = Lists.newArrayList();
+        final NBTTagCompound tagCompound = new NBTTagCompound();
+        this.writeToNBT(tagCompound);
+
+        if (tagCompound.hasKey("SpawnPotentials")) {
+            final NBTTagList tagList = tagCompound.getTagList("SpawnPotentials", 8);
+
+            for (int i = 0; i < tagList.tagCount(); i++) {
+                entries.add(new NeptuneMobSpawnerEntry(tagList.getCompoundTagAt(i)));
+            }
+        }
+
+        return entries.toArray(new MobSpawnerEntry[entries.size()]);
     }
 
 }
