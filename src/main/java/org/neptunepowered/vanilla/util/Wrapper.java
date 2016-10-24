@@ -23,7 +23,7 @@
  */
 package org.neptunepowered.vanilla.util;
 
-public class Wrapper<T> {
+public abstract class Wrapper<T> {
 
     private final T handle;
 

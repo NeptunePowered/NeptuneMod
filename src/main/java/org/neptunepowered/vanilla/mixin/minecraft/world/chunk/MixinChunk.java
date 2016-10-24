@@ -227,7 +227,7 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk, IMixi
 
     @Override
     public Set<Entity> getEntities() {
-        Set<Entity> entities = Sets.newHashSet();
+        final Set<Entity> entities = Sets.newHashSet();
         for (ClassInheritanceMultiMap entityList : this.entityLists) {
             entities.addAll(entityList);
         }

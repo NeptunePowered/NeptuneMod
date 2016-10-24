@@ -21,37 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.minecraft.nbt;
+package org.neptunepowered.vanilla.ai;
 
-import net.canarymod.api.nbt.BaseTag;
-import net.canarymod.api.nbt.NBTTagType;
-import net.minecraft.nbt.NBTBase;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
-import org.spongepowered.asm.mixin.Intrinsic;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import net.canarymod.api.ai.AIBase;
+import net.minecraft.entity.ai.EntityAIBase;
 
-@Mixin(NBTBase.class)
-@Implements(@Interface(iface = BaseTag.class, prefix = "tag$"))
-public abstract class MixinNBTBase<T> implements BaseTag<T> {
+public class NeptuneEntityAI extends EntityAIBase {
 
-    @Shadow public abstract byte getId();
-    @Shadow public abstract NBTBase shadow$copy();
+    private final AIBase handle;
 
-    @Override
-    public byte getTypeId() {
-        return this.getId();
+    public NeptuneEntityAI(AIBase handle) {
+        this.handle = handle;
     }
 
     @Override
-    public NBTTagType getType() {
-        return NBTTagType.getTypeFromId(this.getId());
+    public boolean shouldExecute() {
+        return this.handle.shouldExecute();
     }
 
-    @Intrinsic
-    public T tag$copy() {
-        return (T) this.shadow$copy();
+    @Override
+    public boolean continueExecuting() {
+        return this.handle.continueExecuting();
+    }
+
+    @Override
+    public boolean isInterruptible() {
+        return this.handle.isContinuous();
+    }
+
+    @Override
+    public void startExecuting() {
+        this.handle.startExecuting();
+    }
+
+    @Override
+    public void resetTask() {
+        this.handle.resetTask();
+    }
+
+    @Override
+    public void updateTask() {
+        this.handle.updateTask();
     }
 
 }

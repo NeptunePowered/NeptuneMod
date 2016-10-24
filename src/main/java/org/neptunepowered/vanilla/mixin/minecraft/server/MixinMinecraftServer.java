@@ -94,6 +94,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.GraphicsEnvironment;
 import java.util.Arrays;
@@ -324,7 +325,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     }
 
     @Inject(method = "stopServer", at = @At("RETURN"))
-    public void onServerStop() {
+    public void onServerStop(CallbackInfo ci) {
         if (!this.worldIsBeingDeleted) {
             Canary.log.info("Disabling plugins...");
             Canary.pluginManager().disableAllPlugins(Canary.log);

@@ -86,7 +86,7 @@ public abstract class MixinCommandBlockLogic implements net.canarymod.api.Comman
         }
     }
 
-    public int handleCommandExecution(ICommandManager commandManager, CommandBlockLogic commandBlockLogic, String commandStored) {
+    private int handleCommandExecution(ICommandManager commandManager, CommandBlockLogic commandBlockLogic, String commandStored) {
         final String[] args = commandStored.split(" ");
         String commandName = args[0];
         if (commandName.startsWith("/")) {
