@@ -23,6 +23,7 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.server.management;
 
+import co.aikar.timings.NeptuneTimings;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
@@ -69,7 +70,7 @@ import java.util.List;
 @Implements(@Interface(iface = ConfigurationManager.class, prefix = "config$"))
 public abstract class MixinServerConfigurationManager implements ConfigurationManager {
 
-    @Shadow @Final private static Logger logger;
+    @Shadow @Final public static Logger logger;
     @Shadow @Final private static SimpleDateFormat dateFormat;
 
     @Shadow @Final public List<EntityPlayerMP> playerEntityList;
@@ -80,55 +81,16 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     @Shadow public abstract EntityPlayerMP getPlayerByUsername(String username);
     @Shadow public abstract int getMaxPlayers();
 
-    @Redirect(method = "playerLoggedOut",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/ServerConfigurationManager;"
-                    + "sendPacketToAllPlayers(Lnet/minecraft/network/Packet;)V"))
-    public void firePlayerListData(ServerConfigurationManager manager, net.minecraft.network.Packet packetIn, EntityPlayerMP playerIn) {
-        PlayerListData playerListData = ((Player) playerIn).getPlayerListData(PlayerListAction.REMOVE_PLAYER);
-        for (EntityPlayerMP playerMP : manager.playerEntityList) {
-            PlayerListHook playerListHook = new PlayerListHook(playerListData.copy(), (Player) playerMP);
-            if (!playerListHook.call().isCanceled()) {
-                S38PacketPlayerListItem packet = new S38PacketPlayerListItem();
-                packet.action = S38PacketPlayerListItem.Action.valueOf(PlayerListAction.REMOVE_PLAYER.name());
-                WorldSettings.GameType gameType =
-                        WorldSettings.GameType.getByID(playerListHook.getData().getMode().getId());
-                IChatComponent iChatComponent = playerListHook.getData().displayNameSet() ?
-                        (IChatComponent) playerListHook.getData().getDisplayName() : null;
-                packet.players.add(packet.new AddPlayerData(playerListHook.getData()
-                        .getProfile(), playerListHook.getData().getPing(), gameType, iChatComponent));
-                playerMP.playerNetServerHandler.sendPacket(packet);
-            }
-        }
-    }
-
-    @Redirect(method = "initializeConnectionToPlayer",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/ServerConfigurationManager;"
-                    + "sendChatMsg(Lnet/minecraft/util/IChatComponent;)V"))
-    public void fireConnectionHook(ServerConfigurationManager manager, IChatComponent component, NetworkManager netManager, EntityPlayerMP playerIn) {
-        ConnectionHook hook = (ConnectionHook)
-                new ConnectionHook(
-                        (Player) playerIn, component.getUnformattedTextForChat(), false // TODO: check first time
-                ).call();
-        if (!hook.isHidden()) {
-            manager.sendChatMsg(component);
-        }
-    }
-
-    @Inject(method = "initializeConnectionToPlayer", at = @At("RETURN"))
-    public void sendMOTD(NetworkManager netManager, EntityPlayerMP playerIn, CallbackInfo info) {
-        Canary.motd().sendMOTD((MessageReceiver) playerIn);
-    }
-
     /**
      * @author jamierocks - 8th May 2016
      * @reason Complete overwrite to use Canary internals.
      */
     @Overwrite
     public String allowUserToConnect(SocketAddress address, GameProfile profile) {
-        ServerConfiguration srv = Configuration.getServerConfig();
-        String ip = ((InetSocketAddress) address).getAddress().getHostAddress();
+        final ServerConfiguration srv = Configuration.getServerConfig();
+        final String ip = ((InetSocketAddress) address).getAddress().getHostAddress();
 
-        PreConnectionHook hook = (PreConnectionHook) new PreConnectionHook(ip, profile.getName(), profile.getId(),
+        final PreConnectionHook hook = (PreConnectionHook) new PreConnectionHook(ip, profile.getName(), profile.getId(),
                 DimensionType.NORMAL, Canary.getServer().getDefaultWorldName()).call();
 
         if (hook.getKickReason() != null) {
@@ -136,7 +98,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         }
 
         if (Canary.bans().isBanned(profile.getId().toString())) {
-            Ban ban = Canary.bans().getBan(profile.getId().toString());
+            final Ban ban = Canary.bans().getBan(profile.getId().toString());
 
             if (ban.getExpiration() != -1) {
                 return ban.getReason() + ", " +
@@ -159,9 +121,60 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
                     && Configuration.getServerConfig().isReservelistEnabled()) {
                 return null;
             }
+
             return srv.getServerFullMessage();
         }
+
         return null;
+    }
+
+    @Redirect(method = "playerLoggedOut",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/ServerConfigurationManager;"
+                    + "sendPacketToAllPlayers(Lnet/minecraft/network/Packet;)V"))
+    public void firePlayerListData(ServerConfigurationManager manager, net.minecraft.network.Packet packetIn, EntityPlayerMP playerIn) {
+        PlayerListData playerListData = ((Player) playerIn).getPlayerListData(PlayerListAction.REMOVE_PLAYER);
+        for (EntityPlayerMP playerMP : manager.playerEntityList) {
+            PlayerListHook playerListHook = new PlayerListHook(playerListData.copy(), (Player) playerMP);
+            if (!playerListHook.call().isCanceled()) {
+                S38PacketPlayerListItem packet = new S38PacketPlayerListItem();
+                packet.action = S38PacketPlayerListItem.Action.valueOf(PlayerListAction.REMOVE_PLAYER.name());
+                WorldSettings.GameType gameType =
+                        WorldSettings.GameType.getByID(playerListHook.getData().getMode().getId());
+                IChatComponent iChatComponent = playerListHook.getData().displayNameSet() ?
+                        (IChatComponent) playerListHook.getData().getDisplayName() : null;
+                packet.players.add(packet.new AddPlayerData(playerListHook.getData()
+                        .getProfile(), playerListHook.getData().getPing(), gameType, iChatComponent));
+                playerMP.playerNetServerHandler.sendPacket(packet);
+            }
+        }
+    }
+
+    @Inject(method = "initializeConnectionToPlayer", at = @At("RETURN"))
+    public void sendMOTD(NetworkManager netManager, EntityPlayerMP playerIn, CallbackInfo info) {
+        Canary.motd().sendMOTD((MessageReceiver) playerIn);
+    }
+
+    @Inject(method = "saveAllPlayerData", at = @At("HEAD"))
+    public void onSaveAllPlayerData(CallbackInfo ci) {
+        NeptuneTimings.savePlayersTimer.startTiming();
+    }
+
+    @Inject(method = "saveAllPlayerData", at = @At("RETURN"))
+    public void afterSaveAllPlayerData(CallbackInfo ci) {
+        NeptuneTimings.savePlayersTimer.stopTiming();
+    }
+
+    @Redirect(method = "initializeConnectionToPlayer",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/ServerConfigurationManager;"
+                    + "sendChatMsg(Lnet/minecraft/util/IChatComponent;)V"))
+    public void fireConnectionHook(ServerConfigurationManager manager, IChatComponent component, NetworkManager netManager, EntityPlayerMP playerIn) {
+        ConnectionHook hook = (ConnectionHook)
+                new ConnectionHook(
+                        (Player) playerIn, component.getUnformattedTextForChat(), false // TODO: check first time
+                ).call();
+        if (!hook.isHidden()) {
+            manager.sendChatMsg(component);
+        }
     }
 
     @Override

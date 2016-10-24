@@ -39,7 +39,10 @@ public final class NeptuneTimings {
     public static final Timing chunkIOTickTimer = NeptuneTimingsFactory.ofSafe("ChunkIOTick");
     public static final Timing timeUpdateTimer = NeptuneTimingsFactory.ofSafe("Time Update");
     public static final Timing serverCommandTimer = NeptuneTimingsFactory.ofSafe("Server Command");
-    public static final Timing worldSaveTimer = NeptuneTimingsFactory.ofSafe("World Save");
+    public static final Timing savePlayersTimer = NeptuneTimingsFactory.ofSafe("Save Players");
+
+    public static final Timing tickEntityTimer = NeptuneTimingsFactory.ofSafe("## tickEntity");
+    public static final Timing tickTileEntityTimer = NeptuneTimingsFactory.ofSafe("## tickTileEntity");
 
     public static final Timing processQueueTimer = NeptuneTimingsFactory.ofSafe("processQueue");
 
@@ -52,16 +55,20 @@ public final class NeptuneTimings {
         return NeptuneTimingsFactory.ofSafe(plugin.getName(), context, TimingsManager.PLUGIN_HOOK_HANDLER);
     }
 
+    public static Timing getEntityTiming(Entity entity) {
+        return NeptuneTimingsFactory.ofSafe("Minecraft", "## tickEntity - " + entity.getFqName(), tickEntityTimer);
+    }
+
+    public static Timing getTileEntityTiming(TileEntity entity) {
+        return NeptuneTimingsFactory.ofSafe("Minecraft", "## tickTileEntity - " + entity.getClass().getName(), tickTileEntityTimer);
+    }
+
     public static Timing getBlockTiming(Block block) {
         return NeptuneTimingsFactory.ofSafe("## Scheduled Block: " + block.getUnlocalizedName());
     }
 
-    public static Timing getEntityTiming(Entity entity) {
-        return NeptuneTimingsFactory.ofSafe("Minecraft", "## tickEntity - " + entity.getFqName());
-    }
-
-    public static Timing getTileEntityTiming(TileEntity entity) {
-        return NeptuneTimingsFactory.ofSafe("Minecraft", "## tickTileEntity - " + entity.getClass().getSimpleName());
+    public static void stopServer() {
+        TimingsManager.stopServer();
     }
 
 }

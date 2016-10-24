@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.world;
 
 import co.aikar.timings.Timing;
+import com.google.common.collect.Lists;
 import net.canarymod.api.EntityTracker;
 import net.canarymod.api.GameMode;
 import net.canarymod.api.PlayerManager;
@@ -66,10 +67,12 @@ import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.ReportedException;
 import net.minecraft.village.VillageSiege;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.MinecraftException;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.SpawnerAnimals;
 import net.minecraft.world.Teleporter;
@@ -98,6 +101,9 @@ import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Iterator;
 import java.util.List;
@@ -130,7 +136,10 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     @Shadow protected abstract void wakeAllPlayers();
     @Shadow protected abstract BlockPos adjustPosToNearbyEntity(BlockPos pos);
     @Shadow public abstract boolean addWeatherEffect(net.minecraft.entity.Entity entityIn);
-    @Shadow private void sendQueuedBlockEvents() {}
+    @Shadow protected abstract void saveLevel() throws MinecraftException;
+    @Shadow
+    private void sendQueuedBlockEvents() {
+    }
 
     /**
      * @author jamierocks - 2nd October 2016
@@ -382,6 +391,47 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
                 this.theProfiler.endSection();
             }
         }
+    }
+
+    /**
+     * @author jamierocks - 25th October 2016
+     * @reason Add timings calls
+     */
+    @Overwrite
+    public void saveAllChunks(boolean p_73044_1_, IProgressUpdate progressCallback) throws MinecraftException {
+        if (this.chunkProvider.canSave()) {
+            this.getTimings().worldSave.startTiming(); // Neptune - timings
+            if (progressCallback != null) {
+                progressCallback.displaySavingString("Saving level");
+            }
+
+            this.saveLevel();
+
+            if (progressCallback != null) {
+                progressCallback.displayLoadingString("Saving chunks");
+            }
+
+            this.getTimings().worldSaveChunks.startTiming(); // Neptune - timings
+            this.chunkProvider.saveChunks(p_73044_1_, progressCallback);
+            this.getTimings().worldSaveChunks.startTiming(); // Neptune - timings
+
+            for (net.minecraft.world.chunk.Chunk chunk : Lists.newArrayList(this.theChunkProviderServer.func_152380_a())) {
+                if (chunk != null && !this.thePlayerManager.hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
+                    this.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
+                }
+            }
+            this.getTimings().worldSave.stopTiming(); // Neptune - timings
+        }
+    }
+
+    @Inject(method = "saveLevel", at = @At("HEAD"))
+    public void onSaveLevel(CallbackInfo ci) {
+        this.getTimings().worldSaveLevel.startTiming();
+    }
+
+    @Inject(method = "saveLevel", at = @At("RETURN"))
+    public void afterSaveLevel(CallbackInfo ci) {
+        this.getTimings().worldSaveLevel.stopTiming();
     }
 
     @Override

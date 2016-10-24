@@ -40,12 +40,6 @@ public class WorldTimingsHandler {
     public final Timing scheduledBlocksTicking;
     public final Timing chunkTicks;
     public final Timing chunkTicksBlocks;
-    public final Timing updateBlocks;
-    public final Timing updateBlocksCheckNextLight;
-    public final Timing updateBlocksChunkTick;
-    public final Timing updateBlocksIceAndSnow;
-    public final Timing updateBlocksRandomTick;
-    public final Timing updateBlocksThunder;
     public final Timing doVillages;
     public final Timing doChunkMap;
     public final Timing doChunkGC;
@@ -54,13 +48,11 @@ public class WorldTimingsHandler {
     public final Timing entityTick;
     public final Timing tileEntityTick;
     public final Timing tileEntityPending;
-    public final Timing tileEntityRemoval;
     public final Timing tracker1;
     public final Timing tracker2;
     public final Timing doTick;
     public final Timing tickEntities;
 
-    // Chunk Load
     public final Timing syncChunkLoadTimer;
     public final Timing syncChunkLoadDataTimer;
     public final Timing syncChunkLoadStructuresTimer;
@@ -68,12 +60,14 @@ public class WorldTimingsHandler {
     public final Timing syncChunkLoadTileEntitiesTimer;
     public final Timing syncChunkLoadTileTicksTimer;
     public final Timing syncChunkLoadPostTimer;
-
-    // Chunk population
-    public final Timing chunkPopulate;
+    public final Timing worldSave;
+    public final Timing worldSaveChunks;
+    public final Timing worldSaveLevel;
+    public final Timing chunkSaveNop;
+    public final Timing chunkSaveData;
 
     public WorldTimingsHandler(World world) {
-        String name = Configuration.getServerConfig().getDefaultWorldName() + " - ";
+        final String name = Configuration.getServerConfig().getDefaultWorldName() + " - ";
 
         this.mobSpawn = NeptuneTimingsFactory.ofSafe(name + "mobSpawn");
         this.doChunkUnload = NeptuneTimingsFactory.ofSafe(name + "doChunkUnload");
@@ -82,36 +76,33 @@ public class WorldTimingsHandler {
         this.scheduledBlocksTicking = NeptuneTimingsFactory.ofSafe(name + "Scheduled Blocks - Ticking");
         this.chunkTicks = NeptuneTimingsFactory.ofSafe(name + "Chunk Ticks");
         this.chunkTicksBlocks = NeptuneTimingsFactory.ofSafe(name + "Chunk Ticks - Blocks");
-        this.updateBlocks = NeptuneTimingsFactory.ofSafe(name + "Update Blocks");
-        this.updateBlocksCheckNextLight = NeptuneTimingsFactory.ofSafe(name + "Update Blocks - CheckNextLight");
-        this.updateBlocksChunkTick = NeptuneTimingsFactory.ofSafe(name + "Update Blocks - ChunkTick");
-        this.updateBlocksIceAndSnow = NeptuneTimingsFactory.ofSafe(name + "Update Blocks - IceAndSnow");
-        this.updateBlocksRandomTick = NeptuneTimingsFactory.ofSafe(name + "Update Blocks - RandomTick");
-        this.updateBlocksThunder = NeptuneTimingsFactory.ofSafe(name + "Update Blocks - Thunder");
         this.doVillages = NeptuneTimingsFactory.ofSafe(name + "doVillages");
         this.doChunkMap = NeptuneTimingsFactory.ofSafe(name + "doChunkMap");
         this.doSounds = NeptuneTimingsFactory.ofSafe(name + "doSounds");
-        this.doChunkGC = NeptuneTimingsFactory.ofSafe(name + "doChunkGC");
+        this.doChunkGC = NeptuneTimingsFactory.ofSafe(name + "doChunkGC"); // TODO
         this.doPortalForcer = NeptuneTimingsFactory.ofSafe(name + "doPortalForcer");
         this.entityTick = NeptuneTimingsFactory.ofSafe(name + "entityTick");
         this.entityRemoval = NeptuneTimingsFactory.ofSafe(name + "entityRemoval");
         this.tileEntityTick = NeptuneTimingsFactory.ofSafe(name + "tileEntityTick");
         this.tileEntityPending = NeptuneTimingsFactory.ofSafe(name + "tileEntityPending");
-        this.tileEntityRemoval = NeptuneTimingsFactory.ofSafe(name + "tileEntityRemoval");
 
-        this.syncChunkLoadTimer = NeptuneTimingsFactory.ofSafe(name + "syncChunkLoad");
-        this.syncChunkLoadDataTimer = NeptuneTimingsFactory.ofSafe(name + "syncChunkLoad - Data");
-        this.syncChunkLoadStructuresTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - Structures");
-        this.syncChunkLoadEntitiesTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - Entities");
-        this.syncChunkLoadTileEntitiesTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - TileEntities");
-        this.syncChunkLoadTileTicksTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - TileTicks");
-        this.syncChunkLoadPostTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - Post");
+        this.syncChunkLoadTimer = NeptuneTimingsFactory.ofSafe(name + "syncChunkLoad"); // TODO
+        this.syncChunkLoadDataTimer = NeptuneTimingsFactory.ofSafe(name + "syncChunkLoad - Data"); // TODO
+        this.syncChunkLoadStructuresTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - Structures"); // TODO
+        this.syncChunkLoadEntitiesTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - Entities"); // TODO
+        this.syncChunkLoadTileEntitiesTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - TileEntities"); // TODO
+        this.syncChunkLoadTileTicksTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - TileTicks"); // TODO
+        this.syncChunkLoadPostTimer = NeptuneTimingsFactory.ofSafe(name + "chunkLoad - Post"); // TODO
+        this.worldSave = NeptuneTimingsFactory.ofSafe(name + "World Save");
+        this.worldSaveLevel = NeptuneTimingsFactory.ofSafe(name + "World Save - Level");
+        this.worldSaveChunks = NeptuneTimingsFactory.ofSafe(name + "World Save - Chunks");
+        this.chunkSaveNop = NeptuneTimingsFactory.ofSafe(name + "Chunk Save - NOP");
+        this.chunkSaveData = NeptuneTimingsFactory.ofSafe(name + "Chunk Save - Data");
 
         this.tracker1 = NeptuneTimingsFactory.ofSafe(name + "tracker stage 1");
         this.tracker2 = NeptuneTimingsFactory.ofSafe(name + "tracker stage 2");
         this.doTick = NeptuneTimingsFactory.ofSafe(name + "doTick");
         this.tickEntities = NeptuneTimingsFactory.ofSafe(name + "tickEntities");
-
-        this.chunkPopulate = NeptuneTimingsFactory.ofSafe(name + "chunkPopulate");
     }
+
 }

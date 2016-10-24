@@ -204,10 +204,8 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
         if (this.tickCounter % 900 == 0) {
             this.theProfiler.startSection("save");
-            NeptuneTimings.worldSaveTimer.startTiming(); // Neptune - timings
             this.serverConfigManager.saveAllPlayerData();
             this.saveAllWorlds(true);
-            NeptuneTimings.worldSaveTimer.stopTiming(); // Neptune - timings
             this.theProfiler.endSection();
         }
 
@@ -325,8 +323,15 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         this.previousTick = System.nanoTime() - curTrack; // Neptune - ServerTickHook
     }
 
-    @Inject(method = "stopServer", at = @At("RETURN"))
+    @Inject(method = "stopServer", at = @At("HEAD"))
     public void onServerStop(CallbackInfo ci) {
+        if (!this.worldIsBeingDeleted) {
+            NeptuneTimings.stopServer();
+        }
+    }
+
+    @Inject(method = "stopServer", at = @At("RETURN"))
+    public void afterServerStop(CallbackInfo ci) {
         if (!this.worldIsBeingDeleted) {
             Canary.log.info("Disabling plugins...");
             Canary.pluginManager().disableAllPlugins(Canary.log);
