@@ -84,6 +84,7 @@ import org.neptunepowered.vanilla.NeptuneOfflinePlayer;
 import org.neptunepowered.vanilla.interfaces.minecraft.server.IMixinMinecraftServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinSaveHandler;
+import org.neptunepowered.vanilla.server.ServerTimerManager;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
@@ -447,12 +448,12 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public void setTimer(String uniqueName, int time) {
-
+        ServerTimerManager.setTimer(uniqueName, time);
     }
 
     @Override
     public boolean isTimerExpired(String uniqueName) {
-        return false;
+        return ServerTimerManager.hasTimerFinished(uniqueName);
     }
 
     @Override
