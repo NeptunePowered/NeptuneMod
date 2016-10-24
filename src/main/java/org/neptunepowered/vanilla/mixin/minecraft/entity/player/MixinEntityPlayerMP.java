@@ -89,6 +89,7 @@ import net.visualillusionsent.utils.DateUtils;
 import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.util.IMixinFoodStats;
+import org.neptunepowered.vanilla.util.NbtConstants;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.neptunepowered.vanilla.util.converter.PlayerListActionConverter;
 import org.spongepowered.asm.mixin.Final;
@@ -1019,18 +1020,18 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public NBTTagCompound writeCanaryNBT(NBTTagCompound tagCompound) {
-        this.metadata.setLong("TimePlayed", this.metadata.getLong("TimePlayed") + (ToolBox.getUnixTimestamp() - this.currentSessionStart));
+        this.metadata.setLong(NbtConstants.TIME_PLAYED, this.metadata.getLong(NbtConstants.TIME_PLAYED) + (ToolBox.getUnixTimestamp() - this.currentSessionStart));
         this.currentSessionStart = ToolBox.getUnixTimestamp(); // Reset time
-        this.metadata.setString("PreviousIP", this.getIP());
+        this.metadata.setString(NbtConstants.PREVIOUS_IP, this.getIP());
 
         return super.writeCanaryNBT(tagCompound);
     }
 
     @Override
     public void initializeMetaData() {
-        this.metadata.setString("FirstJoin", DateUtils.longToDateTime(System.currentTimeMillis()));
-        this.metadata.setString("LastJoin", DateUtils.longToDateTime(System.currentTimeMillis()));
-        this.metadata.setLong("TimePlayed", 1L); // Initialise to 1
+        this.metadata.setString(NbtConstants.FIRST_JOINED, DateUtils.longToDateTime(System.currentTimeMillis()));
+        this.metadata.setString(NbtConstants.LAST_JOINED, DateUtils.longToDateTime(System.currentTimeMillis()));
+        this.metadata.setLong(NbtConstants.TIME_PLAYED, 1L); // Initialise to 1
     }
 
 }

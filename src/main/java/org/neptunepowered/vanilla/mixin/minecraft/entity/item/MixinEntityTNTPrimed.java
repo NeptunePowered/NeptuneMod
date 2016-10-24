@@ -30,6 +30,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.nbt.NBTTagCompound;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntity;
+import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -107,18 +108,18 @@ public abstract class MixinEntityTNTPrimed extends MixinEntity implements TNTPri
     @Override
     public NBTTagCompound writeCanaryNBT(NBTTagCompound tagCompound) {
         super.writeCanaryNBT(tagCompound);
-        tagCompound.setBoolean("DamageEntities", this.damageEntity);
-        tagCompound.setBoolean("DamageWorld", this.damageWorld);
-        tagCompound.setFloat("Power", this.power);
+        tagCompound.setBoolean(NbtConstants.DAMAGE_ENTITIES, this.damageEntity);
+        tagCompound.setBoolean(NbtConstants.DAMAGE_WORLD, this.damageWorld);
+        tagCompound.setFloat(NbtConstants.POWER, this.power);
         return tagCompound;
     }
 
     @Override
     public void readCanaryNBT(NBTTagCompound tagCompound) {
         super.readCanaryNBT(tagCompound);
-        this.damageEntity = !tagCompound.hasKey("DamageEntities") || tagCompound.getBoolean("DamageEntities");
-        this.damageWorld = !tagCompound.hasKey("DamageWorld") || tagCompound.getBoolean("DamageWorld");
-        this.power = !tagCompound.hasKey("Power") ? tagCompound.getFloat("Power") : 4.0f;
+        this.damageEntity = tagCompound.hasKey(NbtConstants.DAMAGE_ENTITIES) && tagCompound.getBoolean(NbtConstants.DAMAGE_ENTITIES);
+        this.damageWorld = tagCompound.hasKey(NbtConstants.DAMAGE_WORLD) && tagCompound.getBoolean(NbtConstants.DAMAGE_WORLD);
+        this.power = tagCompound.hasKey(NbtConstants.POWER) ? tagCompound.getFloat(NbtConstants.POWER) : 4.0f;
     }
 
     @Override

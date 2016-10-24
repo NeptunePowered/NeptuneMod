@@ -40,6 +40,7 @@ import net.minecraft.entity.DataWatcher;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import org.neptunepowered.vanilla.interfaces.minecraft.entity.IMixinEntity;
+import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -531,13 +532,13 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
 
     public NBTTagCompound writeCanaryNBT(NBTTagCompound tagCompound) {
         // tagCompound.setString("LevelName", this.getWorld().getName()); // TODO: multiworld
-        tagCompound.setTag("Canary", this.metadata);
+        tagCompound.setTag(NbtConstants.CANARY_TAG, this.metadata);
         return tagCompound;
     }
 
     public void readCanaryNBT(NBTTagCompound tagCompound) {
-        if (tagCompound.hasKey("Canary")) {
-            this.metadata = tagCompound.getCompoundTag("Canary");
+        if (tagCompound.hasKey(NbtConstants.CANARY_TAG)) {
+            this.metadata = tagCompound.getCompoundTag(NbtConstants.CANARY_TAG);
         } else {
             this.initializeMetaData();
         }

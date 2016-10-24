@@ -30,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import org.neptunepowered.vanilla.NeptuneMobSpawnerEntry;
+import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -137,11 +138,11 @@ public abstract class MixinMobSpawnerBaseLogic implements MobSpawnerLogic {
         final NBTTagCompound tagCompound = new NBTTagCompound();
         this.writeToNBT(tagCompound);
 
-        if (tagCompound.hasKey("SpawnPotentials")) {
-            final NBTTagList tagList = tagCompound.getTagList("SpawnPotentials", 8);
+        if (tagCompound.hasKey(NbtConstants.SPAWN_POTENTIALS)) {
+            final NBTTagList tagList = tagCompound.getTagList(NbtConstants.SPAWN_POTENTIALS, NbtConstants.TAG_COMPOUND);
 
             for (int i = 0; i < tagList.tagCount(); i++) {
-                spawns.add(tagList.getCompoundTagAt(i).getString("Type"));
+                spawns.add(tagList.getCompoundTagAt(i).getString(NbtConstants.ENTITY_TYPE));
             }
         }
 
@@ -159,10 +160,10 @@ public abstract class MixinMobSpawnerBaseLogic implements MobSpawnerLogic {
         final NBTTagCompound tagCompound = new NBTTagCompound();
         this.writeToNBT(tagCompound);
 
-        if (tagCompound.hasKey("SpawnPotentials")) {
-            tagCompound.removeTag("SpawnPotentials");
+        if (tagCompound.hasKey(NbtConstants.SPAWN_POTENTIALS)) {
+            tagCompound.removeTag(NbtConstants.SPAWN_POTENTIALS);
         }
-        tagCompound.setTag("SpawnPotentials", spawnPotentials);
+        tagCompound.setTag(NbtConstants.SPAWN_POTENTIALS, spawnPotentials);
 
         this.readFromNBT(tagCompound);
     }
@@ -181,8 +182,8 @@ public abstract class MixinMobSpawnerBaseLogic implements MobSpawnerLogic {
         final NBTTagCompound tagCompound = new NBTTagCompound();
         this.writeToNBT(tagCompound);
 
-        if (tagCompound.hasKey("SpawnPotentials")) {
-            final NBTTagList tagList = tagCompound.getTagList("SpawnPotentials", 8);
+        if (tagCompound.hasKey(NbtConstants.SPAWN_POTENTIALS)) {
+            final NBTTagList tagList = tagCompound.getTagList(NbtConstants.SPAWN_POTENTIALS, NbtConstants.TAG_COMPOUND);
 
             for (int i = 0; i < tagList.tagCount(); i++) {
                 entries.add(new NeptuneMobSpawnerEntry(tagList.getCompoundTagAt(i)));

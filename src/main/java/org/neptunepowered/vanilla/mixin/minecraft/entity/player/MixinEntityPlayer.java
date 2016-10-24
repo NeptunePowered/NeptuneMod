@@ -49,6 +49,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import org.neptunepowered.vanilla.interfaces.minecraft.inventory.IMixinInventoryEnderChest;
 import org.neptunepowered.vanilla.mixin.minecraft.entity.MixinEntityLivingBase;
+import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -215,15 +216,15 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Override
     public NBTTagCompound writeCanaryNBT(NBTTagCompound tagCompound) {
-        tagCompound.setBoolean("SleepingIgnored", this.sleepIgnored);
+        tagCompound.setBoolean(NbtConstants.SLEEPING_IGNORED, this.sleepIgnored);
 
         return super.writeCanaryNBT(tagCompound);
     }
 
     @Override
     public void readCanaryNBT(NBTTagCompound tagCompound) {
-        if (tagCompound.hasKey("SleepingIgnored")) {
-            this.sleepIgnored = tagCompound.getBoolean("SleepingIgnored");
+        if (tagCompound.hasKey(NbtConstants.SLEEPING_IGNORED)) {
+            this.sleepIgnored = tagCompound.getBoolean(NbtConstants.SLEEPING_IGNORED);
         }
 
         super.readCanaryNBT(tagCompound);
