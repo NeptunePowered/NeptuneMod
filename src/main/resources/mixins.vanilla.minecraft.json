@@ -181,6 +181,7 @@
         "world.storage.MixinSaveHandler",
         "world.storage.MixinWorldInfo",
         "world.MixinWorld",
+        "world.MixinWorldProvider",
         "world.MixinWorldServer"
     ],
     "injectors": {
