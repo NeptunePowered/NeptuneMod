@@ -78,6 +78,7 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
     @Shadow protected DataWatcher dataWatcher;
 
     protected NBTTagCompound metadata = new NBTTagCompound();
+    protected NBTTagCompound bukkitData = new NBTTagCompound();
     private Timing timing;
 
     @Shadow public abstract void moveEntity(double x, double y, double z);
@@ -98,6 +99,9 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
 
     @Inject(method = "Lnet/minecraft/entity/Entity;writeToNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("HEAD"))
     public void onWriteToNBT(NBTTagCompound tagCompound, CallbackInfo ci) {
+        if (tagCompound.hasKey(NbtConstants.BUKKIT_TAG)) {
+            this.bukkitData = tagCompound.getCompoundTag(NbtConstants.BUKKIT_TAG);
+        }
         this.writeCanaryNBT(tagCompound);
     }
 

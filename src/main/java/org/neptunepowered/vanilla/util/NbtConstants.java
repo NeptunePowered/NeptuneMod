@@ -53,4 +53,9 @@ public final class NbtConstants {
     public static final String DAMAGE_WORLD = "DamageWorld";
     public static final String POWER = "Power";
 
+    // Bukkit tags
+    public static final String BUKKIT_TAG = "bukkit";
+    public static final String BUKKIT_FIRST_JOINED = "firstPlayed";
+    public static final String BUKKIT_LAST_JOINED = "lastPlayed";
+
 }

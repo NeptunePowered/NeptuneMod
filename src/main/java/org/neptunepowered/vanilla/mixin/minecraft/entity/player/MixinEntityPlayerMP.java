@@ -1029,8 +1029,16 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void initializeMetaData() {
-        this.metadata.setString(NbtConstants.FIRST_JOINED, DateUtils.longToDateTime(System.currentTimeMillis()));
-        this.metadata.setString(NbtConstants.LAST_JOINED, DateUtils.longToDateTime(System.currentTimeMillis()));
+        if (!this.bukkitData.hasKey(NbtConstants.BUKKIT_FIRST_JOINED)) {
+            this.metadata.setString(NbtConstants.FIRST_JOINED, DateUtils.longToDateTime(System.currentTimeMillis()));
+        } else {
+            this.metadata.setString(NbtConstants.FIRST_JOINED, DateUtils.longToDateTime(this.bukkitData.getLong(NbtConstants.BUKKIT_FIRST_JOINED)));
+        }
+        if (!this.bukkitData.hasKey(NbtConstants.BUKKIT_LAST_JOINED)) {
+            this.metadata.setString(NbtConstants.LAST_JOINED, DateUtils.longToDateTime(System.currentTimeMillis()));
+        } else {
+            this.metadata.setString(NbtConstants.LAST_JOINED, DateUtils.longToDateTime(this.bukkitData.getLong(NbtConstants.BUKKIT_LAST_JOINED)));
+        }
         this.metadata.setLong(NbtConstants.TIME_PLAYED, 1L); // Initialise to 1
     }
 

@@ -45,8 +45,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
+import net.visualillusionsent.utils.DateUtils;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
+import org.neptunepowered.vanilla.util.NbtConstants;
 import org.neptunepowered.vanilla.util.helper.NetHandlerPlayServerHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -67,8 +69,9 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
     @Shadow public EntityPlayerMP playerEntity;
     @Shadow private int chatSpamThresholdCount;
 
-    @Shadow
-    public abstract void sendPacket(final net.minecraft.network.Packet packetIn);
+    private final String lastJoin = DateUtils.longToDateTime(System.currentTimeMillis());
+
+    @Shadow public abstract void sendPacket(final net.minecraft.network.Packet packetIn);
 
     @Redirect(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetHandlerPlayServer;"
             + "kickPlayerFromServer(Ljava/lang/String;)V"))
@@ -97,11 +100,12 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
 
     /**
      * @author jamierocks - 28th May 2016
-     * @reason Overwrite to fire the DisconnectHook.
+     * @reason Overwrite to fire the DisconnectHook, and store the LAST_JOINED data.
      */
     @Overwrite
     public void onDisconnect(IChatComponent reason) {
         logger.info(this.playerEntity.getName() + " lost connection: " + reason);
+        ((Player) this.playerEntity).getMetaData().put(NbtConstants.LAST_JOINED, this.lastJoin);
         this.serverController.refreshStatusNextTick();
         ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.left",
                 this.playerEntity.getDisplayName());
