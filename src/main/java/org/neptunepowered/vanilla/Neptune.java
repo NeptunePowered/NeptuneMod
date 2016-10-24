@@ -43,8 +43,8 @@ import net.canarymod.user.ReservelistProvider;
 import net.canarymod.user.UserAndGroupsProvider;
 import net.canarymod.user.WhitelistProvider;
 import net.canarymod.warp.WarpProvider;
-import org.neptunepowered.vanilla.command.NeptuneCommand;
-import org.neptunepowered.vanilla.command.TimingsCommand;
+import org.neptunepowered.vanilla.commandsys.NeptuneCommand;
+import org.neptunepowered.vanilla.commandsys.TimingsCommand;
 import org.neptunepowered.vanilla.commandsys.NeptunePlayerSelector;
 import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.util.NeptuneJsonNBTUtility;
@@ -121,7 +121,7 @@ public class Neptune extends Canary {
     }
 
     public void lateInitialisation() {
-        if (isInitialised) {
+        if (this.isInitialised) {
             return;
         }
 
@@ -131,7 +131,7 @@ public class Neptune extends Canary {
         this.initWarps();
         this.registerCanaryCommands();
         this.initMOTDListener();
-        isInitialised = true;
+        this.isInitialised = true;
     }
 
 }

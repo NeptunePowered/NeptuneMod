@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.command;
+package org.neptunepowered.vanilla.commandsys;
 
 import net.canarymod.Canary;
 import net.canarymod.chat.ChatFormat;

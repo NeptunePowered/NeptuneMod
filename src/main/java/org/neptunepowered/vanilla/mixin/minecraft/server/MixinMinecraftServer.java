@@ -54,6 +54,7 @@ import net.canarymod.hook.command.ConsoleCommandHook;
 import net.canarymod.hook.system.PermissionCheckHook;
 import net.canarymod.hook.system.ServerTickHook;
 import net.canarymod.tasks.ServerTask;
+import net.canarymod.tasks.ServerTaskManager;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.crash.CrashReport;
@@ -91,6 +92,8 @@ import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 
 import java.awt.GraphicsEnvironment;
 import java.util.Arrays;
@@ -121,6 +124,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Shadow private boolean serverRunning;
     @Shadow private ServerConfigurationManager serverConfigManager;
     @Shadow private long nanoTimeSinceStatusRefresh;
+    @Shadow private boolean worldIsBeingDeleted;
 
     private WorldManager worldManager = new NeptuneWorldManager();
     private long previousTick = -1L;
@@ -165,6 +169,10 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Overwrite
     protected void tick() {
         TimingsManager.FULL_SERVER_TICK.startTiming(); // Neptune - timings
+
+        NeptuneTimings.canaryTaskManagerTimer.startTiming(); // Neptune - timings
+        ServerTaskManager.runTasks(); // Neptune - Run tasks
+        NeptuneTimings.canaryTaskManagerTimer.stopTiming(); // Neptune - timings
 
         long i = System.nanoTime();
         ++this.tickCounter;
@@ -231,7 +239,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         long curTrack = System.nanoTime();
         // Neptune - ServerTickHook end
 
-        NeptuneTimings.schedulerTimer.startTiming(); // Neptune - timings
+        NeptuneTimings.minecraftSchedulerTimer.startTiming(); // Neptune - timings
         this.theProfiler.startSection("jobs");
 
         synchronized (this.futureTaskQueue) {
@@ -239,7 +247,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
                 Util.runTask((FutureTask) this.futureTaskQueue.poll(), logger);
             }
         }
-        NeptuneTimings.schedulerTimer.stopTiming(); // Neptune - timings
+        NeptuneTimings.minecraftSchedulerTimer.stopTiming(); // Neptune - timings
 
         this.theProfiler.endStartSection("levels");
 
@@ -315,6 +323,14 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         this.previousTick = System.nanoTime() - curTrack; // Neptune - ServerTickHook
     }
 
+    @Inject(method = "stopServer", at = @At("RETURN"))
+    public void onServerStop() {
+        if (!this.worldIsBeingDeleted) {
+            Canary.log.info("Disabling plugins...");
+            Canary.pluginManager().disableAllPlugins(Canary.log);
+        }
+    }
+
     @Intrinsic
     public String server$getHostname() {
         return this.getHostname();
@@ -322,7 +338,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public int getNumPlayersOnline() {
-        return serverConfigManager.getCurrentPlayerCount();
+        return this.serverConfigManager.getCurrentPlayerCount();
     }
 
     @Intrinsic
@@ -332,7 +348,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public String[] getPlayerNameList() {
-        return serverConfigManager.getAllUsernames();
+        return this.serverConfigManager.getAllUsernames();
     }
 
     @Override
@@ -651,7 +667,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public long[] getTickTimeArray() {
-        return tickTimeArray;
+        return this.tickTimeArray;
     }
 
     @Override
@@ -661,7 +677,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public String getServerVersion() {
-        return getMinecraftVersion();
+        return this.getMinecraftVersion();
     }
 
     @Override
@@ -686,12 +702,12 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public boolean addSynchronousTask(ServerTask task) {
-        return false;
+        return ServerTaskManager.addTask(task);
     }
 
     @Override
     public boolean removeSynchronousTask(ServerTask task) {
-        return false;
+        return ServerTaskManager.removeTask(task);
     }
 
     @Override
@@ -714,12 +730,14 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public void showTitle(ChatComponent title) {
-
+        this.showTitle(title, null);
     }
 
     @Override
     public void showTitle(ChatComponent title, ChatComponent subtitle) {
-
+        for (Player player : this.getPlayerList()) {
+            player.showTitle(title, subtitle);
+        }
     }
 
     @Override

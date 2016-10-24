@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.command;
+package org.neptunepowered.vanilla.commandsys;
 
 import co.aikar.timings.NeptuneTimingsFactory;
 import co.aikar.timings.Timings;

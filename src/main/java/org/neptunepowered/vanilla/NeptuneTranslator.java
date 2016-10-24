@@ -28,13 +28,13 @@ import net.minecraft.util.StatCollector;
 
 final class NeptuneTranslator extends NativeTranslateBridge {
 
-    private NeptuneTranslator() {
-    }
-
     static void load() {
         if ($ == null) {
             $ = new NeptuneTranslator();
         }
+    }
+
+    private NeptuneTranslator() {
     }
 
     @Override

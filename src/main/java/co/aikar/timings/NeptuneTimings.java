@@ -34,7 +34,8 @@ public final class NeptuneTimings {
     public static final Timing playerListTimer = NeptuneTimingsFactory.ofSafe("Player List");
     public static final Timing connectionTimer = NeptuneTimingsFactory.ofSafe("Connection Handler");
     public static final Timing tickablesTimer = NeptuneTimingsFactory.ofSafe("Tickables");
-    public static final Timing schedulerTimer = NeptuneTimingsFactory.ofSafe("Scheduler");
+    public static final Timing minecraftSchedulerTimer = NeptuneTimingsFactory.ofSafe("Minecraft Scheduler");
+    public static final Timing canaryTaskManagerTimer = NeptuneTimingsFactory.ofSafe("Canary TaskManager");
     public static final Timing chunkIOTickTimer = NeptuneTimingsFactory.ofSafe("ChunkIOTick");
     public static final Timing timeUpdateTimer = NeptuneTimingsFactory.ofSafe("Time Update");
     public static final Timing serverCommandTimer = NeptuneTimingsFactory.ofSafe("Server Command");
