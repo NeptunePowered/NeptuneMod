@@ -78,7 +78,7 @@ configurations {
 dependencies {
     compile "org.neptunepowered:NeptuneLib:$apiVersion"
     compile 'co.aikar:fastutil-lite:1.0'
-    compile('org.spongepowered:mixin:0.5.11-SNAPSHOT') {
+    compile('org.spongepowered:mixin:0.5.17-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
     }

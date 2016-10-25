@@ -29,8 +29,6 @@ import net.canarymod.api.nbt.ListTag;
 import net.canarymod.api.nbt.NBTTagType;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,7 +38,6 @@ import java.util.Map;
 import java.util.Set;
 
 @Mixin(NBTTagCompound.class)
-@Implements(@Interface(iface = CompoundTag.class, prefix = "tag$"))
 public abstract class MixinNBTTagCompound extends MixinNBTBase<CompoundTag> implements CompoundTag {
 
     @Shadow private Map<String, NBTBase> tagMap;
@@ -201,7 +198,7 @@ public abstract class MixinNBTTagCompound extends MixinNBTBase<CompoundTag> impl
     }
 
     @Intrinsic
-    public CompoundTag key$getCompoundTag(String key) {
+    public CompoundTag getCompoundTag(String key) {
         return (CompoundTag) this.shadow$getCompoundTag(key);
     }
 

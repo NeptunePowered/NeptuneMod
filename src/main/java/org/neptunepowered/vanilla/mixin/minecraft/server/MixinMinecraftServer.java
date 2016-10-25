@@ -45,7 +45,6 @@ import net.canarymod.api.inventory.recipes.CraftingRecipe;
 import net.canarymod.api.inventory.recipes.Recipe;
 import net.canarymod.api.inventory.recipes.SmeltRecipe;
 import net.canarymod.api.nbt.CompoundTag;
-import net.canarymod.api.world.DimensionType;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
@@ -77,6 +76,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Util;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.storage.AnvilSaveConverter;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import org.apache.logging.log4j.Logger;
@@ -95,9 +95,11 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.GraphicsEnvironment;
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -145,6 +147,11 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Shadow public abstract NetworkSystem getNetworkSystem();
     @Shadow public abstract int getCurrentPlayerCount();
     @Shadow protected abstract void saveAllWorlds(boolean dontLog);
+    
+    @Redirect(method = "<init>", at = @At(value = "NEW", args = "class=net/minecraft/world/chunk/storage/AnvilSaveConverter"))
+    public AnvilSaveConverter createSaveConverter(File dir) {
+        return new AnvilSaveConverter(NeptuneWorldManager.WORLDS_DIR);
+    }
 
     /**
      * @author jamierocks - 18th May 2015
@@ -788,11 +795,6 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         }
 
         this.clearCurrentTask();
-    }
-
-    @Override
-    public void loadWorld(String name, DimensionType dimensionType) {
-
     }
 
 }

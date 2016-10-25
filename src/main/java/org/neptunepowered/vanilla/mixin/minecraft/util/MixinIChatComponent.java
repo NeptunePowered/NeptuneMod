@@ -38,8 +38,16 @@ public interface MixinIChatComponent extends IChatComponent {
         return (ChatComponent) this.setChatStyle((net.minecraft.util.ChatStyle) chatStyle);
     }
 
+    default ChatStyle component$getChatStyle() {
+        return (ChatStyle) this.getChatStyle();
+    }
+
     default ChatComponent component$setText(String s) {
         return (ChatComponent) this;
+    }
+
+    default ChatComponent component$appendText(String var1) {
+        return (ChatComponent) this.appendText(var1);
     }
 
     default ChatComponent component$appendSibling(ChatComponent chatComponent) {

@@ -28,12 +28,14 @@ import net.canarymod.config.Configuration;
 import net.minecraft.profiler.PlayerUsageSnooper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.dedicated.PropertyManager;
 import org.neptunepowered.vanilla.Neptune;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.io.IOException;
@@ -54,6 +56,27 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
         Canary.enableEarlyPlugins();
         ((Neptune) Canary.instance()).lateInitialisation();
         Canary.enableLatePlugins();
+    }
+
+    @Redirect(method = "startServer", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/server/dedicated/PropertyManager;"
+                    + "getStringProperty(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"))
+    public String handleStringProperties(PropertyManager propertyManager, String key, String defaultValue) {
+        if ("server-ip".equals(key)) {
+            return Configuration.getServerConfig().getBindIp();
+        } else if ("motd".equals(key)) {
+            return Configuration.getServerConfig().getMotd();
+        } else if ("level-name".equals(key)) {
+            return Configuration.getServerConfig().getDefaultWorldName();
+        } else if ("level-seed".equals(key)) {
+            return Configuration.getWorldConfig(this.getFolderName() + "_NORMAL").getWorldSeed();
+        } else if ("level-type".equals(key)) {
+            return Configuration.getWorldConfig(this.getFolderName() + "_NORMAL").getWorldType().toString();
+        } else if ("generator-type".equals(key)) {
+            return Configuration.getWorldConfig(this.getFolderName() + "_NORMAL").getGeneratorSettings();
+        } else {
+            return propertyManager.getStringProperty(key, defaultValue);
+        }
     }
 
     /**
