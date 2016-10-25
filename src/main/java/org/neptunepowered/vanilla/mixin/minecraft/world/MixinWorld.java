@@ -47,6 +47,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import org.neptunepowered.vanilla.interfaces.minecraft.entity.IMixinEntity;
 import org.neptunepowered.vanilla.interfaces.minecraft.tileentity.IMixinTileEntity;
@@ -55,6 +56,9 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Iterator;
 import java.util.List;
@@ -85,7 +89,7 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow protected Set<ChunkCoordIntPair> activeChunkSet;
     @Shadow protected int updateLCG;
 
-    protected WorldTimingsHandler timings = new WorldTimingsHandler((WorldServer) (Object) this);
+    protected WorldTimingsHandler timings;
 
     @Shadow public abstract long getSeed();
     @Shadow public abstract void updateEntity(Entity ent);
@@ -115,6 +119,13 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow public abstract WorldType shadow$getWorldType();
     @Shadow public void tick() {}
     @Shadow protected void updateBlocks() {}
+
+    @Inject(method = "<init>*", at = @At("RETURN"))
+    public void onConstruction(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client,
+            CallbackInfo ci) {
+        // This needs to be initialised here because any earlier and the worldInfo won't have been set.
+        this.timings = new WorldTimingsHandler((WorldServer) (Object) this);
+    }
 
     /**
      * @author jamierocks - 2nd October 2016

@@ -39,6 +39,7 @@ import net.canarymod.chat.ChatFormat;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.config.Configuration;
 import net.minecraft.network.rcon.RConConsoleSource;
+import net.minecraft.server.MinecraftServer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -87,8 +88,8 @@ class TimingsExport extends Thread {
         if (!TimingsManager.privacy) {
             builder.add("server", getServerName())
                     .add("motd", Configuration.getServerConfig().getMotd())
-                    .add("online-mode", Configuration.getServerConfig().isOnlineMode());
-                    //.add("icon", SpongeImpl.getServer().getServerStatusResponse().getFavicon());
+                    .add("online-mode", Configuration.getServerConfig().isOnlineMode())
+                    .add("icon", MinecraftServer.getServer().getServerStatusResponse().getFavicon());
         }
 
         final Runtime runtime = Runtime.getRuntime();
@@ -229,7 +230,6 @@ class TimingsExport extends Thread {
             con.setInstanceFollowRedirects(false);
 
             OutputStream request = new GZIPOutputStream(con.getOutputStream()) {
-
                 {
                     this.def.setLevel(7);
                 }
@@ -290,4 +290,5 @@ class TimingsExport extends Thread {
             }
         }
     }
+
 }

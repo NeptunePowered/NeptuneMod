@@ -24,7 +24,6 @@
  */
 package co.aikar.timings;
 
-import net.canarymod.config.Configuration;
 import net.minecraft.world.World;
 
 /**
@@ -67,7 +66,7 @@ public class WorldTimingsHandler {
     public final Timing chunkSaveData;
 
     public WorldTimingsHandler(World world) {
-        final String name = Configuration.getServerConfig().getDefaultWorldName() + " - ";
+        final String name = world.getWorldInfo().getWorldName() + " - ";
 
         this.mobSpawn = NeptuneTimingsFactory.ofSafe(name + "mobSpawn");
         this.doChunkUnload = NeptuneTimingsFactory.ofSafe(name + "doChunkUnload");
@@ -79,7 +78,7 @@ public class WorldTimingsHandler {
         this.doVillages = NeptuneTimingsFactory.ofSafe(name + "doVillages");
         this.doChunkMap = NeptuneTimingsFactory.ofSafe(name + "doChunkMap");
         this.doSounds = NeptuneTimingsFactory.ofSafe(name + "doSounds");
-        this.doChunkGC = NeptuneTimingsFactory.ofSafe(name + "doChunkGC"); // TODO
+        this.doChunkGC = NeptuneTimingsFactory.ofSafe(name + "doChunkGC");
         this.doPortalForcer = NeptuneTimingsFactory.ofSafe(name + "doPortalForcer");
         this.entityTick = NeptuneTimingsFactory.ofSafe(name + "entityTick");
         this.entityRemoval = NeptuneTimingsFactory.ofSafe(name + "entityRemoval");

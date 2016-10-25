@@ -32,19 +32,29 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderDebug;
 import net.minecraft.world.gen.ChunkProviderFlat;
 import net.minecraft.world.gen.ChunkProviderGenerate;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorldProvider;
 import org.neptunepowered.vanilla.world.NeptuneChunkProviderCustom;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldProvider.class)
-public abstract class MixinWorldProvider {
+public abstract class MixinWorldProvider implements IMixinWorldProvider {
 
     @Shadow protected World worldObj;
     @Shadow private WorldType terrainType;
     @Shadow private String generatorSettings;
+    @Shadow protected int dimensionId;
 
-    private DimensionType dimensionType = DimensionType.NORMAL;
+    private DimensionType dimensionType;
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void onConstruction(CallbackInfo ci) {
+        this.dimensionType = DimensionType.fromId(this.dimensionId);
+    }
 
     /**
      * @author jamierocks - 24th October 2016
@@ -70,6 +80,11 @@ public abstract class MixinWorldProvider {
         } else {
             return chunkProvider;
         }
+    }
+
+    @Override
+    public DimensionType getDimensionType() {
+        return this.dimensionType;
     }
 
 }

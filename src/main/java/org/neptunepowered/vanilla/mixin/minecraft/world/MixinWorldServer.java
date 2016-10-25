@@ -56,6 +56,8 @@ import net.canarymod.api.world.effects.Particle;
 import net.canarymod.api.world.effects.SoundEffect;
 import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
+import net.canarymod.config.Configuration;
+import net.canarymod.config.WorldConfiguration;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockOldLeaf;
 import net.minecraft.block.BlockOldLog;
@@ -66,6 +68,8 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.init.Blocks;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.ReportedException;
@@ -92,7 +96,10 @@ import net.minecraft.world.gen.feature.WorldGenTaiga1;
 import net.minecraft.world.gen.feature.WorldGenTaiga2;
 import net.minecraft.world.gen.feature.WorldGenTrees;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorldProvider;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.neptunepowered.vanilla.util.converter.PositionConverter;
 import org.spongepowered.asm.mixin.Final;
@@ -131,6 +138,8 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     @Shadow private List<NextTickListEntry> pendingTickListEntriesThisTick;
     @Shadow public ChunkProviderServer theChunkProviderServer;
 
+    private WorldConfiguration worldConfig;
+
     @Shadow public abstract void scheduleUpdate(BlockPos pos, net.minecraft.block.Block blockIn, int delay);
     @Shadow public abstract boolean areAllPlayersAsleep();
     @Shadow protected abstract void wakeAllPlayers();
@@ -138,6 +147,12 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     @Shadow public abstract boolean addWeatherEffect(net.minecraft.entity.Entity entityIn);
     @Shadow protected abstract void saveLevel() throws MinecraftException;
     @Shadow private void sendQueuedBlockEvents() {}
+
+    @Inject(method = "<init>*", at = @At("RETURN"))
+    public void onConstruction(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn,
+            CallbackInfo ci) {
+        this.worldConfig = Configuration.getWorldConfig(this.getFqName());
+    }
 
     /**
      * @author jamierocks - 2nd October 2016
@@ -451,7 +466,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
 
     @Override
     public DimensionType getType() {
-        return null;
+        return ((IMixinWorldProvider) this.provider).getDimensionType();
     }
 
     @Override
@@ -751,12 +766,12 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
 
     @Override
     public String getName() {
-        return null;
+        return this.worldInfo.getWorldName();
     }
 
     @Override
     public String getFqName() {
-        return null;
+        return this.getName() + "_" + this.getType().toString();
     }
 
     @Override
