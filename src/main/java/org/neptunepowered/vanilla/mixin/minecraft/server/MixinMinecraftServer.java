@@ -202,6 +202,8 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
             this.statusResponse.getPlayerCountData().setPlayers(agameprofile);
         }
 
+        // Auto-save
+        // TODO: Have a auto-save-interval world configuration setting
         if (this.tickCounter % 900 == 0) {
             this.theProfiler.startSection("save");
             this.serverConfigManager.saveAllPlayerData();

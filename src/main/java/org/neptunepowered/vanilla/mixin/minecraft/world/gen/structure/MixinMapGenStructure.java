@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.mixin.minecraft.world.gen.structure;
 
 import co.aikar.timings.NeptuneTimings;
 import co.aikar.timings.Timing;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.MapGenBase;
@@ -34,6 +35,9 @@ import net.minecraft.world.gen.structure.StructureStart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 import java.util.Random;
@@ -48,9 +52,15 @@ public abstract class MixinMapGenStructure extends MapGenBase {
     @Shadow private void initializeStructureData(World worldIn) {}
     @Shadow private void setStructureStart(int chunkX, int chunkZ, StructureStart start) {}
 
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void onConstruction(CallbackInfo info) {
+        // Performance!
+        this.structureMap = new Long2ObjectOpenHashMap<>(1024);
+    }
+
     /**
      * @author jamierocks - 25th October 2016
-     * @reason Add timings calls
+     * @reason Add timings calls and prevent CME
      */
     @Overwrite
     public boolean generateStructure(World worldIn, Random randomIn, ChunkCoordIntPair chunkCoord) {
@@ -60,13 +70,15 @@ public abstract class MixinMapGenStructure extends MapGenBase {
         int j = (chunkCoord.chunkZPos << 4) + 8;
         boolean flag = false;
 
-        for (StructureStart structurestart : this.structureMap.values()) {
-            if (structurestart.isSizeableStructure() && structurestart.func_175788_a(chunkCoord) && structurestart.getBoundingBox()
-                    .intersectsWith(i, j, i + 15, j + 15)) {
-                structurestart.generateStructure(worldIn, randomIn, new StructureBoundingBox(i, j, i + 15, j + 15));
-                structurestart.func_175787_b(chunkCoord);
-                flag = true;
-                this.setStructureStart(structurestart.getChunkPosX(), structurestart.getChunkPosZ(), structurestart);
+        synchronized (this.structureMap) { // Neptune - prevent CME
+            for (StructureStart structurestart : this.structureMap.values()) {
+                if (structurestart.isSizeableStructure() && structurestart.func_175788_a(chunkCoord) && structurestart.getBoundingBox()
+                        .intersectsWith(i, j, i + 15, j + 15)) {
+                    structurestart.generateStructure(worldIn, randomIn, new StructureBoundingBox(i, j, i + 15, j + 15));
+                    structurestart.func_175787_b(chunkCoord);
+                    flag = true;
+                    this.setStructureStart(structurestart.getChunkPosX(), structurestart.getChunkPosZ(), structurestart);
+                }
             }
         }
         this.timing.stopTiming(); // Neptune - timings

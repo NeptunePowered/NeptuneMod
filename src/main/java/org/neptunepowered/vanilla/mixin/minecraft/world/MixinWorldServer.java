@@ -413,11 +413,13 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
             this.chunkProvider.saveChunks(p_73044_1_, progressCallback);
             this.getTimings().worldSaveChunks.startTiming(); // Neptune - timings
 
+            this.getTimings().doChunkGC.startTiming(); // Neptune - timings
             for (net.minecraft.world.chunk.Chunk chunk : Lists.newArrayList(this.theChunkProviderServer.func_152380_a())) {
                 if (chunk != null && !this.thePlayerManager.hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
                     this.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
                 }
             }
+            this.getTimings().doChunkGC.stopTiming(); // Neptune - timings
             this.getTimings().worldSave.stopTiming(); // Neptune - timings
         }
     }

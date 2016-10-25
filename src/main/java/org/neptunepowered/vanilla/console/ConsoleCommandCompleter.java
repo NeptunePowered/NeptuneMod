@@ -32,10 +32,10 @@ public final class ConsoleCommandCompleter implements Completer {
 
     @Override
     public int complete(String buffer, int cursor, List<CharSequence> candidates) {
-        String toComplete = buffer.substring(0, cursor);
-        String[] args = toComplete.split("\\s+");
+        final String toComplete = buffer.substring(0, cursor);
+        final String[] args = toComplete.split("\\s+");
 
-        List<String> completions = Canary.commands().tabComplete(Canary.getServer(), args[0], args);
+        final List<String> completions = Canary.commands().tabComplete(Canary.getServer(), args[0], args);
         if (completions == null) {
             return -1;
         }
