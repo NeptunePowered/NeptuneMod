@@ -179,6 +179,7 @@
         "village.MixinVillage",
         "world.biome.MixinBiomeGenBase",
         "world.chunk.MixinChunk",
+        "world.gen.structure.MixinMapGenStructure",
         "world.gen.MixinChunkProviderServer",
         "world.storage.MixinSaveHandler",
         "world.storage.MixinWorldInfo",

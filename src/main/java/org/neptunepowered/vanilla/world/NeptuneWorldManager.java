@@ -210,14 +210,12 @@ public class NeptuneWorldManager implements WorldManager {
         worldServer.addWorldAccess(new net.minecraft.world.WorldManager(minecraftServer, worldServer));
         worldServer.getWorldInfo().setGameType(GameModeConverter.of(worldConfiguration.getGameMode()));
         minecraftServer.getConfigurationManager().setPlayerManager(new WorldServer[] { worldServer });
-        worldServer.getWorldInfo().setDifficulty(
-                EnumDifficulty.getDifficultyEnum(worldConfiguration.getDifficulty().getId()));
+        worldServer.getWorldInfo().setDifficulty(EnumDifficulty.getDifficultyEnum(worldConfiguration.getDifficulty().getId()));
 
         ((IMixinMinecraftServer) minecraftServer).prepareSpawnArea(worldServer);
 
         this.existingWorlds.add(worldName + "_" + dimensionType.getName());
-        log.debug(String.format(
-                "Adding new world to world manager, filed as %s_%s", worldName, dimensionType.getName()));
+        log.debug(String.format("Adding new world to world manager, filed as %s_%s", worldName, dimensionType.getName()));
         this.loadedWorlds.put(worldName + "_" + dimensionType.getName(), (World) worldServer);
         new LoadWorldHook((World) worldServer).call();
         return true;

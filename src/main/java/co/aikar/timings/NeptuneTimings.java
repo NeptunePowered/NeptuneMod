@@ -28,6 +28,7 @@ import net.canarymod.api.entity.Entity;
 import net.canarymod.api.world.blocks.TileEntity;
 import net.canarymod.plugin.Plugin;
 import net.minecraft.block.Block;
+import net.minecraft.world.gen.structure.MapGenStructure;
 
 public final class NeptuneTimings {
 
@@ -65,6 +66,10 @@ public final class NeptuneTimings {
 
     public static Timing getBlockTiming(Block block) {
         return NeptuneTimingsFactory.ofSafe("## Scheduled Block: " + block.getUnlocalizedName());
+    }
+
+    public static Timing getStructureTiming(MapGenStructure structureGenerator) {
+        return NeptuneTimingsFactory.ofSafe("Structure Generator - " + structureGenerator.getStructureName());
     }
 
     public static void stopServer() {

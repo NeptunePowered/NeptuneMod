@@ -38,12 +38,8 @@ import java.util.List;
 @Mixin(PlayerManager.class)
 public abstract class MixinPlayerManager implements net.canarymod.api.PlayerManager {
 
-    @Shadow @Final private WorldServer theWorldServer;
     @Shadow @Final private List<EntityPlayerMP> players;
-    @Shadow @Final private List<PlayerManager.PlayerInstance> playerInstancesToUpdate;
-    @Shadow @Final private List<PlayerManager.PlayerInstance> playerInstanceList;
     @Shadow private int playerViewRadius;
-    @Shadow private long previousTotalWorldTime;
 
     @Shadow public abstract WorldServer getWorldServer();
     @Shadow public abstract void markBlockForUpdate(BlockPos pos);

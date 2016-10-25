@@ -66,23 +66,12 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk, IMixi
     @Shadow private long lastSaveTime;
     @Shadow public byte[] blockBiomeArray;
 
-    @Shadow
-    public abstract BiomeGenBase getBiome(BlockPos pos, WorldChunkManager chunkManager);
-
-    @Shadow
-    public abstract void generateSkylightMap();
-
-    @Shadow
-    public abstract boolean isLoaded();
-
-    @Shadow
-    public abstract Map<BlockPos, net.minecraft.tileentity.TileEntity> shadow$getTileEntityMap();
-
-    @Shadow
-    public abstract int[] getHeightMap();
-
-    @Shadow
-    public abstract void relightBlock(int x, int y, int z);
+    @Shadow public abstract BiomeGenBase getBiome(BlockPos pos, WorldChunkManager chunkManager);
+    @Shadow public abstract void generateSkylightMap();
+    @Shadow public abstract boolean isLoaded();
+    @Shadow public abstract Map<BlockPos, net.minecraft.tileentity.TileEntity> shadow$getTileEntityMap();
+    @Shadow public abstract int[] getHeightMap();
+    @Shadow public abstract void relightBlock(int x, int y, int z);
 
     @Override
     public int getX() {
