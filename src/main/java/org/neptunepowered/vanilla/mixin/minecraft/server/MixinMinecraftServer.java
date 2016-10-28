@@ -390,7 +390,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Override
     public boolean consoleCommand(String command) {
         NeptuneTimings.serverCommandTimer.startTiming();
-        ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(this, command).call();
+        final ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(this, command).call();
         if (commandHook.isCanceled()) {
             NeptuneTimings.serverCommandTimer.stopTiming();
             return true;
@@ -414,7 +414,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public boolean consoleCommand(String command, Player player) {
-        ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(player, command).call();
+        final ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(player, command).call();
         if (commandHook.isCanceled()) {
             return true;
         }
@@ -438,7 +438,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public boolean consoleCommand(String command, CommandBlockLogic cmdBlockLogic) {
-        ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(cmdBlockLogic, command).call();
+        final ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(cmdBlockLogic, command).call();
         if (commandHook.isCanceled()) {
             return true;
         }

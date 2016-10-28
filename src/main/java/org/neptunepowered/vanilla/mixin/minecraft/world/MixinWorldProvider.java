@@ -58,7 +58,7 @@ public abstract class MixinWorldProvider implements IMixinWorldProvider {
 
     /**
      * @author jamierocks - 24th October 2016
-     * @reason To use ChunkProviderCustoms where necessary
+     * @reason To use custom ChunkProviders where necessary
      */
     @Overwrite
     public IChunkProvider createChunkGenerator() {

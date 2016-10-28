@@ -24,7 +24,7 @@
 package org.neptunepowered.vanilla.mixin.minecraft.world;
 
 import co.aikar.timings.Timing;
-import com.google.common.collect.Lists;
+import net.canarymod.Canary;
 import net.canarymod.api.EntityTracker;
 import net.canarymod.api.GameMode;
 import net.canarymod.api.PlayerManager;
@@ -58,6 +58,7 @@ import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
 import net.canarymod.config.Configuration;
 import net.canarymod.config.WorldConfiguration;
+import net.canarymod.tasks.TaskOwner;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockOldLeaf;
 import net.minecraft.block.BlockOldLog;
@@ -98,8 +99,10 @@ import net.minecraft.world.gen.feature.WorldGenTrees;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import org.neptunepowered.vanilla.chunk.ChunkGCTask;
 import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorldProvider;
+import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorldServer;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.neptunepowered.vanilla.util.converter.PositionConverter;
 import org.spongepowered.asm.mixin.Final;
@@ -119,7 +122,7 @@ import java.util.TreeSet;
 
 @Mixin(WorldServer.class)
 @Implements(@Interface(iface = World.class, prefix = "world$"))
-public abstract class MixinWorldServer extends MixinWorld implements World {
+public abstract class MixinWorldServer extends MixinWorld implements World, IMixinWorldServer, TaskOwner {
 
     private static final IBlockState JUNGLE_LOG = Blocks.log.getDefaultState()
             .withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
@@ -151,7 +154,11 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     @Inject(method = "<init>*", at = @At("RETURN"))
     public void onConstruction(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn,
             CallbackInfo ci) {
+        // Get the world configuration
         this.worldConfig = Configuration.getWorldConfig(this.getFqName());
+
+        // Register ths ChunkGC task
+        Canary.getServer().addSynchronousTask(new ChunkGCTask((WorldServer) (Object) this));
     }
 
     /**
@@ -414,6 +421,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
     public void saveAllChunks(boolean p_73044_1_, IProgressUpdate progressCallback) throws MinecraftException {
         if (this.chunkProvider.canSave()) {
             this.getTimings().worldSave.startTiming(); // Neptune - timings
+
             if (progressCallback != null) {
                 progressCallback.displaySavingString("Saving level");
             }
@@ -428,13 +436,14 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
             this.chunkProvider.saveChunks(p_73044_1_, progressCallback);
             this.getTimings().worldSaveChunks.startTiming(); // Neptune - timings
 
-            this.getTimings().doChunkGC.startTiming(); // Neptune - timings
-            for (net.minecraft.world.chunk.Chunk chunk : Lists.newArrayList(this.theChunkProviderServer.func_152380_a())) {
-                if (chunk != null && !this.thePlayerManager.hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                    this.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-                }
-            }
-            this.getTimings().doChunkGC.stopTiming(); // Neptune - timings
+            // Neptune - Disable vanilla ChunkGC
+            // for (net.minecraft.world.chunk.Chunk chunk : Lists.newArrayList(this.theChunkProviderServer.func_152380_a())) {
+            //     if (chunk != null && !this.thePlayerManager.hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
+            //         this.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
+            //     }
+            // }
+            // Neptune - end
+
             this.getTimings().worldSave.stopTiming(); // Neptune - timings
         }
     }
@@ -1051,4 +1060,8 @@ public abstract class MixinWorldServer extends MixinWorld implements World {
         }
     }
 
+    @Override
+    public WorldConfiguration getWorldConfig() {
+        return this.worldConfig;
+    }
 }

@@ -73,7 +73,7 @@ class TimingsExport extends Thread {
     }
 
     /**
-     * Builds an XML report of the timings to be uploaded for parsing.
+     * Builds an JSON report of the timings to be uploaded for parsing.
      *
      * @param sender Who to report to
      */
