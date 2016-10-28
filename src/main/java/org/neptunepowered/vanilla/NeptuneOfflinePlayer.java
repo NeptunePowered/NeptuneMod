@@ -40,6 +40,11 @@ import net.canarymod.api.world.position.Position;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
 import net.canarymod.user.UserAndGroupsProvider;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatisticsFile;
+import org.neptunepowered.vanilla.util.NbtConstants;
+import org.neptunepowered.vanilla.util.PermissionConstants;
+import org.neptunepowered.vanilla.util.StatisticsUtil;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,13 +53,14 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     private final String name;
     private final UUID id;
-    private final CompoundTag tag;
-    private final PermissionProvider permissionProvider;
+    private final NBTTagCompound tag;
+    private final PermissionProvider permissions;
+    private final StatisticsFile statisticsFile;
     private List<Group> groups;
     private String prefix;
     private boolean isMuted;
 
-    public NeptuneOfflinePlayer(String name, UUID id, CompoundTag tag) {
+    public NeptuneOfflinePlayer(String name, UUID id, NBTTagCompound tag) {
         this.name = name;
         this.id = id;
         this.tag = tag;
@@ -62,7 +68,7 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
         final UserAndGroupsProvider provider = Canary.usersAndGroups();
         final String uuid = this.getUUIDString();
 
-        this.permissionProvider = Canary.permissionManager().getPlayerProvider(this.name, this.getWorld().getFqName());
+        this.permissions = Canary.permissionManager().getPlayerProvider(this.name, this.getWorld().getFqName());
         final String[] data = provider.getPlayerData(uuid);
         final Group[] subs = provider.getModuleGroupsForPlayer(uuid);
 
@@ -76,11 +82,17 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
         this.prefix = data[0];
         this.isMuted = Boolean.parseBoolean(data[2]);
+
+        this.statisticsFile = StatisticsUtil.getStatisticsFile(id, name);
     }
 
     @Override
     public CompoundTag getNBT() {
-        return this.tag;
+        return (CompoundTag) this.tag;
+    }
+
+    public NBTTagCompound getMetadata() {
+        return this.tag.hasKey(NbtConstants.CANARY_TAG) ? this.tag.getCompoundTag(NbtConstants.CANARY_TAG) : null;
     }
 
     @Override
@@ -90,7 +102,7 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public PermissionProvider getPermissionProvider() {
-        return this.permissionProvider;
+        return this.permissions;
     }
 
     @Override
@@ -110,7 +122,7 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public boolean hasPermission(String path) {
-        return this.permissionProvider.queryPermission(path);
+        return this.permissions.queryPermission(path);
     }
 
     @Override
@@ -121,7 +133,10 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public void addGroup(Group group) {
-
+        if (!this.groups.contains(group)) {
+            this.groups.add(group);
+            Canary.usersAndGroups().addOrUpdateOfflinePlayer(this);
+        }
     }
 
     @Override
@@ -188,16 +203,22 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public Group[] getPlayerGroups() {
-        return new Group[0];
+        return this.groups.toArray(new Group[this.groups.size()]);
     }
 
     @Override
     public String getFirstJoined() {
-        return null;
+        if (this.getMetadata() != null && this.getMetadata().hasKey(NbtConstants.FIRST_JOINED)) {
+            return this.getMetadata().getString(NbtConstants.FIRST_JOINED);
+        }
+        return "NEVER";
     }
 
     @Override
     public long getTimePlayed() {
+        if (this.getMetadata() != null && this.getMetadata().hasKey(NbtConstants.TIME_PLAYED)) {
+            return this.getMetadata().getLong(NbtConstants.TIME_PLAYED);
+        }
         return 0;
     }
 
@@ -223,32 +244,32 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public boolean isOperator() {
-        return false;
+        return Canary.ops().isOpped(this);
     }
 
     @Override
     public boolean isAdmin() {
-        return false;
+        return this.isOperator() || this.hasPermission(PermissionConstants.ADMINISTRATOR);
     }
 
     @Override
     public boolean canBuild() {
-        return false;
+        return this.isAdmin() || this.hasPermission(PermissionConstants.BUILD);
     }
 
     @Override
-    public void setCanBuild(boolean b) {
-
+    public void setCanBuild(boolean canModify) {
+        this.permissions.addPermission(PermissionConstants.BUILD, canModify);
     }
 
     @Override
     public boolean canIgnoreRestrictions() {
-        return false;
+        return this.isAdmin() || this.hasPermission(PermissionConstants.IGNORE_RESTRICTIONS);
     }
 
     @Override
-    public void setCanIgnoreRestrictions(boolean b) {
-
+    public void setCanIgnoreRestrictions(boolean canIgnore) {
+        this.permissions.addPermission(PermissionConstants.IGNORE_RESTRICTIONS, canIgnore, -1);
     }
 
     @Override
@@ -358,7 +379,10 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public String getLastJoined() {
-        return null;
+        if (this.getMetadata() != null && this.getMetadata().hasKey(NbtConstants.LAST_JOINED)) {
+            return this.getMetadata().getString(NbtConstants.LAST_JOINED);
+        }
+        return "NEVER";
     }
 
     @Override

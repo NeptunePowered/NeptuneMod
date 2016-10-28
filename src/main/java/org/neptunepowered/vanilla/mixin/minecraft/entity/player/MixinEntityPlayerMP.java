@@ -90,6 +90,7 @@ import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.minecraft.network.IMixinNetHandlerPlayServer;
 import org.neptunepowered.vanilla.interfaces.minecraft.util.IMixinFoodStats;
 import org.neptunepowered.vanilla.util.NbtConstants;
+import org.neptunepowered.vanilla.util.PermissionConstants;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.neptunepowered.vanilla.util.converter.PlayerListActionConverter;
 import org.spongepowered.asm.mixin.Final;
@@ -677,12 +678,12 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public String getFirstJoined() {
-        return this.metadata.getString("FirstJoin");
+        return this.metadata.getString(NbtConstants.FIRST_JOINED);
     }
 
     @Override
     public long getTimePlayed() {
-        return this.metadata.getLong("TimePlayed") + (ToolBox.getUnixTimestamp() - this.currentSessionStart);
+        return this.metadata.getLong(NbtConstants.TIME_PLAYED) + (ToolBox.getUnixTimestamp() - this.currentSessionStart);
     }
 
     @Override
@@ -712,27 +713,27 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public boolean isAdmin() {
-        return this.isOperator() || this.hasPermission("canary.super.administrator");
+        return this.isOperator() || this.hasPermission(PermissionConstants.ADMINISTRATOR);
     }
 
     @Override
     public boolean canBuild() {
-        return this.isAdmin() || this.hasPermission("canary.world.build");
+        return this.isAdmin() || this.hasPermission(PermissionConstants.BUILD);
     }
 
     @Override
     public void setCanBuild(boolean canModify) {
-        this.permissions.addPermission("canary.world.build", canModify);
+        this.permissions.addPermission(PermissionConstants.BUILD, canModify);
     }
 
     @Override
     public boolean canIgnoreRestrictions() {
-        return this.isAdmin() || this.hasPermission("canary.super.ignoreRestrictions");
+        return this.isAdmin() || this.hasPermission(PermissionConstants.IGNORE_RESTRICTIONS);
     }
 
     @Override
     public void setCanIgnoreRestrictions(boolean canIgnore) {
-        this.permissions.addPermission("canary.super.ignoreRestrictions", canIgnore, -1);
+        this.permissions.addPermission(PermissionConstants.IGNORE_RESTRICTIONS, canIgnore, -1);
     }
 
     @Override
@@ -847,7 +848,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public String getLastJoined() {
-        return this.metadata.getString("LastJoin");
+        return this.metadata.getString(NbtConstants.LAST_JOINED);
     }
 
     @Override

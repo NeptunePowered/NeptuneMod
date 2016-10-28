@@ -42,13 +42,17 @@ import net.canarymod.config.ServerConfiguration;
 import net.canarymod.hook.player.ConnectionHook;
 import net.canarymod.hook.player.PlayerListHook;
 import net.canarymod.hook.player.PreConnectionHook;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
+import net.minecraft.stats.StatisticsFile;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldSettings;
 import org.apache.logging.log4j.Logger;
+import org.neptunepowered.vanilla.util.StatisticsUtil;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -65,6 +69,8 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Mixin(ServerConfigurationManager.class)
 @Implements(@Interface(iface = ConfigurationManager.class, prefix = "config$"))
@@ -73,7 +79,9 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     @Shadow @Final public static Logger logger;
     @Shadow @Final private static SimpleDateFormat dateFormat;
 
+    @Shadow @Final private MinecraftServer mcServer;
     @Shadow @Final public List<EntityPlayerMP> playerEntityList;
+    @Shadow @Final private Map<UUID, StatisticsFile> playerStatFiles;
     @Shadow protected int maxPlayers;
 
     @Shadow public abstract int getCurrentPlayerCount();
@@ -126,6 +134,23 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         }
 
         return null;
+    }
+
+    /**
+     * @author jamierocks - 28th October 2016
+     * @reason Use the global stats directory
+     */
+    @Overwrite
+    public StatisticsFile getPlayerStatsFile(EntityPlayer playerIn) {
+        final UUID uuid = playerIn.getUniqueID();
+        StatisticsFile statisticsFile = this.playerStatFiles.get(uuid);
+
+        if (statisticsFile == null) {
+            statisticsFile = StatisticsUtil.getStatisticsFile(playerIn.getUniqueID(), playerIn.getName());
+            this.playerStatFiles.put(uuid, statisticsFile);
+        }
+
+        return statisticsFile;
     }
 
     @Redirect(method = "playerLoggedOut",

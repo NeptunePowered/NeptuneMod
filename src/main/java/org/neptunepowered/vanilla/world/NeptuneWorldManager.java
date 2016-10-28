@@ -59,6 +59,7 @@ public class NeptuneWorldManager implements WorldManager {
     public static final File WORLDS_DIR = new File(Canary.getWorkingDirectory(), "worlds");
     public static final File WORLDS_BACKUP_DIR = new File(Canary.getWorkingDirectory(), "worldsbackup");
     public static final File PLAYERS_DIR = new File(NeptuneWorldManager.WORLDS_DIR, "players");
+    public static final File STATS_DIR = new File(NeptuneWorldManager.WORLDS_DIR, "stats");
 
     private final Map<String, World> loadedWorlds = Maps.newHashMap();
     private final List<String> existingWorlds = Lists.newArrayList();
