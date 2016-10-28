@@ -41,11 +41,15 @@ import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
 import net.canarymod.user.UserAndGroupsProvider;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
+import net.minecraft.world.WorldSettings;
 import org.neptunepowered.vanilla.util.NbtConstants;
 import org.neptunepowered.vanilla.util.PermissionConstants;
 import org.neptunepowered.vanilla.util.StatisticsUtil;
+import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -224,22 +228,28 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public GameMode getMode() {
-        return null;
+        return GameModeConverter.of(WorldSettings.GameType.getByID(this.getModeId()));
     }
 
     @Override
     public int getModeId() {
+        if (this.getNBT() != null && this.getNBT().containsKey(NbtConstants.GAME_TYPE)) {
+            return this.getNBT().getInt(NbtConstants.GAME_TYPE);
+        }
         return 0;
     }
 
     @Override
     public void setMode(GameMode gameMode) {
-
+        this.setModeId(GameModeConverter.of(gameMode).getID());
     }
 
     @Override
-    public void setModeId(int i) {
-
+    public void setModeId(int mode) {
+        if (getNBT() != null) {
+            getNBT().put(NbtConstants.GAME_TYPE, mode);
+            save();
+        }
     }
 
     @Override
@@ -374,7 +384,10 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public String getIP() {
-        return null;
+        if (this.getMetadata() != null && this.getMetadata().hasKey(NbtConstants.PREVIOUS_IP)) {
+            return this.getMetadata().getString(NbtConstants.PREVIOUS_IP);
+        }
+        return "UNKNOWN";
     }
 
     @Override
@@ -401,73 +414,86 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
     }
 
     @Override
-    public void setStat(Stat stat, int i) {
-
+    public void setStat(Stat stat, int value) {
+        this.statisticsFile.unlockAchievement(null, (StatBase) stat, value);
     }
 
     @Override
-    public void setStat(Statistics statistics, int i) {
-
+    public void setStat(Statistics statistics, int value) {
+        this.setStat(statistics.getInstance(), value);
     }
 
     @Override
-    public void increaseStat(Stat stat, int i) {
-
+    public void increaseStat(Stat stat, int value) {
+        if (value < 0) return;
+        this.statisticsFile.increaseStat(null, (StatBase) stat, value);
     }
 
     @Override
-    public void increaseStat(Statistics statistics, int i) {
-
+    public void increaseStat(Statistics statistics, int value) {
+        this.increaseStat(statistics.getInstance(), value);
     }
 
     @Override
-    public void decreaseStat(Stat stat, int i) {
-
+    public void decreaseStat(Stat stat, int value) {
+        if (value < 0) return;
+        this.setStat(stat, this.getStat(stat) - value);
     }
 
     @Override
-    public void decreaseStat(Statistics statistics, int i) {
-
+    public void decreaseStat(Statistics statistics, int value) {
+        this.decreaseStat(statistics.getInstance(), value);
     }
 
     @Override
     public int getStat(Stat stat) {
-        return 0;
+        return this.statisticsFile.readStat((StatBase) stat);
     }
 
     @Override
     public int getStat(Statistics statistics) {
-        return 0;
+        return this.getStat(statistics.getInstance());
     }
 
     @Override
     public boolean hasAchievement(Achievement achievement) {
-        return false;
+        return this.statisticsFile.hasAchievementUnlocked((net.minecraft.stats.Achievement) achievement);
     }
 
     @Override
     public boolean hasAchievement(Achievements achievements) {
-        return false;
+        return this.hasAchievement(achievements.getInstance());
     }
 
     @Override
     public void removeAchievement(Achievement achievement) {
+        // Ensure all children achievements are removed
+        Arrays.stream(Achievements.values())
+                .map(Achievements::getInstance).map(Achievement::getParent)
+                .filter(achievement::equals).filter(this::hasAchievement)
+                .forEach(this::removeAchievement);
 
+        this.statisticsFile.unlockAchievement(null, (StatBase) achievement, 0);
     }
 
     @Override
     public void removeAchievement(Achievements achievements) {
-
+        this.removeAchievement(achievements.getInstance());
     }
 
     @Override
     public void awardAchievement(Achievement achievement) {
+        // Ensure all parent achievements are awarded
+        if (!this.hasAchievement(achievement.getParent())) {
+            this.awardAchievement(achievement.getParent());
+        }
 
+        this.statisticsFile.unlockAchievement(null, (StatBase) achievement, 1);
     }
 
     @Override
     public void awardAchievement(Achievements achievements) {
-
+        this.awardAchievement(achievements.getInstance());
     }
 
     @Override

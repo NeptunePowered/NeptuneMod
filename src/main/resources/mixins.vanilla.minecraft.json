@@ -153,6 +153,7 @@
         "server.MixinMinecraftServer",
         "stats.MixinAchievement",
         "stats.MixinStatBase",
+        "stats.MixinStatisticsFile",
         "tileentity.MixinIHopper",
         "tileentity.MixinMobSpawnerBaseLogic",
         "tileentity.MixinTileEntity",
