@@ -42,6 +42,7 @@ import net.canarymod.user.Group;
 import net.canarymod.user.UserAndGroupsProvider;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
 import net.minecraft.world.WorldSettings;
@@ -105,7 +106,13 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public void save() {
+        if (this.isOnline()) {
+            Canary.log.warn("Attempted to save an online player! (" + this.name + ")");
+            return;
+        }
 
+        this.tag.setTag(NbtConstants.INVENTORY, this.inventory.writeToNBT(new NBTTagList()));
+        // TODO: Save NBT
     }
 
     @Override

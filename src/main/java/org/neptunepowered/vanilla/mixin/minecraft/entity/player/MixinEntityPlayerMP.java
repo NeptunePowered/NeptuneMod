@@ -485,7 +485,6 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Override
     public void showTo(Player player) {
         this.getWorld().getEntityTracker().showPlayer(this, player);
-
     }
 
     @Override

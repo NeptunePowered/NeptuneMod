@@ -43,6 +43,7 @@ import net.canarymod.user.ReservelistProvider;
 import net.canarymod.user.UserAndGroupsProvider;
 import net.canarymod.user.WhitelistProvider;
 import net.canarymod.warp.WarpProvider;
+import org.neptunepowered.vanilla.channels.NeptuneChannelManager;
 import org.neptunepowered.vanilla.commandsys.NeptuneCommand;
 import org.neptunepowered.vanilla.commandsys.TimingsCommand;
 import org.neptunepowered.vanilla.commandsys.NeptunePlayerSelector;
@@ -71,7 +72,8 @@ public class Neptune extends Canary {
         this.reservelist = new ReservelistProvider(); // reverse list
         this.factory = new NeptuneFactory(); // Factories
         this.playerSelector = new NeptunePlayerSelector(); // player selector
-        this.pluginManager = new DefaultPluginManager();
+        this.channelManager = new NeptuneChannelManager(); // channel manager
+        this.pluginManager = new DefaultPluginManager(); // plugin manager
 
         this.pluginManager.scanForPlugins(); // Scan for plugins
     }
