@@ -40,6 +40,7 @@ import net.canarymod.api.world.position.Position;
 import net.canarymod.permissionsystem.PermissionProvider;
 import net.canarymod.user.Group;
 import net.canarymod.user.UserAndGroupsProvider;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatisticsFile;
@@ -60,6 +61,7 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
     private final NBTTagCompound tag;
     private final PermissionProvider permissions;
     private final StatisticsFile statisticsFile;
+    private final InventoryPlayer inventory;
     private List<Group> groups;
     private String prefix;
     private boolean isMuted;
@@ -88,6 +90,8 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
         this.isMuted = Boolean.parseBoolean(data[2]);
 
         this.statisticsFile = StatisticsUtil.getStatisticsFile(id, name);
+        this.inventory = new InventoryPlayer(null);
+        this.inventory.readFromNBT(this.tag.getTagList(NbtConstants.INVENTORY, NbtConstants.TAG_COMPOUND));
     }
 
     @Override
@@ -121,7 +125,7 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public boolean isOnline() {
-        return false;
+        return Canary.getServer().getPlayer(this.name) != null;
     }
 
     @Override
@@ -246,9 +250,9 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public void setModeId(int mode) {
-        if (getNBT() != null) {
-            getNBT().put(NbtConstants.GAME_TYPE, mode);
-            save();
+        if (this.getNBT() != null) {
+            this.getNBT().put(NbtConstants.GAME_TYPE, mode);
+            this.save();
         }
     }
 
@@ -498,7 +502,7 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public PlayerInventory getInventory() {
-        return null;
+        return (PlayerInventory) this.inventory;
     }
 
     @Override

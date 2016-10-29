@@ -28,6 +28,7 @@ public final class NbtConstants {
     public static final String SPAWN_POTENTIALS = "SpawnPotentials";
     public static final String ENTITY_TYPE = "Type";
     public static final String GAME_TYPE = "playerGameType";
+    public static final String INVENTORY = "Inventory";
 
     // NBT tag ids
     public static final int TAG_END = 0;

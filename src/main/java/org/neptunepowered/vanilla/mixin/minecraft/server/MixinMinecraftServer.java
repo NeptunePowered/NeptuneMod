@@ -44,7 +44,6 @@ import net.canarymod.api.gui.GUIControl;
 import net.canarymod.api.inventory.recipes.CraftingRecipe;
 import net.canarymod.api.inventory.recipes.Recipe;
 import net.canarymod.api.inventory.recipes.SmeltRecipe;
-import net.canarymod.api.nbt.CompoundTag;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
@@ -505,18 +504,18 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public OfflinePlayer getOfflinePlayer(UUID uuid) {
-        ISaveHandler saveHandler = MinecraftServer.getServer().getEntityWorld().getSaveHandler();
+        final ISaveHandler saveHandler = MinecraftServer.getServer().getEntityWorld().getSaveHandler();
 
         if (saveHandler instanceof SaveHandler) {
-            NBTTagCompound tagCompound = ((IMixinSaveHandler) saveHandler).readPlayerData(uuid);
+            final NBTTagCompound tagCompound = ((IMixinSaveHandler) saveHandler).readPlayerData(uuid);
 
             if (tagCompound != null) {
-                GameProfile profile = getPlayerProfileCache().getProfileByUUID(uuid);
+                final GameProfile profile = getPlayerProfileCache().getProfileByUUID(uuid);
 
                 if (profile != null) {
-                    return new NeptuneOfflinePlayer(profile.getName(), uuid, (CompoundTag) tagCompound);
+                    return new NeptuneOfflinePlayer(profile.getName(), uuid, tagCompound);
                 } else {
-                    return new NeptuneOfflinePlayer("PLAYER_NAME_UNKNOWN", uuid, (CompoundTag) tagCompound);
+                    return new NeptuneOfflinePlayer("PLAYER_NAME_UNKNOWN", uuid, tagCompound);
                 }
             }
 
