@@ -87,6 +87,12 @@ public class NeptuneWorldManager implements WorldManager {
         }
     }
 
+    public void addWorld(WorldServer worldServer) {
+        log.debug(String.format("Adding new world to world manager, filed as %s_%s",
+                ((World) worldServer).getName(), ((World) worldServer).getType().getName()));
+        this.loadedWorlds.put(((World) worldServer).getName() + "_" + ((World) worldServer).getType().getName(), (World) worldServer);
+    }
+
     @Override
     public World getWorld(String name, boolean autoload) {
         if (name == null || name.isEmpty()) {
@@ -216,8 +222,7 @@ public class NeptuneWorldManager implements WorldManager {
         ((IMixinMinecraftServer) minecraftServer).prepareSpawnArea(worldServer);
 
         this.existingWorlds.add(worldName + "_" + dimensionType.getName());
-        log.debug(String.format("Adding new world to world manager, filed as %s_%s", worldName, dimensionType.getName()));
-        this.loadedWorlds.put(worldName + "_" + dimensionType.getName(), (World) worldServer);
+        this.addWorld(worldServer);
         new LoadWorldHook((World) worldServer).call();
         return true;
     }

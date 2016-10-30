@@ -129,7 +129,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Shadow private long nanoTimeSinceStatusRefresh;
     @Shadow private boolean worldIsBeingDeleted;
 
-    private WorldManager worldManager = new NeptuneWorldManager();
+    private NeptuneWorldManager worldManager = new NeptuneWorldManager();
     private long previousTick = -1L;
 
     @Shadow public abstract void initiateShutdown();
@@ -775,7 +775,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     public void prepareSpawnArea(WorldServer worldServer) {
         int i1 = 0;
         this.setUserMessage("menu.generatingTerrain");
-        logger.info("Preparing start region for level " + worldServer.provider.getDimensionId());
+        logger.info("Preparing start region for level " + ((World) worldServer).getFqName() + " (" + worldServer.provider.getDimensionId() + ")");
         BlockPos spawnPoint = worldServer.getSpawnPoint();
         long k1 = getCurrentTimeMillis();
 

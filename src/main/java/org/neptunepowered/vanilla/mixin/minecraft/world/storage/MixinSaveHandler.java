@@ -49,6 +49,9 @@ public abstract class MixinSaveHandler implements IMixinSaveHandler {
     @Shadow @Final private static Logger logger;
     @Shadow @Final private File playersDirectory;
 
+    @Shadow public abstract File getWorldDirectory();
+    @Shadow public abstract String getWorldDirectoryName();
+
     /**
      * @author jamierocks - 20th July 2016
      * @reason Use the correct player directory
