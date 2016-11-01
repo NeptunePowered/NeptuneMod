@@ -75,6 +75,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.Util;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.storage.AnvilSaveConverter;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
@@ -335,6 +336,14 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         this.theProfiler.endSection();
 
         this.previousTick = System.nanoTime() - curTrack; // Neptune - ServerTickHook
+    }
+
+    @Inject(method = "loadAllWorlds", at = @At("RETURN"))
+    public void onLoadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, String worldNameIn2, CallbackInfo ci) {
+        // Temporary to populate the world manager
+        for (WorldServer worldServer : this.worldServers) {
+            this.worldManager.addWorld(worldServer);
+        }
     }
 
     @Inject(method = "stopServer", at = @At("HEAD"))

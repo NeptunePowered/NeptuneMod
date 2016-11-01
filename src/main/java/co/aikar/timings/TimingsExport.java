@@ -29,7 +29,9 @@ import static co.aikar.timings.TimingsManager.HISTORY;
 import co.aikar.util.JSONUtil;
 import co.aikar.util.JSONUtil.JsonObjectBuilder;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.canarymod.Canary;
 import net.canarymod.api.Server;
@@ -38,6 +40,7 @@ import net.canarymod.api.world.blocks.BlockType;
 import net.canarymod.chat.ChatFormat;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.config.Configuration;
+import net.canarymod.config.ConfigurationContainer;
 import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.server.MinecraftServer;
 
@@ -50,6 +53,7 @@ import java.lang.management.RuntimeMXBean;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
@@ -165,6 +169,14 @@ class TimingsExport extends Thread {
             ).build();
         }));
 
+        // Information on the users Config
+
+        builder.add("config", JSONUtil.objectBuilder()
+                .add("timings", serializeConfig(Configuration.getTimingsConfig()))
+                .add("worlds", JSONUtil.mapArrayToObject(Canary.getServer().getWorldManager().getAllWorlds(), (world) -> {
+                    return JSONUtil.singleObjectPair(world.getFqName(), serializeConfig(Configuration.getWorldConfig(world.getFqName())));
+                })));
+
         new TimingsExport(sender, builder.build(), history).start();
     }
 
@@ -201,6 +213,19 @@ class TimingsExport extends Thread {
         SAMPLER5.reset(true);
         SAMPLER6.reset(true);
         return timingsCost;
+    }
+
+    private static List<String> RESTRICTED_CONFIG_VALUES = ImmutableList.<String>builder()
+            .add("world-seed")
+            .build();
+
+    private static JsonElement serializeConfig(ConfigurationContainer configuration) {
+        return JSONUtil.mapArrayToObject(configuration.getFile().getPropertiesMap().entrySet(), (value) -> {
+            if (!RESTRICTED_CONFIG_VALUES.contains(value.getKey())) {
+                return JSONUtil.singleObjectPair(value.getKey(), value.getValue());
+            }
+            return null;
+        });
     }
 
     @Override

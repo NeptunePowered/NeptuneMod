@@ -645,47 +645,47 @@ public abstract class MixinWorldServer extends MixinWorld implements World, IMix
 
     @Override
     public ChunkProvider getChunkProvider() {
-        return null;
+        return (ChunkProvider) this.chunkProvider;
     }
 
     @Override
     public boolean isChunkLoaded(Block block) {
-        return false;
+        return this.getChunkProvider().isChunkLoaded(block.getX(), block.getZ());
     }
 
     @Override
     public boolean isChunkLoaded(int i, int i1, int i2) {
-        return false;
+        return this.getChunkProvider().isChunkLoaded(i, i2);
     }
 
     @Override
     public boolean isChunkLoaded(int i, int i1) {
-        return false;
+        return this.getChunkProvider().isChunkLoaded(i, i1);
     }
 
     @Override
     public Chunk loadChunk(int i, int i1) {
-        return null;
+        return this.getChunkProvider().loadChunk(i, i1);
     }
 
     @Override
     public Chunk loadChunk(Location location) {
-        return null;
+        return this.getChunkProvider().loadChunk((int) location.getX(), (int) location.getZ());
     }
 
     @Override
     public Chunk loadChunk(Position position) {
-        return null;
+        return this.getChunkProvider().loadChunk((int) position.getX(), (int) position.getZ());
     }
 
     @Override
     public Chunk getChunk(int i, int i1) {
-        return null;
+        return this.getChunkProvider().provideChunk(i, i1);
     }
 
     @Override
     public List<Chunk> getLoadedChunks() {
-        return null;
+        return this.getChunkProvider().getLoadedChunks();
     }
 
     @Override

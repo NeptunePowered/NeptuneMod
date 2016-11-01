@@ -24,26 +24,38 @@
 package org.neptunepowered.vanilla.mixin.minecraft.world.gen;
 
 import co.aikar.timings.Timing;
+import com.google.common.collect.Lists;
+import net.canarymod.api.world.ChunkProvider;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
 import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.io.IOException;
+import java.util.List;
 
 @Mixin(ChunkProviderServer.class)
-public abstract class MixinChunkProviderServer {
+@Implements(@Interface(iface = ChunkProvider.class, prefix = "provider$"))
+public abstract class MixinChunkProviderServer implements IChunkProvider {
 
     @Shadow @Final private static Logger logger;
     @Shadow private IChunkLoader chunkLoader;
     @Shadow private WorldServer worldObj;
+
+    @Shadow public abstract List<Chunk> func_152380_a();
+    @Shadow public abstract Chunk loadChunk(int chunkX, int chunkZ);
+    @Shadow public abstract void dropChunk(int x, int z);
 
     /**
      * @author jamierocks - 25th October 2016
@@ -76,6 +88,59 @@ public abstract class MixinChunkProviderServer {
                 logger.error("Couldn't save chunk; already in use by another instance of Minecraft?", minecraftexception);
             }
         }
+    }
+
+    @Intrinsic
+    public boolean provider$canSave() {
+        return this.canSave();
+    }
+
+    @Intrinsic
+    public boolean provider$chunkExists(int i, int i1) {
+        return this.chunkExists(i, i1);
+    }
+
+    public net.canarymod.api.world.Chunk provider$loadChunk(int i, int i1) {
+        return (net.canarymod.api.world.Chunk) this.loadChunk(i, i1);
+    }
+
+    public void provider$populate(ChunkProvider chunkProvider, int i, int i1) {
+        this.populate((IChunkProvider) chunkProvider, i, i1);
+    }
+
+    public String provider$getStatistics() {
+        return this.makeString();
+    }
+
+    public void provider$reloadChunk(int i, int i1) {
+        this.dropChunk(i, i1);
+        this.loadChunk(i, i1);
+    }
+
+    @Intrinsic
+    public void provider$dropChunk(int i, int i1) {
+        this.dropChunk(i, i1);
+    }
+
+    public net.canarymod.api.world.Chunk provider$provideChunk(int i, int i1) {
+        return (net.canarymod.api.world.Chunk) this.provideChunk(i, i1);
+    }
+
+    public boolean provider$saveChunk(boolean b) {
+        return this.saveChunks(b, null);
+    }
+
+    public net.canarymod.api.world.Chunk provider$regenerateChunk(int i, int i1) {
+        // TODO: implement
+        return null;
+    }
+
+    public boolean provider$isChunkLoaded(int i, int i1) {
+        return this.chunkExists(i, i1);
+    }
+
+    public List<net.canarymod.api.world.Chunk> provider$getLoadedChunks() {
+        return (List) Lists.newArrayList(this.func_152380_a());
     }
 
 }
