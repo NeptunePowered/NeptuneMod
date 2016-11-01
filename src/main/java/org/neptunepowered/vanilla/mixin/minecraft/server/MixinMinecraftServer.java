@@ -99,6 +99,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.net.Proxy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -146,6 +147,11 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Shadow public abstract NetworkSystem getNetworkSystem();
     @Shadow public abstract int getCurrentPlayerCount();
     @Shadow protected abstract void saveAllWorlds(boolean dontLog);
+
+    @Inject(method = "<init>", at = @At("RETURN"))
+    public void onConstruction(File workDir, Proxy proxy, File profileCacheDir, CallbackInfo info) {
+        Canary.setServer(this);
+    }
     
     @Redirect(method = "<init>", at = @At(value = "NEW", args = "class=net/minecraft/world/chunk/storage/AnvilSaveConverter"))
     public AnvilSaveConverter createSaveConverter(File dir) {

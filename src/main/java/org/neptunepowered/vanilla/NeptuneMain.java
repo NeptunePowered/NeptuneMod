@@ -26,21 +26,30 @@ package org.neptunepowered.vanilla;
 import co.aikar.timings.NeptuneTimingsFactory;
 import co.aikar.timings.Timings;
 import net.canarymod.Canary;
-import net.canarymod.api.Server;
 import net.minecraft.server.MinecraftServer;
 import org.neptunepowered.vanilla.util.ReflectionUtil;
 
-import java.io.File;
-
-public class NeptuneVanilla {
+public final class NeptuneMain {
 
     public static void main(String[] args) throws Exception {
+        // Some handy messages that CanaryMod had
+        Canary.log.info("Starting: " + Canary.getImplementationTitle() + " " + Canary.getImplementationVersion());
+        Canary.log.info("Neptune Path: " + Canary.getCanaryJarPath() + " & Working From: " + Canary.getWorkingPath());
+
+        // First lets get Timings up and running
         initTimings();
-        MinecraftServer.main(args);
-        new File("config").mkdirs(); // TODO: Please fix this properly
-        new File("worlds", "players").mkdirs();
+
+        // Initialise the sqlite jdbc driver
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException ignored) {
+        }
+
+        // Now lets initialise Neptune / Canary
         initNeptune();
-        Canary.setServer((Server) MinecraftServer.getServer());
+
+        // Now we're ready to start the Minecraft server
+        MinecraftServer.main(args);
     }
 
     private static void initTimings() throws Exception {

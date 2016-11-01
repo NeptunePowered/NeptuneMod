@@ -115,7 +115,7 @@ public class NeptuneServerTweaker implements ITweaker {
 
     @Override
     public String getLaunchTarget() {
-        return "org.neptunepowered.vanilla.NeptuneVanilla";
+        return "org.neptunepowered.vanilla.NeptuneMain";
     }
 
     @Override
