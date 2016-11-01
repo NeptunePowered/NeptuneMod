@@ -106,5 +106,5 @@ public class FullServerTickHandler extends TimingHandler {
     boolean isViolated() {
         return this.record.curTickTotal > 50000000;
     }
-}
 
+}

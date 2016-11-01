@@ -50,4 +50,5 @@ class UnsafeTimingHandler extends TimingHandler {
         checkThread();
         super.stopTiming();
     }
+
 }

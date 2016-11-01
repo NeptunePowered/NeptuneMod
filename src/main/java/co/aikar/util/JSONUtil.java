@@ -42,13 +42,13 @@ import java.util.function.Function;
  */
 public final class JSONUtil {
 
-    static final Gson gson = new GsonBuilder().serializeNulls().create();
+    static final Gson GSON = new GsonBuilder().serializeNulls().create();
 
     private JSONUtil() {
     }
 
     public static JsonArray arrayOf(Object... elements) {
-        return gson.toJsonTree(elements).getAsJsonArray();
+        return GSON.toJsonTree(elements).getAsJsonArray();
     }
 
     public static JsonObjectBuilder objectBuilder() {
@@ -80,7 +80,7 @@ public final class JSONUtil {
         }
 
         public JsonObject build() {
-            return gson.toJsonTree(this.elements).getAsJsonObject();
+            return GSON.toJsonTree(this.elements).getAsJsonObject();
         }
     }
 
@@ -96,7 +96,7 @@ public final class JSONUtil {
                 list.add(transformed);
             }
         }
-        return gson.toJsonTree(list).getAsJsonArray();
+        return GSON.toJsonTree(list).getAsJsonArray();
     }
 
     public static <E> JsonObject mapArrayToObject(E[] array, Function<E, JsonObject> function) {
@@ -118,11 +118,11 @@ public final class JSONUtil {
     }
 
     public static String toString(JsonElement element) {
-        return gson.toJson(element);
+        return GSON.toJson(element);
     }
 
     public static JsonElement toJsonElement(Object value) {
-        return gson.toJsonTree(value);
+        return GSON.toJsonTree(value);
     }
 
 }

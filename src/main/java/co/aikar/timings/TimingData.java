@@ -35,13 +35,7 @@ import java.util.function.Function;
  */
 class TimingData {
 
-    static Function<Integer, TimingData> LOADER = new Function<Integer, TimingData>() {
-
-        @Override
-        public TimingData apply(Integer input) {
-            return new TimingData(input);
-        }
-    };
+    static Function<Integer, TimingData> LOADER = TimingData::new;
     private int id;
     int count = 0;
     private int lagCount = 0;
@@ -105,4 +99,5 @@ class TimingData {
         }
         return array;
     }
+
 }

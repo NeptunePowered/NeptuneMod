@@ -61,11 +61,11 @@ public final class NeptuneTimings {
     }
 
     public static Timing getTileEntityTiming(TileEntity entity) {
-        return NeptuneTimingsFactory.ofSafe("Minecraft", "## tickTileEntity - " + entity.getClass().getSimpleName(), tickTileEntityTimer);
+        return NeptuneTimingsFactory.ofSafe("Minecraft", "## tickTileEntity - " + entity.getClass().getName(), tickTileEntityTimer);
     }
 
     public static Timing getBlockTiming(Block block) {
-        return NeptuneTimingsFactory.ofSafe("## Scheduled Block: " + block.getClass().getSimpleName());
+        return NeptuneTimingsFactory.ofSafe("## Scheduled Block: " + block.getClass().getName());
     }
 
     public static Timing getStructureTiming(MapGenStructure structureGenerator) {

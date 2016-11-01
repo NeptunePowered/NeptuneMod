@@ -48,4 +48,5 @@ class TimingHistoryEntry {
         }
         return result;
     }
+
 }
