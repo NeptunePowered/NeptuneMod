@@ -79,6 +79,17 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
         }
     }
 
+    @Redirect(method = "startServer", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/server/dedicated/PropertyManager;"
+                    + "getBooleanProperty(Ljava/lang/String;Z)Z"))
+    public boolean handleBooleanProperties(PropertyManager propertyManager, String key, boolean defaultValue) {
+        if ("online-mode".equals(key)) {
+            return Configuration.getServerConfig().isOnlineMode();
+        } else {
+            return propertyManager.getBooleanProperty(key, defaultValue);
+        }
+    }
+
     /**
      * @author jamierocks - 30th September 2016
      * @reason The GUI has long been not recommended for use with Neptune, and on top that it no longer works

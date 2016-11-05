@@ -1,4 +1,4 @@
-NeptuneVanilla
+NeptuneVanilla [![Build Status](https://travis-ci.org/NeptunePowered/NeptuneVanilla.svg?branch=master)](https://travis-ci.org/NeptunePowered/NeptuneVanilla)
 ==============
 
 **Currently not stable and under heavy development!**  
@@ -11,15 +11,18 @@ A 'vanilla' Minecraft implementation of CanaryLib, licensed under the [MIT Licen
 * [Development Chat]: #neptunedev on irc.esper.net
 
 ## Prerequisites
+
 * [Java] 8
 
 ## Cloning
+
 The following steps will ensure your project is cloned properly.
 
 1. `git clone https://github.com/NeptunePowered/NeptuneVanilla.git`
 2. `cd NeptuneVanilla`
 
 ## Building
+
 __Note:__ If you do not have [Gradle] installed then use ./gradlew for Unix systems or Git Bash and gradlew.bat for
 Windows systems in place of any 'gradle' command.
 

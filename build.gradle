@@ -16,7 +16,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-20160116.192356-17'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
         classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
-        classpath 'gradle.plugin.net.minecrell:licenser:0.2.1'
+        classpath 'gradle.plugin.net.minecrell:licenser:0.3'
     }
 }
 
@@ -25,8 +25,8 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecrell.licenser'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 ext.mcVersion  = '1.8.9'
 ext.apiVersion = '1.2.1-20161029.195316-13'
@@ -132,7 +132,7 @@ jar {
     manifest {
         attributes(
                 'Main-Class': 'org.neptunepowered.vanilla.launch.NeptuneServerMain',
-                'Class-Path': 'minecraft_server.1.8.9.jar libraries/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar'
+                'Class-Path': "minecraft_server.${mcVersion}.jar libraries/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar"
         )
     }
 }
