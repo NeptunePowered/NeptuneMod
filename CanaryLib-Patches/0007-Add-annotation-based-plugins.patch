@@ -1,0 +1,233 @@
+From 4f7383a43a67caec481d7934c85bc756d1ebea54 Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Wed, 5 Oct 2016 20:19:35 +0100
+Subject: [PATCH] Add annotation-based plugins
+
+
+diff --git a/src/main/java/org/neptunepowered/lib/plugin/Plugin.java b/src/main/java/org/neptunepowered/lib/plugin/Plugin.java
+new file mode 100644
+index 0000000..cd8cef9
+--- /dev/null
++++ b/src/main/java/org/neptunepowered/lib/plugin/Plugin.java
+@@ -0,0 +1,74 @@
++/*
++ * This file is part of NeptuneLib, licensed under the MIT License (MIT).
++ *
++ * Copyright (c) 2016, Jamie Mansfield <https://www.jamierocks.uk/>
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ */
++
++package org.neptunepowered.lib.plugin;
++
++/**
++ * An annotation used for marking NeptuneLib plugins.
++ */
++public @interface Plugin {
++
++    /**
++     * Gets the name of the plugin.
++     *
++     * @return The plugin name
++     */
++    String name();
++
++    /**
++     * Gets the version of the plugin.
++     *
++     * @return The plugin version
++     */
++    String version() default "";
++
++    /**
++     * Gets the author of the plugin.
++     *
++     * @return The plugin author
++     */
++    String author() default "";
++
++    /**
++     * Gets the language of the plugin.
++     *
++     * @return The plugin language
++     */
++    String language() default "java";
++
++    /**
++     * Gets if the plugin should be enabled early.
++     *
++     * @return {@code True} if the plugin should be enabled early, {@code false} otherwise
++     */
++    boolean enableEarly() default false;
++
++    /**
++     * Gets the dependencies for the plugin.
++     *
++     * @return The plugin dependencies
++     */
++    String[] dependencies() default {};
++
++}
+diff --git a/src/main/java/org/neptunepowered/lib/plugin/processor/PluginProcessor.java b/src/main/java/org/neptunepowered/lib/plugin/processor/PluginProcessor.java
+new file mode 100644
+index 0000000..751326b
+--- /dev/null
++++ b/src/main/java/org/neptunepowered/lib/plugin/processor/PluginProcessor.java
+@@ -0,0 +1,132 @@
++/*
++ * This file is part of NeptuneLib, licensed under the MIT License (MIT).
++ *
++ * Copyright (c) 2016, Jamie Mansfield <https://www.jamierocks.uk/>
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ */
++
++package org.neptunepowered.lib.plugin.processor;
++
++import static javax.tools.StandardLocation.CLASS_OUTPUT;
++
++import org.neptunepowered.lib.plugin.Plugin;
++
++import java.io.BufferedWriter;
++import java.io.IOException;
++import java.util.Properties;
++import java.util.Set;
++
++import javax.annotation.processing.AbstractProcessor;
++import javax.annotation.processing.RoundEnvironment;
++import javax.annotation.processing.SupportedAnnotationTypes;
++import javax.annotation.processing.SupportedSourceVersion;
++import javax.lang.model.SourceVersion;
++import javax.lang.model.element.Element;
++import javax.lang.model.element.ElementKind;
++import javax.lang.model.element.TypeElement;
++import javax.tools.Diagnostic;
++
++@SupportedAnnotationTypes("org.neptunepowered.lib.plugin.Plugin")
++@SupportedSourceVersion(SourceVersion.RELEASE_8)
++public class PluginProcessor extends AbstractProcessor {
++
++    @Override
++    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
++        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(Plugin.class)) {
++            if (annotatedElement.getKind() != ElementKind.CLASS) {
++                this.error("Only classes can be annotated with @Plugin", annotatedElement);
++                return false;
++            }
++
++            final TypeElement pluginElement = (TypeElement) annotatedElement;
++            final Plugin plugin = pluginElement.getAnnotation(Plugin.class);
++
++            // Check plugin name
++            if (plugin.name().isEmpty()) {
++                this.error("The plugin name cannot be empty!", annotatedElement);
++                return false;
++            }
++
++            // Lets create the Canary.inf
++            final Properties props = new Properties();
++            props.setProperty("main-class", pluginElement.getQualifiedName().toString());
++            props.setProperty("name", plugin.name());
++            if (!plugin.version().isEmpty()) {
++                props.setProperty("version", plugin.version());
++            }
++            if (!plugin.author().isEmpty()) {
++                props.setProperty("author", plugin.author());
++            }
++            if (!plugin.language().isEmpty() && !plugin.language().equalsIgnoreCase("java")) {
++                props.setProperty("language", plugin.language());
++            }
++            if (plugin.enableEarly()) {
++                props.setProperty("enable-early", "true");
++            }
++            if (plugin.dependencies().length != 0) {
++                props.setProperty("dependencies", this.getDependencies(plugin.dependencies()));
++            }
++
++            try (BufferedWriter writer
++                    = new BufferedWriter(this.processingEnv.getFiler().createResource(CLASS_OUTPUT, "", "Canary.inf").openWriter())) {
++                props.store(writer, "Generated by NeptuneLib");
++            } catch (IOException e) {
++                e.printStackTrace();
++                return false;
++            }
++
++            // There should only ever be one Plugin
++            return true;
++        }
++
++        return false;
++    }
++
++    /**
++     * Gets the dependency string for an array of dependencies.
++     *
++     * @param dependencies The dependency array
++     * @return The dependency string
++     */
++    private String getDependencies(String[] dependencies) {
++        final StringBuilder builder = new StringBuilder();
++
++        for (int i = 0; i <= dependencies.length; i++) {
++            builder.append(dependencies[i]);
++
++            if (i != dependencies.length) {
++                builder.append(",");
++            }
++        }
++
++        return builder.toString();
++    }
++
++    /**
++     * Convenience method for printing an error message.
++     *
++     * @param message The message
++     * @param element The element
++     */
++    private void error(String message, Element element) {
++        this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message, element);
++    }
++
++}
+diff --git a/src/main/resources/META-INF/services/javax.annotation.processing.Processor b/src/main/resources/META-INF/services/javax.annotation.processing.Processor
+new file mode 100644
+index 0000000..12a4dd2
+--- /dev/null
++++ b/src/main/resources/META-INF/services/javax.annotation.processing.Processor
+@@ -0,0 +1 @@
++org.neptunepowered.lib.plugin.processor.PluginProcessor
+--
+2.10.0

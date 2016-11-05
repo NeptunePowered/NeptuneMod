@@ -17,6 +17,7 @@ buildscript {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
         classpath 'org.spongepowered:mixingradle:0.4-SNAPSHOT'
         classpath 'gradle.plugin.net.minecrell:licenser:0.3'
+        classpath 'gradle.plugin.net.minecrell:gitpatcher:0.8.1'
     }
 }
 
@@ -24,6 +25,7 @@ apply plugin: 'net.minecraftforge.gradle.tweaker-server'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'net.minecrell.licenser'
+apply plugin: 'net.minecrell.gitpatcher'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -37,14 +39,6 @@ version = "$mcVersion-$apiVersion"
 
 repositories {
     mavenCentral()
-    maven {
-        name = 'lex-releases'
-        url = 'http://repo.lexteam.xyz/maven/releases/'
-    }
-    maven {
-        name = 'lex-snapshots'
-        url = 'http://repo.lexteam.xyz/maven/snapshots/'
-    }
     maven {
         name = 'vi-repo'
         url = 'http://repo.visualillusionsent.net/repository/internal'
@@ -76,8 +70,11 @@ configurations {
 }
 
 dependencies {
-    compile "org.neptunepowered:NeptuneLib:$apiVersion"
-    compile 'co.aikar:fastutil-lite:1.0'
+    compile(project(':NeptuneLib')) {
+        exclude module: 'log4j-api'
+        exclude module: 'guava'
+        exclude module: 'authlib'
+    }
     compile('org.spongepowered:mixin:0.5.17-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
@@ -90,8 +87,13 @@ dependencies {
     shadow 'net.sf.jopt-simple:jopt-simple:4.6'
 }
 
+project(':NeptuneLib') {
+    compileJava.dependsOn rootProject.tasks.applyPatches
+}
+
 license {
     header file('HEADER.txt')
+    include '**/*.java'
     exclude 'co/aikar/**'
     newLine = false
 }
@@ -105,6 +107,12 @@ minecraft {
     atSource sourceSets.main
 
     makeObfSourceJar = false
+}
+
+patches {
+    submodule = 'CanaryLib'
+    target = file('NeptuneLib')
+    patches = file('CanaryLib-Patches')
 }
 
 sourceSets {
@@ -165,7 +173,7 @@ shadowJar {
     rename 'joined.srg', 'mappings.srg'
 
     dependencies {
-        include dependency('org.neptunepowered:NeptuneLib')
+        include project(':NeptuneLib')
         include dependency('org.spongepowered:mixin')
 
         // CanaryLib

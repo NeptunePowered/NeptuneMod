@@ -1,0 +1,66 @@
+From 2c9d7bfe2078769ca6e052934a4e9eb08249965c Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Sat, 5 Nov 2016 21:18:45 +0000
+Subject: [PATCH] Rename references from CanaryMod to NeptuneVanilla
+
+
+diff --git a/src/main/java/net/canarymod/config/DatabaseConfiguration.java b/src/main/java/net/canarymod/config/DatabaseConfiguration.java
+index 262a1c8..88fa077 100644
+--- a/src/main/java/net/canarymod/config/DatabaseConfiguration.java
++++ b/src/main/java/net/canarymod/config/DatabaseConfiguration.java
+@@ -19,7 +19,7 @@ public class DatabaseConfiguration implements ConfigurationContainer {
+         File test = new File(path);
+ 
+         if (!test.exists()) {
+-            log.info("Could not find the database configuration at " + path + ", creating default.");
++            log.warn("Could not find the database configuration at " + path + ", creating default.");
+         }
+         this.cfg = new PropertiesFile(path);
+         verifyConfig();
+diff --git a/src/main/java/net/canarymod/config/ServerConfiguration.java b/src/main/java/net/canarymod/config/ServerConfiguration.java
+index 1f9c599..8afcf35 100644
+--- a/src/main/java/net/canarymod/config/ServerConfiguration.java
++++ b/src/main/java/net/canarymod/config/ServerConfiguration.java
+@@ -23,7 +23,7 @@ public class ServerConfiguration implements ConfigurationContainer {
+         File test = new File(path);
+ 
+         if (!test.exists()) {
+-            log.info("Could not find the server configuration at " + path + ", creating default.");
++            log.warn("Could not find the server configuration at " + path + ", creating default.");
+         }
+         this.cfg = new PropertiesFile("config" + File.separatorChar + "server.cfg");
+ 
+@@ -113,7 +113,7 @@ public class ServerConfiguration implements ConfigurationContainer {
+         cfg.setComments("max-players", "The maximum allowed players online (Does not count ReserveList users connecting after server is full)");
+         cfg.getInt("max-tick-time", 60000);
+         cfg.setComments("max-tick-time", "The maximum number of milliseconds a single tick may take before the server watchdog stops the server. Setting to -1 disables WatchDog.");
+-        cfg.getString("motd", "CanaryMod Minecraft Server");
++        cfg.getString("motd", "NeptuneVanilla Minecraft Server");
+         cfg.setComments("motd", "The Server list Message of the Day");
+         cfg.getInt("network-compression-threshold", 256);
+         cfg.setComments("network-compression-threshold", "By default it allows packets that are n-1 bytes big to go normally, but a packet that n bytes or more will be compressed down.");
+@@ -351,7 +351,7 @@ public class ServerConfiguration implements ConfigurationContainer {
+      * @return A string containing the message
+      */
+     public String getMotd() {
+-        return cfg.getString("motd", "Canary Minecraft Server");
++        return cfg.getString("motd", "NeptuneVanilla Minecraft Server");
+     }
+ 
+     /**
+diff --git a/src/main/java/net/canarymod/config/WorldConfiguration.java b/src/main/java/net/canarymod/config/WorldConfiguration.java
+index 60d2cb7..d2ff9e6 100644
+--- a/src/main/java/net/canarymod/config/WorldConfiguration.java
++++ b/src/main/java/net/canarymod/config/WorldConfiguration.java
+@@ -44,7 +44,7 @@ public class WorldConfiguration implements ConfigurationContainer {
+         File test = new File(path);
+ 
+         if (!test.exists()) {
+-            log.info("Could not find the world configuration for " + worldname + " at " + path + ", creating default.");
++            log.warn("Could not find the world configuration for " + worldname + " at " + path + ", creating default.");
+         }
+         cfg = new PropertiesFile(path + File.separatorChar + worldname + ".cfg");
+         verifyConfig();
+-- 
+2.10.0
+

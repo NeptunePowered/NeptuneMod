@@ -1,0 +1,28 @@
+From 116bda84a023ee441502960091c5567ca806c59e Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Sat, 1 Oct 2016 18:56:41 +0100
+Subject: [PATCH] Change access modifiers where necessary
+
+
+diff --git a/src/main/java/net/canarymod/hook/Hook.java b/src/main/java/net/canarymod/hook/Hook.java
+index c612152..687e150 100644
+--- a/src/main/java/net/canarymod/hook/Hook.java
++++ b/src/main/java/net/canarymod/hook/Hook.java
+@@ -39,12 +39,12 @@ public abstract class Hook {
+     }
+ 
+     // Check for execution
+-    final boolean executed() {
++    public final boolean executed() {
+         return executed;
+     }
+ 
+     // Set that it has executed to prevent subsequent calls
+-    final void hasExecuted() {
++    public final void hasExecuted() {
+         executed = true;
+     }
+ }
+-- 
+2.10.0
+

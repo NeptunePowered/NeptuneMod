@@ -1,0 +1,3 @@
+[submodule "CanaryLib"]
+	path = CanaryLib
+	url = https://github.com/CanaryModTeam/CanaryLib.git

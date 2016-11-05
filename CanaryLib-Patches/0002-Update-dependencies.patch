@@ -1,0 +1,24 @@
+From 7d49eaf10a0b451e5129b340ddb5734c89eb8d8e Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Sat, 5 Nov 2016 21:04:09 +0000
+Subject: [PATCH] Update dependencies
+
+
+diff --git a/build.gradle b/build.gradle
+index b8aae24..504ff52 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -39,8 +39,8 @@ dependencies {
+     compile 'org.jdom:jdom2:2.0.5'
+     compile 'com.mchange:c3p0:0.9.5'
+     compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
+-    compile 'com.google.guava:guava:15.0'
+-    compile 'com.mojang:authlib:1.5.17'
++    compile 'com.google.guava:guava:17.0'
++    compile 'com.mojang:authlib:1.5.21'
+     compile 'com.googlecode.json-simple:json-simple:1.1.1'
+     compile 'org.mcstats.standalone:metrics:R7'
+     runtime 'org.xerial:sqlite-jdbc:3.8.7'
+-- 
+2.10.0
+

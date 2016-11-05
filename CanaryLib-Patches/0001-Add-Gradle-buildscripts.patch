@@ -1,0 +1,227 @@
+From c027ade19db39f31bf66dc5cbf63b7d4cfcd2c95 Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Sat, 5 Nov 2016 20:53:47 +0000
+Subject: [PATCH] Add Gradle buildscripts
+
+
+diff --git a/.gitattributes b/.gitattributes
+new file mode 100644
+index 0000000..a6c1a2a
+--- /dev/null
++++ b/.gitattributes
+@@ -0,0 +1,37 @@
++# Handle line endings automatically for files detected as text
++# and leave all files detected as binary untouched.
++* text=auto
++
++#
++# The above will handle all files NOT found below
++#
++# These files are text and should be normalized (Convert crlf => lf)
++*.css           text
++*.df            text
++*.htm           text
++*.html          text
++*.java          text
++*.js            text
++*.json          text
++*.jsp           text
++*.jspf          text
++*.properties    text
++*.sh            text
++*.svg           text
++*.tld           text
++*.txt           text
++*.xml           text
++
++# These files are binary and should be left untouched
++# (binary is a macro for -text -diff)
++*.class         binary
++*.dll           binary
++*.ear           binary
++*.gif           binary
++*.ico           binary
++*.jar           binary
++*.jpg           binary
++*.jpeg          binary
++*.png           binary
++*.so            binary
++*.war           binary
+diff --git a/build.gradle b/build.gradle
+new file mode 100644
+index 0000000..b8aae24
+--- /dev/null
++++ b/build.gradle
+@@ -0,0 +1,125 @@
++apply plugin: 'java'
++apply plugin: 'maven'
++apply plugin: 'idea'
++apply plugin: 'eclipse'
++
++sourceCompatibility = 1.8
++targetCompatibility = 1.8
++
++group = 'org.neptunepowered'
++archivesBaseName = project.name.toLowerCase()
++version = '1.2.1-SNAPSHOT'
++
++repositories {
++    mavenCentral()
++    maven {
++        name = 'vi-repo'
++        url = 'http://repo.visualillusionsent.net/repository/internal'
++    }
++    maven {
++        name = 'vi-snapshots'
++        url = 'http://repo.visualillusionsent.net/repository/snapshots'
++    }
++    maven {
++        name = 'mojang'
++        url = 'https://libraries.minecraft.net'
++    }
++    maven {
++        name = 'mcstats-releases'
++        url = 'http://repo.mcstats.org/content/repositories/releases'
++    }
++    maven {
++        name = 'mcstats-snapshots'
++        url = 'http://repo.mcstats.org/content/repositories/snapshots'
++    }
++}
++
++dependencies {
++    compile 'net.visualillusionsent:viutils:1.4.2'
++    compile 'org.jdom:jdom2:2.0.5'
++    compile 'com.mchange:c3p0:0.9.5'
++    compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
++    compile 'com.google.guava:guava:15.0'
++    compile 'com.mojang:authlib:1.5.17'
++    compile 'com.googlecode.json-simple:json-simple:1.1.1'
++    compile 'org.mcstats.standalone:metrics:R7'
++    runtime 'org.xerial:sqlite-jdbc:3.8.7'
++    runtime 'mysql:mysql-connector-java:5.1.34'
++    testCompile 'junit:junit:4.12'
++}
++
++// Source compiler configuration
++configure([compileJava, compileTestJava]) {
++    options.compilerArgs += ['-Xlint:all', '-Xlint:-path']
++    options.deprecation = true
++    options.encoding = 'UTF-8'
++}
++
++task sourceJar(type: Jar, overwrite: true) {
++    classifier = 'sources'
++    from sourceSets.main.allSource
++}
++
++javadoc {
++    options.encoding = 'UTF-8'
++    options.charSet = 'UTF-8'
++
++    // Disable the crazy super-strict doclint tool in Java 8
++    options.addStringOption('Xdoclint:none', '-quiet')
++}
++
++task javadocJar(type: Jar, dependsOn: javadoc) {
++    classifier = 'javadoc'
++    from javadoc.destinationDir
++}
++
++artifacts {
++    archives sourceJar
++    archives javadocJar
++}
++
++uploadArchives {
++    repositories {
++        mavenDeployer {
++            if (System.getenv('MAVEN_RELEASES') != null) {
++                repository(url: 'file://' + System.getenv('MAVEN_RELEASES'))
++                snapshotRepository(url: 'file://' + System.getenv('MAVEN_SNAPSHOTS'))
++            }
++
++            pom {
++                artifactId = project.archivesBaseName
++
++                project {
++                    name = project.name
++                    description = project.description
++                    packaging = 'jar'
++                    url = project.url
++
++                    scm {
++                        url = 'https://github.com/NeptunePowered/NeptuneVanilla'
++                        connection = 'scm:git:https://github.com/NeptunePowered/NeptuneVanilla.git'
++                        developerConnection = 'scm:git:git@github.com:NeptunePowered/NeptuneVanilla.git'
++                    }
++
++                    issueManagement {
++                        system = 'GitHub'
++                        url = 'https://github.com/NeptunePowered/NeptuneVanilla/issues'
++                    }
++
++                    licenses {
++                        license {
++                            name = 'BSD 3-Clause'
++                            url = 'https://tldrlegal.com/license/bsd-3-clause-license-(revised)'
++                            distribution = 'repo'
++                        }
++                        license {
++                            name = 'MIT License'
++                            url = 'https://tldrlegal.com/license/mit-license'
++                            distribution = 'repo'
++                        }
++                    }
++                }
++            }
++        }
++    }
++}
+diff --git a/gradle.properties b/gradle.properties
+new file mode 100644
+index 0000000..ad0b05e
+--- /dev/null
++++ b/gradle.properties
+@@ -0,0 +1,3 @@
++name = NeptuneLib
++description = The NeptunePowered fork of CanaryLib
++url = https://www.neptunepowered.org/
+diff --git a/settings.gradle b/settings.gradle
+new file mode 100644
+index 0000000..ae239c6
+--- /dev/null
++++ b/settings.gradle
+@@ -0,0 +1,2 @@
++rootProject.name = name
++
+diff --git a/src/main/resources/LICENSE-MIT b/src/main/resources/LICENSE-MIT
+new file mode 100644
+index 0000000..86bf2f9
+--- /dev/null
++++ b/src/main/resources/LICENSE-MIT
+@@ -0,0 +1,21 @@
++The MIT License (MIT)
++
++Copyright (c) 2016, Jamie Mansfield <https://www.jamierocks.uk/>
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in
++all copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++THE SOFTWARE.
+-- 
+2.10.0
+
