@@ -25,11 +25,22 @@ package org.neptunepowered.vanilla.util;
 
 public final class PermissionConstants {
 
+    private PermissionConstants() {
+    }
+
     // canary.super.*
-    public static final String ADMINISTRATOR = "canary.super.administrator";
-    public static final String IGNORE_RESTRICTIONS = "canary.super.ignoreRestrictions";
+    public static class Super {
+
+        public static final String ADMINISTRATOR = "canary.super.administrator";
+        public static final String IGNORE_RESTRICTIONS = "canary.super.ignoreRestrictions";
+
+    }
 
     // canary.world.*
-    public static final String BUILD = "canary.world.build";
+    public static class World {
+
+        public static final String BUILD = "canary.world.build";
+
+    }
 
 }

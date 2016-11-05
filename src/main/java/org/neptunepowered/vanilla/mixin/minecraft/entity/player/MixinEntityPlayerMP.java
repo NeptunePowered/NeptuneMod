@@ -712,27 +712,27 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public boolean isAdmin() {
-        return this.isOperator() || this.hasPermission(PermissionConstants.ADMINISTRATOR);
+        return this.isOperator() || this.hasPermission(PermissionConstants.Super.ADMINISTRATOR);
     }
 
     @Override
     public boolean canBuild() {
-        return this.isAdmin() || this.hasPermission(PermissionConstants.BUILD);
+        return this.isAdmin() || this.hasPermission(PermissionConstants.World.BUILD);
     }
 
     @Override
     public void setCanBuild(boolean canModify) {
-        this.permissions.addPermission(PermissionConstants.BUILD, canModify);
+        this.permissions.addPermission(PermissionConstants.World.BUILD, canModify);
     }
 
     @Override
     public boolean canIgnoreRestrictions() {
-        return this.isAdmin() || this.hasPermission(PermissionConstants.IGNORE_RESTRICTIONS);
+        return this.isAdmin() || this.hasPermission(PermissionConstants.Super.IGNORE_RESTRICTIONS);
     }
 
     @Override
     public void setCanIgnoreRestrictions(boolean canIgnore) {
-        this.permissions.addPermission(PermissionConstants.IGNORE_RESTRICTIONS, canIgnore, -1);
+        this.permissions.addPermission(PermissionConstants.Super.IGNORE_RESTRICTIONS, canIgnore, -1);
     }
 
     @Override

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.util;
+package org.neptunepowered.vanilla.util.helper;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatisticsFile;
@@ -30,7 +30,7 @@ import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import java.io.File;
 import java.util.UUID;
 
-public final class StatisticsUtil {
+public final class StatisticsHelper {
 
     public static StatisticsFile getStatisticsFile(UUID id, String name) {
         final File idFile = new File(NeptuneWorldManager.STATS_DIR, id.toString() + ".json");

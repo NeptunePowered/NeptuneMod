@@ -60,4 +60,7 @@ public final class NbtConstants {
     public static final String BUKKIT_FIRST_JOINED = "firstPlayed";
     public static final String BUKKIT_LAST_JOINED = "lastPlayed";
 
+    private NbtConstants() {
+    }
+
 }

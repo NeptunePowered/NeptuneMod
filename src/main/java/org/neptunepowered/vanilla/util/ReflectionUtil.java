@@ -31,9 +31,6 @@ import java.lang.reflect.Modifier;
  */
 public final class ReflectionUtil {
 
-    private ReflectionUtil() {
-    }
-
     /**
      * Sets the value of a <code>static final</code> field in the given class.
      *
@@ -55,6 +52,9 @@ public final class ReflectionUtil {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new Exception("Failed to set field: " + field + " in class: " + clazz.getName(), e);
         }
+    }
+
+    private ReflectionUtil() {
     }
 
 }

@@ -48,7 +48,7 @@ import net.minecraft.stats.StatisticsFile;
 import net.minecraft.world.WorldSettings;
 import org.neptunepowered.vanilla.util.NbtConstants;
 import org.neptunepowered.vanilla.util.PermissionConstants;
-import org.neptunepowered.vanilla.util.StatisticsUtil;
+import org.neptunepowered.vanilla.util.helper.StatisticsHelper;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 
 import java.util.Arrays;
@@ -90,7 +90,7 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
         this.prefix = data[0];
         this.isMuted = Boolean.parseBoolean(data[2]);
 
-        this.statisticsFile = StatisticsUtil.getStatisticsFile(id, name);
+        this.statisticsFile = StatisticsHelper.getStatisticsFile(id, name);
         this.inventory = new InventoryPlayer(null);
         this.inventory.readFromNBT(this.tag.getTagList(NbtConstants.INVENTORY, NbtConstants.TAG_COMPOUND));
     }
@@ -270,27 +270,27 @@ public class NeptuneOfflinePlayer implements OfflinePlayer {
 
     @Override
     public boolean isAdmin() {
-        return this.isOperator() || this.hasPermission(PermissionConstants.ADMINISTRATOR);
+        return this.isOperator() || this.hasPermission(PermissionConstants.Super.ADMINISTRATOR);
     }
 
     @Override
     public boolean canBuild() {
-        return this.isAdmin() || this.hasPermission(PermissionConstants.BUILD);
+        return this.isAdmin() || this.hasPermission(PermissionConstants.World.BUILD);
     }
 
     @Override
     public void setCanBuild(boolean canModify) {
-        this.permissions.addPermission(PermissionConstants.BUILD, canModify);
+        this.permissions.addPermission(PermissionConstants.World.BUILD, canModify);
     }
 
     @Override
     public boolean canIgnoreRestrictions() {
-        return this.isAdmin() || this.hasPermission(PermissionConstants.IGNORE_RESTRICTIONS);
+        return this.isAdmin() || this.hasPermission(PermissionConstants.Super.IGNORE_RESTRICTIONS);
     }
 
     @Override
     public void setCanIgnoreRestrictions(boolean canIgnore) {
-        this.permissions.addPermission(PermissionConstants.IGNORE_RESTRICTIONS, canIgnore, -1);
+        this.permissions.addPermission(PermissionConstants.Super.IGNORE_RESTRICTIONS, canIgnore, -1);
     }
 
     @Override

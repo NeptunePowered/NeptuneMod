@@ -52,7 +52,7 @@ import net.minecraft.stats.StatisticsFile;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.WorldSettings;
 import org.apache.logging.log4j.Logger;
-import org.neptunepowered.vanilla.util.StatisticsUtil;
+import org.neptunepowered.vanilla.util.helper.StatisticsHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -146,7 +146,7 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         StatisticsFile statisticsFile = this.playerStatFiles.get(uuid);
 
         if (statisticsFile == null) {
-            statisticsFile = StatisticsUtil.getStatisticsFile(playerIn.getUniqueID(), playerIn.getName());
+            statisticsFile = StatisticsHelper.getStatisticsFile(playerIn.getUniqueID(), playerIn.getName());
             this.playerStatFiles.put(uuid, statisticsFile);
         }
 

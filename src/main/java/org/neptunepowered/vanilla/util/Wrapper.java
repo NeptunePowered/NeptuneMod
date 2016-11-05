@@ -27,7 +27,7 @@ public abstract class Wrapper<T> {
 
     private final T handle;
 
-    public Wrapper(final T handle) {
+    protected Wrapper(final T handle) {
         this.handle = handle;
     }
 
