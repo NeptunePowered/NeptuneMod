@@ -157,6 +157,7 @@
         "tileentity.MixinIHopper",
         "tileentity.MixinMobSpawnerBaseLogic",
         "tileentity.MixinTileEntity",
+        "tileentity.MixinTileEntityBeacon",
         "tileentity.MixinTileEntityBrewingStand",
         "tileentity.MixinTileEntityChest",
         "tileentity.MixinTileEntityComparator",

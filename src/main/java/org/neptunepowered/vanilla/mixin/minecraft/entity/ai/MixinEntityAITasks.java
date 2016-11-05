@@ -27,7 +27,7 @@ import net.canarymod.api.ai.AIBase;
 import net.canarymod.api.ai.AIManager;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks;
-import org.neptunepowered.vanilla.ai.NeptuneEntityAI;
+import org.neptunepowered.vanilla.ai.NeptuneCustomEntityAI;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -42,7 +42,7 @@ public abstract class MixinEntityAITasks implements AIManager {
         if (ai instanceof EntityAIBase) {
             this.addTask(priority, (EntityAIBase) ai);
         } else {
-            this.addTask(priority, new NeptuneEntityAI(ai));
+            this.addTask(priority, new NeptuneCustomEntityAI(ai));
         }
         return this.hasTask(ai.getClass());
     }

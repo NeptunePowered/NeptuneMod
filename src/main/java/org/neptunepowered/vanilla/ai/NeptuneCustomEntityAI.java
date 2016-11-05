@@ -26,11 +26,11 @@ package org.neptunepowered.vanilla.ai;
 import net.canarymod.api.ai.AIBase;
 import net.minecraft.entity.ai.EntityAIBase;
 
-public class NeptuneEntityAI extends EntityAIBase {
+public class NeptuneCustomEntityAI extends EntityAIBase {
 
     private final AIBase handle;
 
-    public NeptuneEntityAI(AIBase handle) {
+    public NeptuneCustomEntityAI(AIBase handle) {
         this.handle = handle;
     }
 
