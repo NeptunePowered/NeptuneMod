@@ -1,4 +1,4 @@
-From 4f7383a43a67caec481d7934c85bc756d1ebea54 Mon Sep 17 00:00:00 2001
+From bd687ce78d8ad622612a356ced894142bc87feb6 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Wed, 5 Oct 2016 20:19:35 +0100
 Subject: [PATCH] Add annotation-based plugins
@@ -229,5 +229,6 @@ index 0000000..12a4dd2
 +++ b/src/main/resources/META-INF/services/javax.annotation.processing.Processor
 @@ -0,0 +1 @@
 +org.neptunepowered.lib.plugin.processor.PluginProcessor
---
+-- 
 2.10.0
+

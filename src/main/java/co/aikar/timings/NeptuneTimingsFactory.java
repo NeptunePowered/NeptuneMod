@@ -24,13 +24,13 @@
  */
 package co.aikar.timings;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.collect.EvictingQueue;
 import net.canarymod.Canary;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.config.Configuration;
 import net.canarymod.plugin.Plugin;
+import net.canarymod.tasks.ServerTask;
+import net.canarymod.tasks.TaskOwner;
 import org.neptunepowered.lib.config.TimingsConfiguration;
 
 import java.util.Queue;
@@ -71,15 +71,18 @@ public class NeptuneTimingsFactory implements TimingsFactory {
         return time;
     }
 
-    private static Plugin checkPlugin(Object plugin) {
-        checkArgument(plugin instanceof Plugin, "Provided object is not a plugin!");
-        return (Plugin) plugin;
+    @Override
+    public Timing of(Plugin plugin, String name, Timing groupHandler) {
+        return TimingsManager.getHandler(plugin.getName().toLowerCase(), name, groupHandler, true);
     }
 
     @Override
-    public Timing of(Object pluginObj, String name, Timing groupHandler) {
-        Plugin plugin = checkPlugin(pluginObj);
-        return TimingsManager.getHandler(plugin.getName().toLowerCase(), name, groupHandler, true);
+    public Timing of(TaskOwner owner, ServerTask task) {
+        if (owner instanceof Plugin) {
+            return of((Plugin) owner, task.getClass().getName(), null);
+        } else {
+            return TimingsManager.getHandler(owner.getClass().getName(), task.getClass().getName(), null, true);
+        }
     }
 
     @Override

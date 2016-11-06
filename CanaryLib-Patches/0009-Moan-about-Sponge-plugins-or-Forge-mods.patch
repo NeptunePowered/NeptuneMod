@@ -1,11 +1,11 @@
-From faa2494a5117e680bdab632448ed90da8fcb242e Mon Sep 17 00:00:00 2001
+From 2d9d5ae738a723781cc650d18bd23e29b8252537 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sat, 29 Oct 2016 20:51:19 +0100
 Subject: [PATCH] Moan about Sponge plugins or Forge mods
 
 
 diff --git a/src/main/java/net/canarymod/plugin/PluginDescriptor.java b/src/main/java/net/canarymod/plugin/PluginDescriptor.java
-index ab595a0..d57286f 100644
+index fa6946f..ed8b2f8 100644
 --- a/src/main/java/net/canarymod/plugin/PluginDescriptor.java
 +++ b/src/main/java/net/canarymod/plugin/PluginDescriptor.java
 @@ -75,6 +75,9 @@ public class PluginDescriptor {
@@ -18,5 +18,6 @@ index ab595a0..d57286f 100644
                      throw new InvalidPluginException("I don't know where to find a Canary.inf in " + path);
                  }
              }
---
+-- 
 2.10.0
+

@@ -1,4 +1,4 @@
-From 5f1c77b1a699abc9084c60168b345861b0b99f2f Mon Sep 17 00:00:00 2001
+From 7dd4bb465e5915a22c7b35689fe36df55f7d5235 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 30 Sep 2016 21:44:56 +0100
 Subject: [PATCH] Add Timings v2 and fastutil
@@ -105,10 +105,10 @@ index 0000000..c5ce1a2
 +}
 diff --git a/src/main/java/co/aikar/timings/Timings.java b/src/main/java/co/aikar/timings/Timings.java
 new file mode 100644
-index 0000000..13096e2
+index 0000000..d40e21d
 --- /dev/null
 +++ b/src/main/java/co/aikar/timings/Timings.java
-@@ -0,0 +1,215 @@
+@@ -0,0 +1,222 @@
 +/*
 + * This file is part of SpongeAPI, licensed under the MIT License (MIT).
 + *
@@ -138,6 +138,9 @@ index 0000000..13096e2
 +import static com.google.common.base.Preconditions.checkNotNull;
 +
 +import net.canarymod.chat.MessageReceiver;
++import net.canarymod.plugin.Plugin;
++import net.canarymod.tasks.ServerTask;
++import net.canarymod.tasks.TaskOwner;
 +
 +import javax.annotation.Nullable;
 +
@@ -158,7 +161,7 @@ index 0000000..13096e2
 +     * @param name Name of the timing
 +     * @return A {@link Timing} instance
 +     */
-+    public static Timing of(Object plugin, String name) {
++    public static Timing of(Plugin plugin, String name) {
 +        return factory.of(checkNotNull(plugin, "plugin"), checkNotNull(name, "name"), null);
 +    }
 +
@@ -174,7 +177,7 @@ index 0000000..13096e2
 +     * @param groupHandler Parent handler to mirror .start/stop calls to
 +     * @return A {@link Timing} instance
 +     */
-+    public static Timing of(Object plugin, String name, Timing groupHandler) {
++    public static Timing of(Plugin plugin, String name, Timing groupHandler) {
 +        return factory.of(checkNotNull(plugin, "plugin"), checkNotNull(name, "name"), checkNotNull(groupHandler, "groupHandler"));
 +    }
 +
@@ -192,7 +195,7 @@ index 0000000..13096e2
 +     * @param name Name of timing
 +     * @return A {@link Timing} instance
 +     */
-+    public static Timing ofStart(Object plugin, String name) {
++    public static Timing ofStart(Plugin plugin, String name) {
 +        Timing timing = of(plugin, name);
 +        timing.startTimingIfSync();
 +        return timing;
@@ -214,10 +217,14 @@ index 0000000..13096e2
 +     * @param groupHandler Parent handler to mirror start/stop calls to
 +     * @return A {@link Timing} instance
 +     */
-+    public static Timing ofStart(Object plugin, String name, Timing groupHandler) {
++    public static Timing ofStart(Plugin plugin, String name, Timing groupHandler) {
 +        Timing timing = of(plugin, name, groupHandler);
 +        timing.startTimingIfSync();
 +        return timing;
++    }
++
++    public static Timing of(TaskOwner owner, ServerTask task) {
++        return factory.of(checkNotNull(owner, "owner"), checkNotNull(task, "task"));
 +    }
 +
 +    /**
@@ -326,10 +333,10 @@ index 0000000..13096e2
 +}
 diff --git a/src/main/java/co/aikar/timings/TimingsFactory.java b/src/main/java/co/aikar/timings/TimingsFactory.java
 new file mode 100644
-index 0000000..44ab362
+index 0000000..50ff0f1
 --- /dev/null
 +++ b/src/main/java/co/aikar/timings/TimingsFactory.java
-@@ -0,0 +1,114 @@
+@@ -0,0 +1,126 @@
 +/*
 + * This file is part of SpongeAPI, licensed under the MIT License (MIT).
 + *
@@ -357,6 +364,9 @@ index 0000000..44ab362
 +package co.aikar.timings;
 +
 +import net.canarymod.chat.MessageReceiver;
++import net.canarymod.plugin.Plugin;
++import net.canarymod.tasks.ServerTask;
++import net.canarymod.tasks.TaskOwner;
 +
 +import javax.annotation.Nullable;
 +
@@ -373,7 +383,16 @@ index 0000000..44ab362
 +     * @param groupHandler The handler, can be null for no parent
 +     * @return A timing instance
 +     */
-+    Timing of(Object plugin, String name, @Nullable Timing groupHandler);
++    Timing of(Plugin plugin, String name, @Nullable Timing groupHandler);
++
++    /**
++     * Gets or create a timing instance for the task owner with the name of the given task.
++     *
++     * @param owner TaskOwner owning the task
++     * @param task The task
++     * @return A timing instance
++     */
++    Timing of(TaskOwner owner, ServerTask task);
 +
 +    /**
 +     * Gets whether the timing system is enabled.
@@ -475,9 +494,85 @@ index 599f4e2..559d5a3 100644
      /**
       * Get the world configuration for the specified world
       *
+diff --git a/src/main/java/net/canarymod/tasks/ServerTask.java b/src/main/java/net/canarymod/tasks/ServerTask.java
+index 6eb609d..dd380fe 100644
+--- a/src/main/java/net/canarymod/tasks/ServerTask.java
++++ b/src/main/java/net/canarymod/tasks/ServerTask.java
+@@ -1,5 +1,7 @@
+ package net.canarymod.tasks;
+ 
++import co.aikar.timings.Timing; // Neptune
++import co.aikar.timings.Timings;
+ import net.canarymod.plugin.Plugin;
+ 
+ /**
+@@ -17,6 +19,7 @@ public abstract class ServerTask {
+     private final boolean continuous;
+     private final TaskOwner owner;
+     private long delay;
++    private Timing timings; // Neptune
+ 
+     /**
+      * Constructs a one-time use ServerTask
+@@ -76,6 +79,7 @@ public abstract class ServerTask {
+         this.delay = delay;
+         this.continuous = continuous;
+         this.owner = owner;
++        this.timings = Timings.of(owner, this);
+     }
+ 
+     /**
+@@ -101,6 +105,17 @@ public abstract class ServerTask {
+      */
+     public abstract void run();
+ 
++    // Neptune - start
++    /**
++     * Executes the task with timings.
++     */
++    public void runTimed() {
++        this.timings.startTimingIfSync();
++        this.run();
++        this.timings.stopTimingIfSync();
++    }
++    // Neptune - end
++
+     /**
+      * Called when a Continuous Task is reset.<br>
+      * Override and set any logic you may need to also have reset with each run.
+diff --git a/src/main/java/net/canarymod/tasks/ServerTaskManager.java b/src/main/java/net/canarymod/tasks/ServerTaskManager.java
+index 32e9b81..9829b51 100644
+--- a/src/main/java/net/canarymod/tasks/ServerTaskManager.java
++++ b/src/main/java/net/canarymod/tasks/ServerTaskManager.java
+@@ -1,5 +1,7 @@
+ package net.canarymod.tasks;
+ 
++import static net.canarymod.Canary.log;
++
+ import net.canarymod.plugin.Plugin;
+ 
+ import java.util.ArrayList;
+@@ -8,8 +10,6 @@ import java.util.List;
+ import java.util.Map.Entry;
+ import java.util.concurrent.ConcurrentHashMap;
+ 
+-import static net.canarymod.Canary.log;
+-
+ /**
+  * Server Task Manager
+  * <p/>
+@@ -127,7 +127,7 @@ public final class ServerTaskManager {
+                 task.decrementDelay();
+                 if (task.shouldExecute()) {
+                     try {
+-                        task.run();
++                        task.runTimed(); // Neptune - timings
+                     }
+                     catch (Throwable thrown) {
+                         log.error("An Exception occurred while executing ServerTask: " + task.getClass().getSimpleName(), thrown);
 diff --git a/src/main/java/org/neptunepowered/lib/config/TimingsConfiguration.java b/src/main/java/org/neptunepowered/lib/config/TimingsConfiguration.java
 new file mode 100644
-index 0000000..d07f2c1
+index 0000000..7339dc5
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/config/TimingsConfiguration.java
 @@ -0,0 +1,89 @@
@@ -524,11 +619,11 @@ index 0000000..d07f2c1
 +    private final PropertiesFile cfg;
 +
 +    public TimingsConfiguration(String path) {
-+        File test = new File(path);
-+
++        final File test = new File(path);
 +        if (!test.exists()) {
-+            log.info("Could not find the timings configuration at " + path + ", creating default.");
++            log.warn("Could not find the timings configuration at {}, creating default.", path);
 +        }
++
 +        this.cfg = new PropertiesFile(path);
 +        verifyConfig();
 +    }
