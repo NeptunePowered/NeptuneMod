@@ -48,6 +48,7 @@ import net.canarymod.api.world.World;
 import net.canarymod.api.world.WorldManager;
 import net.canarymod.chat.MessageReceiver;
 import net.canarymod.config.Configuration;
+import net.canarymod.config.ServerConfiguration;
 import net.canarymod.hook.command.ConsoleCommandHook;
 import net.canarymod.hook.system.PermissionCheckHook;
 import net.canarymod.hook.system.ServerTickHook;
@@ -215,9 +216,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
             this.statusResponse.getPlayerCountData().setPlayers(agameprofile);
         }
 
-        // Auto-save
-        // TODO: Have a auto-save-interval world configuration setting
-        if (this.tickCounter % 900 == 0) {
+        if (this.tickCounter % Configuration.getServerConfig().getWorldAutoSaveInterval() == 0) { // Neptune - use auto-save interval
             this.theProfiler.startSection("save");
             this.serverConfigManager.saveAllPlayerData();
             this.saveAllWorlds(true);

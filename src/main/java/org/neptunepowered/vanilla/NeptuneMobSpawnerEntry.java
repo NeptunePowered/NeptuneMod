@@ -73,11 +73,11 @@ public class NeptuneMobSpawnerEntry implements MobSpawnerEntry {
             return null;
         }
 
-        NBTTagCompound nbttagcompound = new NBTTagCompound();
+        final NBTTagCompound nbttagcompound = new NBTTagCompound();
         nbttagcompound.setTag("Properties", this.properties);
         nbttagcompound.setString("Type", this.entity.getFqName());
         nbttagcompound.setInteger("Weight", this.weight);
-        return null;
+        return (CompoundTag) nbttagcompound;
     }
 
 }

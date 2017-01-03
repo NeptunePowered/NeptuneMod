@@ -1,4 +1,4 @@
-From d12c5d7f35cbe7f4aaf4f6550d79fa88edc75cb4 Mon Sep 17 00:00:00 2001
+From 9ad8c43101150e1c829d636043604533cd4e4ce6 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Thu, 1 Sep 2016 16:53:01 +0100
 Subject: [PATCH] Add command builder
@@ -6,14 +6,14 @@ Subject: [PATCH] Add command builder
 
 diff --git a/src/main/java/org/neptunepowered/lib/command/CommandBuilder.java b/src/main/java/org/neptunepowered/lib/command/CommandBuilder.java
 new file mode 100644
-index 0000000..c4f91a4
+index 0000000..0a31ef5
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/command/CommandBuilder.java
 @@ -0,0 +1,123 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
-+ * Copyright (c) 2016, Jamie Mansfield <https://www.jamierocks.uk/>
++ * Copyright (c) 2016-2017, Jamie Mansfield <https://www.jamierocks.uk/>
 + *
 + * Permission is hereby granted, free of charge, to any person obtaining a copy
 + * of this software and associated documentation files (the "Software"), to deal
@@ -135,14 +135,14 @@ index 0000000..c4f91a4
 +}
 diff --git a/src/main/java/org/neptunepowered/lib/command/CommandExecutor.java b/src/main/java/org/neptunepowered/lib/command/CommandExecutor.java
 new file mode 100644
-index 0000000..33767c6
+index 0000000..d962f8c
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/command/CommandExecutor.java
 @@ -0,0 +1,44 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
-+ * Copyright (c) 2016, Jamie Mansfield <https://www.jamierocks.uk/>
++ * Copyright (c) 2016-2017, Jamie Mansfield <https://www.jamierocks.uk/>
 + *
 + * Permission is hereby granted, free of charge, to any person obtaining a copy
 + * of this software and associated documentation files (the "Software"), to deal

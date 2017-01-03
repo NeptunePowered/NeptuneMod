@@ -1,4 +1,4 @@
-From c027ade19db39f31bf66dc5cbf63b7d4cfcd2c95 Mon Sep 17 00:00:00 2001
+From a736c71e4d7801e43923ce0d72ec6f6d09014e23 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sat, 5 Nov 2016 20:53:47 +0000
 Subject: [PATCH] Add Gradle buildscripts
@@ -197,13 +197,13 @@ index 0000000..ae239c6
 +
 diff --git a/src/main/resources/LICENSE-MIT b/src/main/resources/LICENSE-MIT
 new file mode 100644
-index 0000000..86bf2f9
+index 0000000..ab36d96
 --- /dev/null
 +++ b/src/main/resources/LICENSE-MIT
 @@ -0,0 +1,21 @@
 +The MIT License (MIT)
 +
-+Copyright (c) 2016, Jamie Mansfield <https://www.jamierocks.uk/>
++Copyright (c) 2016-2017, Jamie Mansfield <https://www.jamierocks.uk/>
 +
 +Permission is hereby granted, free of charge, to any person obtaining a copy
 +of this software and associated documentation files (the "Software"), to deal

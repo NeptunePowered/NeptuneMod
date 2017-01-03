@@ -1,0 +1,33 @@
+From 67d57057f5a35a7083033d12275271d9c3c6ccea Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Tue, 3 Jan 2017 00:50:41 +0000
+Subject: [PATCH] Make world auto-save interval configurable
+
+
+diff --git a/src/main/java/net/canarymod/config/ServerConfiguration.java b/src/main/java/net/canarymod/config/ServerConfiguration.java
+index 8afcf35..cabcbdb 100644
+--- a/src/main/java/net/canarymod/config/ServerConfiguration.java
++++ b/src/main/java/net/canarymod/config/ServerConfiguration.java
+@@ -178,6 +178,8 @@ public class ServerConfiguration implements ConfigurationContainer {
+         cfg.setComments("world-cache-timer-enabled", "Enable automatic unloading of unused worlds.");
+         cfg.getLong("world-cache-timeout", 60);
+         cfg.setComments("world-cache-timeout", "The number of minutes a world should be empty before it will be unloaded (if use-world-cache is enabled)");
++        cfg.setInt("world-auto-save-interval", 900); // Neptune - add auto-save interval config
++        cfg.setComments("world-auto-save-interval", "The number of ticks between each auto-save."); // Neptune - add auto-save interval config
+         cfg.getBoolean("bungeecord", false);
+         cfg.setComments("bungeecord", "If you want to enable Bungeecord support. REQUIRES THAT ONLINE MODE IS DISABLED (false)");
+ 
+@@ -689,4 +691,10 @@ public class ServerConfiguration implements ConfigurationContainer {
+     public boolean getPluginDevModeEnabled() {
+         return cfg.getBoolean("plugin-dev-mode", false);
+     }
++
++    // Neptune - start
++    public int getWorldAutoSaveInterval() {
++        return this.cfg.getInt("world-auto-save-interval", 900);
++    }
++    // Neptune - end
+ }
+-- 
+2.10.0
+

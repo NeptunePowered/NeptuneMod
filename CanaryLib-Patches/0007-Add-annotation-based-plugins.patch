@@ -1,4 +1,4 @@
-From bd687ce78d8ad622612a356ced894142bc87feb6 Mon Sep 17 00:00:00 2001
+From 570a50d3037676d0dd1e03a18d029b76ea7faf89 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Wed, 5 Oct 2016 20:19:35 +0100
 Subject: [PATCH] Add annotation-based plugins
@@ -6,14 +6,14 @@ Subject: [PATCH] Add annotation-based plugins
 
 diff --git a/src/main/java/org/neptunepowered/lib/plugin/Plugin.java b/src/main/java/org/neptunepowered/lib/plugin/Plugin.java
 new file mode 100644
-index 0000000..cd8cef9
+index 0000000..bb71152
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/plugin/Plugin.java
 @@ -0,0 +1,74 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
-+ * Copyright (c) 2016, Jamie Mansfield <https://www.jamierocks.uk/>
++ * Copyright (c) 2016-2017, Jamie Mansfield <https://www.jamierocks.uk/>
 + *
 + * Permission is hereby granted, free of charge, to any person obtaining a copy
 + * of this software and associated documentation files (the "Software"), to deal
@@ -86,14 +86,14 @@ index 0000000..cd8cef9
 +}
 diff --git a/src/main/java/org/neptunepowered/lib/plugin/processor/PluginProcessor.java b/src/main/java/org/neptunepowered/lib/plugin/processor/PluginProcessor.java
 new file mode 100644
-index 0000000..751326b
+index 0000000..0bce5a1
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/plugin/processor/PluginProcessor.java
 @@ -0,0 +1,132 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
-+ * Copyright (c) 2016, Jamie Mansfield <https://www.jamierocks.uk/>
++ * Copyright (c) 2016-2017, Jamie Mansfield <https://www.jamierocks.uk/>
 + *
 + * Permission is hereby granted, free of charge, to any person obtaining a copy
 + * of this software and associated documentation files (the "Software"), to deal

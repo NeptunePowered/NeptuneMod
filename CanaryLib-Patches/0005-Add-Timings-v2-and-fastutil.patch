@@ -1,4 +1,4 @@
-From 7dd4bb465e5915a22c7b35689fe36df55f7d5235 Mon Sep 17 00:00:00 2001
+From 35f4be08818dda13f661386c8f57123d4e241c7d Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 30 Sep 2016 21:44:56 +0100
 Subject: [PATCH] Add Timings v2 and fastutil
@@ -572,14 +572,14 @@ index 32e9b81..9829b51 100644
                          log.error("An Exception occurred while executing ServerTask: " + task.getClass().getSimpleName(), thrown);
 diff --git a/src/main/java/org/neptunepowered/lib/config/TimingsConfiguration.java b/src/main/java/org/neptunepowered/lib/config/TimingsConfiguration.java
 new file mode 100644
-index 0000000..7339dc5
+index 0000000..315d4d3
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/config/TimingsConfiguration.java
 @@ -0,0 +1,89 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
-+ * Copyright (c) 2016, Jamie Mansfield <https://www.jamierocks.uk/>
++ * Copyright (c) 2016-2017, Jamie Mansfield <https://www.jamierocks.uk/>
 + *
 + * Permission is hereby granted, free of charge, to any person obtaining a copy
 + * of this software and associated documentation files (the "Software"), to deal
