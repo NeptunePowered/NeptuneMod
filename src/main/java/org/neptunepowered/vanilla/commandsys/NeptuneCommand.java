@@ -56,7 +56,7 @@ public final class NeptuneCommand implements CommandListener {
         caller.message(ChatFormat.GOLD + "Website:" + ChatFormat.WHITE + " https://www.neptunepowered.org/");
         caller.message(ChatFormat.GOLD + "Lead Developer:" + ChatFormat.WHITE + " Jamie Mansfield");
         caller.message(ChatFormat.GOLD + "With Contributions By:" + ChatFormat.WHITE + " 14mRh4X0r, Minecrell");
-        caller.message(ChatFormat.RED + "Copyright (c) 2015-2016, Jamie Mansfield");
+        caller.message(ChatFormat.RED + "Copyright (c) 2015-2017, Jamie Mansfield");
         caller.message(ChatFormat.RED + "Licensed under the MIT license.");
     }
 

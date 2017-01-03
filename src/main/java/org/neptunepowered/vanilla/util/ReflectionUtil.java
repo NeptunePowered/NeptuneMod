@@ -23,8 +23,13 @@
  */
 package org.neptunepowered.vanilla.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A utility for using Reflection.
@@ -52,6 +57,21 @@ public final class ReflectionUtil {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new Exception("Failed to set field: " + field + " in class: " + clazz.getName(), e);
         }
+    }
+
+    /**
+     * Gets a {@link List} of all the {@link Method}s in the given class, annotated with the given annotation class.
+     *
+     * @param clazz The class
+     * @param annotClazz The annotation class
+     * @return The list of methods
+     */
+    public static List<Method> getMethodsAnnotatedWith(Class<?> clazz, Class<? extends Annotation> annotClazz) {
+        return Stream.of(clazz.getDeclaredMethods()).filter(method ->
+                Stream.of(method.getDeclaredAnnotations()).anyMatch(annotation ->
+                        annotation.annotationType().equals(annotClazz)
+                )
+        ).collect(Collectors.toList());
     }
 
     private ReflectionUtil() {

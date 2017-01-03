@@ -24,9 +24,9 @@
 package org.neptunepowered.vanilla.plugin;
 
 import net.canarymod.plugin.Plugin;
+import org.neptunepowered.vanilla.util.ReflectionUtil;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.stream.Stream;
 
 public class NeptunePluginWrapper extends Plugin {
 
@@ -38,15 +38,11 @@ public class NeptunePluginWrapper extends Plugin {
 
     @Override
     public boolean enable() {
-        Stream.of(pluginObject.getClass().getDeclaredMethods()).filter(method ->
-                Stream.of(method.getDeclaredAnnotations()).anyMatch(annotation ->
-                        annotation.annotationType().equals(org.neptunepowered.lib.plugin.Plugin.Enable.class)
-                )
-        ).forEach(m -> {
+        ReflectionUtil.getMethodsAnnotatedWith(this.pluginObject.getClass(), org.neptunepowered.lib.plugin.Plugin.Enable.class).forEach(m -> {
             try {
                 m.invoke(this.pluginObject);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                this.getLogman().error("Failed to invoke enable method: " + m.getName(), e);
             }
         });
         return true;
@@ -54,15 +50,11 @@ public class NeptunePluginWrapper extends Plugin {
 
     @Override
     public void disable() {
-        Stream.of(pluginObject.getClass().getDeclaredMethods()).filter(method ->
-                Stream.of(method.getDeclaredAnnotations()).anyMatch(annotation ->
-                        annotation.annotationType().equals(org.neptunepowered.lib.plugin.Plugin.Disable.class)
-                )
-        ).forEach(m -> {
+        ReflectionUtil.getMethodsAnnotatedWith(this.pluginObject.getClass(), org.neptunepowered.lib.plugin.Plugin.Disable.class).forEach(m -> {
             try {
                 m.invoke(this.pluginObject);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+                this.getLogman().error("Failed to invoke enable method: " + m.getName(), e);
             }
         });
     }

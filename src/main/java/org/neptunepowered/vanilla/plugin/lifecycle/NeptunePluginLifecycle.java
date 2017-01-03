@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.plugin.lifecycle;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import net.canarymod.Canary;
 import net.canarymod.exceptions.PluginLoadFailedException;
 import net.canarymod.plugin.Plugin;
 import net.canarymod.plugin.PluginDescriptor;
@@ -65,12 +66,16 @@ public class NeptunePluginLifecycle extends PluginLifecycleBase {
             // mad haks bro
             Plugin.threadLocalName.set(this.desc.getName());
             final Injector injector = Guice.createInjector(new PluginGuiceModule(this.desc, pluginClass));
-            final Plugin plugin = new NeptunePluginWrapper(injector.getInstance(pluginClass));
+            final Object pluginInstance = injector.getInstance(pluginClass);
+            final Plugin plugin = new NeptunePluginWrapper(pluginInstance);
 
             // gotta be certain
             plugin.setName(this.desc.getName());
             plugin.setPriority(this.desc.getPriority());
             this.desc.setPlugin(plugin);
+
+            // Register the plugin as a hook listener
+            Canary.hooks().registerListener(pluginInstance, plugin);
         } catch (Exception ex) {
             throw new PluginLoadFailedException("Failed to load plugin", ex);
         }
