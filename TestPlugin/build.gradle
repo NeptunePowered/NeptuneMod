@@ -1,0 +1,26 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+group = 'org.neptunepowered'
+archivesBaseName = project.name.toLowerCase()
+version = project(':NeptuneLib').version
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':NeptuneLib')
+}
+
+// Source compiler configuration
+configure([compileJava, compileTestJava]) {
+    options.compilerArgs += ['-Xlint:all', '-Xlint:-path']
+    options.deprecation = true
+    options.encoding = 'UTF-8'
+}
