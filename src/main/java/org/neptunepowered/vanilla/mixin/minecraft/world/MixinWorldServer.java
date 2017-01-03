@@ -434,7 +434,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World, IMix
 
             this.getTimings().worldSaveChunks.startTiming(); // Neptune - timings
             this.chunkProvider.saveChunks(p_73044_1_, progressCallback);
-            this.getTimings().worldSaveChunks.startTiming(); // Neptune - timings
+            this.getTimings().worldSaveChunks.stopTiming(); // Neptune - timings
 
             // Neptune - Disable vanilla ChunkGC
             // for (net.minecraft.world.chunk.Chunk chunk : Lists.newArrayList(this.theChunkProviderServer.func_152380_a())) {

@@ -203,14 +203,17 @@ public abstract class MixinWorld implements IMixinWorld {
                 try {
                     ((IMixinEntity) entity).getTimingsHandler().startTiming(); // Neptune - Timings
                     this.updateEntity(entity);
-                    ((IMixinEntity) entity).getTimingsHandler().stopTiming(); // Neptune - Timings
                 } catch (Throwable throwable1) {
-                    ((IMixinEntity) entity).getTimingsHandler().stopTiming(); // Neptune - Timings
                     CrashReport crashreport1 = CrashReport.makeCrashReport(throwable1, "Ticking entity");
                     CrashReportCategory crashreportcategory2 = crashreport1.makeCategory("Entity being ticked");
                     entity.addEntityCrashInfo(crashreportcategory2);
                     throw new ReportedException(crashreport1);
                 }
+                // Neptune - start
+                finally {
+                    ((IMixinEntity) entity).getTimingsHandler().stopTiming();
+                }
+                // Neptune - end
             }
 
             this.theProfiler.endSection();
