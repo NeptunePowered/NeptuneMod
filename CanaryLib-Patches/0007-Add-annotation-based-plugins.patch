@@ -1,15 +1,27 @@
-From 570a50d3037676d0dd1e03a18d029b76ea7faf89 Mon Sep 17 00:00:00 2001
+From 81a4dc39458e47936996844f739eef430b5e276e Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Wed, 5 Oct 2016 20:19:35 +0100
 Subject: [PATCH] Add annotation-based plugins
 
 
+diff --git a/build.gradle b/build.gradle
+index 8cf2873..7433223 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -44,6 +44,7 @@ dependencies {
+     compile 'com.mchange:c3p0:0.9.5'
+     compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
+     compile 'com.google.guava:guava:17.0'
++    compile 'com.google.inject:guice:4.1.0'
+     compile 'com.mojang:authlib:1.5.21'
+     compile 'com.googlecode.json-simple:json-simple:1.1.1'
+     compile 'org.mcstats.standalone:metrics:R7'
 diff --git a/src/main/java/org/neptunepowered/lib/plugin/Plugin.java b/src/main/java/org/neptunepowered/lib/plugin/Plugin.java
 new file mode 100644
-index 0000000..bb71152
+index 0000000..c571950
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/plugin/Plugin.java
-@@ -0,0 +1,74 @@
+@@ -0,0 +1,84 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
@@ -36,9 +48,16 @@ index 0000000..bb71152
 +
 +package org.neptunepowered.lib.plugin;
 +
++import java.lang.annotation.ElementType;
++import java.lang.annotation.Retention;
++import java.lang.annotation.RetentionPolicy;
++import java.lang.annotation.Target;
++
 +/**
 + * An annotation used for marking NeptuneLib plugins.
 + */
++@Retention(RetentionPolicy.RUNTIME)
++@Target(ElementType.TYPE)
 +public @interface Plugin {
 +
 +    /**
@@ -63,13 +82,6 @@ index 0000000..bb71152
 +    String author() default "";
 +
 +    /**
-+     * Gets the language of the plugin.
-+     *
-+     * @return The plugin language
-+     */
-+    String language() default "java";
-+
-+    /**
 +     * Gets if the plugin should be enabled early.
 +     *
 +     * @return {@code True} if the plugin should be enabled early, {@code false} otherwise
@@ -83,13 +95,23 @@ index 0000000..bb71152
 +     */
 +    String[] dependencies() default {};
 +
++    @Retention(RetentionPolicy.RUNTIME)
++    @Target(ElementType.METHOD)
++    @interface Enable {
++    }
++
++    @Retention(RetentionPolicy.RUNTIME)
++    @Target(ElementType.METHOD)
++    @interface Disable {
++    }
++
 +}
 diff --git a/src/main/java/org/neptunepowered/lib/plugin/processor/PluginProcessor.java b/src/main/java/org/neptunepowered/lib/plugin/processor/PluginProcessor.java
 new file mode 100644
-index 0000000..0bce5a1
+index 0000000..fc35610
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/plugin/processor/PluginProcessor.java
-@@ -0,0 +1,132 @@
+@@ -0,0 +1,130 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
@@ -166,9 +188,7 @@ index 0000000..0bce5a1
 +            if (!plugin.author().isEmpty()) {
 +                props.setProperty("author", plugin.author());
 +            }
-+            if (!plugin.language().isEmpty() && !plugin.language().equalsIgnoreCase("java")) {
-+                props.setProperty("language", plugin.language());
-+            }
++            props.setProperty("language", "neptune");
 +            if (plugin.enableEarly()) {
 +                props.setProperty("enable-early", "true");
 +            }

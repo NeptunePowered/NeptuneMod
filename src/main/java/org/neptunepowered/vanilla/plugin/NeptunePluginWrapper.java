@@ -21,30 +21,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary.plugin;
+package org.neptunepowered.vanilla.plugin;
 
-import co.aikar.timings.NeptuneTimings;
-import co.aikar.timings.Timing;
 import net.canarymod.plugin.Plugin;
-import net.canarymod.plugin.RegisteredPluginListener;
-import org.neptunepowered.vanilla.interfaces.canary.plugin.IMixinRegisteredPluginListener;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.neptunepowered.vanilla.util.ReflectionUtil;
 
-@Mixin(value = RegisteredPluginListener.class, remap = false)
-public abstract class MixinRegisteredPluginListener implements IMixinRegisteredPluginListener {
+import java.lang.reflect.InvocationTargetException;
 
-    @Shadow private Object listener;
-    @Shadow private Plugin plugin;
+public class NeptunePluginWrapper extends Plugin {
 
-    private Timing listenerTimer;
+    private final Object pluginObject;
+
+    public NeptunePluginWrapper(Object pluginObject) {
+        this.pluginObject = pluginObject;
+    }
 
     @Override
-    public Timing getTimingsHandler() {
-        if (this.listenerTimer == null) {
-            this.listenerTimer = NeptuneTimings.getPluginTimings(this.plugin, this.listener.getClass().getSimpleName());
-        }
-        return this.listenerTimer;
+    public boolean enable() {
+        ReflectionUtil.getMethodsAnnotatedWith(this.pluginObject.getClass(), org.neptunepowered.lib.plugin.Plugin.Enable.class).forEach(m -> {
+            try {
+                m.invoke(this.pluginObject);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                this.getLogman().error("Failed to invoke enable method: " + m.getName(), e);
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public void disable() {
+        ReflectionUtil.getMethodsAnnotatedWith(this.pluginObject.getClass(), org.neptunepowered.lib.plugin.Plugin.Disable.class).forEach(m -> {
+            try {
+                m.invoke(this.pluginObject);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                this.getLogman().error("Failed to invoke enable method: " + m.getName(), e);
+            }
+        });
     }
 
 }

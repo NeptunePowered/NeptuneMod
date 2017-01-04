@@ -21,30 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary.plugin;
 
-import co.aikar.timings.NeptuneTimings;
-import co.aikar.timings.Timing;
-import net.canarymod.plugin.Plugin;
-import net.canarymod.plugin.RegisteredPluginListener;
-import org.neptunepowered.vanilla.interfaces.canary.plugin.IMixinRegisteredPluginListener;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+package org.neptunepowered.testplugin;
 
-@Mixin(value = RegisteredPluginListener.class, remap = false)
-public abstract class MixinRegisteredPluginListener implements IMixinRegisteredPluginListener {
+import com.google.inject.Inject;
+import net.canarymod.hook.HookHandler;
+import net.canarymod.hook.command.ConsoleCommandHook;
+import net.canarymod.logger.Logman;
+import org.neptunepowered.lib.plugin.Plugin;
 
-    @Shadow private Object listener;
-    @Shadow private Plugin plugin;
+@Plugin(name = "TestPlugin")
+public final class TestPlugin {
 
-    private Timing listenerTimer;
+    @Inject
+    private Logman logman;
 
-    @Override
-    public Timing getTimingsHandler() {
-        if (this.listenerTimer == null) {
-            this.listenerTimer = NeptuneTimings.getPluginTimings(this.plugin, this.listener.getClass().getSimpleName());
-        }
-        return this.listenerTimer;
+    @Plugin.Enable
+    public void onEnable() {
+        this.logman.info("Hello, world!");
+    }
+
+    @HookHandler
+    public void onConsoleCommand(ConsoleCommandHook hook) {
+        this.logman.info("Console command used: " + hook.getCommand()[0]);
     }
 
 }

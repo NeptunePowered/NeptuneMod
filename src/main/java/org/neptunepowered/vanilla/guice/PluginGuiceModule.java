@@ -21,30 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.canary.plugin;
+package org.neptunepowered.vanilla.guice;
 
-import co.aikar.timings.NeptuneTimings;
-import co.aikar.timings.Timing;
-import net.canarymod.plugin.Plugin;
-import net.canarymod.plugin.RegisteredPluginListener;
-import org.neptunepowered.vanilla.interfaces.canary.plugin.IMixinRegisteredPluginListener;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
+import net.canarymod.logger.Logman;
+import net.canarymod.plugin.PluginDescriptor;
 
-@Mixin(value = RegisteredPluginListener.class, remap = false)
-public abstract class MixinRegisteredPluginListener implements IMixinRegisteredPluginListener {
+public class PluginGuiceModule extends AbstractModule {
 
-    @Shadow private Object listener;
-    @Shadow private Plugin plugin;
+    private final PluginDescriptor descriptor;
+    private final Class<?> pluginClass;
 
-    private Timing listenerTimer;
+    public PluginGuiceModule(PluginDescriptor descriptor, Class<?> pluginClass) {
+        this.descriptor = descriptor;
+        this.pluginClass = pluginClass;
+    }
 
     @Override
-    public Timing getTimingsHandler() {
-        if (this.listenerTimer == null) {
-            this.listenerTimer = NeptuneTimings.getPluginTimings(this.plugin, this.listener.getClass().getSimpleName());
-        }
-        return this.listenerTimer;
+    protected void configure() {
+        this.bind(this.pluginClass).in(Scopes.SINGLETON);
+        this.bind(PluginDescriptor.class).toInstance(this.descriptor);
+        this.bind(Logman.class).toInstance(Logman.getLogman(this.descriptor.getName()));
     }
 
 }

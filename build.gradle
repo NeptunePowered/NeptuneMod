@@ -31,7 +31,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext.mcVersion  = '1.8.9'
-ext.apiVersion = '1.2.1-20161029.195316-13'
+ext.apiVersion = project(':NeptuneLib').version
 
 group = 'org.neptunepowered'
 archivesBaseName = project.name.toLowerCase()

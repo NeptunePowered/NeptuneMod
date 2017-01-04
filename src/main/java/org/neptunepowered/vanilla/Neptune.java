@@ -45,9 +45,10 @@ import net.canarymod.user.WhitelistProvider;
 import net.canarymod.warp.WarpProvider;
 import org.neptunepowered.vanilla.channels.NeptuneChannelManager;
 import org.neptunepowered.vanilla.commandsys.NeptuneCommand;
-import org.neptunepowered.vanilla.commandsys.TimingsCommand;
 import org.neptunepowered.vanilla.commandsys.NeptunePlayerSelector;
+import org.neptunepowered.vanilla.commandsys.TimingsCommand;
 import org.neptunepowered.vanilla.factory.NeptuneFactory;
+import org.neptunepowered.vanilla.plugin.lifecycle.NeptunePluginLifecycle;
 import org.neptunepowered.vanilla.util.NeptuneJsonNBTUtility;
 
 public class Neptune extends Canary {
@@ -55,6 +56,8 @@ public class Neptune extends Canary {
     private boolean isInitialised = false;
 
     public Neptune() {
+        NeptunePluginLifecycle.init();
+
         Canary.setCanary(this);
 
         DatabaseLoader.load();

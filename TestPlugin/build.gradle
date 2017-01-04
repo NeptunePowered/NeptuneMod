@@ -1,0 +1,64 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'net.minecrell.licenser'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+group = 'org.neptunepowered'
+archivesBaseName = project.name.toLowerCase()
+version = project(':NeptuneLib').version
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'vi-repo'
+        url = 'http://repo.visualillusionsent.net/repository/internal'
+    }
+    maven {
+        name = 'vi-snapshots'
+        url = 'http://repo.visualillusionsent.net/repository/snapshots'
+    }
+    maven {
+        name = 'mojang'
+        url = 'https://libraries.minecraft.net'
+    }
+    maven {
+        name = 'mcstats-releases'
+        url = 'http://repo.mcstats.org/content/repositories/releases'
+    }
+    maven {
+        name = 'mcstats-snapshots'
+        url = 'http://repo.mcstats.org/content/repositories/snapshots'
+    }
+    maven {
+        name = 'aikar'
+        url = 'https://ci.emc.gs/nexus/content/repositories/aikar/'
+    }
+}
+
+dependencies {
+    compile project(':NeptuneLib')
+}
+
+// Source compiler configuration
+configure([compileJava, compileTestJava]) {
+    options.compilerArgs += ['-Xlint:all', '-Xlint:-path']
+    options.deprecation = true
+    options.encoding = 'UTF-8'
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+
+    // Disable the crazy super-strict doclint tool in Java 8
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+license {
+    header rootProject.file('HEADER.txt')
+    include '**/*.java'
+}
