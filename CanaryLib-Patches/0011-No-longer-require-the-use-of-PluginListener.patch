@@ -1,4 +1,4 @@
-From 76f9d82dca099f7abfb6da1f5d87423482c7e234 Mon Sep 17 00:00:00 2001
+From d79201b3e18d65267163a5be318811333aca4bd4 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Tue, 3 Jan 2017 17:23:17 +0000
 Subject: [PATCH] No longer require the use of PluginListener
@@ -6,15 +6,10 @@ Subject: [PATCH] No longer require the use of PluginListener
 Useful for annotation plugins
 
 diff --git a/src/main/java/net/canarymod/hook/Dispatcher.java b/src/main/java/net/canarymod/hook/Dispatcher.java
-index b9a3675..e6c80e6 100644
+index b9a3675..dbdd47a 100644
 --- a/src/main/java/net/canarymod/hook/Dispatcher.java
 +++ b/src/main/java/net/canarymod/hook/Dispatcher.java
-@@ -1,12 +1,11 @@
- package net.canarymod.hook;
- 
- import net.canarymod.plugin.Plugin;
--import net.canarymod.plugin.PluginListener;
- import net.canarymod.plugin.Priority;
+@@ -6,7 +6,7 @@ import net.canarymod.plugin.Priority;
  
  /**
   * This class invokes a method on a listener.
@@ -23,18 +18,23 @@ index b9a3675..e6c80e6 100644
   * for each hook separately.
   *
   * @author Chris (damagefilter)
-@@ -14,5 +13,5 @@ import net.canarymod.plugin.Priority;
+@@ -14,5 +14,10 @@ import net.canarymod.plugin.Priority;
  public abstract class Dispatcher {
      public boolean ignoreCanceled;
  
 -    public abstract void execute(PluginListener listener, Hook hook);
-+    public abstract void execute(Object listener, Hook hook); // Neptune - PluginListener -> Object
++    @Deprecated // Neptune - Remove requirement for PluginListener
++    public void execute(PluginListener listener, Hook hook) {
++        this.execute((Object) listener, hook);
++    }
++
++    public abstract void execute(Object listener, Hook hook);
  }
 diff --git a/src/main/java/net/canarymod/hook/HookExecutor.java b/src/main/java/net/canarymod/hook/HookExecutor.java
-index fb70f1d..07850b2 100644
+index fb70f1d..1902042 100644
 --- a/src/main/java/net/canarymod/hook/HookExecutor.java
 +++ b/src/main/java/net/canarymod/hook/HookExecutor.java
-@@ -1,9 +1,10 @@
+@@ -1,5 +1,7 @@
  package net.canarymod.hook;
  
 +import static net.canarymod.Canary.log;
@@ -42,11 +42,7 @@ index fb70f1d..07850b2 100644
  import com.google.common.collect.ArrayListMultimap;
  import net.canarymod.ToolBox;
  import net.canarymod.plugin.Plugin;
--import net.canarymod.plugin.PluginListener;
- import net.canarymod.plugin.Priority;
- import net.canarymod.plugin.RegisteredPluginListener;
- 
-@@ -12,8 +13,6 @@ import java.util.Collections;
+@@ -12,8 +14,6 @@ import java.util.Collections;
  import java.util.Comparator;
  import java.util.Iterator;
  
@@ -55,7 +51,7 @@ index fb70f1d..07850b2 100644
  /**
   * Stores registered listeners and performs hook dispatches.
   *
-@@ -26,10 +25,10 @@ public class HookExecutor implements HookExecutorInterface {
+@@ -26,10 +26,10 @@ public class HookExecutor implements HookExecutorInterface {
      final ArrayListMultimap<Class<? extends Hook>, RegisteredPluginListener> listeners = ArrayListMultimap.create();
  
      /**
@@ -68,7 +64,7 @@ index fb70f1d..07850b2 100644
          Method[] methods = ToolBox.safeArrayMerge(listener.getClass().getMethods(), listener.getClass().getDeclaredMethods(), new Method[1]);
          for (final Method method : methods) {
              // Check if the method is a hook handling method
-@@ -54,7 +53,7 @@ public class HookExecutor implements HookExecutorInterface {
+@@ -54,7 +54,7 @@ public class HookExecutor implements HookExecutorInterface {
              Dispatcher dispatcher = new Dispatcher() {
  
                  @Override
@@ -77,7 +73,7 @@ index fb70f1d..07850b2 100644
                      try {
                          method.invoke(listener, hook);
                      }
-@@ -76,7 +75,7 @@ public class HookExecutor implements HookExecutorInterface {
+@@ -76,7 +76,7 @@ public class HookExecutor implements HookExecutorInterface {
      /**
       * A more flexible hook interface used internally. Adds flexibility required for Scala hook registration.
       */
@@ -86,7 +82,7 @@ index fb70f1d..07850b2 100644
          // Caller is assumed to check class (this is an internal API)
          listeners.put((Class<? extends Hook>)hookCls, new RegisteredPluginListener(listener, plugin, dispatcher, priority));
          Collections.sort(listeners.get((Class<? extends Hook>)hookCls), listener_comp);
-@@ -100,7 +99,7 @@ public class HookExecutor implements HookExecutorInterface {
+@@ -100,7 +100,7 @@ public class HookExecutor implements HookExecutorInterface {
      }
  
      @Override
@@ -96,18 +92,10 @@ index fb70f1d..07850b2 100644
          while (iter.hasNext()) {
              RegisteredPluginListener rListener = iter.next();
 diff --git a/src/main/java/net/canarymod/hook/HookExecutorInterface.java b/src/main/java/net/canarymod/hook/HookExecutorInterface.java
-index 3dafbef..00a5769 100644
+index 3dafbef..966f6fc 100644
 --- a/src/main/java/net/canarymod/hook/HookExecutorInterface.java
 +++ b/src/main/java/net/canarymod/hook/HookExecutorInterface.java
-@@ -1,7 +1,6 @@
- package net.canarymod.hook;
- 
- import net.canarymod.plugin.Plugin;
--import net.canarymod.plugin.PluginListener;
- 
- /**
-  * Interface for a hook executor.
-@@ -14,11 +13,11 @@ public interface HookExecutorInterface {
+@@ -14,11 +14,16 @@ public interface HookExecutorInterface {
       * Register listener to this executor.
       *
       * @param listener
@@ -117,11 +105,16 @@ index 3dafbef..00a5769 100644
       *         the {@link Plugin}
       */
 -    void registerListener(PluginListener listener, Plugin plugin);
-+    void registerListener(Object listener, Plugin plugin); // Neptune - PluginListener -> Object
++    @Deprecated // Neptune - Remove requirement for PluginListener
++    default void registerListener(PluginListener listener, Plugin plugin) {
++        this.registerListener((Object) listener, plugin);
++    }
++
++    void registerListener(Object listener, Plugin plugin);
  
      /**
       * Unregister all listeners for specified plugin
-@@ -32,9 +31,9 @@ public interface HookExecutorInterface {
+@@ -32,9 +37,14 @@ public interface HookExecutorInterface {
       * Unregisters a listener
       *
       * @param listener
@@ -129,7 +122,12 @@ index 3dafbef..00a5769 100644
 +     *         the plugin listener
       */
 -    void unregisterPluginListener(PluginListener listener);
-+    void unregisterPluginListener(Object listener); // Neptune - PluginListener -> Object
++    @Deprecated // Neptune - Remove requirement for PluginListener
++    default void unregisterPluginListener(PluginListener listener) {
++        this.unregisterPluginListener((Object) listener);
++    }
++
++    void unregisterPluginListener(Object listener);
  
      /**
       * Invokes a hook call to registered plugin listeners

@@ -26,7 +26,6 @@ package org.neptunepowered.vanilla.mixin.canary.plugin;
 import co.aikar.timings.NeptuneTimings;
 import co.aikar.timings.Timing;
 import net.canarymod.plugin.Plugin;
-import net.canarymod.plugin.PluginListener;
 import net.canarymod.plugin.RegisteredPluginListener;
 import org.neptunepowered.vanilla.interfaces.canary.plugin.IMixinRegisteredPluginListener;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,7 +34,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(value = RegisteredPluginListener.class, remap = false)
 public abstract class MixinRegisteredPluginListener implements IMixinRegisteredPluginListener {
 
-    @Shadow private PluginListener listener;
+    @Shadow private Object listener;
     @Shadow private Plugin plugin;
 
     private Timing listenerTimer;
