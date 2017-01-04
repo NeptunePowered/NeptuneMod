@@ -1,4 +1,4 @@
-From d79201b3e18d65267163a5be318811333aca4bd4 Mon Sep 17 00:00:00 2001
+From 1a6b28ec3d97350ff52832c5d1559cb448d5e22f Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Tue, 3 Jan 2017 17:23:17 +0000
 Subject: [PATCH] No longer require the use of PluginListener
@@ -132,10 +132,10 @@ index 3dafbef..966f6fc 100644
      /**
       * Invokes a hook call to registered plugin listeners
 diff --git a/src/main/java/net/canarymod/plugin/RegisteredPluginListener.java b/src/main/java/net/canarymod/plugin/RegisteredPluginListener.java
-index 4be8816..6aa2bf6 100644
+index 4be8816..f4db53d 100644
 --- a/src/main/java/net/canarymod/plugin/RegisteredPluginListener.java
 +++ b/src/main/java/net/canarymod/plugin/RegisteredPluginListener.java
-@@ -10,13 +10,13 @@ import net.canarymod.hook.Hook;
+@@ -10,13 +10,18 @@ import net.canarymod.hook.Hook;
   * @author Chris (damagefilter)
   */
  public class RegisteredPluginListener {
@@ -146,12 +146,16 @@ index 4be8816..6aa2bf6 100644
      private int basePriority;
      private Dispatcher executor;
  
--    public RegisteredPluginListener(PluginListener l, Plugin plugin, Dispatcher executor, Priority priority) {
-+    public RegisteredPluginListener(Object l, Plugin plugin, Dispatcher executor, Priority priority) { // Neptune - PluginListener -> Object
++    @Deprecated // Neptune - Remove requirement for PluginListener
+     public RegisteredPluginListener(PluginListener l, Plugin plugin, Dispatcher executor, Priority priority) {
++        this((Object) l, plugin, executor, priority);
++    }
++
++    public RegisteredPluginListener(Object l, Plugin plugin, Dispatcher executor, Priority priority) {
          this.listener = l;
          this.plugin = plugin;
          this.basePriority = plugin.getPriority();
-@@ -24,7 +24,7 @@ public class RegisteredPluginListener {
+@@ -24,7 +29,7 @@ public class RegisteredPluginListener {
          methodPriority = priority;
      }
  

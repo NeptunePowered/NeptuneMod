@@ -25,6 +25,8 @@
 package org.neptunepowered.testplugin;
 
 import com.google.inject.Inject;
+import net.canarymod.hook.HookHandler;
+import net.canarymod.hook.command.ConsoleCommandHook;
 import net.canarymod.logger.Logman;
 import org.neptunepowered.lib.plugin.Plugin;
 
@@ -37,6 +39,11 @@ public final class TestPlugin {
     @Plugin.Enable
     public void onEnable() {
         this.logman.info("Hello, world!");
+    }
+
+    @HookHandler
+    public void onConsoleCommand(ConsoleCommandHook hook) {
+        this.logman.info("Console command used: " + hook.getCommand()[0]);
     }
 
 }

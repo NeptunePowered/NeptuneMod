@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.guice;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 import net.canarymod.logger.Logman;
 import net.canarymod.plugin.PluginDescriptor;
 
@@ -39,6 +40,8 @@ public class PluginGuiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        this.bind(this.pluginClass).in(Scopes.SINGLETON);
+        this.bind(PluginDescriptor.class).toInstance(this.descriptor);
         this.bind(Logman.class).toInstance(Logman.getLogman(this.descriptor.getName()));
     }
 
