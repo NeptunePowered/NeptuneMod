@@ -1,4 +1,3 @@
 rootProject.name = name
-include 'NeptuneLib'
-include 'TestPlugin'
+include 'NeptuneLib', 'TestPlugin'
 
