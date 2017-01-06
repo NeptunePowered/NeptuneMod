@@ -24,9 +24,16 @@
 package org.neptunepowered.vanilla.guice;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Scopes;
+import net.canarymod.Canary;
+import net.canarymod.api.Server;
 import net.canarymod.logger.Logman;
 import net.canarymod.plugin.PluginDescriptor;
+import net.visualillusionsent.utils.PropertiesFile;
+import org.neptunepowered.lib.config.ConfigurationProvider;
+import org.neptunepowered.lib.plugin.ConfigFile;
 
 public class PluginGuiceModule extends AbstractModule {
 
@@ -40,9 +47,53 @@ public class PluginGuiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        final ConfigFileAnnotation canaryInf = new ConfigFileAnnotation(ConfigFile.Type.CANARY_INF);
+        final ConfigFileAnnotation config = new ConfigFileAnnotation(ConfigFile.Type.CONFIG);
+
+        // Canary globals
+        this.bind(Server.class).toInstance(Canary.getServer());
+
+        // Plugin related
         this.bind(this.pluginClass).in(Scopes.SINGLETON);
         this.bind(PluginDescriptor.class).toInstance(this.descriptor);
         this.bind(Logman.class).toInstance(Logman.getLogman(this.descriptor.getName()));
+
+        // Config related
+        this.bind(ConfigurationProvider.class).toInstance(ConfigurationProvider.getConfigurationProvider(this.descriptor.getName()));
+        this.bind(PropertiesFile.class).annotatedWith(canaryInf).toProvider(CanaryInfConfigProvider.class);
+        this.bind(PropertiesFile.class).annotatedWith(config).toProvider(ConfigConfigProvider.class);
+    }
+
+    private static class CanaryInfConfigProvider implements Provider<PropertiesFile> {
+
+        private final PluginDescriptor descriptor;
+
+        @Inject
+        public CanaryInfConfigProvider(PluginDescriptor descriptor) {
+            this.descriptor = descriptor;
+        }
+
+        @Override
+        public PropertiesFile get() {
+            return this.descriptor.getCanaryInf();
+        }
+
+    }
+
+    private static class ConfigConfigProvider implements Provider<PropertiesFile> {
+
+        private final PluginDescriptor descriptor;
+
+        @Inject
+        public ConfigConfigProvider(PluginDescriptor descriptor) {
+            this.descriptor = descriptor;
+        }
+
+        @Override
+        public PropertiesFile get() {
+            return ConfigurationProvider.getConfigurationProvider(this.descriptor.getName()).getPluginConfig();
+        }
+
     }
 
 }

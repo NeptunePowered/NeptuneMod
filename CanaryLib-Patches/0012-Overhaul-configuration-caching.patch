@@ -1,0 +1,268 @@
+From c9ee45765246d5bb66b64bfcfbaa9fd9746bf064 Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Fri, 6 Jan 2017 18:41:49 +0000
+Subject: [PATCH] Overhaul configuration caching
+
+
+diff --git a/src/main/java/net/canarymod/config/Configuration.java b/src/main/java/net/canarymod/config/Configuration.java
+index 559d5a3..91c4a6e 100644
+--- a/src/main/java/net/canarymod/config/Configuration.java
++++ b/src/main/java/net/canarymod/config/Configuration.java
+@@ -3,10 +3,10 @@ package net.canarymod.config;
+ import net.canarymod.api.world.World;
+ import net.canarymod.plugin.Plugin;
+ import net.visualillusionsent.utils.PropertiesFile;
++import org.neptunepowered.lib.config.ConfigurationProvider;
+ import org.neptunepowered.lib.config.TimingsConfiguration;
+ 
+ import java.io.File;
+-import java.util.HashMap;
+ 
+ /**
+  * A caching configuration provider.
+@@ -17,11 +17,11 @@ import java.util.HashMap;
+  */
+ public class Configuration {
+ 
+-    private static HashMap<Plugin, HashMap<String, PropertiesFile>> plugin_cfg_cache = new HashMap<Plugin, HashMap<String, PropertiesFile>>();
++    /*private static HashMap<Plugin, HashMap<String, PropertiesFile>> plugin_cfg_cache = new HashMap<Plugin, HashMap<String, PropertiesFile>>();*/ // Neptune
+     private static ServerConfiguration serverConfig = new ServerConfiguration("config" + File.separatorChar + "server.cfg");
+     private static DatabaseConfiguration dbConfig = new DatabaseConfiguration("config" + File.separatorChar + "db.cfg");
+     private static TimingsConfiguration timingsConfig = new TimingsConfiguration("config" + File.separator + "timings.cfg");
+-    private static HashMap<String, WorldConfiguration> worldConfigs = new HashMap<String, WorldConfiguration>();
++    /*private static HashMap<String, WorldConfiguration> worldConfigs = new HashMap<String, WorldConfiguration>();*/ // Neptune
+ 
+     /**
+      * Reload all configuration from disk
+@@ -31,14 +31,19 @@ public class Configuration {
+         dbConfig.reload();
+ 
+         // Reload world configurations
++        /*
+         for (WorldConfiguration wc : worldConfigs.values()) {
+             wc.reload();
+         }
++        */ConfigurationProvider.reloadWorldConfigs();
+ 
+         // Clear the cache
++        /*
+         plugin_cfg_cache.clear();
++        */ConfigurationProvider.clearAllCaches();
+     }
+ 
++    /*
+     private static PropertiesFile getPluginCachedConfig(Plugin plugin, String filepath) {
+         if (!plugin_cfg_cache.containsKey(plugin)) {
+             plugin_cfg_cache.put(plugin, new HashMap<String, PropertiesFile>());
+@@ -51,6 +56,7 @@ public class Configuration {
+         }
+         return plugin_cfg_cache.get(plugin).get(filepath);
+     }
++    */
+ 
+     /**
+      * Gets the server configuration
+@@ -83,6 +89,7 @@ public class Configuration {
+      * @return world configuration
+      */
+     public static WorldConfiguration getWorldConfig(String world) {
++        /*
+         WorldConfiguration r = worldConfigs.get(world);
+         if (r != null) {
+             return r;
+@@ -92,6 +99,7 @@ public class Configuration {
+ 
+         worldConfigs.put(world, config);
+         return config;
++        */return ConfigurationProvider.getWorldConfig(world);
+     }
+ 
+     /**
+@@ -103,7 +111,9 @@ public class Configuration {
+      * @return configuration of a {@link Plugin}
+      */
+     public static PropertiesFile getPluginConfig(Plugin plugin) {
++        /*
+         return Configuration.getPluginCachedConfig(plugin, "config" + File.separatorChar + plugin.getName() + File.separatorChar + plugin.getName() + ".cfg");
++        */return ConfigurationProvider.getConfigurationProvider(plugin.getName()).getPluginConfig();
+     }
+ 
+     /**
+@@ -117,7 +127,9 @@ public class Configuration {
+      * @return configuration of a {@link Plugin}
+      */
+     public static PropertiesFile getPluginConfig(Plugin plugin, String module) {
++        /*
+         return Configuration.getPluginCachedConfig(plugin, "config" + File.separatorChar + plugin.getName() + File.separatorChar + plugin.getName() + "." + module + ".cfg");
++        */return ConfigurationProvider.getConfigurationProvider(plugin.getName()).getPluginModuleConfig(module);
+     }
+ 
+     /**
+@@ -132,12 +144,14 @@ public class Configuration {
+      * @return configuration of a {@link Plugin}
+      */
+     public static PropertiesFile getPluginConfig(Plugin plugin, World world) {
++        /*
+         PropertiesFile file = Configuration.getPluginCachedConfig(plugin, "config" + File.separatorChar + plugin.getName() + File.separatorChar + "worlds" + File.separatorChar + world.getFqName() + File.separatorChar + plugin.getName() + ".cfg");
+ 
+         if (file == null) {
+             file = Configuration.getPluginCachedConfig(plugin, "config" + File.separatorChar + plugin.getName() + File.separatorChar + plugin.getName() + ".cfg");
+         }
+         return file;
++        */return ConfigurationProvider.getConfigurationProvider(plugin.getName()).getPluginWorldConfig(world.getFqName());
+     }
+ 
+     /**
+@@ -154,12 +168,14 @@ public class Configuration {
+      * @return configuration of a {@link Plugin}
+      */
+     public static PropertiesFile getPluginConfig(Plugin plugin, String module, World world) {
++        /*
+         PropertiesFile file = Configuration.getPluginCachedConfig(plugin, "config" + File.separatorChar + plugin.getName() + File.separatorChar + "worlds" + File.separatorChar + world.getFqName() + File.separatorChar + plugin.getName() + "." + module + ".cfg");
+ 
+         if (file == null) {
+             file = Configuration.getPluginCachedConfig(plugin, "config" + File.separatorChar + plugin.getName() + File.separatorChar + plugin.getName() + "." + module + ".cfg");
+         }
+         return file;
++        */return ConfigurationProvider.getConfigurationProvider(plugin.getName()).getPluginModuleWorldConfig(module, world.getFqName());
+     }
+ 
+     /**
+@@ -170,11 +186,15 @@ public class Configuration {
+      */
+     public static void clearPluginCachedConfigs(Plugin plugin) {
+         if (plugin != null && plugin.isDisabled()) { // Make sure the plugin really needs a clean up
++            /*
+             Configuration.plugin_cfg_cache.remove(plugin);
++            */ConfigurationProvider.getConfigurationProvider(plugin.getName()).clearCache();
+         }
+     }
+ 
+     static boolean hasWorldConfig(String name) {
++        /*
+         return worldConfigs.containsKey(name);
++         */return ConfigurationProvider.isWorldConfigCached(name);
+     }
+ }
+diff --git a/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
+new file mode 100644
+index 0000000..55b0edd
+--- /dev/null
++++ b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
+@@ -0,0 +1,113 @@
++/*
++ * This file is part of NeptuneLib, licensed under the MIT License (MIT).
++ *
++ * Copyright (c) 2016-2017, Jamie Mansfield <https://www.jamierocks.uk/>
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ */
++
++package org.neptunepowered.lib.config;
++
++import com.google.common.cache.Cache;
++import com.google.common.cache.CacheBuilder;
++import com.google.common.cache.CacheLoader;
++import net.canarymod.config.WorldConfiguration;
++import net.visualillusionsent.utils.PropertiesFile;
++
++import java.io.File;
++
++/**
++ * A reimplemented configuration provider.
++ */
++public final class ConfigurationProvider {
++
++    private static Cache<String, ConfigurationProvider> configProviderCache = CacheBuilder.newBuilder()
++            .build(new CacheLoader<String, ConfigurationProvider>() {
++                @Override
++                public ConfigurationProvider load(String key) throws Exception {
++                    return new ConfigurationProvider(key);
++                }
++            });
++
++    public static ConfigurationProvider getConfigurationProvider(String pluginName) {
++        return configProviderCache.getIfPresent(pluginName);
++    }
++
++    public static void clearAllCaches() {
++        configProviderCache.asMap().keySet().stream().map(ConfigurationProvider::getConfigurationProvider).forEach(ConfigurationProvider::clearCache);
++    }
++
++    private static Cache<String, WorldConfiguration> worldConfigCache = CacheBuilder.newBuilder()
++            .build(new CacheLoader<String, WorldConfiguration>() {
++                @Override
++                public WorldConfiguration load(String key) throws Exception {
++                    final String[] split = key.split("_");
++                    return new WorldConfiguration("config" + File.separatorChar + "worlds" + File.separatorChar + split[0], key);
++                }
++            });
++
++    public static WorldConfiguration getWorldConfig(String worldName) {
++        return worldConfigCache.getIfPresent(worldName);
++    }
++
++    public static void reloadWorldConfigs() {
++        worldConfigCache.asMap().values().forEach(WorldConfiguration::reload);
++    }
++
++    public static boolean isWorldConfigCached(String worldName) {
++        return worldConfigCache.asMap().containsKey(worldName);
++    }
++
++    private Cache<String, PropertiesFile> pluginConfigCache = CacheBuilder.newBuilder()
++            .build(new CacheLoader<String, PropertiesFile>() {
++                @Override
++                public PropertiesFile load(String key) throws Exception {
++                    final PropertiesFile propertiesFile = new PropertiesFile(key);
++                    propertiesFile.save();
++                    return propertiesFile;
++                }
++            });
++
++    private final String pluginName;
++
++    private ConfigurationProvider(String pluginName) {
++        this.pluginName = pluginName;
++    }
++
++    public PropertiesFile getPluginConfig() {
++        return this.pluginConfigCache.getIfPresent("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + ".cfg");
++    }
++
++    public PropertiesFile getPluginModuleConfig(String moduleName) {
++        return this.pluginConfigCache.getIfPresent("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
++    }
++
++    public PropertiesFile getPluginWorldConfig(String worldName) {
++        return this.pluginConfigCache.getIfPresent("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + ".cfg");
++    }
++
++    public PropertiesFile getPluginModuleWorldConfig(String moduleName, String worldName) {
++        return this.pluginConfigCache.getIfPresent("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
++    }
++
++    public void clearCache() {
++        this.pluginConfigCache.invalidateAll();
++    }
++
++}
+-- 
+2.10.0
+
