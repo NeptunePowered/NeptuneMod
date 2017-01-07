@@ -87,8 +87,6 @@ dependencies {
     shadow 'net.sf.jopt-simple:jopt-simple:4.6'
 }
 
-tasks.setupCiWorkspace.dependsOn rootProject.tasks.applyPatches
-
 license {
     header file('HEADER.txt')
     include '**/*.java'
