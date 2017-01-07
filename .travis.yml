@@ -7,8 +7,8 @@ jdk:
   - oraclejdk8
 
 env: GRADLE_OPTS="-Xms1g -Xmx3g"
-install: ./gradlew setupCIWorkspace
-script: ./gradlew build
+install: ./gradlew setupCIWorkspace -s
+script: ./gradlew build -s
 
 notifications:
   email: false
