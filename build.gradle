@@ -87,9 +87,7 @@ dependencies {
     shadow 'net.sf.jopt-simple:jopt-simple:4.6'
 }
 
-project(':NeptuneLib') {
-    compileJava.dependsOn rootProject.tasks.applyPatches
-}
+tasks.setupCiWorkspace.dependsOn rootProject.tasks.applyPatches
 
 license {
     header file('HEADER.txt')

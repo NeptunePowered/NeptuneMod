@@ -1,18 +1,20 @@
-From 6f6e089db200204812cf20c12e8ebd7f187caa12 Mon Sep 17 00:00:00 2001
+From df7566f9583e020f71dfc135aac3e401d0f120df Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Wed, 5 Oct 2016 20:19:35 +0100
 Subject: [PATCH] Add annotation-based plugins
 
 
 diff --git a/build.gradle b/build.gradle
-index 8cf2873..7433223 100644
+index 8cf2873..be7e643 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -44,6 +44,7 @@ dependencies {
+@@ -44,6 +44,9 @@ dependencies {
      compile 'com.mchange:c3p0:0.9.5'
      compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
      compile 'com.google.guava:guava:17.0'
-+    compile 'com.google.inject:guice:4.1.0'
++    compile('com.google.inject:guice:4.1.0') {
++        exclude module: 'guava'
++    }
      compile 'com.mojang:authlib:1.5.21'
      compile 'com.googlecode.json-simple:json-simple:1.1.1'
      compile 'org.mcstats.standalone:metrics:R7'
