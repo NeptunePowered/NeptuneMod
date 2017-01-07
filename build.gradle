@@ -40,12 +40,8 @@ version = "$mcVersion-$apiVersion"
 repositories {
     mavenCentral()
     maven {
-        name = 'vi-repo'
-        url = 'http://repo.visualillusionsent.net/repository/internal'
-    }
-    maven {
-        name = 'vi-snapshots'
-        url = 'http://repo.visualillusionsent.net/repository/snapshots'
+        name = 'neptune-temp'
+        url = 'http://www.neptunepowered.org/temprepo/'
     }
     maven {
         name = 'sponge'
