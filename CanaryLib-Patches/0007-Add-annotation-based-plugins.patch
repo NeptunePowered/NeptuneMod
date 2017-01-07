@@ -1,4 +1,4 @@
-From 39991118efc89ad1111c34c0963a6dab4f83d462 Mon Sep 17 00:00:00 2001
+From 6f6e089db200204812cf20c12e8ebd7f187caa12 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Wed, 5 Oct 2016 20:19:35 +0100
 Subject: [PATCH] Add annotation-based plugins
@@ -18,10 +18,10 @@ index 8cf2873..7433223 100644
      compile 'org.mcstats.standalone:metrics:R7'
 diff --git a/src/main/java/org/neptunepowered/lib/plugin/ConfigFile.java b/src/main/java/org/neptunepowered/lib/plugin/ConfigFile.java
 new file mode 100644
-index 0000000..60ca932
+index 0000000..ca3d4aa
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/plugin/ConfigFile.java
-@@ -0,0 +1,59 @@
+@@ -0,0 +1,61 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
@@ -48,6 +48,7 @@ index 0000000..60ca932
 +
 +package org.neptunepowered.lib.plugin;
 +
++import com.google.inject.BindingAnnotation;
 +import net.visualillusionsent.utils.PropertiesFile;
 +
 +import java.lang.annotation.ElementType;
@@ -58,6 +59,7 @@ index 0000000..60ca932
 +/**
 + * An annotation used for establishing the type of the injected {@link PropertiesFile}.
 + */
++@BindingAnnotation
 +@Retention(RetentionPolicy.RUNTIME)
 +@Target(ElementType.FIELD)
 +public @interface ConfigFile {

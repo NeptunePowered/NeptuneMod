@@ -1,4 +1,4 @@
-From c9ee45765246d5bb66b64bfcfbaa9fd9746bf064 Mon Sep 17 00:00:00 2001
+From f892d53201b5190706db18d69779039fe0f93f3c Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 6 Jan 2017 18:41:49 +0000
 Subject: [PATCH] Overhaul configuration caching
@@ -146,10 +146,10 @@ index 559d5a3..91c4a6e 100644
  }
 diff --git a/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
 new file mode 100644
-index 0000000..55b0edd
+index 0000000..a67db53
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
-@@ -0,0 +1,113 @@
+@@ -0,0 +1,138 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
@@ -176,20 +176,21 @@ index 0000000..55b0edd
 +
 +package org.neptunepowered.lib.config;
 +
-+import com.google.common.cache.Cache;
 +import com.google.common.cache.CacheBuilder;
 +import com.google.common.cache.CacheLoader;
++import com.google.common.cache.LoadingCache;
 +import net.canarymod.config.WorldConfiguration;
 +import net.visualillusionsent.utils.PropertiesFile;
 +
 +import java.io.File;
++import java.util.concurrent.ExecutionException;
 +
 +/**
 + * A reimplemented configuration provider.
 + */
 +public final class ConfigurationProvider {
 +
-+    private static Cache<String, ConfigurationProvider> configProviderCache = CacheBuilder.newBuilder()
++    private static LoadingCache<String, ConfigurationProvider> configProviderCache = CacheBuilder.newBuilder()
 +            .build(new CacheLoader<String, ConfigurationProvider>() {
 +                @Override
 +                public ConfigurationProvider load(String key) throws Exception {
@@ -198,14 +199,18 @@ index 0000000..55b0edd
 +            });
 +
 +    public static ConfigurationProvider getConfigurationProvider(String pluginName) {
-+        return configProviderCache.getIfPresent(pluginName);
++        try {
++            return configProviderCache.get(pluginName);
++        } catch (ExecutionException ignored) {
++            return null;
++        }
 +    }
 +
 +    public static void clearAllCaches() {
 +        configProviderCache.asMap().keySet().stream().map(ConfigurationProvider::getConfigurationProvider).forEach(ConfigurationProvider::clearCache);
 +    }
 +
-+    private static Cache<String, WorldConfiguration> worldConfigCache = CacheBuilder.newBuilder()
++    private static LoadingCache<String, WorldConfiguration> worldConfigCache = CacheBuilder.newBuilder()
 +            .build(new CacheLoader<String, WorldConfiguration>() {
 +                @Override
 +                public WorldConfiguration load(String key) throws Exception {
@@ -215,7 +220,11 @@ index 0000000..55b0edd
 +            });
 +
 +    public static WorldConfiguration getWorldConfig(String worldName) {
-+        return worldConfigCache.getIfPresent(worldName);
++        try {
++            return worldConfigCache.get(worldName);
++        } catch (ExecutionException ignored) {
++            return null;
++        }
 +    }
 +
 +    public static void reloadWorldConfigs() {
@@ -226,7 +235,7 @@ index 0000000..55b0edd
 +        return worldConfigCache.asMap().containsKey(worldName);
 +    }
 +
-+    private Cache<String, PropertiesFile> pluginConfigCache = CacheBuilder.newBuilder()
++    private LoadingCache<String, PropertiesFile> pluginConfigCache = CacheBuilder.newBuilder()
 +            .build(new CacheLoader<String, PropertiesFile>() {
 +                @Override
 +                public PropertiesFile load(String key) throws Exception {
@@ -243,19 +252,35 @@ index 0000000..55b0edd
 +    }
 +
 +    public PropertiesFile getPluginConfig() {
-+        return this.pluginConfigCache.getIfPresent("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + ".cfg");
++        try {
++            return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + ".cfg");
++        } catch (ExecutionException ignored) {
++            return null;
++        }
 +    }
 +
 +    public PropertiesFile getPluginModuleConfig(String moduleName) {
-+        return this.pluginConfigCache.getIfPresent("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
++        try {
++            return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
++        } catch (ExecutionException ignored) {
++            return null;
++        }
 +    }
 +
 +    public PropertiesFile getPluginWorldConfig(String worldName) {
-+        return this.pluginConfigCache.getIfPresent("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + ".cfg");
++        try {
++            return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + ".cfg");
++        } catch (ExecutionException ignored) {
++            return null;
++        }
 +    }
 +
 +    public PropertiesFile getPluginModuleWorldConfig(String moduleName, String worldName) {
-+        return this.pluginConfigCache.getIfPresent("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
++        try {
++            return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
++        } catch (ExecutionException ignored) {
++            return null;
++        }
 +    }
 +
 +    public void clearCache() {
