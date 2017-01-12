@@ -98,6 +98,12 @@ public class NeptunePacketFactory implements PacketFactory {
             case 3:
                 this.check(3, "UpdateTime", 2, args, this.test(Long.class), this.test(Long.class));
                 return this.updateTime((Long) args[0], (Long) args[1]);
+            case 4:
+                this.check(4, "EntityEquipment", 3, args, this.test(Integer.class), this.test(Integer.class), this.test(Item.class));
+                return this.entityEquipment((Integer) args[0], (Integer) args[1], (Item) args[2]);
+            case 5:
+                this.check(5, "SpawnPosition", 3, args, this.test(Integer.class), this.test(Integer.class), this.test(Integer.class));
+                return this.spawnPosition((Integer) args[0], (Integer) args[1], (Integer) args[2]);
         }
         return null;
     }

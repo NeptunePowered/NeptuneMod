@@ -23,20 +23,55 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
+import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.inventory.InventoryType;
 import net.canarymod.api.inventory.Item;
 import net.canarymod.api.inventory.PlayerInventory;
+import net.canarymod.hook.player.ArmorBrokenHook;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(InventoryPlayer.class)
 public abstract class MixinInventoryPlayer implements PlayerInventory {
 
     @Shadow public int currentItem;
+    @Shadow public ItemStack[] armorInventory;
+    @Shadow public EntityPlayer player;
 
     @Shadow public abstract ItemStack getCurrentItem();
+
+    /**
+     * @author jamierocks - 12th January 2017
+     * @reason Fire ArmorBrokenHook
+     */
+    @Overwrite
+    public void damageArmor(float damage) {
+        damage = damage / 4.0F;
+
+        if (damage < 1.0F) {
+            damage = 1.0F;
+        }
+
+        for (int i = 0; i < this.armorInventory.length; ++i) {
+            if (this.armorInventory[i] != null && this.armorInventory[i].getItem() instanceof ItemArmor) {
+                this.armorInventory[i].damageItem((int)damage, this.player);
+
+                if (this.armorInventory[i].stackSize == 0) {
+                    // Neptune - ArmorBrokenHook start
+                    final ArmorBrokenHook hook = (ArmorBrokenHook) new ArmorBrokenHook((Player) this.player, (Item) this.armorInventory[i]).call();
+                    if (hook.getArmor().getAmount() <= 0) {
+                        this.armorInventory[i] = null;
+                    }
+                    // Neptune - ArmorBrokenHook end
+                }
+            }
+        }
+    }
 
     @Override
     public Item getHelmetSlot() {
