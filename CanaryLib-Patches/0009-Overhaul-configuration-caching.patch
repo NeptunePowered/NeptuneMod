@@ -1,9 +1,24 @@
-From 5c2d0e034a960d498ac30ff2002a732e983c57e3 Mon Sep 17 00:00:00 2001
+From b9feff6e4c9684c91e30eec26b0e343f2dc45423 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 6 Jan 2017 18:41:49 +0000
 Subject: [PATCH] Overhaul configuration caching
 
 
+diff --git a/build.gradle b/build.gradle
+index 8cf2873d..156362dc 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -51,6 +51,10 @@ dependencies {
+     runtime 'org.xerial:sqlite-jdbc:3.8.7'
+     runtime 'mysql:mysql-connector-java:5.1.34'
+     testCompile 'junit:junit:4.12'
++
++    // Neptune: start
++    compile 'com.github.ben-manes.caffeine:caffeine:2.3.5'
++    // Neptune: end
+ }
+ 
+ // Source compiler configuration
 diff --git a/src/main/java/net/canarymod/config/Configuration.java b/src/main/java/net/canarymod/config/Configuration.java
 index 559d5a3a..91c4a6e8 100644
 --- a/src/main/java/net/canarymod/config/Configuration.java
@@ -146,10 +161,10 @@ index 559d5a3a..91c4a6e8 100644
  }
 diff --git a/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
 new file mode 100644
-index 00000000..a67db536
+index 00000000..46a0a7a7
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
-@@ -0,0 +1,138 @@
+@@ -0,0 +1,101 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
@@ -176,55 +191,37 @@ index 00000000..a67db536
 +
 +package org.neptunepowered.lib.config;
 +
-+import com.google.common.cache.CacheBuilder;
-+import com.google.common.cache.CacheLoader;
-+import com.google.common.cache.LoadingCache;
++import com.github.benmanes.caffeine.cache.Caffeine;
++import com.github.benmanes.caffeine.cache.LoadingCache;
 +import net.canarymod.config.WorldConfiguration;
 +import net.visualillusionsent.utils.PropertiesFile;
 +
 +import java.io.File;
-+import java.util.concurrent.ExecutionException;
 +
 +/**
 + * A reimplemented configuration provider.
 + */
 +public final class ConfigurationProvider {
 +
-+    private static LoadingCache<String, ConfigurationProvider> configProviderCache = CacheBuilder.newBuilder()
-+            .build(new CacheLoader<String, ConfigurationProvider>() {
-+                @Override
-+                public ConfigurationProvider load(String key) throws Exception {
-+                    return new ConfigurationProvider(key);
-+                }
-+            });
++    private static LoadingCache<String, ConfigurationProvider> configProviderCache = Caffeine.newBuilder()
++            .build(ConfigurationProvider::new);
 +
 +    public static ConfigurationProvider getConfigurationProvider(String pluginName) {
-+        try {
-+            return configProviderCache.get(pluginName);
-+        } catch (ExecutionException ignored) {
-+            return null;
-+        }
++        return configProviderCache.get(pluginName);
 +    }
 +
 +    public static void clearAllCaches() {
 +        configProviderCache.asMap().keySet().stream().map(ConfigurationProvider::getConfigurationProvider).forEach(ConfigurationProvider::clearCache);
 +    }
 +
-+    private static LoadingCache<String, WorldConfiguration> worldConfigCache = CacheBuilder.newBuilder()
-+            .build(new CacheLoader<String, WorldConfiguration>() {
-+                @Override
-+                public WorldConfiguration load(String key) throws Exception {
-+                    final String[] split = key.split("_");
-+                    return new WorldConfiguration("config" + File.separatorChar + "worlds" + File.separatorChar + split[0], key);
-+                }
++    private static LoadingCache<String, WorldConfiguration> worldConfigCache = Caffeine.newBuilder()
++            .build(key -> {
++                final String[] split = key.split("_");
++                return new WorldConfiguration("config" + File.separatorChar + "worlds" + File.separatorChar + split[0], key);
 +            });
 +
 +    public static WorldConfiguration getWorldConfig(String worldName) {
-+        try {
-+            return worldConfigCache.get(worldName);
-+        } catch (ExecutionException ignored) {
-+            return null;
-+        }
++        return worldConfigCache.get(worldName);
 +    }
 +
 +    public static void reloadWorldConfigs() {
@@ -235,14 +232,11 @@ index 00000000..a67db536
 +        return worldConfigCache.asMap().containsKey(worldName);
 +    }
 +
-+    private LoadingCache<String, PropertiesFile> pluginConfigCache = CacheBuilder.newBuilder()
-+            .build(new CacheLoader<String, PropertiesFile>() {
-+                @Override
-+                public PropertiesFile load(String key) throws Exception {
-+                    final PropertiesFile propertiesFile = new PropertiesFile(key);
-+                    propertiesFile.save();
-+                    return propertiesFile;
-+                }
++    private LoadingCache<String, PropertiesFile> pluginConfigCache = Caffeine.newBuilder()
++            .build(key -> {
++                final PropertiesFile propertiesFile = new PropertiesFile(key);
++                propertiesFile.save();
++                return propertiesFile;
 +            });
 +
 +    private final String pluginName;
@@ -252,35 +246,19 @@ index 00000000..a67db536
 +    }
 +
 +    public PropertiesFile getPluginConfig() {
-+        try {
-+            return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + ".cfg");
-+        } catch (ExecutionException ignored) {
-+            return null;
-+        }
++        return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + ".cfg");
 +    }
 +
 +    public PropertiesFile getPluginModuleConfig(String moduleName) {
-+        try {
-+            return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
-+        } catch (ExecutionException ignored) {
-+            return null;
-+        }
++        return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
 +    }
 +
 +    public PropertiesFile getPluginWorldConfig(String worldName) {
-+        try {
-+            return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + ".cfg");
-+        } catch (ExecutionException ignored) {
-+            return null;
-+        }
++        return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + ".cfg");
 +    }
 +
 +    public PropertiesFile getPluginModuleWorldConfig(String moduleName, String worldName) {
-+        try {
-+            return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
-+        } catch (ExecutionException ignored) {
-+            return null;
-+        }
++        return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
 +    }
 +
 +    public void clearCache() {
@@ -288,6 +266,7 @@ index 00000000..a67db536
 +    }
 +
 +}
+\ No newline at end of file
 -- 
 2.11.1
 

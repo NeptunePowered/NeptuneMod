@@ -1,11 +1,11 @@
-From 7d954c9de7194515fbfade90809ee5bfcca2cad2 Mon Sep 17 00:00:00 2001
+From 1c038a1efe465e77d207d6c05158223cf9b2005a Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sat, 7 Jan 2017 19:49:22 +0000
 Subject: [PATCH] Use NeptunePowered temp repository
 
 
 diff --git a/build.gradle b/build.gradle
-index 8cf2873d..c404830b 100644
+index 156362dc..471753ae 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -13,12 +13,8 @@ version = '1.2.1-SNAPSHOT'

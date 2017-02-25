@@ -175,6 +175,7 @@ shadowJar {
         include dependency('com.googlecode.json-simple:json-simple')
         include dependency('org.mcstats.standalone:metrics')
         include dependency('co.aikar:fastutil-lite')
+        include dependency('com.github.ben-manes.caffeine:caffeine')
 
         // LaunchWrapper
         include dependency('net.sf.jopt-simple:jopt-simple')
