@@ -1,11 +1,11 @@
-From 2c9d7bfe2078769ca6e052934a4e9eb08249965c Mon Sep 17 00:00:00 2001
+From e9ff8b8a7a037992d137576fdf2b3ebda4377a3c Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sat, 5 Nov 2016 21:18:45 +0000
 Subject: [PATCH] Rename references from CanaryMod to NeptuneVanilla
 
 
 diff --git a/src/main/java/net/canarymod/config/DatabaseConfiguration.java b/src/main/java/net/canarymod/config/DatabaseConfiguration.java
-index 262a1c8..88fa077 100644
+index 262a1c88..88fa077b 100644
 --- a/src/main/java/net/canarymod/config/DatabaseConfiguration.java
 +++ b/src/main/java/net/canarymod/config/DatabaseConfiguration.java
 @@ -19,7 +19,7 @@ public class DatabaseConfiguration implements ConfigurationContainer {
@@ -18,7 +18,7 @@ index 262a1c8..88fa077 100644
          this.cfg = new PropertiesFile(path);
          verifyConfig();
 diff --git a/src/main/java/net/canarymod/config/ServerConfiguration.java b/src/main/java/net/canarymod/config/ServerConfiguration.java
-index 1f9c599..8afcf35 100644
+index 1f9c599f..8afcf35c 100644
 --- a/src/main/java/net/canarymod/config/ServerConfiguration.java
 +++ b/src/main/java/net/canarymod/config/ServerConfiguration.java
 @@ -23,7 +23,7 @@ public class ServerConfiguration implements ConfigurationContainer {
@@ -49,7 +49,7 @@ index 1f9c599..8afcf35 100644
  
      /**
 diff --git a/src/main/java/net/canarymod/config/WorldConfiguration.java b/src/main/java/net/canarymod/config/WorldConfiguration.java
-index 60d2cb7..d2ff9e6 100644
+index 60d2cb71..d2ff9e6c 100644
 --- a/src/main/java/net/canarymod/config/WorldConfiguration.java
 +++ b/src/main/java/net/canarymod/config/WorldConfiguration.java
 @@ -44,7 +44,7 @@ public class WorldConfiguration implements ConfigurationContainer {
@@ -62,5 +62,5 @@ index 60d2cb7..d2ff9e6 100644
          cfg = new PropertiesFile(path + File.separatorChar + worldname + ".cfg");
          verifyConfig();
 -- 
-2.10.0
+2.11.1
 

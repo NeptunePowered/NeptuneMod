@@ -1,11 +1,11 @@
-From f892d53201b5190706db18d69779039fe0f93f3c Mon Sep 17 00:00:00 2001
+From 5c2d0e034a960d498ac30ff2002a732e983c57e3 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 6 Jan 2017 18:41:49 +0000
 Subject: [PATCH] Overhaul configuration caching
 
 
 diff --git a/src/main/java/net/canarymod/config/Configuration.java b/src/main/java/net/canarymod/config/Configuration.java
-index 559d5a3..91c4a6e 100644
+index 559d5a3a..91c4a6e8 100644
 --- a/src/main/java/net/canarymod/config/Configuration.java
 +++ b/src/main/java/net/canarymod/config/Configuration.java
 @@ -3,10 +3,10 @@ package net.canarymod.config;
@@ -146,7 +146,7 @@ index 559d5a3..91c4a6e 100644
  }
 diff --git a/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
 new file mode 100644
-index 0000000..a67db53
+index 00000000..a67db536
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
 @@ -0,0 +1,138 @@
@@ -289,5 +289,5 @@ index 0000000..a67db53
 +
 +}
 -- 
-2.10.0
+2.11.1
 

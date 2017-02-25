@@ -1,11 +1,11 @@
-From 281d394c043499007fff513d7822d51128f03b84 Mon Sep 17 00:00:00 2001
+From bfaea2fa05b7925ea16a6c2e5280f4d69db5a3fd Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Wed, 26 Oct 2016 00:52:36 +0100
 Subject: [PATCH] Add ChunkGC config options
 
 
 diff --git a/src/main/java/net/canarymod/config/WorldConfiguration.java b/src/main/java/net/canarymod/config/WorldConfiguration.java
-index d2ff9e6..59a29b5 100644
+index d2ff9e6c..59a29b58 100644
 --- a/src/main/java/net/canarymod/config/WorldConfiguration.java
 +++ b/src/main/java/net/canarymod/config/WorldConfiguration.java
 @@ -108,6 +108,11 @@ public class WorldConfiguration implements ConfigurationContainer {
@@ -38,5 +38,5 @@ index d2ff9e6..59a29b5 100644
       * Gets whether to load a world when a warp is used
       *
 -- 
-2.10.0
+2.11.1
 

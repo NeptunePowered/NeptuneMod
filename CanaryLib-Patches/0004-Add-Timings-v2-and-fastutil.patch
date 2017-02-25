@@ -1,4 +1,4 @@
-From 35f4be08818dda13f661386c8f57123d4e241c7d Mon Sep 17 00:00:00 2001
+From 337d9d970ff4030b8725db57ca9549c3e063a31f Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 30 Sep 2016 21:44:56 +0100
 Subject: [PATCH] Add Timings v2 and fastutil
@@ -6,7 +6,7 @@ Subject: [PATCH] Add Timings v2 and fastutil
 Based on the source from SpongeAPI
 
 diff --git a/build.gradle b/build.gradle
-index 504ff52..8cf2873 100644
+index 504ff52d..8cf2873d 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -32,6 +32,10 @@ repositories {
@@ -30,7 +30,7 @@ index 504ff52..8cf2873 100644
      testCompile 'junit:junit:4.12'
 diff --git a/src/main/java/co/aikar/timings/Timing.java b/src/main/java/co/aikar/timings/Timing.java
 new file mode 100644
-index 0000000..c5ce1a2
+index 00000000..c5ce1a23
 --- /dev/null
 +++ b/src/main/java/co/aikar/timings/Timing.java
 @@ -0,0 +1,69 @@
@@ -105,7 +105,7 @@ index 0000000..c5ce1a2
 +}
 diff --git a/src/main/java/co/aikar/timings/Timings.java b/src/main/java/co/aikar/timings/Timings.java
 new file mode 100644
-index 0000000..d40e21d
+index 00000000..d40e21db
 --- /dev/null
 +++ b/src/main/java/co/aikar/timings/Timings.java
 @@ -0,0 +1,222 @@
@@ -333,7 +333,7 @@ index 0000000..d40e21d
 +}
 diff --git a/src/main/java/co/aikar/timings/TimingsFactory.java b/src/main/java/co/aikar/timings/TimingsFactory.java
 new file mode 100644
-index 0000000..50ff0f1
+index 00000000..50ff0f15
 --- /dev/null
 +++ b/src/main/java/co/aikar/timings/TimingsFactory.java
 @@ -0,0 +1,126 @@
@@ -464,7 +464,7 @@ index 0000000..50ff0f1
 +
 +}
 diff --git a/src/main/java/net/canarymod/config/Configuration.java b/src/main/java/net/canarymod/config/Configuration.java
-index 599f4e2..559d5a3 100644
+index 599f4e25..559d5a3a 100644
 --- a/src/main/java/net/canarymod/config/Configuration.java
 +++ b/src/main/java/net/canarymod/config/Configuration.java
 @@ -3,6 +3,7 @@ package net.canarymod.config;
@@ -495,7 +495,7 @@ index 599f4e2..559d5a3 100644
       * Get the world configuration for the specified world
       *
 diff --git a/src/main/java/net/canarymod/tasks/ServerTask.java b/src/main/java/net/canarymod/tasks/ServerTask.java
-index 6eb609d..dd380fe 100644
+index 6eb609d2..dd380fed 100644
 --- a/src/main/java/net/canarymod/tasks/ServerTask.java
 +++ b/src/main/java/net/canarymod/tasks/ServerTask.java
 @@ -1,5 +1,7 @@
@@ -541,7 +541,7 @@ index 6eb609d..dd380fe 100644
       * Called when a Continuous Task is reset.<br>
       * Override and set any logic you may need to also have reset with each run.
 diff --git a/src/main/java/net/canarymod/tasks/ServerTaskManager.java b/src/main/java/net/canarymod/tasks/ServerTaskManager.java
-index 32e9b81..9829b51 100644
+index 32e9b810..9829b51b 100644
 --- a/src/main/java/net/canarymod/tasks/ServerTaskManager.java
 +++ b/src/main/java/net/canarymod/tasks/ServerTaskManager.java
 @@ -1,5 +1,7 @@
@@ -572,7 +572,7 @@ index 32e9b81..9829b51 100644
                          log.error("An Exception occurred while executing ServerTask: " + task.getClass().getSimpleName(), thrown);
 diff --git a/src/main/java/org/neptunepowered/lib/config/TimingsConfiguration.java b/src/main/java/org/neptunepowered/lib/config/TimingsConfiguration.java
 new file mode 100644
-index 0000000..315d4d3
+index 00000000..315d4d3b
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/config/TimingsConfiguration.java
 @@ -0,0 +1,89 @@
@@ -666,5 +666,5 @@ index 0000000..315d4d3
 +
 +}
 -- 
-2.10.0
+2.11.1
 
