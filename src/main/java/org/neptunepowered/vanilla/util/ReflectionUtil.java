@@ -27,9 +27,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A utility for using Reflection.
@@ -67,11 +67,9 @@ public final class ReflectionUtil {
      * @return The list of methods
      */
     public static List<Method> getMethodsAnnotatedWith(Class<?> clazz, Class<? extends Annotation> annotClazz) {
-        return Stream.of(clazz.getDeclaredMethods()).filter(method ->
-                Stream.of(method.getDeclaredAnnotations()).anyMatch(annotation ->
-                        annotation.annotationType().equals(annotClazz)
-                )
-        ).collect(Collectors.toList());
+        return Arrays.stream(clazz.getDeclaredMethods())
+                .filter(m -> m.getClass().isAnnotationPresent(annotClazz))
+                .collect(Collectors.toList());
     }
 
     private ReflectionUtil() {

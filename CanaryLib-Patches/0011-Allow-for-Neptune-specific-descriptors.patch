@@ -1,0 +1,56 @@
+From e25852dd22dc2f14911b8a997c0bddc447b00f51 Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Sun, 26 Feb 2017 00:07:30 +0000
+Subject: [PATCH] Allow for Neptune-specific descriptors
+
+
+diff --git a/src/main/java/net/canarymod/plugin/PluginDescriptor.java b/src/main/java/net/canarymod/plugin/PluginDescriptor.java
+index ed8b2f81..689966cc 100644
+--- a/src/main/java/net/canarymod/plugin/PluginDescriptor.java
++++ b/src/main/java/net/canarymod/plugin/PluginDescriptor.java
+@@ -69,30 +69,38 @@ public class PluginDescriptor {
+     private void findAndLoadCanaryInf() throws InvalidPluginException {
+         File pluginFile = new File(path);
+         if (pluginFile.isFile() && pluginFile.getName().matches(".+\\.(jar|zip)$")) {
++            final boolean hasNeptuneInf; // Neptune: Neptune.inf
+             try {
+                 ZipFile zip = new ZipFile(path);
+-                if (zip.getEntry("Canary.inf") == null) {
++                hasNeptuneInf = zip.getEntry("Neptune.inf") != null; // Neptune: Neptune.inf
++                if (zip.getEntry("Canary.inf") == null && !hasNeptuneInf) { // Neptune: Neptune.inf
+                     if (zip.getEntry("plugin.yml") != null) {
+                         throw new InvalidPluginException("Bukkit Plugins are not natively supported. Please remove '" + pluginFile.getName() + "' from your plugins directory.");
+                     }
+                     if (zip.getEntry("mcmod.info") != null) {
+                         throw new InvalidPluginException("Forge Mods or Sponge Plugins are not natively supported. Please remove '" + pluginFile.getName() + "' from your plugins directory.");
+                     }
+-                    throw new InvalidPluginException("I don't know where to find a Canary.inf in " + path);
++                    throw new InvalidPluginException("I don't know where to find a Canary.inf or Neptune.inf in " + path); // Neptune: Neptune.inf
+                 }
+             }
+             catch (IOException ioex) {
+                 throw new InvalidPluginException("Oops, something exploded while checking " + path, ioex);
+             }
+ 
+-            canaryInf = new PropertiesFile(pluginFile.getAbsolutePath(), "Canary.inf");
++            // Neptune: start
++            if (hasNeptuneInf) {
++                canaryInf = new PropertiesFile(pluginFile.getAbsolutePath(), "Neptune.inf");
++            } else {
++                canaryInf = new PropertiesFile(pluginFile.getAbsolutePath(), "Canary.inf");
++            }
++            // Neptune: end
+         }
+         else if (pluginFile.isDirectory()) {
+             File confFile = new File(pluginFile, "Canary.inf");
+             canaryInf = new PropertiesFile(confFile.getAbsolutePath());
+         }
+         else {
+-            throw new InvalidPluginException("I don't know where to find a Canary.inf in " + path);
++            throw new InvalidPluginException("I don't know where to find a Canary.inf or Neptune.inf in " + path); // Neptune: Neptune.inf
+         }
+     }
+ 
+-- 
+2.11.1
+

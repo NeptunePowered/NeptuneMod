@@ -1,0 +1,125 @@
+From cd609449fc19dd328b91c6d24a627938736e0246 Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Sun, 26 Feb 2017 00:31:16 +0000
+Subject: [PATCH] Use LaunchWrapper for loading plugins
+
+
+diff --git a/build.gradle b/build.gradle
+index 471753ae..443b3830 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -50,6 +50,7 @@ dependencies {
+ 
+     // Neptune: start
+     compile 'com.github.ben-manes.caffeine:caffeine:2.3.5'
++    compile 'net.minecraft:launchwrapper:1.11'
+     // Neptune: end
+ }
+ 
+diff --git a/src/main/java/net/canarymod/Canary.java b/src/main/java/net/canarymod/Canary.java
+index 896b9b6e..517e6235 100644
+--- a/src/main/java/net/canarymod/Canary.java
++++ b/src/main/java/net/canarymod/Canary.java
+@@ -19,7 +19,6 @@ import net.canarymod.motd.MessageOfTheDay;
+ import net.canarymod.permissionsystem.PermissionManager;
+ import net.canarymod.plugin.PluginManager;
+ import net.canarymod.plugin.lifecycle.InvalidPluginLifecycleException;
+-import net.canarymod.plugin.lifecycle.JavaPluginLifecycle;
+ import net.canarymod.plugin.lifecycle.PluginLifecycleFactory;
+ import net.canarymod.serialize.Serializer;
+ import net.canarymod.tasks.TaskOwner;
+@@ -30,6 +29,7 @@ import net.canarymod.user.WhitelistProvider;
+ import net.canarymod.util.JsonNBTUtility;
+ import net.canarymod.warp.WarpProvider;
+ import net.visualillusionsent.utils.JarUtils;
++import org.neptunepowered.lib.plugin.lifecycle.NeptuneJavaPluginLifecycle;
+ 
+ import java.io.File;
+ import java.io.IOException;
+@@ -82,7 +82,7 @@ public abstract class Canary implements TaskOwner {
+         log = Logman.getLogman("CanaryMod");
+ 
+         try {
+-            PluginLifecycleFactory.registerLifecycle("java", JavaPluginLifecycle.class);
++            PluginLifecycleFactory.registerLifecycle("java", NeptuneJavaPluginLifecycle.class); // Neptune: Use NeptuneJavaPluginLifecycle
+         }
+         catch (InvalidPluginLifecycleException e) {
+             e.printStackTrace();
+diff --git a/src/main/java/org/neptunepowered/lib/plugin/lifecycle/NeptuneJavaPluginLifecycle.java b/src/main/java/org/neptunepowered/lib/plugin/lifecycle/NeptuneJavaPluginLifecycle.java
+new file mode 100644
+index 00000000..9ceb658e
+--- /dev/null
++++ b/src/main/java/org/neptunepowered/lib/plugin/lifecycle/NeptuneJavaPluginLifecycle.java
+@@ -0,0 +1,69 @@
++/*
++ * This file is part of NeptuneLib, licensed under the MIT License (MIT).
++ *
++ * Copyright (c) 2016-2017, Jamie Mansfield <https://www.jamierocks.uk/>
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ */
++
++package org.neptunepowered.lib.plugin.lifecycle;
++
++import net.canarymod.exceptions.PluginLoadFailedException;
++import net.canarymod.plugin.Plugin;
++import net.canarymod.plugin.PluginDescriptor;
++import net.canarymod.plugin.lifecycle.InvalidPluginLifecycleException;
++import net.canarymod.plugin.lifecycle.PluginLifecycleBase;
++import net.canarymod.plugin.lifecycle.PluginLifecycleFactory;
++import net.minecraft.launchwrapper.Launch;
++
++import java.io.File;
++
++/**
++ * Lifecycle manager for a Java plugin running on NeptuneVanilla.
++ */
++public class NeptuneJavaPluginLifecycle extends PluginLifecycleBase {
++
++    public NeptuneJavaPluginLifecycle(PluginDescriptor desc) {
++        super(desc);
++    }
++
++    @Override
++    protected void _load() throws PluginLoadFailedException {
++        try {
++            Launch.classLoader.addURL(new File(this.desc.getPath()).toURI().toURL());
++            final Class<?> pluginClass = Launch.classLoader.loadClass(this.desc.getCanaryInf().getString("main-class"));
++
++            // mad haks bro
++            Plugin.threadLocalName.set(this.desc.getName());
++            final Plugin plugin = (Plugin) pluginClass.newInstance();
++
++            // gotta be certain
++            plugin.setName(this.desc.getName());
++            plugin.setPriority(this.desc.getPriority());
++            this.desc.setPlugin(plugin);
++        } catch (Exception ex) {
++            throw new PluginLoadFailedException("Failed to load plugin", ex);
++        }
++    }
++
++    @Override
++    protected void _unload() {
++    }
++
++}
+-- 
+2.11.1
+
