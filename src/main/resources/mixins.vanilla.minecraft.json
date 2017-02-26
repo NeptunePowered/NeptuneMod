@@ -49,6 +49,7 @@
         "entity.effect.MixinEntityWeatherEffect",
         "entity.item.MixinEntityArmorStand",
         "entity.item.MixinEntityExpBottle",
+        "entity.item.MixinEntityFireworkRocket",
         "entity.item.MixinEntityItem",
         "entity.item.MixinEntityItemFrame",
         "entity.item.MixinEntityMinecart",

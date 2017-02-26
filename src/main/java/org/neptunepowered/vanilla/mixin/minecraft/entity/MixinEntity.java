@@ -51,6 +51,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 @Mixin(net.minecraft.entity.Entity.class)
@@ -76,6 +77,12 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
     @Shadow private int entityId;
     @Shadow private AxisAlignedBB boundingBox;
     @Shadow protected DataWatcher dataWatcher;
+    @Shadow protected Random rand;
+    @Shadow public double lastTickPosX;
+    @Shadow public double lastTickPosY;
+    @Shadow public double lastTickPosZ;
+    @Shadow public float prevRotationYaw;
+    @Shadow public float prevRotationPitch;
 
     protected NBTTagCompound metadata = new NBTTagCompound();
     protected NBTTagCompound bukkitData = new NBTTagCompound();
@@ -96,6 +103,10 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
     @Shadow public abstract String getName();
     @Shadow public abstract void writeToNBT(NBTTagCompound tagCompound);
     @Shadow public abstract void readFromNBT(NBTTagCompound tagCompound);
+    @Shadow public abstract boolean isSilent();
+    @Shadow public void onUpdate() {
+        throw new RuntimeException("noop");
+    }
 
     @Inject(method = "Lnet/minecraft/entity/Entity;writeToNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("HEAD"))
     public void onWriteToNBT(NBTTagCompound tagCompound, CallbackInfo ci) {

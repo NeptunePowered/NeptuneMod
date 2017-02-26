@@ -31,8 +31,10 @@ import net.canarymod.api.world.blocks.BlockBase;
 import net.canarymod.api.world.blocks.BlockMaterial;
 import net.canarymod.api.world.blocks.MapColor;
 import net.canarymod.api.world.position.Position;
+import net.canarymod.hook.world.BlockDropXpHook;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.util.BlockPos;
 import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
 import org.neptunepowered.vanilla.util.converter.PositionConverter;
@@ -41,6 +43,7 @@ import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.Random;
@@ -90,6 +93,28 @@ public abstract class MixinBlock implements BlockBase, IMixinBlock {
     @Shadow public abstract double getBlockBoundsMaxY();
     @Shadow public abstract double getBlockBoundsMinZ();
     @Shadow public abstract double getBlockBoundsMaxZ();
+
+    /**
+     * @author jamierocks - 26th February 2017
+     * @reason Fire BlockDropXpHook
+     */
+    @Overwrite
+    protected void dropXpOnBlockBreak(net.minecraft.world.World worldIn, BlockPos pos, int amount) {
+        if (!worldIn.isRemote) {
+            // Neptune: start
+            final Block block = worldIn.getBlockState(pos).getBlock(); // TODO: test
+            final BlockDropXpHook hook = (BlockDropXpHook) new BlockDropXpHook((net.canarymod.api.world.blocks.Block) block, amount).call();
+            if (hook.isCanceled()) return;
+            amount = hook.getXp();
+            // Neptune: end
+
+            while (amount > 0) {
+                int i = EntityXPOrb.getXPSplit(amount);
+                amount -= i;
+                worldIn.spawnEntityInWorld(new EntityXPOrb(worldIn, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, i));
+            }
+        }
+    }
 
     @Intrinsic
     public boolean block$isFullBlock() {
