@@ -21,34 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.stats;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.minecraft.stats.Achievement;
+import net.minecraft.stats.StatBase;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(Achievement.class)
+public abstract class MixinAchievement extends StatBase implements net.canarymod.api.statistics.Achievement {
 
-    private final WorldServer world;
+    @Shadow @Final public Achievement parentAchievement;
+    @Shadow @Final private String achievementDescription;
+    @Shadow private boolean isSpecial;
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    MixinAchievement() {
+        super(null, null, null);
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public String getDescription() {
+        return this.achievementDescription;
+    }
+
+    @Override
+    public net.canarymod.api.statistics.Achievement getParent() {
+        return (net.canarymod.api.statistics.Achievement) this.parentAchievement;
+    }
+
+    @Override
+    public boolean isSpecial() {
+        return this.isSpecial;
     }
 
 }

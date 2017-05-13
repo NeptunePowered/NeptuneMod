@@ -21,34 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.world;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldType;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.storage.WorldInfo;
+import org.neptunepowered.vanilla.interfaces.core.world.IMixinWorld;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+import java.util.List;
+import java.util.Random;
 
-    private final WorldServer world;
+@Mixin(World.class)
+public abstract class MixinWorld implements IMixinWorld {
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
-    }
+    @Shadow @Final public List<EntityPlayer> playerEntities;
+    @Shadow @Final public WorldProvider provider;
+    @Shadow @Final public Random rand;
+    @Shadow protected IChunkProvider chunkProvider;
+    @Shadow protected WorldInfo worldInfo;
+
+    @Shadow public abstract long getSeed();
+    @Shadow public abstract WorldInfo getWorldInfo();
+    @Shadow public abstract EnumDifficulty shadow$getDifficulty();
+    @Shadow public abstract WorldType shadow$getWorldType();
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public void setWorldInfo(WorldInfo worldInfo) {
+        this.worldInfo = worldInfo;
     }
 
 }

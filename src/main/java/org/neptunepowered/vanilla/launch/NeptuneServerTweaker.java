@@ -93,11 +93,13 @@ public class NeptuneServerTweaker implements ITweaker {
         Launch.blackboard.put("vanilla.at", new URL[]{getResource("vanilla_at.cfg")});
         loader.registerTransformer("org.neptunepowered.vanilla.launch.transformer.AccessTransformer");
 
-        LOGGER.debug("Initializing Mixin environment...");
+        LOGGER.debug("Initialising Mixin environment...");
         MixinBootstrap.init();
         Mixins.addConfigurations(
+                "mixins.vanilla.bungee.json",
                 "mixins.vanilla.canary.json",
-                "mixins.vanilla.minecraft.json");
+                "mixins.vanilla.core.json",
+                "mixins.vanilla.perf.json");
         MixinEnvironment.getDefaultEnvironment().setSide(SERVER);
 
         LOGGER.info("Initialisation finished. Starting Minecraft server...");

@@ -21,34 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.event;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.chat.ChatComponent;
+import net.canarymod.api.chat.HoverEvent;
+import net.canarymod.api.chat.HoverEventAction;
+import net.minecraft.util.IChatComponent;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(net.minecraft.event.HoverEvent.class)
+@Implements(@Interface(iface = HoverEvent.class, prefix = "event$"))
+public abstract class MixinHoverEvent implements HoverEvent {
 
-    private final WorldServer world;
+    @Shadow @Final private net.minecraft.event.HoverEvent.Action action;
+    @Shadow @Final private IChatComponent value;
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Override
+    public HoverEventAction getAction() {
+        return (HoverEventAction) (Object) this.action;
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public ChatComponent getValue() {
+        return (ChatComponent) this.value;
     }
 
 }

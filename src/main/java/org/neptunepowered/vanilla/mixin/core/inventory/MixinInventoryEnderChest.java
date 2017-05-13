@@ -21,34 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.inventory;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.entity.living.humanoid.Human;
+import net.canarymod.api.inventory.EnderChestInventory;
+import net.canarymod.api.inventory.InventoryType;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryEnderChest;
+import org.neptunepowered.vanilla.interfaces.core.inventory.IMixinInventoryEnderChest;
+import org.spongepowered.asm.mixin.Mixin;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(InventoryEnderChest.class)
+public abstract class MixinInventoryEnderChest implements EnderChestInventory, IMixinInventoryEnderChest {
 
-    private final WorldServer world;
+    private EntityPlayer player;
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Override
+    public Human getInventoryOwner() {
+        return (Human) this.player;
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public InventoryType getInventoryType() {
+        return InventoryType.CHEST;
+    }
+
+    @Override
+    public void setOwner(EntityPlayer player) {
+        this.player = player;
     }
 
 }

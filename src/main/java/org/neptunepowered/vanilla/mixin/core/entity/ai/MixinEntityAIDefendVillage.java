@@ -21,34 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.entity.ai;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.ai.AIDefendVillage;
+import net.minecraft.entity.ai.EntityAIDefendVillage;
+import net.minecraft.entity.ai.EntityAITarget;
+import org.spongepowered.asm.mixin.Mixin;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(EntityAIDefendVillage.class)
+public abstract class MixinEntityAIDefendVillage extends EntityAITarget implements AIDefendVillage {
 
-    private final WorldServer world;
-
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
-    }
-
-    @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    MixinEntityAIDefendVillage() {
+        super(null, false);
     }
 
 }

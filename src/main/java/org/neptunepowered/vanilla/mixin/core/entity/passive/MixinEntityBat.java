@@ -21,34 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.entity.passive;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.living.animal.Bat;
+import net.canarymod.api.inventory.Item;
+import net.minecraft.entity.passive.EntityBat;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(EntityBat.class)
+public abstract class MixinEntityBat extends MixinEntityAmbientCreature implements Bat {
 
-    private final WorldServer world;
+    @Shadow public abstract boolean getIsBatHanging();
+    @Shadow public abstract void setIsBatHanging(boolean isHanging);
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Override
+    public boolean isAnimal() {
+        return true;
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public boolean isBreedingItem(Item item) {
+        return false;
+    }
+
+    @Override
+    public boolean isHanging() {
+        return this.getIsBatHanging();
+    }
+
+    @Override
+    public void setHanging(boolean b) {
+        this.setIsBatHanging(b);
+    }
+
+    @Override
+    public String getFqName() {
+        return "Bat";
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.BAT;
     }
 
 }

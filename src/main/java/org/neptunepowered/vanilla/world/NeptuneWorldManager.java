@@ -43,9 +43,9 @@ import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-import org.neptunepowered.vanilla.interfaces.minecraft.server.IMixinMinecraftServer;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.storage.IMixinWorldInfo;
+import org.neptunepowered.vanilla.interfaces.core.server.IMixinMinecraftServer;
+import org.neptunepowered.vanilla.interfaces.core.world.IMixinWorld;
+import org.neptunepowered.vanilla.interfaces.core.world.storage.IMixinWorldInfo;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 
 import java.io.File;

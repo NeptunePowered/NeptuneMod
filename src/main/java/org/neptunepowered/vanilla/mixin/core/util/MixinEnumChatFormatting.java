@@ -21,34 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.util;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.chat.ChatFormatting;
+import net.minecraft.util.EnumChatFormatting;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(EnumChatFormatting.class)
+@Implements(@Interface(iface = ChatFormatting.class, prefix = "chat$"))
+public abstract class MixinEnumChatFormatting implements ChatFormatting {
 
-    private final WorldServer world;
+    @Shadow @Final public char formattingCode;
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Shadow public abstract boolean isFancyStyling();
+    @Shadow public abstract String getFriendlyName();
+    @Shadow public abstract boolean isColor();
+
+    @Override
+    public char getFormattingCode() {
+        return this.formattingCode;
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public boolean isFormat() {
+        return this.isFancyStyling();
+    }
+
+    @Intrinsic
+    public boolean chat$isColor() {
+        return this.isColor();
+    }
+
+    @Override
+    public String getName() {
+        return this.getFriendlyName();
     }
 
 }

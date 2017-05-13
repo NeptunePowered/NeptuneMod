@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.4.19",
+    "package": "org.neptunepowered.vanilla.mixin.perf",
+    "compatibilityLevel": "JAVA_8",
+    "refmap": "mixins.vanilla.refmap.json",
+    "mixins": [
+        "world.gen.structure.MixinMapGenStructure_Performance",
+        "world.MixinWorld_Performance",
+        "world.MixinWorldServer_Performance"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

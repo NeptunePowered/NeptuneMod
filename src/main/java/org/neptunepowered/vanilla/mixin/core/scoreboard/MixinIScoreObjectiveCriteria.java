@@ -21,34 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.scoreboard;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.scoreboard.ScoreObjectiveCriteria;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.scoreboard.IScoreObjectiveCriteria;
+import org.spongepowered.asm.mixin.Implements;
+import org.spongepowered.asm.mixin.Interface;
+import org.spongepowered.asm.mixin.Intrinsic;
+import org.spongepowered.asm.mixin.Mixin;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+import java.util.List;
 
-    private final WorldServer world;
+@Mixin(IScoreObjectiveCriteria.class)
+@Implements(@Interface(iface = ScoreObjectiveCriteria.class, prefix = "criteria$"))
+public interface MixinIScoreObjectiveCriteria extends IScoreObjectiveCriteria, ScoreObjectiveCriteria {
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Override
+    default String getProtocolName() {
+        return this.getName();
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    default int getScore(List<?> var1) {
+        return this.setScore((List<EntityPlayer>) var1);
+    }
+
+    @Intrinsic
+    default boolean criteria$isReadOnly() {
+        return this.isReadOnly();
     }
 
 }

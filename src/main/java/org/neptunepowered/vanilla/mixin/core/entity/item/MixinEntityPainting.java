@@ -21,34 +21,59 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.entity.item;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.hanging.Painting;
+import net.minecraft.entity.item.EntityPainting;
+import org.neptunepowered.vanilla.mixin.core.entity.MixinEntityHanging;
+import org.neptunepowered.vanilla.util.converter.ArtConverter;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(EntityPainting.class)
+public abstract class MixinEntityPainting extends MixinEntityHanging implements Painting {
 
-    private final WorldServer world;
+    @Shadow public EntityPainting.EnumArt art;
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Override
+    public ArtType getArtType() {
+        return ArtConverter.of(this.art);
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public void setArtType(ArtType type) {
+        this.art = ArtConverter.of(type);
+    }
+
+    @Override
+    public int getSizeX() {
+        return this.art.sizeX;
+    }
+
+    @Override
+    public int getSizeY() {
+        return this.art.sizeY;
+    }
+
+    @Override
+    public int getOffsetX() {
+        return this.art.offsetX;
+    }
+
+    @Override
+    public int getOffsetY() {
+        return this.art.offsetY;
+    }
+
+    @Override
+    public String getFqName() {
+        return "Painting";
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.PAINTING;
     }
 
 }

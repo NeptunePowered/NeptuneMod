@@ -21,34 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.entity.monster;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.living.monster.Slime;
+import net.minecraft.entity.monster.EntitySlime;
+import org.neptunepowered.vanilla.mixin.core.entity.MixinEntityLiving;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(EntitySlime.class)
+public abstract class MixinEntitySlime extends MixinEntityLiving implements Slime {
 
-    private final WorldServer world;
+    @Shadow public abstract int getSlimeSize();
+    @Shadow protected abstract void setSlimeSize(int size);
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Override
+    public Size getSize() {
+        return Size.fromByte((byte) this.getSlimeSize());
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public void setSize(Size size) {
+        this.setSlimeSize(size.getByte());
+    }
+
+    @Override
+    public String getFqName() {
+        return "Slime";
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.SLIME;
     }
 
 }

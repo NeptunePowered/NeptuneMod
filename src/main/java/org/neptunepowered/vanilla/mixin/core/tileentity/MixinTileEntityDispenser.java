@@ -21,34 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.tileentity;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.entity.Entity;
+import net.canarymod.api.inventory.InventoryType;
+import net.canarymod.api.world.blocks.Dispenser;
+import net.minecraft.tileentity.TileEntityDispenser;
+import org.apache.commons.lang3.NotImplementedException;
+import org.spongepowered.asm.mixin.Mixin;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(TileEntityDispenser.class)
+public abstract class MixinTileEntityDispenser extends MixinTileEntityLockable implements Dispenser {
 
-    private final WorldServer world;
-
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Override
+    public Entity activate() {
+        throw new NotImplementedException("activate is not implemented!");
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public Entity dispenseFromSlot(int i) {
+        throw new NotImplementedException("dispenseFromSlot is not implemented!");
+    }
+
+    @Override
+    public InventoryType getInventoryType() {
+        return InventoryType.DISPENSER;
     }
 
 }

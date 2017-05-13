@@ -21,34 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.entity;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.hanging.HangingEntity;
+import net.minecraft.entity.EntityHanging;
+import net.minecraft.util.EnumFacing;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(EntityHanging.class)
+public abstract class MixinEntityHanging extends MixinEntity implements HangingEntity {
 
-    private final WorldServer world;
+    @Shadow private int tickCounter1;
+    @Shadow public EnumFacing facingDirection;
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Shadow public abstract boolean onValidSurface();
+
+    @Override
+    public int getHangingDirection() {
+        return this.facingDirection.getIndex();
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public void setHangingDirection(int direction) {
+        this.facingDirection = EnumFacing.getFront(direction);
+    }
+
+    @Override
+    public boolean isOnValidSurface() {
+        return this.onValidSurface();
+    }
+
+    @Override
+    public int getTickCounter() {
+        return this.tickCounter1;
+    }
+
+    @Override
+    public void setTickCounter(int ticks) {
+        this.tickCounter1 = ticks;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.GENERIC_HANGING;
     }
 
 }

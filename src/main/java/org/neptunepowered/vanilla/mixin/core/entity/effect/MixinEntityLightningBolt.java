@@ -21,34 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.entity.effect;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.canarymod.api.entity.EntityType;
+import net.canarymod.api.entity.effect.LightningBolt;
+import net.minecraft.entity.effect.EntityLightningBolt;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(EntityLightningBolt.class)
+public abstract class MixinEntityLightningBolt extends MixinEntityWeatherEffect implements LightningBolt {
 
-    private final WorldServer world;
+    @Shadow private int boltLivingTime;
+    @Shadow private int lightningState;
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
+    @Override
+    public int getLivingTime() {
+        return this.boltLivingTime;
     }
 
     @Override
-    public void run() {
-        for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    public void setLivingTime(int time) {
+        this.boltLivingTime = time;
+    }
+
+    @Override
+    public int getLightningState() {
+        return this.lightningState;
+    }
+
+    @Override
+    public void setLightingState(int state) {
+        this.lightningState = state;
+    }
+
+    @Override
+    public String getFqName() {
+        return "LightningBolt";
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.LIGHTNINGBOLT;
     }
 
 }
