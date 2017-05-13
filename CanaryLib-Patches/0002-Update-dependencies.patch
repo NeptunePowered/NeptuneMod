@@ -20,5 +20,5 @@ index b8aae240..504ff52d 100644
      compile 'org.mcstats.standalone:metrics:R7'
      runtime 'org.xerial:sqlite-jdbc:3.8.7'
 -- 
-2.11.1
+2.12.0
 

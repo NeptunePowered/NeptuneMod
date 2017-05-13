@@ -45,13 +45,11 @@ public final class ChunkGCTask extends ServerTask {
 
     @Override
     public void run() {
-        ((IMixinWorld) this.world).getTimings().doChunkGC.startTiming();
         for (Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
             if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
                 this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
             }
         }
-        ((IMixinWorld) this.world).getTimings().doChunkGC.stopTiming();
     }
 
 }

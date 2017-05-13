@@ -23,7 +23,6 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.server.management;
 
-import co.aikar.timings.NeptuneTimings;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
 import net.canarymod.ToolBox;
@@ -177,16 +176,6 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     @Inject(method = "initializeConnectionToPlayer", at = @At("RETURN"))
     public void sendMOTD(NetworkManager netManager, EntityPlayerMP playerIn, CallbackInfo info) {
         Canary.motd().sendMOTD((MessageReceiver) playerIn);
-    }
-
-    @Inject(method = "saveAllPlayerData", at = @At("HEAD"))
-    public void onSaveAllPlayerData(CallbackInfo ci) {
-        NeptuneTimings.savePlayersTimer.startTiming();
-    }
-
-    @Inject(method = "saveAllPlayerData", at = @At("RETURN"))
-    public void afterSaveAllPlayerData(CallbackInfo ci) {
-        NeptuneTimings.savePlayersTimer.stopTiming();
     }
 
     @Redirect(method = "initializeConnectionToPlayer",

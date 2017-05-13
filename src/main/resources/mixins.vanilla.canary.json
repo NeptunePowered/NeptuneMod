@@ -5,8 +5,6 @@
     "compatibilityLevel": "JAVA_8",
     "refmap": "mixins.vanilla.refmap.json",
     "mixins": [
-        "hook.MixinHookExecutor",
-        "plugin.MixinRegisteredPluginListener",
         "MixinCanary"
     ],
     "injectors": {

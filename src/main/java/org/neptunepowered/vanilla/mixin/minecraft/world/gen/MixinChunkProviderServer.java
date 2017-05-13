@@ -23,72 +23,31 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.world.gen;
 
-import co.aikar.timings.Timing;
 import com.google.common.collect.Lists;
 import net.canarymod.api.world.ChunkProvider;
-import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.apache.logging.log4j.Logger;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.io.IOException;
 import java.util.List;
 
 @Mixin(ChunkProviderServer.class)
 @Implements(@Interface(iface = ChunkProvider.class, prefix = "provider$"))
 public abstract class MixinChunkProviderServer implements IChunkProvider {
 
-    @Shadow @Final private static Logger logger;
-    @Shadow private IChunkLoader chunkLoader;
-    @Shadow private WorldServer worldObj;
-
     @Shadow public abstract List<Chunk> func_152380_a();
     @Shadow public abstract Chunk loadChunk(int chunkX, int chunkZ);
     @Shadow public abstract void dropChunk(int x, int z);
 
-    /**
-     * @author jamierocks - 25th October 2016
-     * @reason Add timings calls
-     */
-    @Overwrite
-    private void saveChunkExtraData(Chunk chunkIn) {
-        if (this.chunkLoader != null) {
-            try (Timing ignored = ((IMixinWorld) this.worldObj).getTimings().chunkSaveNop.startTiming()) { // Neptune - timings
-                this.chunkLoader.saveExtraChunkData(this.worldObj, chunkIn);
-            } catch (Exception exception) {
-                logger.error("Couldn't save entities", exception);
-            }
-        }
-    }
-
-    /**
-     * @author jamierocks - 25th October 2016
-     * @reason Add timings calls
-     */
-    @Overwrite
-    private void saveChunkData(Chunk chunkIn) {
-        if (this.chunkLoader != null) {
-            try (Timing ignored = ((IMixinWorld) this.worldObj).getTimings().chunkSaveData.startTiming()) { // Neptune - timings
-                chunkIn.setLastSaveTime(this.worldObj.getTotalWorldTime());
-                this.chunkLoader.saveChunk(this.worldObj, chunkIn);
-            } catch (IOException ioexception) {
-                logger.error("Couldn't save chunk", ioexception);
-            } catch (MinecraftException minecraftexception) {
-                logger.error("Couldn't save chunk; already in use by another instance of Minecraft?", minecraftexception);
-            }
-        }
-    }
 
     @Intrinsic
     public boolean provider$canSave() {

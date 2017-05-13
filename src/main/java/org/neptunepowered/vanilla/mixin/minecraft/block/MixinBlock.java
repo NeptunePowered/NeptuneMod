@@ -23,8 +23,6 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.block;
 
-import co.aikar.timings.NeptuneTimings;
-import co.aikar.timings.Timing;
 import net.canarymod.api.entity.Entity;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.blocks.BlockBase;
@@ -36,7 +34,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.util.BlockPos;
-import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
 import org.neptunepowered.vanilla.util.converter.PositionConverter;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
@@ -50,7 +47,7 @@ import java.util.Random;
 
 @Mixin(Block.class)
 @Implements(@Interface(iface = BlockBase.class, prefix = "block$"))
-public abstract class MixinBlock implements BlockBase, IMixinBlock {
+public abstract class MixinBlock implements BlockBase {
 
     @Shadow @Final protected Material blockMaterial;
     @Shadow protected boolean needsRandomTick;
@@ -60,8 +57,6 @@ public abstract class MixinBlock implements BlockBase, IMixinBlock {
     @Shadow protected double maxX;
     @Shadow protected double maxY;
     @Shadow protected double maxZ;
-
-    private Timing timing;
 
     @Shadow public abstract boolean isFullBlock();
     @Shadow public abstract int getLightOpacity();
@@ -289,14 +284,6 @@ public abstract class MixinBlock implements BlockBase, IMixinBlock {
     @Override
     public int getComparatorInputOverride(World worldIn, Position pos) {
         return this.getComparatorInputOverride((net.minecraft.world.World) worldIn, PositionConverter.of(pos));
-    }
-
-    @Override
-    public Timing getTimingsHandler() {
-        if (this.timing == null) {
-            this.timing = NeptuneTimings.getBlockTiming((net.minecraft.block.Block)(Object) this);
-        }
-        return this.timing;
     }
 
 }

@@ -23,15 +23,12 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.tileentity;
 
-import co.aikar.timings.NeptuneTimings;
-import co.aikar.timings.Timing;
 import net.canarymod.api.nbt.CompoundTag;
 import net.canarymod.api.world.World;
 import net.canarymod.api.world.blocks.Block;
 import net.canarymod.api.world.blocks.TileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import org.neptunepowered.vanilla.interfaces.minecraft.tileentity.IMixinTileEntity;
 import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,13 +37,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(net.minecraft.tileentity.TileEntity.class)
-public abstract class MixinTileEntity implements TileEntity, IMixinTileEntity {
+public abstract class MixinTileEntity implements TileEntity {
 
     @Shadow protected net.minecraft.block.Block blockType;
     @Shadow protected net.minecraft.world.World worldObj;
     @Shadow protected BlockPos pos;
 
-    private Timing timing;
     private NBTTagCompound canaryMeta = new NBTTagCompound();
 
     @Shadow public abstract void writeToNBT(NBTTagCompound compound);
@@ -110,14 +106,6 @@ public abstract class MixinTileEntity implements TileEntity, IMixinTileEntity {
     @Override
     public void readFromTag(CompoundTag tag) {
         this.readFromNBT((NBTTagCompound) tag);
-    }
-
-    @Override
-    public Timing getTimingsHandler() {
-        if (this.timing == null) {
-            this.timing = NeptuneTimings.getTileEntityTiming(this);
-        }
-        return this.timing;
     }
 
 }

@@ -1,0 +1,32 @@
+From caf33f9a7ed7a8e60ac3119d50ade80b0c4700b0 Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Fri, 30 Sep 2016 21:44:56 +0100
+Subject: [PATCH] Add fastutil-lite
+
+
+diff --git a/build.gradle b/build.gradle
+index 504ff52d..8cf2873d 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -32,6 +32,10 @@ repositories {
+         name = 'mcstats-snapshots'
+         url = 'http://repo.mcstats.org/content/repositories/snapshots'
+     }
++    maven {
++        name = 'aikar'
++        url = 'https://ci.emc.gs/nexus/content/repositories/aikar/'
++    }
+ }
+ 
+ dependencies {
+@@ -43,6 +47,7 @@ dependencies {
+     compile 'com.mojang:authlib:1.5.21'
+     compile 'com.googlecode.json-simple:json-simple:1.1.1'
+     compile 'org.mcstats.standalone:metrics:R7'
++    compile 'co.aikar:fastutil-lite:1.0'
+     runtime 'org.xerial:sqlite-jdbc:3.8.7'
+     runtime 'mysql:mysql-connector-java:5.1.34'
+     testCompile 'junit:junit:4.12'
+-- 
+2.12.0
+

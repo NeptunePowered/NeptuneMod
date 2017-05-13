@@ -46,7 +46,6 @@ import net.canarymod.warp.WarpProvider;
 import org.neptunepowered.vanilla.channels.NeptuneChannelManager;
 import org.neptunepowered.vanilla.commandsys.NeptuneCommand;
 import org.neptunepowered.vanilla.commandsys.NeptunePlayerSelector;
-import org.neptunepowered.vanilla.commandsys.TimingsCommand;
 import org.neptunepowered.vanilla.factory.NeptuneFactory;
 import org.neptunepowered.vanilla.util.NeptuneJsonNBTUtility;
 
@@ -108,13 +107,6 @@ public class Neptune extends Canary {
             log.error("Failed to set up Neptune commands! Dependency resolution failed!", e);
         } catch (DuplicateCommandException f) {
             log.error("Failed to set up Neptune commands! The command already exists!", f);
-        }
-        try {
-            this.commandManager.registerCommands(new TimingsCommand(), getServer(), true);
-        } catch (CommandDependencyException e) {
-            log.error("Failed to set up Timings commands! Dependency resolution failed!", e);
-        } catch (DuplicateCommandException f) {
-            log.error("Failed to set up Timings commands! The command already exists!", f);
         }
     }
 

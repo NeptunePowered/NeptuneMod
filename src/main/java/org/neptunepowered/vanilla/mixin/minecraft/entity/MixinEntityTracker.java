@@ -23,22 +23,18 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.entity;
 
-import com.google.common.collect.Lists;
 import net.canarymod.api.EntityTracker;
 import net.canarymod.api.entity.Entity;
 import net.canarymod.api.entity.living.humanoid.Player;
 import net.canarymod.api.packet.Packet;
 import net.canarymod.api.world.World;
 import net.minecraft.entity.EntityTrackerEntry;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.WorldServer;
-import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorld;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
@@ -55,37 +51,6 @@ public abstract class MixinEntityTracker implements EntityTracker {
     @Shadow public abstract void trackEntity(net.minecraft.entity.Entity p_72786_1_);
     @Shadow public abstract void untrackEntity(net.minecraft.entity.Entity entityIn);
     @Shadow public abstract void sendToAllTrackingEntity(net.minecraft.entity.Entity entityIn, net.minecraft.network.Packet p_151247_2_);
-
-    /**
-     * @author jamierocks - 2nd October 2016
-     * @reason Add timings calls
-     */
-    @Overwrite
-    public void updateTrackedEntities() {
-        final List<EntityPlayerMP> list = Lists.newArrayList();
-
-        ((IMixinWorld) this.theWorld).getTimings().tracker1.startTiming(); // Neptune - timings
-        for (EntityTrackerEntry entitytrackerentry : this.trackedEntities) {
-            entitytrackerentry.updatePlayerList(this.theWorld.playerEntities);
-
-            if (entitytrackerentry.playerEntitiesUpdated && entitytrackerentry.trackedEntity instanceof EntityPlayerMP) {
-                list.add((EntityPlayerMP) entitytrackerentry.trackedEntity);
-            }
-        }
-        ((IMixinWorld) this.theWorld).getTimings().tracker1.stopTiming(); // Neptune - timings
-
-        ((IMixinWorld) this.theWorld).getTimings().tracker2.startTiming(); // Neptune - timings
-        for (int i = 0; i < ((List) list).size(); ++i) {
-            EntityPlayerMP entityplayermp = list.get(i);
-
-            for (EntityTrackerEntry entitytrackerentry1 : this.trackedEntities) {
-                if (entitytrackerentry1.trackedEntity != entityplayermp) {
-                    entitytrackerentry1.updatePlayerEntity(entityplayermp);
-                }
-            }
-        }
-        ((IMixinWorld) this.theWorld).getTimings().tracker2.stopTiming(); // Neptune - timings
-    }
 
     @Override
     public void trackEntity(Entity entity) {

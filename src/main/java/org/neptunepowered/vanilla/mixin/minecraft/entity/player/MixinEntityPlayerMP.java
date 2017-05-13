@@ -25,7 +25,6 @@ package org.neptunepowered.vanilla.mixin.minecraft.entity.player;
 
 import static net.canarymod.Canary.log;
 
-import co.aikar.timings.NeptuneTimings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
@@ -289,11 +288,9 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public boolean executeCommand(String[] command) {
-        NeptuneTimings.playerCommandTimer.startTiming();
         try {
             PlayerCommandHook commandHook = (PlayerCommandHook) new PlayerCommandHook(this, command).call();
             if (commandHook.isCanceled()) {
-                NeptuneTimings.playerCommandTimer.stopTiming();
                 return true;
             }
 
@@ -304,11 +301,9 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
             if (Canary.commands().parseCommand(this, commandName, command)) {
                 log.info("Command used by " + getName() + ": " + StringUtils.joinString(command, " ", 0));
-                NeptuneTimings.playerCommandTimer.stopTiming();
                 return true;
             } else {
                 log.debug("Vanilla Command Execution...");
-                NeptuneTimings.playerCommandTimer.stopTiming();
                 return Canary.getServer().consoleCommand(StringUtils.joinString(command, " ", 0), this);
             }
         } catch (Throwable t) {
@@ -316,7 +311,6 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
             if (this.isAdmin()) {
                 this.message(ChatFormat.RED + "Exception occurred: " + t.getMessage());
             }
-            NeptuneTimings.playerCommandTimer.stopTiming();
             return false;
         }
     }

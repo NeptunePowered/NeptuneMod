@@ -62,5 +62,5 @@ index 60d2cb71..d2ff9e6c 100644
          cfg = new PropertiesFile(path + File.separatorChar + worldname + ".cfg");
          verifyConfig();
 -- 
-2.11.1
+2.12.0
 

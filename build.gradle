@@ -86,7 +86,6 @@ dependencies {
 license {
     header file('HEADER.txt')
     include '**/*.java'
-    exclude 'co/aikar/**'
     newLine = false
 }
 

@@ -23,11 +23,8 @@
  */
 package org.neptunepowered.vanilla;
 
-import co.aikar.timings.NeptuneTimingsFactory;
-import co.aikar.timings.Timings;
 import net.canarymod.Canary;
 import net.minecraft.server.MinecraftServer;
-import org.neptunepowered.vanilla.util.ReflectionUtil;
 
 public final class NeptuneMain {
 
@@ -35,9 +32,6 @@ public final class NeptuneMain {
         // Some handy messages that CanaryMod had
         Canary.log.info("Starting: " + Canary.getImplementationTitle() + " " + Canary.getImplementationVersion());
         Canary.log.info("Neptune Path: " + Canary.getCanaryJarPath() + " & Working From: " + Canary.getWorkingPath());
-
-        // First lets get Timings up and running
-        initTimings();
 
         // Initialise the sqlite jdbc driver
         try {
@@ -50,12 +44,6 @@ public final class NeptuneMain {
 
         // Now we're ready to start the Minecraft server
         MinecraftServer.main(args);
-    }
-
-    private static void initTimings() throws Exception {
-        NeptuneTimingsFactory timingsFactory = new NeptuneTimingsFactory();
-        ReflectionUtil.setStaticFinalField(Timings.class, "factory", timingsFactory);
-        timingsFactory.init();
     }
 
     private static void initNeptune() {

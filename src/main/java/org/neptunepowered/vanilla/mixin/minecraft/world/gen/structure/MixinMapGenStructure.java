@@ -23,8 +23,6 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.world.gen.structure;
 
-import co.aikar.timings.NeptuneTimings;
-import co.aikar.timings.Timing;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
@@ -47,8 +45,6 @@ public abstract class MixinMapGenStructure extends MapGenBase {
 
     @Shadow protected Map<Long, StructureStart> structureMap;
 
-    private final Timing timing = NeptuneTimings.getStructureTiming((MapGenStructure) (Object) this);
-
     @Shadow private void initializeStructureData(World worldIn) {}
     @Shadow private void setStructureStart(int chunkX, int chunkZ, StructureStart start) {}
 
@@ -60,11 +56,10 @@ public abstract class MixinMapGenStructure extends MapGenBase {
 
     /**
      * @author jamierocks - 25th October 2016
-     * @reason Add timings calls and prevent CME
+     * @reason Prevent CME
      */
     @Overwrite
     public boolean generateStructure(World worldIn, Random randomIn, ChunkCoordIntPair chunkCoord) {
-        this.timing.startTiming(); // Neptune - timings
         this.initializeStructureData(worldIn);
         int i = (chunkCoord.chunkXPos << 4) + 8;
         int j = (chunkCoord.chunkZPos << 4) + 8;
@@ -81,7 +76,6 @@ public abstract class MixinMapGenStructure extends MapGenBase {
                 }
             }
         }
-        this.timing.stopTiming(); // Neptune - timings
 
         return flag;
     }

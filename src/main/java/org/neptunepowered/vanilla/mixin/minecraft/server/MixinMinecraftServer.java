@@ -25,9 +25,6 @@ package org.neptunepowered.vanilla.mixin.minecraft.server;
 
 import static net.minecraft.server.MinecraftServer.getCurrentTimeMillis;
 
-import co.aikar.timings.NeptuneTimings;
-import co.aikar.timings.TimingsManager;
-import co.aikar.timings.WorldTimingsHandler;
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import net.canarymod.Canary;
@@ -133,6 +130,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     private NeptuneWorldManager worldManager = new NeptuneWorldManager();
     private long previousTick = -1L;
+    private long curTrack;
 
     @Shadow public abstract void initiateShutdown();
     @Shadow public abstract String getMinecraftVersion();
@@ -148,6 +146,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Shadow public abstract NetworkSystem getNetworkSystem();
     @Shadow public abstract int getCurrentPlayerCount();
     @Shadow protected abstract void saveAllWorlds(boolean dontLog);
+    @Shadow public abstract void updateTimeLightAndEntities();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void onConstruction(File workDir, Proxy proxy, File profileCacheDir, CallbackInfo info) {
@@ -179,15 +178,11 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     /**
      * @author jamierocks - 2nd October 2016
-     * @reason Add timings calls
+     * @reason Run server tasks, and use auto-save interval
      */
     @Overwrite
     protected void tick() {
-        TimingsManager.FULL_SERVER_TICK.startTiming(); // Neptune - timings
-
-        NeptuneTimings.canaryTaskManagerTimer.startTiming(); // Neptune - timings
         ServerTaskManager.runTasks(); // Neptune - Run tasks
-        NeptuneTimings.canaryTaskManagerTimer.stopTiming(); // Neptune - timings
 
         long i = System.nanoTime();
         ++this.tickCounter;
@@ -237,103 +232,23 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
         this.theProfiler.endSection();
         this.theProfiler.endSection();
-
-        TimingsManager.FULL_SERVER_TICK.stopTiming(); // Neptune - timings
     }
 
-    /**
-     * @author jamierocks - 2nd October 2016
-     * @reason Add timings calls
-     */
-    @Overwrite
-    public void updateTimeLightAndEntities() {
-        // Neptune - ServerTickHook start
+    @Inject(
+            method = "updateTimeLightAndEntities",
+            at = @At("HEAD")
+    )
+    public void onUpdateTimeLightAndEntities(final CallbackInfo ci) {
         new ServerTickHook(this.previousTick).call();
-        long curTrack = System.nanoTime();
-        // Neptune - ServerTickHook end
+        this.curTrack = System.nanoTime();
+    }
 
-        NeptuneTimings.minecraftSchedulerTimer.startTiming(); // Neptune - timings
-        this.theProfiler.startSection("jobs");
-
-        synchronized (this.futureTaskQueue) {
-            while (!this.futureTaskQueue.isEmpty()) {
-                Util.runTask((FutureTask) this.futureTaskQueue.poll(), logger);
-            }
-        }
-        NeptuneTimings.minecraftSchedulerTimer.stopTiming(); // Neptune - timings
-
-        this.theProfiler.endStartSection("levels");
-
-        for (int j = 0; j < this.worldServers.length; ++j) {
-            long i = System.nanoTime();
-
-            if (j == 0 || this.getAllowNether()) {
-                WorldServer worldserver = this.worldServers[j];
-                final WorldTimingsHandler timings = ((IMixinWorld) worldserver).getTimings(); // Neptune - timings
-
-                this.theProfiler.startSection(worldserver.getWorldInfo().getWorldName());
-
-                NeptuneTimings.timeUpdateTimer.startTiming(); // Neptune - timings
-                if (this.tickCounter % 20 == 0) {
-                    this.theProfiler.startSection("timeSync");
-                    this.serverConfigManager.sendPacketToAllPlayersInDimension(
-                            new S03PacketTimeUpdate(worldserver.getTotalWorldTime(), worldserver.getWorldTime(),
-                                    worldserver.getGameRules().getBoolean("doDaylightCycle")), worldserver.provider.getDimensionId());
-                    this.theProfiler.endSection();
-                }
-                NeptuneTimings.timeUpdateTimer.stopTiming(); // Neptune - timings
-
-                this.theProfiler.startSection("tick");
-
-                try {
-                    timings.doTick.startTiming(); // Neptune - timings
-                    worldserver.tick();
-                    timings.doTick.stopTiming(); // Neptune - timings
-                } catch (Throwable throwable1) {
-                    CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
-                    worldserver.addWorldInfoToCrashReport(crashreport);
-                    throw new ReportedException(crashreport);
-                }
-
-                try {
-                    timings.tickEntities.startTiming(); // Neptune - timings
-                    worldserver.updateEntities();
-                    timings.tickEntities.stopTiming(); // Neptune - timings
-                } catch (Throwable throwable) {
-                    CrashReport crashreport1 = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
-                    worldserver.addWorldInfoToCrashReport(crashreport1);
-                    throw new ReportedException(crashreport1);
-                }
-
-                this.theProfiler.endSection();
-                this.theProfiler.startSection("tracker");
-                worldserver.getEntityTracker().updateTrackedEntities();
-                this.theProfiler.endSection();
-                this.theProfiler.endSection();
-            }
-
-            this.timeOfLastDimensionTick[j][this.tickCounter % 100] = System.nanoTime() - i;
-        }
-
-        this.theProfiler.endStartSection("connection");
-        NeptuneTimings.connectionTimer.startTiming(); // Neptune - timings
-        this.getNetworkSystem().networkTick();
-        NeptuneTimings.connectionTimer.stopTiming(); // Neptune - timings
-        this.theProfiler.endStartSection("players");
-        NeptuneTimings.playerListTimer.startTiming(); // Neptune - timings
-        this.serverConfigManager.onTick();
-        NeptuneTimings.playerListTimer.stopTiming(); // Neptune - timings
-        this.theProfiler.endStartSection("tickables");
-
-        NeptuneTimings.tickablesTimer.startTiming(); // Neptune - timings
-        for (int k = 0; k < this.playersOnline.size(); ++k) {
-            this.playersOnline.get(k).update();
-        }
-        NeptuneTimings.tickablesTimer.stopTiming(); // Neptune - timings
-
-        this.theProfiler.endSection();
-
-        this.previousTick = System.nanoTime() - curTrack; // Neptune - ServerTickHook
+    @Inject(
+            method = "updateTimeLightAndEntities",
+            at = @At("RETURN")
+    )
+    public void afterUpdateTimeLightAndEntities(final CallbackInfo ci) {
+        this.previousTick = System.nanoTime() - curTrack;
     }
 
     @Inject(method = "loadAllWorlds", at = @At("RETURN"))
@@ -341,13 +256,6 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         // Temporary to populate the world manager
         for (WorldServer worldServer : this.worldServers) {
             this.worldManager.addWorld(worldServer);
-        }
-    }
-
-    @Inject(method = "stopServer", at = @At("HEAD"))
-    public void onServerStop(CallbackInfo ci) {
-        if (!this.worldIsBeingDeleted) {
-            NeptuneTimings.stopServer();
         }
     }
 
@@ -401,10 +309,8 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
 
     @Override
     public boolean consoleCommand(String command) {
-        NeptuneTimings.serverCommandTimer.startTiming();
         final ConsoleCommandHook commandHook = (ConsoleCommandHook) new ConsoleCommandHook(this, command).call();
         if (commandHook.isCanceled()) {
-            NeptuneTimings.serverCommandTimer.stopTiming();
             return true;
         }
 
@@ -416,11 +322,9 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         }
 
         if (!Canary.commands().parseCommand(this, commandName, args)) {
-            NeptuneTimings.serverCommandTimer.stopTiming();
             return this.getCommandManager().executeCommand((ICommandSender) this, command) > 0;
         }
 
-        NeptuneTimings.serverCommandTimer.stopTiming();
         return true;
     }
 

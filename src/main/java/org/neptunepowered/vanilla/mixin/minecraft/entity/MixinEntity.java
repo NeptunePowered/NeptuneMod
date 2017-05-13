@@ -23,8 +23,6 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.entity;
 
-import co.aikar.timings.NeptuneTimings;
-import co.aikar.timings.Timing;
 import net.canarymod.api.BoundingBox;
 import net.canarymod.api.entity.Entity;
 import net.canarymod.api.entity.EntityItem;
@@ -39,7 +37,6 @@ import net.canarymod.api.world.position.Vector3D;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import org.neptunepowered.vanilla.interfaces.minecraft.entity.IMixinEntity;
 import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -56,7 +53,7 @@ import java.util.UUID;
 
 @Mixin(net.minecraft.entity.Entity.class)
 @Implements(@Interface(iface = Entity.class, prefix = "entity$"))
-public abstract class MixinEntity implements Entity, IMixinEntity {
+public abstract class MixinEntity implements Entity {
 
     @Shadow public double posX;
     @Shadow public double posY;
@@ -86,7 +83,6 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
 
     protected NBTTagCompound metadata = new NBTTagCompound();
     protected NBTTagCompound bukkitData = new NBTTagCompound();
-    private Timing timing;
 
     @Shadow public abstract void moveEntity(double x, double y, double z);
     @Shadow public abstract void setDead();
@@ -560,14 +556,6 @@ public abstract class MixinEntity implements Entity, IMixinEntity {
     }
 
     public void initializeMetaData() {
-    }
-
-    @Override
-    public Timing getTimingsHandler() {
-        if (this.timing == null) {
-            this.timing = NeptuneTimings.getEntityTiming(this);
-        }
-        return this.timing;
     }
 
     @Override

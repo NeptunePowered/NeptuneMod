@@ -23,7 +23,6 @@
  */
 package org.neptunepowered.vanilla.mixin.minecraft.world;
 
-import co.aikar.timings.Timing;
 import net.canarymod.Canary;
 import net.canarymod.api.EntityTracker;
 import net.canarymod.api.GameMode;
@@ -100,7 +99,6 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import org.neptunepowered.vanilla.chunk.ChunkGCTask;
-import org.neptunepowered.vanilla.interfaces.minecraft.block.IMixinBlock;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorldProvider;
 import org.neptunepowered.vanilla.interfaces.minecraft.world.IMixinWorldServer;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
@@ -160,268 +158,13 @@ public abstract class MixinWorldServer extends MixinWorld implements World, IMix
         // Register ths ChunkGC task
         Canary.getServer().addSynchronousTask(new ChunkGCTask((WorldServer) (Object) this));
     }
-
-    /**
-     * @author jamierocks - 2nd October 2016
-     * @reason Add timings calls
-     */
-    @Overwrite
-    public void tick() {
-        super.tick();
-
-        if (this.getWorldInfo().isHardcoreModeEnabled() && this.shadow$getDifficulty() != EnumDifficulty.HARD) {
-            this.getWorldInfo().setDifficulty(EnumDifficulty.HARD);
-        }
-
-        this.provider.getWorldChunkManager().cleanupCache();
-
-        if (this.areAllPlayersAsleep()) {
-            if (this.getGameRules().getBoolean("doDaylightCycle")) {
-                long i = this.worldInfo.getWorldTime() + 24000L;
-                this.worldInfo.setWorldTime(i - i % 24000L);
-            }
-
-            this.wakeAllPlayers();
-        }
-
-        this.theProfiler.startSection("mobSpawner");
-
-        if (this.getGameRules().getBoolean("doMobSpawning") && this.worldInfo.getTerrainType() != net.minecraft.world.WorldType.DEBUG_WORLD) {
-            this.timings.mobSpawn.startTiming(); // Neptune - timings
-            this.mobSpawner.findChunksForSpawning(
-                    (WorldServer) (Object) this,
-                    this.spawnHostileMobs,
-                    this.spawnPeacefulMobs,
-                    this.worldInfo.getWorldTotalTime() % 400L == 0L);
-            this.timings.mobSpawn.stopTiming(); // Neptune - timings
-        }
-
-        this.timings.doChunkUnload.startTiming(); // Neptune - timings
-        this.theProfiler.endStartSection("chunkSource");
-        this.chunkProvider.unloadQueuedChunks();
-        int j = this.calculateSkylightSubtracted(1.0F);
-
-        if (j != this.getSkylightSubtracted()) {
-            this.setSkylightSubtracted(j);
-        }
-
-        this.worldInfo.setWorldTotalTime(this.worldInfo.getWorldTotalTime() + 1L);
-
-        if (this.getGameRules().getBoolean("doDaylightCycle")) {
-            this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
-        }
-        this.timings.doChunkUnload.stopTiming(); // Neptune - timings
-
-        this.theProfiler.endStartSection("tickPending");
-        this.timings.scheduledBlocks.startTiming(); // Neptune - timings
-        this.tickUpdates(false);
-        this.timings.scheduledBlocks.stopTiming(); // Neptune - timings
-        this.theProfiler.endStartSection("tickBlocks");
-        this.timings.chunkTicks.startTiming(); // Neptune - timings
-        this.updateBlocks();
-        this.timings.chunkTicks.stopTiming(); // Neptune - timings
-        this.theProfiler.endStartSection("chunkMap");
-        this.timings.doChunkMap.startTiming(); // Neptune - timings
-        this.thePlayerManager.updatePlayerInstances();
-        this.timings.doChunkMap.stopTiming(); // Neptune - timings
-        this.theProfiler.endStartSection("village");
-        this.timings.doVillages.startTiming(); // Neptune - timings
-        this.villageCollectionObj.tick();
-        this.villageSiege.tick();
-        this.timings.doVillages.stopTiming(); // Neptune - timings
-        this.theProfiler.endStartSection("portalForcer");
-        this.timings.doPortalForcer.startTiming(); // Neptune - timings
-        this.worldTeleporter.removeStalePortalLocations(this.getTotalWorldTime());
-        this.timings.doPortalForcer.stopTiming(); // Neptune - timings
-        this.theProfiler.endSection();
-        this.timings.doSounds.startTiming(); // Neptune - timings
-        this.sendQueuedBlockEvents();
-        this.timings.doSounds.stopTiming(); // Neptune - timings
-    }
-
-    /**
-     * @author jamierocks - 2nd October 2016
-     * @reason Add timings calls
-     */
-    @Overwrite
-    public boolean tickUpdates(boolean p_72955_1_) {
-        if (this.worldInfo.getTerrainType() == net.minecraft.world.WorldType.DEBUG_WORLD) {
-            return false;
-        } else {
-            int i = this.pendingTickListEntriesTreeSet.size();
-
-            if (i != this.pendingTickListEntriesHashSet.size()) {
-                throw new IllegalStateException("TickNextTick list out of synch");
-            } else {
-                if (i > 1000) {
-                    i = 1000;
-                }
-
-                this.theProfiler.startSection("cleaning");
-                this.timings.scheduledBlocksCleanup.startTiming(); // Neptune - timings
-
-                for (int j = 0; j < i; ++j) {
-                    NextTickListEntry nextticklistentry = this.pendingTickListEntriesTreeSet.first();
-
-                    if (!p_72955_1_ && nextticklistentry.scheduledTime > this.worldInfo.getWorldTotalTime()) {
-                        break;
-                    }
-
-                    this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
-                    this.pendingTickListEntriesHashSet.remove(nextticklistentry);
-                    this.pendingTickListEntriesThisTick.add(nextticklistentry);
-                }
-                this.timings.scheduledBlocksCleanup.stopTiming(); // Neptune - timings
-
-                this.theProfiler.endSection();
-                this.theProfiler.startSection("ticking");
-                this.timings.scheduledBlocksTicking.startTiming(); // Neptune - timings
-                Iterator<NextTickListEntry> iterator = this.pendingTickListEntriesThisTick.iterator();
-
-                while (iterator.hasNext()) {
-                    NextTickListEntry nextticklistentry1 = iterator.next();
-                    iterator.remove();
-                    int k = 0;
-
-                    if (this.isAreaLoaded(nextticklistentry1.position.add(-k, -k, -k), nextticklistentry1.position.add(k, k, k))) {
-                        IBlockState iblockstate = this.getBlockState(nextticklistentry1.position);
-                        final Timing timing = ((IMixinBlock) iblockstate.getBlock()).getTimingsHandler(); // Neptune - timings
-                        timing.startTiming(); // Neptune - timings
-
-                        if (iblockstate.getBlock().getMaterial() != Material.air && net.minecraft.block.Block
-                                .isEqualTo(iblockstate.getBlock(), nextticklistentry1.getBlock())) {
-                            try {
-                                iblockstate.getBlock().updateTick((WorldServer) (Object) this, nextticklistentry1.position, iblockstate, this.rand);
-                            } catch (Throwable throwable) {
-                                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception while ticking a block");
-                                CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being ticked");
-                                CrashReportCategory.addBlockInfo(crashreportcategory, nextticklistentry1.position, iblockstate);
-                                throw new ReportedException(crashreport);
-                            }
-                        }
-
-                        timing.stopTiming(); // Neptune - timings
-                    } else {
-                        this.scheduleUpdate(nextticklistentry1.position, nextticklistentry1.getBlock(), 0);
-                    }
-                }
-                this.timings.scheduledBlocksTicking.stopTiming(); // Neptune - timings
-
-                this.theProfiler.endSection();
-                this.pendingTickListEntriesThisTick.clear();
-                return !this.pendingTickListEntriesTreeSet.isEmpty();
-            }
-        }
-    }
-
-    /**
-     * @author jamierocks - 7th October 2016
-     * @reason Add timings calls
-     */
-    @Overwrite
-    protected void updateBlocks() {
-        super.updateBlocks();
-
-        if (this.worldInfo.getTerrainType() == net.minecraft.world.WorldType.DEBUG_WORLD) {
-            for (ChunkCoordIntPair chunkcoordintpair1 : this.activeChunkSet) {
-                this.getChunkFromChunkCoords(chunkcoordintpair1.chunkXPos, chunkcoordintpair1.chunkZPos).func_150804_b(false);
-            }
-        } else {
-            int i = 0;
-            int j = 0;
-
-            for (ChunkCoordIntPair chunkcoordintpair : this.activeChunkSet) {
-                int k = chunkcoordintpair.chunkXPos * 16;
-                int l = chunkcoordintpair.chunkZPos * 16;
-                this.theProfiler.startSection("getChunk");
-                net.minecraft.world.chunk.Chunk chunk = this.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
-                this.playMoodSoundAndCheckLight(k, l, chunk);
-                this.theProfiler.endStartSection("tickChunk");
-                chunk.func_150804_b(false);
-                this.theProfiler.endStartSection("thunder");
-
-                if (this.rand.nextInt(100000) == 0 && this.isRaining() && this.isThundering()) {
-                    this.updateLCG = this.updateLCG * 3 + 1013904223;
-                    int i1 = this.updateLCG >> 2;
-                    BlockPos blockpos = this.adjustPosToNearbyEntity(new BlockPos(k + (i1 & 15), 0, l + (i1 >> 8 & 15)));
-
-                    if (this.isRainingAt(blockpos)) {
-                        this.addWeatherEffect(new EntityLightningBolt(
-                                (net.minecraft.world.World) (Object) this,
-                                (double) blockpos.getX(),
-                                (double) blockpos.getY(),
-                                (double) blockpos.getZ()
-                        ));
-                    }
-                }
-
-                this.theProfiler.endStartSection("iceandsnow");
-
-                if (this.rand.nextInt(16) == 0) {
-                    this.updateLCG = this.updateLCG * 3 + 1013904223;
-                    int k2 = this.updateLCG >> 2;
-                    BlockPos blockpos2 = this.getPrecipitationHeight(new BlockPos(k + (k2 & 15), 0, l + (k2 >> 8 & 15)));
-                    BlockPos blockpos1 = blockpos2.down();
-
-                    if (this.canBlockFreezeNoWater(blockpos1)) {
-                        this.setBlockState(blockpos1, Blocks.ice.getDefaultState());
-                    }
-
-                    if (this.isRaining() && this.canSnowAt(blockpos2, true)) {
-                        this.setBlockState(blockpos2, Blocks.snow_layer.getDefaultState());
-                    }
-
-                    if (this.isRaining() && this.getBiomeGenForCoords(blockpos1).canRain()) {
-                        this.getBlockState(blockpos1).getBlock().fillWithRain((net.minecraft.world.World) (Object) this, blockpos1);
-                    }
-                }
-
-                this.theProfiler.endStartSection("tickBlocks");
-                int l2 = this.getGameRules().getInt("randomTickSpeed");
-
-                this.timings.chunkTicksBlocks.startTiming(); // Neptune - timings
-                if (l2 > 0) {
-                    for (ExtendedBlockStorage extendedblockstorage : chunk.getBlockStorageArray()) {
-                        if (extendedblockstorage != null && extendedblockstorage.getNeedsRandomTick()) {
-                            for (int j1 = 0; j1 < l2; ++j1) {
-                                this.updateLCG = this.updateLCG * 3 + 1013904223;
-                                int k1 = this.updateLCG >> 2;
-                                int l1 = k1 & 15;
-                                int i2 = k1 >> 8 & 15;
-                                int j2 = k1 >> 16 & 15;
-                                ++j;
-                                IBlockState iblockstate = extendedblockstorage.get(l1, j2, i2);
-                                net.minecraft.block.Block block = iblockstate.getBlock();
-
-                                if (block.getTickRandomly()) {
-                                    ++i;
-                                    block.randomTick(
-                                            (net.minecraft.world.World) (Object) this,
-                                            new BlockPos(l1 + k, j2 + extendedblockstorage.getYLocation(), i2 + l),
-                                            iblockstate,
-                                            this.rand
-                                    );
-                                }
-                            }
-                        }
-                    }
-                }
-                this.timings.chunkTicksBlocks.stopTiming(); // Neptune - timings
-
-                this.theProfiler.endSection();
-            }
-        }
-    }
-
     /**
      * @author jamierocks - 25th October 2016
-     * @reason Add timings calls
+     * @reason Disable vanilla ChunkGC
      */
     @Overwrite
     public void saveAllChunks(boolean p_73044_1_, IProgressUpdate progressCallback) throws MinecraftException {
         if (this.chunkProvider.canSave()) {
-            this.getTimings().worldSave.startTiming(); // Neptune - timings
-
             if (progressCallback != null) {
                 progressCallback.displaySavingString("Saving level");
             }
@@ -432,9 +175,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World, IMix
                 progressCallback.displayLoadingString("Saving chunks");
             }
 
-            this.getTimings().worldSaveChunks.startTiming(); // Neptune - timings
             this.chunkProvider.saveChunks(p_73044_1_, progressCallback);
-            this.getTimings().worldSaveChunks.stopTiming(); // Neptune - timings
 
             // Neptune - Disable vanilla ChunkGC
             // for (net.minecraft.world.chunk.Chunk chunk : Lists.newArrayList(this.theChunkProviderServer.func_152380_a())) {
@@ -443,19 +184,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World, IMix
             //     }
             // }
             // Neptune - end
-
-            this.getTimings().worldSave.stopTiming(); // Neptune - timings
         }
-    }
-
-    @Inject(method = "saveLevel", at = @At("HEAD"))
-    public void onSaveLevel(CallbackInfo ci) {
-        this.getTimings().worldSaveLevel.startTiming();
-    }
-
-    @Inject(method = "saveLevel", at = @At("RETURN"))
-    public void afterSaveLevel(CallbackInfo ci) {
-        this.getTimings().worldSaveLevel.stopTiming();
     }
 
     @Override
