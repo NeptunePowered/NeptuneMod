@@ -56,77 +56,77 @@ public abstract class MixinAxisAlignedBB implements BoundingBox {
 
     @Override
     public double getMinX() {
-        return minX;
+        return this.minX;
     }
 
     @Override
     public double getMinY() {
-        return minY;
+        return this.minY;
     }
 
     @Override
     public double getMinZ() {
-        return minZ;
+        return this.minZ;
     }
 
     @Override
     public double getMaxX() {
-        return maxX;
+        return this.maxX;
     }
 
     @Override
     public double getMaxY() {
-        return maxY;
+        return this.maxY;
     }
 
     @Override
     public double getMaxZ() {
-        return maxZ;
+        return this.maxZ;
     }
 
     @Override
     public BoundingBox addCoordinates(double x, double y, double z) {
-        return (BoundingBox) addCoord(x, y, z);
+        return (BoundingBox) this.addCoord(x, y, z);
     }
 
     @Override
     public BoundingBox expand(double x, double y, double z) {
-        return (BoundingBox) shadow$expand(x, y, z);
+        return (BoundingBox) this.shadow$expand(x, y, z);
     }
 
     @Override
     public BoundingBox contract(double x, double y, double z) {
-        return (BoundingBox) shadow$contract(x, y, z);
+        return (BoundingBox) this.shadow$contract(x, y, z);
     }
 
     @Override
     public BoundingBox union(BoundingBox boundingBox) {
-        return (BoundingBox) union((AxisAlignedBB) boundingBox);
+        return (BoundingBox) this.union((AxisAlignedBB) boundingBox);
     }
 
     @Override
     public BoundingBox offset(double x, double y, double z) {
-        return (BoundingBox) shadow$offset(x, y, z);
+        return (BoundingBox) this.shadow$offset(x, y, z);
     }
 
     @Override
     public double calculateXOffset(BoundingBox other, double xOffset) {
-        return calculateXOffset((AxisAlignedBB) other, xOffset);
+        return this.calculateXOffset((AxisAlignedBB) other, xOffset);
     }
 
     @Override
     public double calculateYOffset(BoundingBox other, double yOffset) {
-        return calculateYOffset((AxisAlignedBB) other, yOffset);
+        return this.calculateYOffset((AxisAlignedBB) other, yOffset);
     }
 
     @Override
     public double calculateZOffset(BoundingBox other, double zOffset) {
-        return calculateZOffset((AxisAlignedBB) other, zOffset);
+        return this.calculateZOffset((AxisAlignedBB) other, zOffset);
     }
 
     @Override
     public boolean intersectsWith(BoundingBox other) {
-        return intersectsWith((AxisAlignedBB) other);
+        return this.intersectsWith((AxisAlignedBB) other);
     }
 
     @Intrinsic

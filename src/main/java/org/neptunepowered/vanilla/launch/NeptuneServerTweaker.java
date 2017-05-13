@@ -42,7 +42,7 @@ import java.util.List;
 
 public class NeptuneServerTweaker implements ITweaker {
 
-    public static final Logger LOGGER = LogManager.getLogger("Neptune");
+    public static final Logger log = LogManager.getLogger("Neptune");
 
     private String[] args;
 
@@ -53,56 +53,14 @@ public class NeptuneServerTweaker implements ITweaker {
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader loader) {
-        LOGGER.info("Initialising Neptune...");
+        log.info("Initialising Neptune...");
 
-        // We shouldn't load these through LaunchWrapper as they use native dependencies
-        loader.addClassLoaderExclusion("io.netty.");
-        loader.addClassLoaderExclusion("jline.");
-        loader.addClassLoaderExclusion("org.fusesource.");
+        configureLaunchClassLoader(loader);
+        configureDeobfuscation(loader);
+        registerAccessTransformers(loader);
+        configureMixinEnvironment();
 
-        // Neptune launch
-        loader.addClassLoaderExclusion("org.neptunepowered.vanilla.launch.");
-
-        // The server GUI won't work if we don't exclude this: log4j2 wants to have this in the same classloader
-        loader.addClassLoaderExclusion("com.mojang.util.QueueLogAppender");
-
-        // Don't allow libraries to be transformed
-        loader.addTransformerExclusion("com.google.");
-        loader.addTransformerExclusion("org.apache.");
-        loader.addTransformerExclusion("joptsimple.");
-
-        // CanaryLib libraries
-        loader.addTransformerExclusion("net.visualillusionsent.utils.");
-
-        // Add a transformer exclusion for translator so we can get the JAR path from it
-        loader.addTransformerExclusion("net.canarymod.Translator");
-
-        // Check if we're running in de-obfuscated environment already
-        LOGGER.debug("Applying runtime de-obfuscation...");
-        if (isObfuscated()) {
-            LOGGER.info("De-obfuscation mappings are provided by MCP (http://www.modcoderpack.com)");
-            Launch.blackboard.put("vanilla.mappings", getResource("mappings.srg"));
-            loader.registerTransformer("org.neptunepowered.vanilla.launch.transformer.DeobfuscationTransformer");
-            LOGGER.debug("Runtime de-obfuscation is applied.");
-        } else {
-            LOGGER.debug(
-                    "Runtime de-obfuscation was not applied. Neptune is being loaded in a de-obfuscated environment.");
-        }
-
-        LOGGER.debug("Applying access transformer...");
-        Launch.blackboard.put("vanilla.at", new URL[]{getResource("vanilla_at.cfg")});
-        loader.registerTransformer("org.neptunepowered.vanilla.launch.transformer.AccessTransformer");
-
-        LOGGER.debug("Initialising Mixin environment...");
-        MixinBootstrap.init();
-        Mixins.addConfigurations(
-                "mixins.vanilla.bungee.json",
-                "mixins.vanilla.canary.json",
-                "mixins.vanilla.core.json",
-                "mixins.vanilla.perf.json");
-        MixinEnvironment.getDefaultEnvironment().setSide(SERVER);
-
-        LOGGER.info("Initialisation finished. Starting Minecraft server...");
+        log.info("Initialisation finished. Starting Minecraft server...");
     }
 
 
@@ -122,7 +80,62 @@ public class NeptuneServerTweaker implements ITweaker {
 
     @Override
     public String[] getLaunchArguments() {
-        return args;
+        return this.args;
+    }
+
+    private static void configureLaunchClassLoader(final LaunchClassLoader loader) {
+        // Logging
+        loader.addClassLoaderExclusion("org.slf4j.");
+        loader.addClassLoaderExclusion("org.jline.");
+        loader.addClassLoaderExclusion("com.sun.");
+        loader.addClassLoaderExclusion("com.mojang.util.QueueLogAppender");
+
+        // Neptune Launch
+        loader.addClassLoaderExclusion("com.google.common.");
+        loader.addClassLoaderExclusion("org.neptunepowered.vanilla.launch.");
+
+        // Don't allow transforming libraries
+        loader.addTransformerExclusion("com.google.");
+        loader.addTransformerExclusion("org.apache.");
+        loader.addTransformerExclusion("joptsimple.");
+        loader.addTransformerExclusion("io.netty.");
+        loader.addTransformerExclusion("it.unimi.dsi.fastutil.");
+        loader.addTransformerExclusion("com.github.benmanes.caffeine.");
+        loader.addTransformerExclusion("net.visualillusionsent.utils.");
+
+        // Add a transformer exclusion for translator so we can get the JAR path from it
+        loader.addTransformerExclusion("net.canarymod.Translator");
+    }
+
+    private static void configureDeobfuscation(final LaunchClassLoader loader) {
+        // Check if we're running in de-obfuscated environment already
+        log.debug("Applying runtime de-obfuscation...");
+        if (isObfuscated()) {
+            log.info("De-obfuscation mappings are provided by MCP (http://www.modcoderpack.com)");
+            Launch.blackboard.put("vanilla.mappings", getResource("mappings.srg"));
+            loader.registerTransformer("org.neptunepowered.vanilla.launch.transformer.DeobfuscationTransformer");
+            log.debug("Runtime de-obfuscation is applied.");
+        } else {
+            log.debug(
+                    "Runtime de-obfuscation was not applied. Neptune is being loaded in a de-obfuscated environment.");
+        }
+    }
+
+    private static void registerAccessTransformers(final LaunchClassLoader loader) {
+        log.debug("Applying access transformer...");
+        Launch.blackboard.put("vanilla.at", new URL[]{getResource("vanilla_at.cfg")});
+        loader.registerTransformer("org.neptunepowered.vanilla.launch.transformer.AccessTransformer");
+    }
+
+    private static void configureMixinEnvironment() {
+        log.debug("Initialising Mixin environment...");
+        MixinBootstrap.init();
+        Mixins.addConfigurations(
+                "mixins.vanilla.api.json",
+                "mixins.vanilla.bungee.json",
+                "mixins.vanilla.core.json",
+                "mixins.vanilla.perf.json");
+        MixinEnvironment.getDefaultEnvironment().setSide(SERVER);
     }
 
 }
