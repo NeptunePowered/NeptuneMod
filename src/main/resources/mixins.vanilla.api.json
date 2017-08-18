@@ -1,9 +1,9 @@
 {
     "required": true,
-    "minVersion": "0.4.19",
+    "minVersion": "0.7",
     "package": "org.neptunepowered.vanilla.mixin.api",
-    "compatibilityLevel": "JAVA_8",
     "refmap": "mixins.vanilla.refmap.json",
+    "compatibilityLevel": "JAVA_8",
     "mixins": [
         "MixinCanary"
     ],

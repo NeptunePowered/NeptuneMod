@@ -26,7 +26,6 @@ package org.neptunepowered.vanilla.mixin.bungee.server.network;
 import com.google.gson.Gson;
 import com.mojang.authlib.properties.Property;
 import com.mojang.util.UUIDTypeAdapter;
-import net.canarymod.config.Configuration;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
@@ -58,7 +57,7 @@ public abstract class MixinNetHandlerHandshakeTCP_Bungee {
         info.setHostnamePinged(packetIn.ip);
         info.setPortPinged(packetIn.port);
 
-        if (Configuration.getServerConfig().getBungeecordSupport() && packetIn.getRequestedState().equals(EnumConnectionState.LOGIN)) {
+        if (packetIn.getRequestedState().equals(EnumConnectionState.LOGIN)) {
             String[] split = packetIn.ip.split("\00");
 
             if (split.length >= 3) {

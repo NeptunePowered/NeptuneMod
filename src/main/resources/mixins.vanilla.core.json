@@ -1,9 +1,9 @@
 {
     "required": true,
-    "minVersion": "0.4.19",
+    "minVersion": "0.7",
     "package": "org.neptunepowered.vanilla.mixin.core",
-    "compatibilityLevel": "JAVA_8",
     "refmap": "mixins.vanilla.refmap.json",
+    "compatibilityLevel": "JAVA_8",
     "mixins": [
         "block.material.MixinMapColor",
         "block.material.MixinMaterial",

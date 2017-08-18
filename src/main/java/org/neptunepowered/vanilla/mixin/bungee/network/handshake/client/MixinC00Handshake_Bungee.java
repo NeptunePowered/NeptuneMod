@@ -23,7 +23,6 @@
  */
 package org.neptunepowered.vanilla.mixin.bungee.network.handshake.client;
 
-import net.canarymod.config.Configuration;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.handshake.client.C00Handshake;
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,11 +40,7 @@ public abstract class MixinC00Handshake_Bungee {
             )
     )
     public String onReadPacketData(PacketBuffer buf, int value) {
-        if (Configuration.getServerConfig().getBungeecordSupport()) {
-            return buf.readStringFromBuffer(Short.MAX_VALUE);
-        } else {
-            return buf.readStringFromBuffer(255);
-        }
+        return buf.readStringFromBuffer(Short.MAX_VALUE);
     }
 
 }

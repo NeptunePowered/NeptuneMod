@@ -1,9 +1,9 @@
 {
-    "required": true,
-    "minVersion": "0.4.19",
+    "minVersion": "0.7",
     "package": "org.neptunepowered.vanilla.mixin.bungee",
-    "compatibilityLevel": "JAVA_8",
+    "plugin": "org.neptunepowered.vanilla.mixin.plugin.BungeecordPlugin",
     "refmap": "mixins.vanilla.refmap.json",
+    "compatibilityLevel": "JAVA_8",
     "mixins": [
         "network.handshake.client.MixinC00Handshake_Bungee",
         "network.MixinNetworkManager_Bungee",
