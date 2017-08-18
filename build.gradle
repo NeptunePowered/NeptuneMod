@@ -105,6 +105,7 @@ patches {
     target = file('NeptuneLib')
     patches = file('CanaryLib-Patches')
 }
+applyPatches.dependsOn.remove('updateSubmodules') // ridiculous
 
 sourceSets {
     main {
