@@ -1,23 +1,23 @@
-From 4dd4ded62641881b812b62ba97c6c1b19016348a Mon Sep 17 00:00:00 2001
+From 3a96d3bd9f47d4e7712afdc5567757b81d619790 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 18 Aug 2017 16:30:50 +0100
 Subject: [PATCH] Add performance mixin configuration
 
 
 diff --git a/src/main/java/net/canarymod/config/ServerConfiguration.java b/src/main/java/net/canarymod/config/ServerConfiguration.java
-index cabcbdbb..2221c522 100644
+index 65c1299c..5383d29c 100644
 --- a/src/main/java/net/canarymod/config/ServerConfiguration.java
 +++ b/src/main/java/net/canarymod/config/ServerConfiguration.java
-@@ -182,6 +182,8 @@ public class ServerConfiguration implements ConfigurationContainer {
-         cfg.setComments("world-auto-save-interval", "The number of ticks between each auto-save."); // Neptune - add auto-save interval config
-         cfg.getBoolean("bungeecord", false);
-         cfg.setComments("bungeecord", "If you want to enable Bungeecord support. REQUIRES THAT ONLINE MODE IS DISABLED (false)");
+@@ -186,6 +186,8 @@ public class ServerConfiguration implements ConfigurationContainer {
+         // Neptune - start
+         cfg.setInt("world-auto-save-interval", 900);
+         cfg.setComments("world-auto-save-interval", "The number of ticks between each auto-save.");
 +        cfg.setBoolean("performance", true);
 +        cfg.setComments("performance", "If you want to enable the PERFORMANCE Mixin plugin.");
+         // Neptune - end
  
          cfg.save();
-     }
-@@ -696,5 +698,9 @@ public class ServerConfiguration implements ConfigurationContainer {
+@@ -710,5 +712,9 @@ public class ServerConfiguration implements ConfigurationContainer {
      public int getWorldAutoSaveInterval() {
          return this.cfg.getInt("world-auto-save-interval", 900);
      }
@@ -28,5 +28,5 @@ index cabcbdbb..2221c522 100644
      // Neptune - end
  }
 -- 
-2.13.4
+2.14.1
 

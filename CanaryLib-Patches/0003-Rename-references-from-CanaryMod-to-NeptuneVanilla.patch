@@ -1,4 +1,4 @@
-From e9ff8b8a7a037992d137576fdf2b3ebda4377a3c Mon Sep 17 00:00:00 2001
+From 0d3274badb3a12b16e2b03a1690f8e5b002527cb Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sat, 5 Nov 2016 21:18:45 +0000
 Subject: [PATCH] Rename references from CanaryMod to NeptuneVanilla
@@ -18,7 +18,7 @@ index 262a1c88..88fa077b 100644
          this.cfg = new PropertiesFile(path);
          verifyConfig();
 diff --git a/src/main/java/net/canarymod/config/ServerConfiguration.java b/src/main/java/net/canarymod/config/ServerConfiguration.java
-index 1f9c599f..8afcf35c 100644
+index f4040c72..508722ad 100644
 --- a/src/main/java/net/canarymod/config/ServerConfiguration.java
 +++ b/src/main/java/net/canarymod/config/ServerConfiguration.java
 @@ -23,7 +23,7 @@ public class ServerConfiguration implements ConfigurationContainer {
@@ -39,7 +39,7 @@ index 1f9c599f..8afcf35c 100644
          cfg.setComments("motd", "The Server list Message of the Day");
          cfg.getInt("network-compression-threshold", 256);
          cfg.setComments("network-compression-threshold", "By default it allows packets that are n-1 bytes big to go normally, but a packet that n bytes or more will be compressed down.");
-@@ -351,7 +351,7 @@ public class ServerConfiguration implements ConfigurationContainer {
+@@ -352,7 +352,7 @@ public class ServerConfiguration implements ConfigurationContainer {
       * @return A string containing the message
       */
      public String getMotd() {
@@ -62,5 +62,5 @@ index 60d2cb71..d2ff9e6c 100644
          cfg = new PropertiesFile(path + File.separatorChar + worldname + ".cfg");
          verifyConfig();
 -- 
-2.12.0
+2.14.1
 
