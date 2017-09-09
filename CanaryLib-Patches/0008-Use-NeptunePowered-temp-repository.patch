@@ -1,4 +1,4 @@
-From 1c038a1efe465e77d207d6c05158223cf9b2005a Mon Sep 17 00:00:00 2001
+From af0cb5ab8e73d7edc25a1d1df2d7266a57e2022e Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sat, 7 Jan 2017 19:49:22 +0000
 Subject: [PATCH] Use NeptunePowered temp repository
@@ -24,5 +24,5 @@ index 156362dc..471753ae 100644
      maven {
          name = 'mojang'
 -- 
-2.11.1
+2.14.1
 

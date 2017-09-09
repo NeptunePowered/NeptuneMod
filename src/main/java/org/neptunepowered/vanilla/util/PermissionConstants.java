@@ -34,12 +34,18 @@ public final class PermissionConstants {
         public static final String ADMINISTRATOR = "canary.super.administrator";
         public static final String IGNORE_RESTRICTIONS = "canary.super.ignoreRestrictions";
 
+        private Super() {
+        }
+
     }
 
     // canary.world.*
     public static class World {
 
         public static final String BUILD = "canary.world.build";
+
+        private World() {
+        }
 
     }
 

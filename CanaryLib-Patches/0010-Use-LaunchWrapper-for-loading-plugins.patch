@@ -1,4 +1,4 @@
-From cd609449fc19dd328b91c6d24a627938736e0246 Mon Sep 17 00:00:00 2001
+From e5d3126f2a1fac764ddb8d4df9e801c17cc074ee Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sun, 26 Feb 2017 00:31:16 +0000
 Subject: [PATCH] Use LaunchWrapper for loading plugins
@@ -121,5 +121,5 @@ index 00000000..9ceb658e
 +
 +}
 -- 
-2.11.1
+2.14.1
 

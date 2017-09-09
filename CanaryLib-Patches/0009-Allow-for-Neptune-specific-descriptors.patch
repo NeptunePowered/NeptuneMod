@@ -1,11 +1,11 @@
-From e25852dd22dc2f14911b8a997c0bddc447b00f51 Mon Sep 17 00:00:00 2001
+From 6e00bf120cb77ec1f031079caa0ccddc119d5b4c Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sun, 26 Feb 2017 00:07:30 +0000
 Subject: [PATCH] Allow for Neptune-specific descriptors
 
 
 diff --git a/src/main/java/net/canarymod/plugin/PluginDescriptor.java b/src/main/java/net/canarymod/plugin/PluginDescriptor.java
-index ed8b2f81..689966cc 100644
+index ce72b47e..b4e7a1ca 100644
 --- a/src/main/java/net/canarymod/plugin/PluginDescriptor.java
 +++ b/src/main/java/net/canarymod/plugin/PluginDescriptor.java
 @@ -69,30 +69,38 @@ public class PluginDescriptor {
@@ -22,7 +22,7 @@ index ed8b2f81..689966cc 100644
                          throw new InvalidPluginException("Bukkit Plugins are not natively supported. Please remove '" + pluginFile.getName() + "' from your plugins directory.");
                      }
                      if (zip.getEntry("mcmod.info") != null) {
-                         throw new InvalidPluginException("Forge Mods or Sponge Plugins are not natively supported. Please remove '" + pluginFile.getName() + "' from your plugins directory.");
+                         throw new InvalidPluginException("Forge Mods and Sponge Plugins are not natively supported. Please remove '" + pluginFile.getName() + "' from your plugins directory.");
                      }
 -                    throw new InvalidPluginException("I don't know where to find a Canary.inf in " + path);
 +                    throw new InvalidPluginException("I don't know where to find a Canary.inf or Neptune.inf in " + path); // Neptune: Neptune.inf
@@ -52,5 +52,5 @@ index ed8b2f81..689966cc 100644
      }
  
 -- 
-2.11.1
+2.14.1
 

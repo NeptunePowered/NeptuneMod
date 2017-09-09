@@ -51,14 +51,14 @@ public abstract class MixinNetHandlerHandshakeTCP_Bungee {
     @Shadow @Final private NetworkManager networkManager;
 
     @Inject(method = "processHandshake", at = @At(value = "HEAD"), cancellable = true)
-    public void onProcessHandshake(C00Handshake packetIn, CallbackInfo ci) {
-        IMixinNetworkManager info = (IMixinNetworkManager) this.networkManager;
+    private void onProcessHandshake(C00Handshake packetIn, CallbackInfo ci) {
+        final IMixinNetworkManager info = (IMixinNetworkManager) this.networkManager;
         info.setProtocolVersion(packetIn.getProtocolVersion());
         info.setHostnamePinged(packetIn.ip);
         info.setPortPinged(packetIn.port);
 
         if (packetIn.getRequestedState().equals(EnumConnectionState.LOGIN)) {
-            String[] split = packetIn.ip.split("\00");
+            final String[] split = packetIn.ip.split("\00");
 
             if (split.length >= 3) {
                 packetIn.ip = split[0];
@@ -70,7 +70,7 @@ public abstract class MixinNetHandlerHandshakeTCP_Bungee {
                     ((IMixinNetworkManager_Bungee) this.networkManager).setSpoofedProfile(GSON.fromJson(split[3], Property[].class));
                 }
             } else {
-                ChatComponentText chatcomponenttext =
+                final ChatComponentText chatcomponenttext =
                         new ChatComponentText("If you wish to use IP forwarding, please enable it in your BungeeCord config as well!");
                 this.networkManager.sendPacket(new S00PacketDisconnect(chatcomponenttext));
                 this.networkManager.closeChannel(chatcomponenttext);

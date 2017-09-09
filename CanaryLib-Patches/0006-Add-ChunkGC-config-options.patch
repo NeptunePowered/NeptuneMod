@@ -1,26 +1,42 @@
-From bfaea2fa05b7925ea16a6c2e5280f4d69db5a3fd Mon Sep 17 00:00:00 2001
+From d7e5f2c286f8ce7579337daa08f0af5d050dd88a Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Wed, 26 Oct 2016 00:52:36 +0100
 Subject: [PATCH] Add ChunkGC config options
 
 
 diff --git a/src/main/java/net/canarymod/config/WorldConfiguration.java b/src/main/java/net/canarymod/config/WorldConfiguration.java
-index d2ff9e6c..59a29b58 100644
+index d2ff9e6c..64806bbc 100644
 --- a/src/main/java/net/canarymod/config/WorldConfiguration.java
 +++ b/src/main/java/net/canarymod/config/WorldConfiguration.java
-@@ -108,6 +108,11 @@ public class WorldConfiguration implements ConfigurationContainer {
+@@ -1,5 +1,7 @@
+ package net.canarymod.config;
+ 
++import static net.canarymod.Canary.log;
++
+ import net.canarymod.MathHelp;
+ import net.canarymod.api.GameMode;
+ import net.canarymod.api.world.DimensionType;
+@@ -13,8 +15,6 @@ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.Set;
+ 
+-import static net.canarymod.Canary.log;
+-
+ /**
+  * @author Jason (darkdiplomat)
+  * @author Jos Kuijpers
+@@ -108,6 +108,10 @@ public class WorldConfiguration implements ConfigurationContainer {
          cfg.getIntArray("ender-blocks", enderblocks);
          cfg.getIntArray("disallowed-blocks", disallowedblocks);
  
 +        // Neptune - start
 +        cfg.getInt("chunk-gc-tick-interval", 600);
-+        cfg.getInt("chunk-gc-load-threshold", 0);
 +        // Neptune - end
 +
          cfg.save();
      }
  
-@@ -429,6 +434,16 @@ public class WorldConfiguration implements ConfigurationContainer {
+@@ -429,6 +433,12 @@ public class WorldConfiguration implements ConfigurationContainer {
          return cfg.getBoolean("startup-autoload", false);
      }
  
@@ -28,15 +44,11 @@ index d2ff9e6c..59a29b58 100644
 +    public int getTickInterval() {
 +        return cfg.getInt("chunk-gc-tick-interval", 600);
 +    }
-+
-+    public int getChunkLoadThreadhold() {
-+        return cfg.getInt("chunk-gc-load-threshold", 0);
-+    }
 +    // Neptune - end
 +
      /**
       * Gets whether to load a world when a warp is used
       *
 -- 
-2.11.1
+2.14.1
 

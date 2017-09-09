@@ -47,7 +47,7 @@ public class MixinNetHandlerLoginServer_Bungee {
      */
     @Overwrite
     protected GameProfile getOfflineProfile(GameProfile original) {
-        UUID uuid;
+        final UUID uuid;
         if (((IMixinNetworkManager_Bungee) this.networkManager).getSpoofedUUID() != null) {
             uuid = ((IMixinNetworkManager_Bungee) this.networkManager).getSpoofedUUID();
         } else {
@@ -57,7 +57,7 @@ public class MixinNetHandlerLoginServer_Bungee {
         original = new GameProfile(uuid, original.getName());
 
         if (((IMixinNetworkManager_Bungee) this.networkManager).getSpoofedProfile() != null) {
-            for (Property property : ((IMixinNetworkManager_Bungee) this.networkManager).getSpoofedProfile()) {
+            for (final Property property : ((IMixinNetworkManager_Bungee) this.networkManager).getSpoofedProfile()) {
                 original.getProperties().put(property.getName(), property);
             }
         }

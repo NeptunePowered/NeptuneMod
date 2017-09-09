@@ -1,4 +1,4 @@
-From 72ae47134a3cab9cec856fe7797ad5288cd0e20f Mon Sep 17 00:00:00 2001
+From d8734b1829ad5b99f24777ef56f5dacaa158e980 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 6 Jan 2017 18:41:49 +0000
 Subject: [PATCH] Overhaul configuration caching
@@ -266,5 +266,5 @@ index 00000000..46a0a7a7
 +}
 \ No newline at end of file
 -- 
-2.12.0
+2.14.1
 

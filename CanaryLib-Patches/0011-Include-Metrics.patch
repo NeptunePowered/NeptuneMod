@@ -1,4 +1,4 @@
-From 1507f53a9e7e31a78ff5ca63ca1deba03f6cd550 Mon Sep 17 00:00:00 2001
+From 62b054614777f5c5e4279de4141d1eb20c59e7b8 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sun, 26 Feb 2017 00:51:17 +0000
 Subject: [PATCH] Include Metrics
@@ -813,5 +813,5 @@ index 00000000..4d9ae075
 +    }
 +}
 -- 
-2.11.1
+2.14.1
 

@@ -45,7 +45,8 @@ public class NeptuneJsonNBTUtility implements JsonNBTUtility {
 
     @Override
     public String baseTagToJSON(BaseTag baseTag) {
-        return null;
+        // wtf, but matches CanaryMod behaviour so meh
+        return baseTag.toString();
     }
 
     @Override
