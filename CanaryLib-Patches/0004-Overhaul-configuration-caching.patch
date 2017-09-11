@@ -1,24 +1,9 @@
-From d8734b1829ad5b99f24777ef56f5dacaa158e980 Mon Sep 17 00:00:00 2001
+From bc87cd0575198b257e1a740e7004ddb6aca3f7cf Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 6 Jan 2017 18:41:49 +0000
 Subject: [PATCH] Overhaul configuration caching
 
 
-diff --git a/build.gradle b/build.gradle
-index 8cf2873d..156362dc 100644
---- a/build.gradle
-+++ b/build.gradle
-@@ -51,6 +51,10 @@ dependencies {
-     runtime 'org.xerial:sqlite-jdbc:3.8.7'
-     runtime 'mysql:mysql-connector-java:5.1.34'
-     testCompile 'junit:junit:4.12'
-+
-+    // Neptune: start
-+    compile 'com.github.ben-manes.caffeine:caffeine:2.3.5'
-+    // Neptune: end
- }
- 
- // Source compiler configuration
 diff --git a/src/main/java/net/canarymod/config/Configuration.java b/src/main/java/net/canarymod/config/Configuration.java
 index 599f4e25..093e85df 100644
 --- a/src/main/java/net/canarymod/config/Configuration.java
@@ -159,10 +144,10 @@ index 599f4e25..093e85df 100644
  }
 diff --git a/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
 new file mode 100644
-index 00000000..46a0a7a7
+index 00000000..42c3affd
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/config/ConfigurationProvider.java
-@@ -0,0 +1,101 @@
+@@ -0,0 +1,169 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
@@ -197,19 +182,32 @@ index 00000000..46a0a7a7
 +import java.io.File;
 +
 +/**
-+ * A reimplemented configuration provider.
++ * A configuration provider for Canary plugins, in addition to
++ * methods to obtain them.
 + */
 +public final class ConfigurationProvider {
 +
 +    private static LoadingCache<String, ConfigurationProvider> configProviderCache = Caffeine.newBuilder()
 +            .build(ConfigurationProvider::new);
 +
++    /**
++     * Gets a plugin configuration provider for the plugin of the
++     * specified name.
++     *
++     * @param pluginName The name of the plugin
++     * @return The configuration provider
++     */
 +    public static ConfigurationProvider getConfigurationProvider(String pluginName) {
 +        return configProviderCache.get(pluginName);
 +    }
 +
++    /**
++     * Clears all of the caches of all the cached configuration providers.
++     */
 +    public static void clearAllCaches() {
-+        configProviderCache.asMap().keySet().stream().map(ConfigurationProvider::getConfigurationProvider).forEach(ConfigurationProvider::clearCache);
++        configProviderCache.asMap().keySet().stream()
++                .map(ConfigurationProvider::getConfigurationProvider)
++                .forEach(ConfigurationProvider::clearCache);
 +    }
 +
 +    private static LoadingCache<String, WorldConfiguration> worldConfigCache = Caffeine.newBuilder()
@@ -218,19 +216,38 @@ index 00000000..46a0a7a7
 +                return new WorldConfiguration("config" + File.separatorChar + "worlds" + File.separatorChar + split[0], key);
 +            });
 +
++    /**
++     * Gets a world configuration for the world of the specified
++     * name.
++     *
++     * @param worldName The name of the world
++     * @return The world configuration
++     */
 +    public static WorldConfiguration getWorldConfig(String worldName) {
 +        return worldConfigCache.get(worldName);
 +    }
 +
++    /**
++     * Reloads all of the cached world configurations.
++     */
 +    public static void reloadWorldConfigs() {
-+        worldConfigCache.asMap().values().forEach(WorldConfiguration::reload);
++        worldConfigCache.asMap().values()
++                .forEach(WorldConfiguration::reload);
 +    }
 +
++    /**
++     * Establishes whether a world configuration for the specified
++     * world has been cached.
++     *
++     * @param worldName The name of the world
++     * @return {@code True} if a world configuration is cached for
++     *         the specified world, {@code false} otherwise
++     */
 +    public static boolean isWorldConfigCached(String worldName) {
 +        return worldConfigCache.asMap().containsKey(worldName);
 +    }
 +
-+    private LoadingCache<String, PropertiesFile> pluginConfigCache = Caffeine.newBuilder()
++    private LoadingCache<String, PropertiesFile> configCache = Caffeine.newBuilder()
 +            .build(key -> {
 +                final PropertiesFile propertiesFile = new PropertiesFile(key);
 +                propertiesFile.save();
@@ -239,32 +256,67 @@ index 00000000..46a0a7a7
 +
 +    private final String pluginName;
 +
++    /**
++     * Creates a new plugin configuration provider, for the plugin of
++     * the specified name.
++     *
++     * @param pluginName The name of the plugin
++     */
 +    private ConfigurationProvider(String pluginName) {
 +        this.pluginName = pluginName;
 +    }
 +
++    /**
++     * Gets the configuration of the plugin the provider supports.
++     *
++     * @return The plugin's configuration
++     */
 +    public PropertiesFile getPluginConfig() {
-+        return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + ".cfg");
++        return this.configCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + ".cfg");
 +    }
 +
++    /**
++     * Gets the module configuration of the plugin the provider
++     * supports.
++     *
++     * @param moduleName The name of the plugin module
++     * @return The plugin's module configuration
++     */
 +    public PropertiesFile getPluginModuleConfig(String moduleName) {
-+        return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
++        return this.configCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
 +    }
 +
++    /**
++     * Gets the world configuration of the plugin the provider
++     * supports.
++     *
++     * @param worldName The name of the world
++     * @return The plugin's world configuration
++     */
 +    public PropertiesFile getPluginWorldConfig(String worldName) {
-+        return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + ".cfg");
++        return this.configCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + ".cfg");
 +    }
 +
++    /**
++     * Gets the module world configuration of the plugin the
++     * provider supports.
++     *
++     * @param moduleName The name of the plugin module
++     * @param worldName The name of the world
++     * @return The plugin's world module configuration
++     */
 +    public PropertiesFile getPluginModuleWorldConfig(String moduleName, String worldName) {
-+        return this.pluginConfigCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
++        return this.configCache.get("config" + File.separatorChar + this.pluginName + File.separatorChar + "worlds" + File.separatorChar + worldName + File.separatorChar + this.pluginName + "." + moduleName + ".cfg");
 +    }
 +
++    /**
++     * Clears the cache.
++     */
 +    public void clearCache() {
-+        this.pluginConfigCache.invalidateAll();
++        this.configCache.invalidateAll();
 +    }
 +
 +}
-\ No newline at end of file
 -- 
 2.14.1
 

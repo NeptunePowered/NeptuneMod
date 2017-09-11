@@ -1,21 +1,9 @@
-From e5d3126f2a1fac764ddb8d4df9e801c17cc074ee Mon Sep 17 00:00:00 2001
+From 5a8c3f1f9b3e932e6b31c65fffec5b72bcab488e Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sun, 26 Feb 2017 00:31:16 +0000
 Subject: [PATCH] Use LaunchWrapper for loading plugins
 
 
-diff --git a/build.gradle b/build.gradle
-index 471753ae..443b3830 100644
---- a/build.gradle
-+++ b/build.gradle
-@@ -50,6 +50,7 @@ dependencies {
- 
-     // Neptune: start
-     compile 'com.github.ben-manes.caffeine:caffeine:2.3.5'
-+    compile 'net.minecraft:launchwrapper:1.11'
-     // Neptune: end
- }
- 
 diff --git a/src/main/java/net/canarymod/Canary.java b/src/main/java/net/canarymod/Canary.java
 index 896b9b6e..517e6235 100644
 --- a/src/main/java/net/canarymod/Canary.java

@@ -1,11 +1,11 @@
-From 8ee86d95e87499d958af0d5f5607b86ed2dd280c Mon Sep 17 00:00:00 2001
+From 8710c06d9526fc8528cc5ad45e603e2405093919 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sat, 1 Oct 2016 18:56:41 +0100
 Subject: [PATCH] Change access modifiers where necessary
 
 
 diff --git a/src/main/java/net/canarymod/hook/Hook.java b/src/main/java/net/canarymod/hook/Hook.java
-index c612152a..687e150c 100644
+index c612152a..ae0028eb 100644
 --- a/src/main/java/net/canarymod/hook/Hook.java
 +++ b/src/main/java/net/canarymod/hook/Hook.java
 @@ -39,12 +39,12 @@ public abstract class Hook {
@@ -13,16 +13,16 @@ index c612152a..687e150c 100644
  
      // Check for execution
 -    final boolean executed() {
-+    public final boolean executed() {
++    public final boolean executed() { // Neptune: public
          return executed;
      }
  
      // Set that it has executed to prevent subsequent calls
 -    final void hasExecuted() {
-+    public final void hasExecuted() {
++    public final void hasExecuted() { // Neptune: public
          executed = true;
      }
  }
 -- 
-2.11.1
+2.14.1
 

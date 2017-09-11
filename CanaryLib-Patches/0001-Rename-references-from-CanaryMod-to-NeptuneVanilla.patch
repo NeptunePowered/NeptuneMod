@@ -1,4 +1,4 @@
-From c45ca7eb4612c2106661905d2d2dca51347bf227 Mon Sep 17 00:00:00 2001
+From c04c493f00af6b05156485ee962eb4966755e56e Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sat, 5 Nov 2016 21:18:45 +0000
 Subject: [PATCH] Rename references from CanaryMod to NeptuneVanilla

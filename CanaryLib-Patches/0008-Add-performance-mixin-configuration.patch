@@ -1,4 +1,4 @@
-From cabaf492325f57f9eb311e8123725d247c9481ef Mon Sep 17 00:00:00 2001
+From ffb787cd9f474dcb6ac94165658c322a32d1c123 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Fri, 18 Aug 2017 16:30:50 +0100
 Subject: [PATCH] Add performance mixin configuration

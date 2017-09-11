@@ -107,6 +107,11 @@ patches {
 }
 applyPatches.dependsOn.remove('updateSubmodules') // ridiculous
 
+project(':NeptuneLib') {
+    apply from: rootProject.file('lib.gradle')
+    compileJava.dependsOn rootProject.tasks.applyPatches
+}
+
 sourceSets {
     main {
         refMap = 'mixins.vanilla.refmap.json'

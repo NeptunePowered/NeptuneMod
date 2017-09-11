@@ -1,39 +1,9 @@
-From 62b054614777f5c5e4279de4141d1eb20c59e7b8 Mon Sep 17 00:00:00 2001
+From 1deea27603dbbcce5cd95211cff91b4d55be04e9 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sun, 26 Feb 2017 00:51:17 +0000
 Subject: [PATCH] Include Metrics
 
 
-diff --git a/build.gradle b/build.gradle
-index 443b3830..0f2eadb2 100644
---- a/build.gradle
-+++ b/build.gradle
-@@ -20,14 +20,14 @@ repositories {
-         name = 'mojang'
-         url = 'https://libraries.minecraft.net'
-     }
--    maven {
-+    /*maven {
-         name = 'mcstats-releases'
-         url = 'http://repo.mcstats.org/content/repositories/releases'
-     }
-     maven {
-         name = 'mcstats-snapshots'
-         url = 'http://repo.mcstats.org/content/repositories/snapshots'
--    }
-+    }*/
-     maven {
-         name = 'aikar'
-         url = 'https://ci.emc.gs/nexus/content/repositories/aikar/'
-@@ -42,7 +42,7 @@ dependencies {
-     compile 'com.google.guava:guava:17.0'
-     compile 'com.mojang:authlib:1.5.21'
-     compile 'com.googlecode.json-simple:json-simple:1.1.1'
--    compile 'org.mcstats.standalone:metrics:R7'
-+    //compile 'org.mcstats.standalone:metrics:R7'
-     compile 'co.aikar:fastutil-lite:1.0'
-     runtime 'org.xerial:sqlite-jdbc:3.8.7'
-     runtime 'mysql:mysql-connector-java:5.1.34'
 diff --git a/src/main/java/org/mcstats/Metrics.java b/src/main/java/org/mcstats/Metrics.java
 new file mode 100644
 index 00000000..4d9ae075

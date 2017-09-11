@@ -1,0 +1,138 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext {
+    name = 'NeptuneLib'
+    description = 'The NeptunePowered fork of CanaryLib'
+    url = 'https://www.neptunepowered.org/'
+}
+
+group = 'org.neptunepowered'
+archivesBaseName = project.name.toLowerCase()
+version = '1.2.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'neptune-temp'
+        url = 'http://www.neptunepowered.org/temprepo/'
+    }
+    maven {
+        name = 'mojang'
+        url = 'https://libraries.minecraft.net'
+    }
+    /*maven {
+        name = 'mcstats-releases'
+        url = 'http://repo.mcstats.org/content/repositories/releases'
+    }
+    maven {
+        name = 'mcstats-snapshots'
+        url = 'http://repo.mcstats.org/content/repositories/snapshots'
+    }*/
+    maven {
+        name = 'aikar'
+        url = 'https://ci.emc.gs/nexus/content/repositories/aikar/'
+    }
+}
+
+dependencies {
+    // Keep up-to-date with CanaryLib!
+    compile 'net.visualillusionsent:viutils:1.4.2'
+    compile 'org.jdom:jdom2:2.0.5'
+    compile 'com.mchange:c3p0:0.9.5'
+    compile 'org.apache.logging.log4j:log4j-api:2.0-beta9'
+    compile 'com.google.guava:guava:17.0'
+    compile 'com.mojang:authlib:1.5.21'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    //compile 'org.mcstats.standalone:metrics:R7'
+    compile 'co.aikar:fastutil-lite:1.0'
+    runtime 'org.xerial:sqlite-jdbc:3.8.7'
+    runtime 'mysql:mysql-connector-java:5.1.34'
+    testCompile 'junit:junit:4.12'
+
+    // Neptune: start
+    compile 'com.github.ben-manes.caffeine:caffeine:2.3.5'
+    compile 'net.minecraft:launchwrapper:1.11'
+    // Neptune: end
+}
+
+// Source compiler configuration
+configure([compileJava, compileTestJava]) {
+    options.compilerArgs += ['-Xlint:all', '-Xlint:-path']
+    options.deprecation = true
+    options.encoding = 'UTF-8'
+}
+
+task sourceJar(type: Jar, overwrite: true) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+    options.charSet = 'UTF-8'
+
+    // Disable the crazy super-strict doclint tool in Java 8
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourceJar
+    archives javadocJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            if (System.getenv('MAVEN_RELEASES') != null) {
+                repository(url: 'file://' + System.getenv('MAVEN_RELEASES'))
+                snapshotRepository(url: 'file://' + System.getenv('MAVEN_SNAPSHOTS'))
+            }
+
+            pom {
+                artifactId = project.archivesBaseName
+
+                project {
+                    name = project.name
+                    description = project.description
+                    packaging = 'jar'
+                    url = project.url
+
+                    scm {
+                        url = 'https://github.com/NeptunePowered/NeptuneVanilla'
+                        connection = 'scm:git:https://github.com/NeptunePowered/NeptuneVanilla.git'
+                        developerConnection = 'scm:git:git@github.com:NeptunePowered/NeptuneVanilla.git'
+                    }
+
+                    issueManagement {
+                        system = 'GitHub'
+                        url = 'https://github.com/NeptunePowered/NeptuneVanilla/issues'
+                    }
+
+                    licenses {
+                        license {
+                            name = 'BSD 3-Clause'
+                            url = 'https://tldrlegal.com/license/bsd-3-clause-license-(revised)'
+                            distribution = 'repo'
+                        }
+                        license {
+                            name = 'MIT License'
+                            url = 'https://tldrlegal.com/license/mit-license'
+                            distribution = 'repo'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

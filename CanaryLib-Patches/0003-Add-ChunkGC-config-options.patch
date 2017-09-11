@@ -1,4 +1,4 @@
-From d7e5f2c286f8ce7579337daa08f0af5d050dd88a Mon Sep 17 00:00:00 2001
+From c012b160e789b7293dc6356770e6d0113b9e9173 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Wed, 26 Oct 2016 00:52:36 +0100
 Subject: [PATCH] Add ChunkGC config options

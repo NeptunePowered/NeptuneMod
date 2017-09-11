@@ -1,4 +1,4 @@
-From 6e00bf120cb77ec1f031079caa0ccddc119d5b4c Mon Sep 17 00:00:00 2001
+From 81c4962559b2291ed46ca9f1ad92fb795b54024e Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sun, 26 Feb 2017 00:07:30 +0000
 Subject: [PATCH] Allow for Neptune-specific descriptors
