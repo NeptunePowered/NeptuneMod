@@ -1,0 +1,132 @@
+From 4b51e303f83a4b3e30657776b67e9b0ae5db9324 Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Mon, 11 Sep 2017 20:56:56 +0100
+Subject: [PATCH] Introduce Neptune config
+
+
+diff --git a/src/main/java/net/canarymod/config/Configuration.java b/src/main/java/net/canarymod/config/Configuration.java
+index 093e85df..c2d1d5ac 100644
+--- a/src/main/java/net/canarymod/config/Configuration.java
++++ b/src/main/java/net/canarymod/config/Configuration.java
+@@ -5,6 +5,7 @@ import net.canarymod.plugin.Plugin;
+ import net.visualillusionsent.utils.PropertiesFile;
+ 
+ import org.neptunepowered.lib.config.ConfigurationProvider;
++import org.neptunepowered.lib.config.NeptuneConfiguration;
+ 
+ import java.io.File;
+ 
+@@ -19,6 +20,7 @@ public class Configuration {
+ 
+     /*private static HashMap<Plugin, HashMap<String, PropertiesFile>> plugin_cfg_cache = new HashMap<Plugin, HashMap<String, PropertiesFile>>();*/ // Neptune
+     private static ServerConfiguration serverConfig = new ServerConfiguration("config" + File.separatorChar + "server.cfg");
++    private static NeptuneConfiguration neptuneConfig = new NeptuneConfiguration("config" + File.separatorChar + "neptune.cfg"); // Neptune
+     private static DatabaseConfiguration dbConfig = new DatabaseConfiguration("config" + File.separatorChar + "db.cfg");
+     /*private static HashMap<String, WorldConfiguration> worldConfigs = new HashMap<String, WorldConfiguration>();*/ // Neptune
+ 
+@@ -66,6 +68,15 @@ public class Configuration {
+         return serverConfig;
+     }
+ 
++    /**
++     * Gets the Neptune configuration
++     *
++     * @return neptune configuration file
++     */
++    public static NeptuneConfiguration getNeptuneConfig() {
++        return neptuneConfig;
++    }
++
+     /**
+      * Gets the net configuration
+      *
+diff --git a/src/main/java/org/neptunepowered/lib/config/NeptuneConfiguration.java b/src/main/java/org/neptunepowered/lib/config/NeptuneConfiguration.java
+new file mode 100644
+index 00000000..30fee40c
+--- /dev/null
++++ b/src/main/java/org/neptunepowered/lib/config/NeptuneConfiguration.java
+@@ -0,0 +1,81 @@
++/*
++ * This file is part of NeptuneLib, licensed under the MIT License (MIT).
++ *
++ * Copyright (c) 2016-2017, Jamie Mansfield <https://www.jamierocks.uk/>
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ */
++
++package org.neptunepowered.lib.config;
++
++import static net.canarymod.Canary.log;
++
++import net.canarymod.config.ConfigurationContainer;
++import net.visualillusionsent.utils.PropertiesFile;
++
++import java.nio.file.Files;
++import java.nio.file.Path;
++import java.nio.file.Paths;
++
++/**
++ * The Neptune configuration, with Neptune-specific configuration
++ * options.
++ *
++ * This was introduced, to ensure that no confusion occurs over
++ * weather a config option is from Canary or Neptune.
++ */
++public class NeptuneConfiguration implements ConfigurationContainer {
++
++    private final PropertiesFile cfg;
++
++    public NeptuneConfiguration(final String path) {
++        final Path test = Paths.get(path);
++        if (Files.notExists(test)) log.warn("Could not find the neptune configuration at " + path + ", creating default.");
++        this.cfg = new PropertiesFile(path);
++    }
++
++    private void verifyConfig() {
++        this.cfg.setBoolean("performance-plugin", true);
++        this.cfg.setComments("performance-plugin", "Enables the performance plugin");
++
++        this.cfg.save();
++    }
++
++    /**
++     * Gets whether the performance plugin is enabled.
++     *
++     * @return {@code true} if the performance plugin is enabled,
++     *         {@code false} otherwise
++     */
++    public boolean getPerformancePluginEnabled() {
++        return this.cfg.getBoolean("performance-plugin", true);
++    }
++
++    @Override
++    public void reload() {
++        this.cfg.reload();
++        this.verifyConfig();
++    }
++
++    @Override
++    public PropertiesFile getFile() {
++        return this.cfg;
++    }
++
++}
+-- 
+2.14.1
+

@@ -1,14 +1,14 @@
-From 5a8c3f1f9b3e932e6b31c65fffec5b72bcab488e Mon Sep 17 00:00:00 2001
+From 2c3153fe45743552e606d8b9ee2ab3a28e21b64a Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sun, 26 Feb 2017 00:31:16 +0000
 Subject: [PATCH] Use LaunchWrapper for loading plugins
 
 
 diff --git a/src/main/java/net/canarymod/Canary.java b/src/main/java/net/canarymod/Canary.java
-index 896b9b6e..517e6235 100644
+index a450e6d1..e329439f 100644
 --- a/src/main/java/net/canarymod/Canary.java
 +++ b/src/main/java/net/canarymod/Canary.java
-@@ -19,7 +19,6 @@ import net.canarymod.motd.MessageOfTheDay;
+@@ -20,7 +20,6 @@ import net.canarymod.motd.MessageOfTheDay;
  import net.canarymod.permissionsystem.PermissionManager;
  import net.canarymod.plugin.PluginManager;
  import net.canarymod.plugin.lifecycle.InvalidPluginLifecycleException;
@@ -16,7 +16,7 @@ index 896b9b6e..517e6235 100644
  import net.canarymod.plugin.lifecycle.PluginLifecycleFactory;
  import net.canarymod.serialize.Serializer;
  import net.canarymod.tasks.TaskOwner;
-@@ -30,6 +29,7 @@ import net.canarymod.user.WhitelistProvider;
+@@ -31,6 +30,7 @@ import net.canarymod.user.WhitelistProvider;
  import net.canarymod.util.JsonNBTUtility;
  import net.canarymod.warp.WarpProvider;
  import net.visualillusionsent.utils.JarUtils;
@@ -24,8 +24,8 @@ index 896b9b6e..517e6235 100644
  
  import java.io.File;
  import java.io.IOException;
-@@ -82,7 +82,7 @@ public abstract class Canary implements TaskOwner {
-         log = Logman.getLogman("CanaryMod");
+@@ -83,7 +83,7 @@ public abstract class Canary implements TaskOwner {
+         log = Logman.getLogman(getImplementationTitle());
  
          try {
 -            PluginLifecycleFactory.registerLifecycle("java", JavaPluginLifecycle.class);

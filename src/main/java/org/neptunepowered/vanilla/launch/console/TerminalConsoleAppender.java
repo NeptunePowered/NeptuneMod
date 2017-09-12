@@ -103,7 +103,7 @@ public class TerminalConsoleAppender extends AbstractAppender {
                         reader = new ConsoleReader();
                         reader.setExpandEvents(false);
                     } catch (Exception e) {
-                        LOGGER.warn("Failed to initialize terminal. Falling back to default.", e);
+                        LOGGER.warn("Failed to initialise terminal. Falling back to default.", e);
                     }
                 }
 
@@ -122,7 +122,7 @@ public class TerminalConsoleAppender extends AbstractAppender {
                             reader = new ConsoleReader();
                             reader.setExpandEvents(false);
                         } catch (Exception e) {
-                            LOGGER.warn("Failed to initialize fallback terminal. Falling back to standard output console.", e);
+                            LOGGER.warn("Failed to initialise fallback terminal. Falling back to standard output console.", e);
                         }
                     } else {
                         LOGGER.warn("Disabling terminal, you're running in an unsupported environment.");

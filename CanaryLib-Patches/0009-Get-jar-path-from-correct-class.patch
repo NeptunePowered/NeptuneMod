@@ -1,0 +1,24 @@
+From 04312f276a7846fc1786e20f95778f48cb1aeae0 Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Tue, 12 Sep 2017 20:32:03 +0100
+Subject: [PATCH] Get jar-path from correct class
+
+Because of the way LaunchWrapper hacks around the class loading, we need to use a classloader excluded
+class to get the jar-path properly.
+
+diff --git a/src/main/java/net/canarymod/Canary.java b/src/main/java/net/canarymod/Canary.java
+index e329439f..831cf160 100644
+--- a/src/main/java/net/canarymod/Canary.java
++++ b/src/main/java/net/canarymod/Canary.java
+@@ -474,7 +474,7 @@ public abstract class Canary implements TaskOwner {
+      */
+     public static String getCanaryJarPath() {
+         if (jarPath == null) {
+-            jarPath = JarUtils.getJarPath(Canary.class);
++            jarPath = JarUtils.getJarPath(Translator.class); // Neptune: Use Translator.class
+         }
+         return jarPath;
+     }
+-- 
+2.14.1
+

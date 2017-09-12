@@ -44,7 +44,7 @@ public class PerformancePlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return Configuration.getServerConfig().getPerformanceEnabled();
+        return Configuration.getNeptuneConfig().getPerformancePluginEnabled();
     }
 
     @Override

@@ -1,9 +1,31 @@
-From c04c493f00af6b05156485ee962eb4966755e56e Mon Sep 17 00:00:00 2001
+From f37c2e36768bd4ef8a91dca60ea44512ff6d2320 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Sat, 5 Nov 2016 21:18:45 +0000
-Subject: [PATCH] Rename references from CanaryMod to NeptuneVanilla
+Subject: [PATCH] Rename references from CanaryMod to NeptuneMod
 
 
+diff --git a/src/main/java/net/canarymod/Canary.java b/src/main/java/net/canarymod/Canary.java
+index 071aa89b..a450e6d1 100644
+--- a/src/main/java/net/canarymod/Canary.java
++++ b/src/main/java/net/canarymod/Canary.java
+@@ -425,7 +425,7 @@ public abstract class Canary implements TaskOwner {
+      * @return specification title
+      */
+     public static String getSpecificationTitle() {
+-        return Objects.firstNonNull(Canary.class.getPackage().getSpecificationTitle(), "CanaryLib");
++        return Objects.firstNonNull(Canary.class.getPackage().getSpecificationTitle(), "NeptuneLib");
+     }
+ 
+     /**
+@@ -443,7 +443,7 @@ public abstract class Canary implements TaskOwner {
+      * @return implementation title
+      */
+     public static String getImplementationTitle() {
+-        return Objects.firstNonNull(Canary.class.getPackage().getImplementationTitle(), "CanaryMod");
++        return Objects.firstNonNull(Canary.class.getPackage().getImplementationTitle(), "NeptuneMod");
+     }
+ 
+     /**
 diff --git a/src/main/java/net/canarymod/config/DatabaseConfiguration.java b/src/main/java/net/canarymod/config/DatabaseConfiguration.java
 index 262a1c88..88fa077b 100644
 --- a/src/main/java/net/canarymod/config/DatabaseConfiguration.java
@@ -18,7 +40,7 @@ index 262a1c88..88fa077b 100644
          this.cfg = new PropertiesFile(path);
          verifyConfig();
 diff --git a/src/main/java/net/canarymod/config/ServerConfiguration.java b/src/main/java/net/canarymod/config/ServerConfiguration.java
-index 45515549..3dc7ea95 100644
+index 45515549..fff32b99 100644
 --- a/src/main/java/net/canarymod/config/ServerConfiguration.java
 +++ b/src/main/java/net/canarymod/config/ServerConfiguration.java
 @@ -23,7 +23,7 @@ public class ServerConfiguration implements ConfigurationContainer {
@@ -35,7 +57,7 @@ index 45515549..3dc7ea95 100644
          cfg.getInt("max-tick-time", 60000);
          cfg.setComments("max-tick-time", "The maximum number of milliseconds a single tick may take before the server watchdog stops the server. Setting to -1 disables WatchDog.");
 -        cfg.getString("motd", "CanaryMod Minecraft Server");
-+        cfg.getString("motd", "NeptuneVanilla Minecraft Server");
++        cfg.getString("motd", "NeptuneMod Minecraft Server");
          cfg.setComments("motd", "The Server list Message of the Day");
          cfg.getInt("network-compression-threshold", 256);
          cfg.setComments("network-compression-threshold", "By default it allows packets that are n-1 bytes big to go normally, but a packet that n bytes or more will be compressed down.");
@@ -44,7 +66,7 @@ index 45515549..3dc7ea95 100644
       */
      public String getMotd() {
 -        return cfg.getString("motd", "Canary Minecraft Server");
-+        return cfg.getString("motd", "NeptuneVanilla Minecraft Server");
++        return cfg.getString("motd", "NeptuneMod Minecraft Server");
      }
  
      /**

@@ -131,7 +131,6 @@ public class NeptuneServerTweaker implements ITweaker {
         log.debug("Initialising Mixin environment...");
         MixinBootstrap.init();
         Mixins.addConfigurations(
-                "mixins.vanilla.api.json",
                 "mixins.vanilla.bungee.json",
                 "mixins.vanilla.core.json",
                 "mixins.vanilla.perf.json");
