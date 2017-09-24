@@ -23,6 +23,7 @@
  */
 package org.neptunepowered.vanilla.ai;
 
+import net.canarymod.Canary;
 import net.canarymod.api.ai.AIBase;
 import net.minecraft.entity.ai.EntityAIBase;
 
@@ -36,32 +37,65 @@ public class NeptuneCustomEntityAI extends EntityAIBase {
 
     @Override
     public boolean shouldExecute() {
-        return this.handle.shouldExecute();
+        try {
+            return this.handle.shouldExecute();
+        } catch (final Exception ex) {
+            Canary.log.error("Exception in " + this.handle.getClass().getName() +
+                    " while executing #shouldExecute()", ex);
+            return false;
+        }
     }
 
     @Override
     public boolean continueExecuting() {
-        return this.handle.continueExecuting();
+        try {
+            return this.handle.continueExecuting();
+        } catch (final Exception ex) {
+            Canary.log.error("Exception in " + this.handle.getClass().getName() +
+                    " while executing #continueExecuting()", ex);
+            return false;
+        }
     }
 
     @Override
     public boolean isInterruptible() {
-        return this.handle.isContinuous();
+        try {
+            return this.handle.isContinuous();
+        } catch (final Exception ex) {
+            Canary.log.error("Exception in " + this.handle.getClass().getName() +
+                    " while executing #isContinuous()", ex);
+            return false;
+        }
     }
 
     @Override
     public void startExecuting() {
-        this.handle.startExecuting();
+        try {
+            this.handle.startExecuting();
+        } catch (final Exception ex) {
+            Canary.log.error("Exception in " + this.handle.getClass().getName() +
+                    " while executing #startExecuting()", ex);
+        }
     }
 
     @Override
     public void resetTask() {
-        this.handle.resetTask();
+        try {
+            this.handle.resetTask();
+        } catch (final Exception ex) {
+            Canary.log.error("Exception in " + this.handle.getClass().getName() +
+                    " while executing #resetTask()", ex);
+        }
     }
 
     @Override
     public void updateTask() {
-        this.handle.updateTask();
+        try {
+            this.handle.updateTask();
+        } catch (final Exception ex) {
+            Canary.log.error("Exception in " + this.handle.getClass().getName() +
+                    " while executing #updateTask()", ex);
+        }
     }
 
 }

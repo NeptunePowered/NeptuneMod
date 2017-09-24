@@ -29,7 +29,9 @@ import net.canarymod.api.attributes.AttributeMap;
 import net.canarymod.api.attributes.AttributeModifier;
 import net.canarymod.api.attributes.ModifiedAttribute;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
+import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -45,19 +47,34 @@ public abstract class MixinBaseAttributeMap implements AttributeMap {
     @Shadow public abstract void applyAttributeModifiers(Multimap p_111147_1_);
     @Shadow public abstract void removeAttributeModifiers(Multimap p_111148_1_);
     @Shadow public abstract Collection<IAttributeInstance> shadow$getAllAttributes();
+    @Shadow public abstract IAttributeInstance getAttributeInstance(IAttribute attribute);
+    @Shadow public abstract IAttributeInstance getAttributeInstanceByName(String attributeName);
+    @Shadow public abstract IAttributeInstance registerAttribute(IAttribute attribute);
 
     @Override
     public ModifiedAttribute getModifiedAttribute(Attribute attribute) {
+        final IAttributeInstance instance = this.getAttributeInstance((IAttribute) attribute);
+        if (instance != null && instance instanceof ModifiableAttributeInstance) {
+            return (ModifiedAttribute) instance;
+        }
         return null;
     }
 
     @Override
     public ModifiedAttribute getModifiedAttributeByName(String name) {
+        final IAttributeInstance instance = this.getAttributeInstanceByName(name);
+        if (instance != null && instance instanceof ModifiableAttributeInstance) {
+            return (ModifiedAttribute) instance;
+        }
         return null;
     }
 
     @Override
     public ModifiedAttribute registerAttribute(Attribute attribute) {
+        final IAttributeInstance instance = this.registerAttribute((IAttribute) attribute);
+        if (instance != null && instance instanceof ModifiableAttributeInstance) {
+            return (ModifiedAttribute) instance;
+        }
         return null;
     }
 

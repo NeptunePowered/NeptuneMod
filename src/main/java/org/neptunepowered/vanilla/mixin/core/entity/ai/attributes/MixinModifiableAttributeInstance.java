@@ -52,7 +52,7 @@ public abstract class MixinModifiableAttributeInstance implements ModifiedAttrib
 
     @Override
     public Attribute getAttribute() {
-        return (Attribute) genericAttribute;
+        return (Attribute) this.genericAttribute;
     }
 
     @Intrinsic

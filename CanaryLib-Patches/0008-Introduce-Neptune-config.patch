@@ -1,4 +1,4 @@
-From 4b51e303f83a4b3e30657776b67e9b0ae5db9324 Mon Sep 17 00:00:00 2001
+From a81b698c1f11b5035361043f5f5d4222a818ffbb Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Mon, 11 Sep 2017 20:56:56 +0100
 Subject: [PATCH] Introduce Neptune config
@@ -42,10 +42,10 @@ index 093e85df..c2d1d5ac 100644
       *
 diff --git a/src/main/java/org/neptunepowered/lib/config/NeptuneConfiguration.java b/src/main/java/org/neptunepowered/lib/config/NeptuneConfiguration.java
 new file mode 100644
-index 00000000..30fee40c
+index 00000000..8ff4a5c6
 --- /dev/null
 +++ b/src/main/java/org/neptunepowered/lib/config/NeptuneConfiguration.java
-@@ -0,0 +1,81 @@
+@@ -0,0 +1,84 @@
 +/*
 + * This file is part of NeptuneLib, licensed under the MIT License (MIT).
 + *
@@ -86,7 +86,9 @@ index 00000000..30fee40c
 + * options.
 + *
 + * This was introduced, to ensure that no confusion occurs over
-+ * weather a config option is from Canary or Neptune.
++ * weather a config option is from Canary or Neptune. It also
++ * helps when switching from CanaryMod to NeptuneMod - or vice
++ * versa.
 + */
 +public class NeptuneConfiguration implements ConfigurationContainer {
 +
@@ -96,6 +98,7 @@ index 00000000..30fee40c
 +        final Path test = Paths.get(path);
 +        if (Files.notExists(test)) log.warn("Could not find the neptune configuration at " + path + ", creating default.");
 +        this.cfg = new PropertiesFile(path);
++        this.verifyConfig();
 +    }
 +
 +    private void verifyConfig() {

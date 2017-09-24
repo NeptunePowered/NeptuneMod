@@ -1,8 +1,8 @@
-NeptuneVanilla [![Build Status](https://travis-ci.org/NeptunePowered/NeptuneVanilla.svg?branch=master)](https://travis-ci.org/NeptunePowered/NeptuneVanilla)
-==============
+NeptuneMod [![Build Status](https://travis-ci.org/NeptunePowered/NeptuneMod.svg?branch=master)](https://travis-ci.org/NeptunePowered/NeptuneMod)
+==========
 
-**Currently not stable and under heavy development!**  
-A 'vanilla' Minecraft implementation of CanaryLib, licensed under the [MIT License]. 
+An alternate implementation of CanaryLib, built for vanilla Minecraft, licensed
+under the [MIT License]. 
 
 * [Homepage]
 * [Source]
@@ -18,7 +18,7 @@ A 'vanilla' Minecraft implementation of CanaryLib, licensed under the [MIT Licen
 
 The following steps will ensure your project is cloned properly.
 
-1. `git clone https://github.com/NeptunePowered/NeptuneVanilla.git`
+1. `git clone https://github.com/NeptunePowered/NeptuneMod.git`
 2. `cd NeptuneVanilla`
 
 ## Building
@@ -26,14 +26,14 @@ The following steps will ensure your project is cloned properly.
 __Note:__ If you do not have [Gradle] installed then use ./gradlew for Unix systems or Git Bash and gradlew.bat for
 Windows systems in place of any 'gradle' command.
 
-In order to build NeptuneVanilla you simply need to run the `gradle build` command. You can find the compiled JAR 
-files in `./build/libs` but in most cases you'll only need 'neptunevanilla-x.x.x-x.x.x.jar'.
+In order to build NeptuneMod you simply need to run the `gradle build` command. You can find the compiled JAR 
+files in `./build/libs` but in most cases you'll only need 'neptunemod-x.x.x-x.x.x.jar'.
 
-[Gradle]: http://www.gradle.org/
-[Homepage]: http://www.neptunepowered.org/
-[Issues]: https://github.com/NeptunePowered/NeptuneVanilla/issues
-[Java]: http://java.oracle.com/
-[Source]: https://github.com/NeptunePowered/
 [MIT License]: http://www.tldrlegal.com/license/mit-license
+[Homepage]: http://www.neptunepowered.org/
+[Source]: https://github.com/NeptunePowered/
+[Issues]: https://github.com/NeptunePowered/NeptuneMod/issues
 [Community Chat]: https://kiwiirc.com/client/irc.esper.net/?#neptune
 [Development Chat]: https://kiwiirc.com/client/irc.esper.net/?#neptunedev
+[Java]: http://java.oracle.com/
+[Gradle]: http://www.gradle.org/

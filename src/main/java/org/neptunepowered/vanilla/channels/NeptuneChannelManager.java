@@ -43,7 +43,7 @@ public class NeptuneChannelManager extends ChannelManager {
             if (bytes == null) {
                 throw new CustomPayloadChannelException("Invalid Custom Payload: Byte Array is null.");
             }
-            if (channel == null || channel.trim().equals("") || channel.equalsIgnoreCase("REGISTER") || channel.equalsIgnoreCase("UNREGISTER")) {
+            if (channel == null || channel.trim().equals("") || isReservedChannel(channel)) {
                 throw new CustomPayloadChannelException(String.format("Invalid Custom Payload: Invalid channel name of '%s'", channel));
             }
             if (channel.length() > 20) {
@@ -51,15 +51,15 @@ public class NeptuneChannelManager extends ChannelManager {
             }
 
             if (this.clients.containsKey(channel)) {
-                for (NetServerHandler handler : this.clients.get(channel)) {
-                    PacketBuffer packetbuffer = new PacketBuffer(Unpooled.buffer());
+                for (final NetServerHandler handler : this.clients.get(channel)) {
+                    final PacketBuffer packetbuffer = new PacketBuffer(Unpooled.buffer());
                     packetbuffer.writeByteArray(bytes);
                     handler.sendPacket((Packet) new S3FPacketCustomPayload(channel, packetbuffer));
                     toRet = true;
                 }
             }
-        } catch (CustomPayloadChannelException e) {
-            Canary.log.error(e.getMessage(), e);
+        } catch (final CustomPayloadChannelException ex) {
+            Canary.log.error(ex.getMessage(), ex);
         }
 
         return toRet;
@@ -71,7 +71,7 @@ public class NeptuneChannelManager extends ChannelManager {
             if (bytes == null) {
                 throw new CustomPayloadChannelException("Invalid Custom Payload: Byte Array is null.");
             }
-            if (channel == null || channel.trim().equals("") || channel.equalsIgnoreCase("REGISTER") || channel.equalsIgnoreCase("UNREGISTER")) {
+            if (channel == null || channel.trim().equals("") || isReservedChannel(channel)) {
                 throw new CustomPayloadChannelException(String.format("Invalid Custom Payload: Invalid channel name of '%s'", channel));
             }
             if (channel.length() > 20) {
@@ -82,7 +82,7 @@ public class NeptuneChannelManager extends ChannelManager {
             }
 
             if (this.clients.containsKey(channel)) {
-                for (NetServerHandler handler : this.clients.get(channel)) {
+                for (final NetServerHandler handler : this.clients.get(channel)) {
                     if (handler.getUser().equals(player)) {
                         final PacketBuffer packetbuffer = new PacketBuffer(Unpooled.buffer());
                         packetbuffer.writeByteArray(bytes);
@@ -91,8 +91,8 @@ public class NeptuneChannelManager extends ChannelManager {
                     }
                 }
             }
-        } catch (CustomPayloadChannelException e) {
-            Canary.log.error(e.getMessage(), e);
+        } catch (final CustomPayloadChannelException ex) {
+            Canary.log.error(ex.getMessage(), ex);
         }
 
         return false;

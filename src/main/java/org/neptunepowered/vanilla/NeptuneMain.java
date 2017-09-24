@@ -29,7 +29,7 @@ import net.minecraft.server.MinecraftServer;
 public final class NeptuneMain {
 
     public static void main(String[] args) throws Exception {
-        // Some handy messages that CanaryMod had
+        // Some handy messages that CanaryMod has
         Canary.log.info("Starting: " + Canary.getImplementationTitle() + " " + Canary.getImplementationVersion());
         Canary.log.info("Neptune Path: " + Canary.getCanaryJarPath() + " & Working From: " + Canary.getWorkingPath());
 
