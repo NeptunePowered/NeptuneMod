@@ -150,6 +150,7 @@
         "server.dedicated.MixinDedicatedServer",
         "server.management.MixinItemInWorldManager",
         "server.management.MixinServerConfigurationManager",
+        "server.network.MixinNetHandlerHandshakeTCP",
         "server.network.MixinNetHandlerStatusServer",
         "server.MixinMinecraftServer",
         "stats.MixinAchievement",

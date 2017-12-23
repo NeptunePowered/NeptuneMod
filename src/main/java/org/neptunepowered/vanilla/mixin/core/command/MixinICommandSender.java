@@ -58,14 +58,14 @@ public interface MixinICommandSender extends ICommandSender, MessageReceiver {
 
     @Override
     default void notice(CharSequence... messages) {
-        for (CharSequence message : messages) {
+        for (final CharSequence message : messages) {
             this.notice(message);
         }
     }
 
     @Override
     default void notice(Iterable<? extends CharSequence> messages) {
-        for (CharSequence message : messages) {
+        for (final CharSequence message : messages) {
             this.notice(message);
         }
     }
@@ -82,21 +82,21 @@ public interface MixinICommandSender extends ICommandSender, MessageReceiver {
 
     @Override
     default void message(CharSequence... messages) {
-        for (CharSequence message : messages) {
+        for (final CharSequence message : messages) {
             this.message(message);
         }
     }
 
     @Override
     default void message(Iterable<? extends CharSequence> messages) {
-        for (CharSequence message : messages) {
+        for (final CharSequence message : messages) {
             this.message(message);
         }
     }
 
     @Override
     default void message(ChatComponent... chatComponents) {
-        for (ChatComponent message : chatComponents) {
+        for (final ChatComponent message : chatComponents) {
             this.message(message.getText());
         }
     }

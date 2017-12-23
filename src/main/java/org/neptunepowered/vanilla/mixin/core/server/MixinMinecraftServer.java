@@ -233,7 +233,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
             method = "updateTimeLightAndEntities",
             at = @At("HEAD")
     )
-    public void onUpdateTimeLightAndEntities(final CallbackInfo ci) {
+    private void onUpdateTimeLightAndEntities(final CallbackInfo ci) {
         new ServerTickHook(this.previousTick).call();
         this.curTrack = System.nanoTime();
     }
@@ -242,12 +242,12 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
             method = "updateTimeLightAndEntities",
             at = @At("RETURN")
     )
-    public void afterUpdateTimeLightAndEntities(final CallbackInfo ci) {
+    private void afterUpdateTimeLightAndEntities(final CallbackInfo ci) {
         this.previousTick = System.nanoTime() - curTrack;
     }
 
     @Inject(method = "loadAllWorlds", at = @At("RETURN"))
-    public void onLoadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, String worldNameIn2, CallbackInfo ci) {
+    private void onLoadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, String worldNameIn2, CallbackInfo ci) {
         // Temporary to populate the world manager
         for (WorldServer worldServer : this.worldServers) {
             this.worldManager.addWorld(worldServer);
@@ -255,7 +255,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     }
 
     @Inject(method = "stopServer", at = @At("RETURN"))
-    public void afterServerStop(CallbackInfo ci) {
+    private void afterServerStop(CallbackInfo ci) {
         if (!this.worldIsBeingDeleted) {
             Canary.log.info("Disabling plugins...");
             Canary.pluginManager().disableAllPlugins(Canary.log);

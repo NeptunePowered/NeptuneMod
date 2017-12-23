@@ -51,7 +51,7 @@ public abstract class MixinWorldServer_Performance extends MixinWorld_Performanc
     @Shadow protected abstract void saveLevel() throws MinecraftException;
 
     @Inject(method = "<init>*", at = @At("RETURN"))
-    public void onConstruction(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn,
+    private void onConstruction(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn,
             CallbackInfo ci) {
         // Get the world configuration
         this.worldConfig = Configuration.getWorldConfig(this.getFqName());

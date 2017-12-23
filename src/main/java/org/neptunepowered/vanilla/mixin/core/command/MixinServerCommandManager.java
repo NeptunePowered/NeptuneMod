@@ -45,45 +45,40 @@ public abstract class MixinServerCommandManager extends MixinCommandHandler {
      */
     @Overwrite
     public void notifyOperators(ICommandSender sender, ICommand command, int flags, String msgFormat, Object... msgParams) {
-        boolean flag = true;
-        MinecraftServer minecraftserver = MinecraftServer.getServer();
+        final MinecraftServer server = MinecraftServer.getServer();
 
-        if (!sender.sendCommandFeedback()) {
-            flag = false;
-        }
-
-        IChatComponent ichatcomponent =
+        final IChatComponent feedback =
                 new ChatComponentTranslation("chat.type.admin", sender.getName(), new ChatComponentTranslation(msgFormat, msgParams));
-        ichatcomponent.getChatStyle().setColor(EnumChatFormatting.GRAY);
-        ichatcomponent.getChatStyle().setItalic(true);
+        feedback.getChatStyle().setColor(EnumChatFormatting.GRAY);
+        feedback.getChatStyle().setItalic(true);
 
-        if (flag) {
-            for (EntityPlayer entityplayer : minecraftserver.getConfigurationManager().getPlayerList()) {
-                if (entityplayer != sender && minecraftserver.getConfigurationManager().canSendCommands(entityplayer.getGameProfile()) && command
+        if (sender.sendCommandFeedback()) {
+            for (final EntityPlayer player : server.getConfigurationManager().getPlayerList()) {
+                if (player != sender && server.getConfigurationManager().canSendCommands(player.getGameProfile()) && command
                         .canCommandSenderUseCommand(sender)) {
-                    boolean flag1 = sender instanceof MinecraftServer && MinecraftServer.getServer().shouldBroadcastConsoleToOps();
-                    boolean flag2 = sender instanceof RConConsoleSource && MinecraftServer.getServer().shouldBroadcastRconToOps();
+                    final boolean broadcastConsoleToOps = sender instanceof MinecraftServer &&
+                            MinecraftServer.getServer().shouldBroadcastConsoleToOps();
+                    final boolean broadcastRconToOps = sender instanceof RConConsoleSource &&
+                            MinecraftServer.getServer().shouldBroadcastRconToOps();
 
-                    if (flag1 || flag2 || !(sender instanceof RConConsoleSource) && !(sender instanceof MinecraftServer)) {
-                        entityplayer.addChatMessage(ichatcomponent);
+                    if (broadcastConsoleToOps || broadcastRconToOps || !(sender instanceof RConConsoleSource) && !(sender instanceof MinecraftServer)) {
+                        player.addChatMessage(feedback);
                     }
                 }
             }
         }
 
         // Neptune - Always log command feedback
-        //if (sender != minecraftserver && minecraftserver.worldServers[0].getGameRules().getBoolean("logAdminCommands")) {
-        minecraftserver.addChatMessage(ichatcomponent);
+        //if (sender != server && server.worldServers[0].getGameRules().getBoolean("logAdminCommands")) {
+        server.addChatMessage(feedback);
         //}
         // Neptune - end
 
-        boolean flag3 = minecraftserver.worldServers[0].getGameRules().getBoolean("sendCommandFeedback");
+        final boolean shouldSendCommandFeedback = sender instanceof CommandBlockLogic ?
+                ((CommandBlockLogic) sender).shouldTrackOutput() :
+                server.worldServers[0].getGameRules().getBoolean("sendCommandFeedback");
 
-        if (sender instanceof CommandBlockLogic) {
-            flag3 = ((CommandBlockLogic) sender).shouldTrackOutput();
-        }
-
-        if ((flags & 1) != 1 && flag3 || sender instanceof MinecraftServer) {
+        if ((flags & 1) != 1 && shouldSendCommandFeedback || sender instanceof MinecraftServer) {
             sender.addChatMessage(new ChatComponentTranslation(msgFormat, msgParams));
         }
     }

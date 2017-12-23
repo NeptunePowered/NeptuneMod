@@ -39,7 +39,7 @@ public abstract class MixinC00Handshake_Bungee {
                     target = "Lnet/minecraft/network/PacketBuffer;readStringFromBuffer(I)Ljava/lang/String;"
             )
     )
-    public String onReadPacketData(PacketBuffer buf, int value) {
+    private String onReadPacketData(PacketBuffer buf, int value) {
         return buf.readStringFromBuffer(Short.MAX_VALUE);
     }
 

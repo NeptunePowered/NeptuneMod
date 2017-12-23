@@ -49,7 +49,7 @@ public abstract class MixinMapGenStructure_Performance extends MapGenBase {
     @Shadow private void setStructureStart(int chunkX, int chunkZ, StructureStart start) {}
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    public void onConstruction(CallbackInfo info) {
+    private void onConstruction(CallbackInfo info) {
         // Performance!
         this.structureMap = new Long2ObjectOpenHashMap<>(1024);
     }

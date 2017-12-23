@@ -107,7 +107,7 @@ patches {
 }
 applyPatches.dependsOn.remove('updateSubmodules') // ridiculous
 
-project(':NeptuneLib') {
+project('NeptuneLib') {
     apply from: rootProject.file('lib.gradle')
     compileJava.dependsOn rootProject.tasks.applyPatches
 }

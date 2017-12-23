@@ -43,8 +43,8 @@ public abstract class MixinCrashReport {
     private void onPopulateEnvironment(CallbackInfo ci) {
         if (Canary.pluginManager() != null) {
             this.theReportCategory.addCrashSectionCallable("Canary Plugins", () -> {
-                StringBuilder result = new StringBuilder(64);
-                for (Plugin plugin : Canary.pluginManager().getPlugins()) {
+                final StringBuilder result = new StringBuilder(64);
+                for (final Plugin plugin : Canary.pluginManager().getPlugins()) {
                     result.append("\n\t\t")
                             .append(plugin.getName())
                             .append(" v ")

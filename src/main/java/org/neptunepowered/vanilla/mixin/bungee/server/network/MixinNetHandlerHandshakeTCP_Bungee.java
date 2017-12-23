@@ -33,7 +33,6 @@ import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.server.network.NetHandlerHandshakeTCP;
 import net.minecraft.util.ChatComponentText;
 import org.neptunepowered.vanilla.interfaces.bungee.network.IMixinNetworkManager_Bungee;
-import org.neptunepowered.vanilla.interfaces.core.network.IMixinNetworkManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -52,11 +51,6 @@ public abstract class MixinNetHandlerHandshakeTCP_Bungee {
 
     @Inject(method = "processHandshake", at = @At(value = "HEAD"), cancellable = true)
     private void onProcessHandshake(C00Handshake packetIn, CallbackInfo ci) {
-        final IMixinNetworkManager info = (IMixinNetworkManager) this.networkManager;
-        info.setProtocolVersion(packetIn.getProtocolVersion());
-        info.setHostnamePinged(packetIn.ip);
-        info.setPortPinged(packetIn.port);
-
         if (packetIn.getRequestedState().equals(EnumConnectionState.LOGIN)) {
             final String[] split = packetIn.ip.split("\00");
 

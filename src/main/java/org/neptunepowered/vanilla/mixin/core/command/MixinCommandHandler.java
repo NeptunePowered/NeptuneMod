@@ -38,11 +38,13 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Mixin(CommandHandler.class)
 public abstract class MixinCommandHandler {
 
     @Shadow @Final private Map<String, ICommand> commandMap;
+    @Shadow @Final private Set<ICommand> commandSet;
 
     /**
      * @author jamierocks - 15th May 2015
@@ -50,36 +52,35 @@ public abstract class MixinCommandHandler {
      */
     @Overwrite
     public List<String> getTabCompletionOptions(ICommandSender sender, String input, BlockPos pos) {
-        String[] astring = input.split(" ", -1);
-        String s = astring[0];
+        final String[] commandSplit = input.split(" ", -1);
+        final String commandName = commandSplit[0];
 
-        if (astring.length == 1) {
-            List<String> list = Lists.newArrayList();
+        if (commandSplit.length == 1) {
+            final List<String> matches = Lists.newArrayList();
 
             // Neptune - Add Canary command matches
-            list.addAll(Canary.commands().matchCommandNames((MessageReceiver) sender, s, false));
+            matches.addAll(Canary.commands().matchCommandNames((MessageReceiver) sender, commandName, false));
             // Neptune - end
 
-            for (Map.Entry<String, ICommand> entry : this.commandMap.entrySet()) {
-                if (CommandBase.doesStringStartWith(s, entry.getKey()) && entry.getValue().canCommandSenderUseCommand(sender)) {
-                    list.add(entry.getKey());
+            for (final Map.Entry<String, ICommand> alias : this.commandMap.entrySet()) {
+                if (CommandBase.doesStringStartWith(commandName, alias.getKey()) && alias.getValue().canCommandSenderUseCommand(sender)) {
+                    matches.add(alias.getKey());
                 }
             }
 
-            return list;
+            return matches;
         } else {
-            if (astring.length > 1) {
+            if (commandSplit.length > 1) {
                 // Neptune - Tab complete through Canary if possible
-                List<String> options = Canary.commands().tabComplete((MessageReceiver) sender, s, CommandHandler.dropFirstString(astring));
+                final List<String> options = Canary.commands().tabComplete((MessageReceiver) sender, commandName, CommandHandler.dropFirstString(commandSplit));
                 if (options != null) {
                     return options;
                 }
                 // Neptune - end
 
-                ICommand icommand = this.commandMap.get(s);
-
-                if (icommand != null && icommand.canCommandSenderUseCommand(sender)) {
-                    return icommand.addTabCompletionOptions(sender, CommandHandler.dropFirstString(astring), pos);
+                final ICommand command = this.commandMap.get(commandName);
+                if (command != null && command.canCommandSenderUseCommand(sender)) {
+                    return command.addTabCompletionOptions(sender, CommandHandler.dropFirstString(commandSplit), pos);
                 }
             }
 

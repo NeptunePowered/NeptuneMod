@@ -21,34 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.chunk;
+package org.neptunepowered.vanilla.mixin.core.server.network;
 
-import com.google.common.collect.Lists;
-import net.canarymod.tasks.ServerTask;
-import net.canarymod.tasks.TaskOwner;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.handshake.client.C00Handshake;
+import net.minecraft.server.network.NetHandlerHandshakeTCP;
+import org.neptunepowered.vanilla.interfaces.core.network.IMixinNetworkManager;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
- */
-public final class ChunkGCTask extends ServerTask {
+@Mixin(NetHandlerHandshakeTCP.class)
+public abstract class MixinNetHandlerHandshakeTCP {
 
-    private final WorldServer world;
+    @Shadow @Final private NetworkManager networkManager;
 
-    public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
-        this.world = world;
-    }
-
-    @Override
-    public void run() {
-        for (final Chunk chunk : Lists.newArrayList(this.world.theChunkProviderServer.func_152380_a())) {
-            if (chunk != null && !this.world.getPlayerManager().hasPlayerInstance(chunk.xPosition, chunk.zPosition)) {
-                this.world.theChunkProviderServer.dropChunk(chunk.xPosition, chunk.zPosition);
-            }
-        }
+    @Inject(method = "processHandshake", at = @At(value = "HEAD"))
+    private void onProcessHandshake(C00Handshake packetIn, CallbackInfo ci) {
+        final IMixinNetworkManager info = (IMixinNetworkManager) this.networkManager;
+        info.setProtocolVersion(packetIn.getProtocolVersion());
+        info.setHostnamePinged(packetIn.ip);
+        info.setPortPinged(packetIn.port);
     }
 
 }
