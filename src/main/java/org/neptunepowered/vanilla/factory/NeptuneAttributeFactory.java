@@ -25,6 +25,7 @@ package org.neptunepowered.vanilla.factory;
 
 import com.google.common.collect.Maps;
 import net.canarymod.api.attributes.Attribute;
+import net.canarymod.api.attributes.AttributeModifier;
 import net.canarymod.api.factory.AttributeFactory;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -32,6 +33,7 @@ import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityHorse;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class NeptuneAttributeFactory implements AttributeFactory {
 
@@ -58,6 +60,16 @@ public class NeptuneAttributeFactory implements AttributeFactory {
     @Override
     public Attribute getGenericAttribute(String nativeName) {
         return (Attribute) map.get(nativeName);
+    }
+
+    @Override
+    public AttributeModifier createModifier(String name, double value, int operation) {
+        return (AttributeModifier) new net.minecraft.entity.ai.attributes.AttributeModifier(name, value, operation);
+    }
+
+    @Override
+    public AttributeModifier createModifier(UUID id, String name, double value, int operation) {
+        return (AttributeModifier) new net.minecraft.entity.ai.attributes.AttributeModifier(id, name, value, operation);
     }
 
 }

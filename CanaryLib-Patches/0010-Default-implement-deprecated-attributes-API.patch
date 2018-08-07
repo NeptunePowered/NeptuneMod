@@ -1,0 +1,124 @@
+From 005e91063d4801f130052904f3ceb7bdded240bc Mon Sep 17 00:00:00 2001
+From: Jamie Mansfield <dev@jamierocks.uk>
+Date: Tue, 7 Aug 2018 21:51:57 +0100
+Subject: [PATCH] Default implement deprecated attributes API
+
+
+diff --git a/src/main/java/net/canarymod/api/attributes/AttributeMap.java b/src/main/java/net/canarymod/api/attributes/AttributeMap.java
+index 9b118912..aa473959 100644
+--- a/src/main/java/net/canarymod/api/attributes/AttributeMap.java
++++ b/src/main/java/net/canarymod/api/attributes/AttributeMap.java
+@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
+ import com.google.common.collect.Multimap;
+ 
+ import java.util.Collection;
++import java.util.stream.Collectors;
+ 
+ /**
+  * @author Jason (darkdiplomat)
+@@ -18,7 +19,9 @@ public interface AttributeMap {
+      * @param attribute The attribute
+      * @return The modifiable attribute instance
+      */
+-    ModifiableAttribute getAttribute(Attribute attribute);
++    default ModifiableAttribute getAttribute(Attribute attribute) {
++        return this.getModifiedAttribute(attribute);
++    }
+ 
+     /**
+      * Retrieves the modifiable attribute instance from the attribute's name.
+@@ -26,7 +29,9 @@ public interface AttributeMap {
+      * @param name The attribute's name
+      * @return The modifiable attribute instance
+      */
+-    ModifiableAttribute getAttributeByName(String name);
++    default ModifiableAttribute getAttributeByName(String name) {
++        return this.getModifiedAttributeByName(name);
++    }
+ 
+     /**
+      * Registers the given {@link Attribute} to the attribute map, providing
+@@ -35,21 +40,29 @@ public interface AttributeMap {
+      * @param attribute The attribute to register
+      * @return The modifiable attribute instance
+      */
+-    ModifiableAttribute register(Attribute attribute);
++    default ModifiableAttribute register(Attribute attribute) {
++        return this.registerAttribute(attribute);
++    }
+ 
+     /**
+      * Gets an immutable view of all the registered {@link ModifiableAttribute}s.
+      *
+      * @return An immutable view of registered attributes
+      */
+-    Collection<ModifiableAttribute> getAttributes();
++    default Collection<ModifiableAttribute> getAttributes() {
++        return this.getAllAttributes().stream()
++                .map(attribute -> (ModifiableAttribute) attribute)
++                .collect(Collectors.toSet());
++    }
+ 
+     /**
+      * Adds the attribute instance to the map.
+      *
+      * @param attribute The attribute instance
+      */
+-    void addModifier(ModifiableAttribute attribute);
++    default void addModifier(ModifiableAttribute attribute) {
++        this.addModifier((ModifiedAttribute) attribute);
++    }
+ 
+     /**
+      * Removes the given modifiers, from the attribute instance of the given name.
+diff --git a/src/main/java/net/canarymod/api/attributes/AttributeModifier.java b/src/main/java/net/canarymod/api/attributes/AttributeModifier.java
+index a7b2573f..a584f90d 100644
+--- a/src/main/java/net/canarymod/api/attributes/AttributeModifier.java
++++ b/src/main/java/net/canarymod/api/attributes/AttributeModifier.java
+@@ -18,7 +18,9 @@ public interface AttributeModifier {
+      *
+      * @return The identifier
+      */
+-    UUID getId();
++    default UUID getId() {
++        return this.getUUID();
++    }
+ 
+     /**
+      * Gets the name of the modifier.
+@@ -40,7 +42,9 @@ public interface AttributeModifier {
+      *
+      * @return The modifier's value
+      */
+-    double getValue();
++    default double getValue() {
++        return this.getAmount();
++    }
+ 
+     /**
+      * Gets whether the modifier should be saved to file.
+@@ -48,7 +52,9 @@ public interface AttributeModifier {
+      * @return {@code true} if the modifier should be saved to file,
+      *         {@code false} otherwise
+      */
+-    boolean getShouldSave();
++    default boolean getShouldSave() {
++        return this.isSaved();
++    }
+ 
+     /**
+      * Sets whether the modifier should be saved to file.
+@@ -57,7 +63,9 @@ public interface AttributeModifier {
+      *              {@code false} otherwise
+      * @return {@code this} for chaining
+      */
+-    AttributeModifier setShouldSave(boolean saved);
++    default AttributeModifier setShouldSave(boolean saved) {
++        return this.setSaved(saved);
++    }
+ 
+     /**
+      * Gets the identifier of the modifier.
+-- 
+2.18.0
+
