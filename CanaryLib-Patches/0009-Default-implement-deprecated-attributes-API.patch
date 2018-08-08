@@ -1,4 +1,4 @@
-From 005e91063d4801f130052904f3ceb7bdded240bc Mon Sep 17 00:00:00 2001
+From 85a80ea1c02e93467eebf0b19ea6f9aa58852b80 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Tue, 7 Aug 2018 21:51:57 +0100
 Subject: [PATCH] Default implement deprecated attributes API

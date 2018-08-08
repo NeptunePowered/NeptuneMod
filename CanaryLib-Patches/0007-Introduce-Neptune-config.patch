@@ -1,4 +1,4 @@
-From a81b698c1f11b5035361043f5f5d4222a818ffbb Mon Sep 17 00:00:00 2001
+From 813f35b2019c98973f70faca7377d4fb7028f363 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Mon, 11 Sep 2017 20:56:56 +0100
 Subject: [PATCH] Introduce Neptune config
@@ -131,5 +131,5 @@ index 00000000..8ff4a5c6
 +
 +}
 -- 
-2.14.1
+2.18.0
 

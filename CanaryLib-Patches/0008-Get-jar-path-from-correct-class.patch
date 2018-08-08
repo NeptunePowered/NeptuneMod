@@ -1,4 +1,4 @@
-From 04312f276a7846fc1786e20f95778f48cb1aeae0 Mon Sep 17 00:00:00 2001
+From 1aaebd36e292e562c1a6a5640bb4cf0dfb5ff2c6 Mon Sep 17 00:00:00 2001
 From: Jamie Mansfield <dev@jamierocks.uk>
 Date: Tue, 12 Sep 2017 20:32:03 +0100
 Subject: [PATCH] Get jar-path from correct class
@@ -20,5 +20,5 @@ index e329439f..831cf160 100644
          return jarPath;
      }
 -- 
-2.14.1
+2.18.0
 
