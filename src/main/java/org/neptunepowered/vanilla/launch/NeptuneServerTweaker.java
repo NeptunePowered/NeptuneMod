@@ -86,7 +86,7 @@ public class NeptuneServerTweaker implements ITweaker {
     private static void configureLaunchClassLoader(final LaunchClassLoader loader) {
         // Logging
         loader.addClassLoaderExclusion("org.slf4j.");
-        loader.addClassLoaderExclusion("org.jline.");
+        loader.addClassLoaderExclusion("jline.");
         loader.addClassLoaderExclusion("com.sun.");
         loader.addClassLoaderExclusion("com.mojang.util.QueueLogAppender");
 
