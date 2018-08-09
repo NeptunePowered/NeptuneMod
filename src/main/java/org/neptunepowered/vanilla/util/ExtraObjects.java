@@ -32,6 +32,10 @@ public final class ExtraObjects {
         return function.get();
     }
 
+    public static void nullable(final Object obj, final Runnable runnable) {
+        if (obj != null) runnable.run();
+    }
+
     private ExtraObjects() {
     }
 

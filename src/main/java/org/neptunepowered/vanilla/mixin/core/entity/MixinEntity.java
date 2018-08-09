@@ -104,6 +104,8 @@ public abstract class MixinEntity implements Entity {
         throw new RuntimeException("noop");
     }
 
+    @Shadow public int ticksExisted;
+
     @Inject(method = "Lnet/minecraft/entity/Entity;writeToNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("HEAD"))
     public void onWriteToNBT(NBTTagCompound tagCompound, CallbackInfo ci) {
         if (tagCompound.hasKey(NbtConstants.BUKKIT_TAG)) {

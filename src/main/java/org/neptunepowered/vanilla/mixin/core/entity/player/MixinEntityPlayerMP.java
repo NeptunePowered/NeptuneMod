@@ -24,6 +24,7 @@
 package org.neptunepowered.vanilla.mixin.core.entity.player;
 
 import static net.canarymod.Canary.log;
+import static org.neptunepowered.vanilla.util.ExtraObjects.nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -53,6 +54,7 @@ import net.canarymod.hook.command.PlayerCommandHook;
 import net.canarymod.hook.player.ChatHook;
 import net.canarymod.hook.player.PlayerDeathHook;
 import net.canarymod.hook.player.ReturnFromIdleHook;
+import net.canarymod.hook.player.SignShowHook;
 import net.canarymod.hook.player.TeleportHook;
 import net.canarymod.hook.system.PermissionCheckHook;
 import net.canarymod.permissionsystem.PermissionProvider;
@@ -79,6 +81,7 @@ import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.stats.StatisticsFile;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IChatComponent;
@@ -147,6 +150,16 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
         if (idleTime > 10000) {
             new ReturnFromIdleHook(this, idleTime).call();
         }
+    }
+
+    @Inject(method = "sendTileEntityUpdate", at = @At("HEAD"))
+    private void onTileEntityUpdate(TileEntity tileEntity, CallbackInfo ci) {
+        nullable(tileEntity, () -> {
+            if (tileEntity instanceof TileEntitySign) {
+                final TileEntitySign sign = (TileEntitySign) tileEntity;
+                new SignShowHook(this, (Sign) sign).call();
+            }
+        });
     }
 
     @Redirect(method = "travelToDimension",

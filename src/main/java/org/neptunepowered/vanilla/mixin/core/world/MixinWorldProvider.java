@@ -52,7 +52,7 @@ public abstract class MixinWorldProvider implements IMixinWorldProvider {
     private DimensionType dimensionType;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    public void onConstruction(CallbackInfo ci) {
+    private void onConstruction(CallbackInfo ci) {
         this.dimensionType = DimensionType.fromId(this.dimensionId);
     }
 
