@@ -29,6 +29,7 @@ public final class SerializerConstants {
 
     // Types
     public static final String ENCHANTMENT = "Enchantment";
+    public static final String ITEM = "Item";
 
     private SerializerConstants() {
     }

@@ -23,6 +23,8 @@
  */
 package org.neptunepowered.vanilla.mixin.core.item;
 
+import static org.neptunepowered.vanilla.util.ExtraObjects.nullableOrElse;
+
 import com.google.common.collect.Multimap;
 import net.canarymod.api.attributes.AttributeModifier;
 import net.canarymod.api.inventory.BaseItem;
@@ -31,6 +33,8 @@ import net.canarymod.api.inventory.Item;
 import net.canarymod.api.inventory.ItemType;
 import net.canarymod.api.nbt.CompoundTag;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Intrinsic;
@@ -54,75 +58,80 @@ public abstract class MixinItemStack implements Item {
     @Shadow public abstract String getDisplayName();
     @Shadow public abstract int getRepairCost();
     @Shadow public abstract void setRepairCost(int cost);
+    @Shadow public abstract void setItem(net.minecraft.item.Item newItem);
+    @Shadow public abstract boolean hasTagCompound();
+    @Shadow public abstract NBTTagCompound getTagCompound();
+    @Shadow public abstract void setTagCompound(NBTTagCompound nbt);
+    @Shadow public abstract NBTTagCompound writeToNBT(NBTTagCompound nbt);
+    @Shadow public abstract void readFromNBT(NBTTagCompound nbt);
 
     @Override
     public int getId() {
-        return net.minecraft.item.Item.getIdFromItem(item);
+        return net.minecraft.item.Item.getIdFromItem(this.item);
     }
 
     @Override
     public void setId(int id) {
-
+        this.setItem(net.minecraft.item.Item.getItemById(id));
     }
 
     @Override
     public int getDamage() {
-        return itemDamage;
+        return this.itemDamage;
     }
 
     @Override
     public void setDamage(int damage) {
-        itemDamage = damage;
+        this.itemDamage = damage;
     }
 
     @Override
     public int getAmount() {
-        return stackSize;
+        return this.stackSize;
     }
 
     @Override
     public void setAmount(int amount) {
-        stackSize = amount;
+        this.stackSize = amount;
     }
 
     @Override
     public int getMaxAmount() {
-        return item.getItemStackLimit();
+        return this.item.getItemStackLimit();
     }
 
     @Override
     public void setMaxAmount(int amount) {
-        item.setMaxStackSize(amount);
+        this.item.setMaxStackSize(amount);
     }
 
     @Override
     public int getSlot() {
-        return 0;
+        return 0; // TODO: implement
     }
 
     @Override
     public void setSlot(int slot) {
-
     }
 
     @Override
     public ItemType getType() {
-        return ItemType.fromId(getId());
+        return ItemType.fromIdAndData(this.getId(), this.getDamage());
     }
 
     @Override
     public BaseItem getBaseItem() {
-        return (BaseItem) item;
+        return (BaseItem) this.item;
     }
 
     @Override
     public boolean isEnchanted() {
-        return isItemEnchanted();
+        return this.isItemEnchanted();
     }
 
     @Override
     public boolean isEnchantable() {
-        return isItemEnchantable();
+        return this.isItemEnchantable();
     }
 
     @Override
@@ -172,12 +181,12 @@ public abstract class MixinItemStack implements Item {
 
     @Override
     public void setDisplayName(String name) {
-        setStackDisplayName(name);
+        this.setStackDisplayName(name);
     }
 
     @Override
     public void removeDisplayName() {
-        clearCustomName();
+        this.clearCustomName();
     }
 
     @Intrinsic
@@ -207,42 +216,51 @@ public abstract class MixinItemStack implements Item {
 
     @Override
     public boolean hasMetaTag() {
-        return false;
+        return this.hasDataTag() && this.getDataTag().containsKey(NbtConstants.CANARY_TAG);
     }
 
     @Override
     public CompoundTag getMetaTag() {
-        return null;
+        final CompoundTag dataTag = nullableOrElse(this.getDataTag(), () -> {
+            final CompoundTag tag = (CompoundTag) new NBTTagCompound();
+            this.setDataTag(tag);
+            return tag;
+        });
+
+        if (!dataTag.containsKey(NbtConstants.CANARY_TAG)) {
+            dataTag.put(NbtConstants.CANARY_TAG, (CompoundTag) new NBTTagCompound());
+        }
+        return dataTag.getCompoundTag(NbtConstants.CANARY_TAG);
     }
 
     @Override
     public boolean hasDataTag() {
-        return false;
+        return this.hasTagCompound();
     }
 
     @Override
     public CompoundTag getDataTag() {
-        return null;
+        return (CompoundTag) this.getTagCompound();
     }
 
     @Override
     public void setDataTag(CompoundTag tag) {
-
+        this.setTagCompound((NBTTagCompound) tag);
     }
 
     @Override
     public CompoundTag writeToTag(CompoundTag tag) {
-        return null;
+        return (CompoundTag) this.writeToNBT((NBTTagCompound) tag);
     }
 
     @Override
     public void readFromTag(CompoundTag tag) {
-
+        this.readFromNBT((NBTTagCompound) tag);
     }
 
     @Override
     public Item clone() {
-        return (Item) copy();
+        return (Item) this.copy();
     }
 
     @Override

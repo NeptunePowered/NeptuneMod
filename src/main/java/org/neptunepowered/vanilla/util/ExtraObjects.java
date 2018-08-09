@@ -36,6 +36,15 @@ public final class ExtraObjects {
         if (obj != null) runnable.run();
     }
 
+    public static <R> R nullableOrElse(final R obj, final Supplier<R> orElse) {
+        if (obj == null) return orElse.get();
+        return obj;
+    }
+
+    public static void ifttt(final Supplier<Boolean> condition, final Runnable runnable) {
+        if (condition.get()) runnable.run();
+    }
+
     private ExtraObjects() {
     }
 
