@@ -93,16 +93,16 @@ public class NeptunePacketFactory implements PacketFactory {
             case 1:
                 throw new InvalidPacketConstructionException(id, "JoinGame", "Join Game packets should only be handled by the server!");
             case 2:
-                this.check(2, "Chat", 1, args, this.test(ChatComponent.class));
+                check(2, "Chat", 1, args, test(ChatComponent.class));
                 return this.chat((ChatComponent) args[0]);
             case 3:
-                this.check(3, "UpdateTime", 2, args, this.test(Long.class), this.test(Long.class));
+                check(3, "UpdateTime", 2, args, test(Long.class), test(Long.class));
                 return this.updateTime((Long) args[0], (Long) args[1]);
             case 4:
-                this.check(4, "EntityEquipment", 3, args, this.test(Integer.class), this.test(Integer.class), this.test(Item.class));
+                check(4, "EntityEquipment", 3, args, test(Integer.class), test(Integer.class), test(Item.class));
                 return this.entityEquipment((Integer) args[0], (Integer) args[1], (Item) args[2]);
             case 5:
-                this.check(5, "SpawnPosition", 3, args, this.test(Integer.class), this.test(Integer.class), this.test(Integer.class));
+                check(5, "SpawnPosition", 3, args, test(Integer.class), test(Integer.class), test(Integer.class));
                 return this.spawnPosition((Integer) args[0], (Integer) args[1], (Integer) args[2]);
         }
         return null;
@@ -381,7 +381,7 @@ public class NeptunePacketFactory implements PacketFactory {
         throw new NotImplementedException("A Minecraft Update has broken this construction!");
     }
 
-    private void check(int packetId, String packetName, int minParams, Object[] args, ArgumentPredicate... tests) throws
+    private static void check(int packetId, String packetName, int minParams, Object[] args, ArgumentPredicate... tests) throws
             InvalidPacketConstructionException {
         if (args.length < minParams) {
             throw new InvalidPacketConstructionException(packetId, packetName, String.format(TOO_FEW_ARGUMENTS, minParams, args.length));
@@ -395,23 +395,19 @@ public class NeptunePacketFactory implements PacketFactory {
         }
     }
 
-    private <T> ArgumentPredicate<T> test(Class<T> type) {
-        return new ArgumentPredicate<T>() {
-            @Override
-            public Class<T> getType() {
-                return type;
-            }
-
-            @Override
-            public boolean test(T t) {
-                return type.isAssignableFrom(t.getClass());
-            }
-        };
+    private static <T> ArgumentPredicate<T> test(final Class<T> type) {
+        return () -> type;
     }
 
+    @FunctionalInterface
     private interface ArgumentPredicate<T> extends Predicate<T> {
 
         Class<T> getType();
+
+        @Override
+        default boolean test(final T t) {
+            return this.getType().isAssignableFrom(t.getClass());
+        }
 
     }
 

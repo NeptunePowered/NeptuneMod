@@ -23,16 +23,16 @@
  */
 package org.neptunepowered.vanilla.util;
 
-public abstract class Wrapper<T> {
+import java.util.function.Supplier;
 
-    private final T handle;
+public final class ExtraObjects {
 
-    protected Wrapper(final T handle) {
-        this.handle = handle;
+    public static <R> R nullable(final Object obj, final Supplier<R> function) {
+        if (obj == null) return null;
+        return function.get();
     }
 
-    protected T getHandle() {
-        return this.handle;
+    private ExtraObjects() {
     }
 
 }

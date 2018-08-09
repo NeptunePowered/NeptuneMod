@@ -21,18 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.util;
+package org.neptunepowered.vanilla.serialize;
 
-public abstract class Wrapper<T> {
+import net.canarymod.CanaryDeserializeException;
+import net.canarymod.serialize.Serializer;
+import org.neptunepowered.vanilla.util.SerializerConstants;
 
-    private final T handle;
+public abstract class NeptuneSerializer<T> implements Serializer<T> {
 
-    protected Wrapper(final T handle) {
-        this.handle = handle;
+    protected CanaryDeserializeException newDeserializeException(final String message) {
+        return new CanaryDeserializeException(message, SerializerConstants.VENDOR);
     }
 
-    protected T getHandle() {
-        return this.handle;
+    @Override
+    public String getVendor() {
+        return SerializerConstants.VENDOR;
     }
 
 }

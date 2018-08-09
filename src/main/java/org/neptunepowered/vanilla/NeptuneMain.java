@@ -24,7 +24,10 @@
 package org.neptunepowered.vanilla;
 
 import net.canarymod.Canary;
+import net.canarymod.api.inventory.Enchantment;
 import net.minecraft.server.MinecraftServer;
+import org.neptunepowered.vanilla.inventory.NeptuneEnchantment;
+import org.neptunepowered.vanilla.serialize.EnchantmentSerializer;
 
 public final class NeptuneMain {
 
@@ -48,6 +51,9 @@ public final class NeptuneMain {
 
     private static void initNeptune() {
         new Neptune();
+        // Serialisers
+        Canary.addSerializer(EnchantmentSerializer.INSTANCE, Enchantment.class);
+        Canary.addSerializer(EnchantmentSerializer.INSTANCE, NeptuneEnchantment.class);
     }
 
 }

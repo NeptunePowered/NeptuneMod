@@ -23,16 +23,14 @@
  */
 package org.neptunepowered.vanilla.util;
 
-public abstract class Wrapper<T> {
+public final class SerializerConstants {
 
-    private final T handle;
+    public static final String VENDOR = "NeptunePowered";
 
-    protected Wrapper(final T handle) {
-        this.handle = handle;
-    }
+    // Types
+    public static final String ENCHANTMENT = "Enchantment";
 
-    protected T getHandle() {
-        return this.handle;
+    private SerializerConstants() {
     }
 
 }

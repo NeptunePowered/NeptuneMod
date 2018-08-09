@@ -23,11 +23,14 @@
  */
 package org.neptunepowered.vanilla.factory;
 
+import static org.neptunepowered.vanilla.util.ExtraObjects.nullable;
+
 import net.canarymod.api.factory.ItemFactory;
 import net.canarymod.api.inventory.Enchantment;
 import net.canarymod.api.inventory.Item;
 import net.canarymod.api.inventory.ItemType;
 import net.canarymod.api.inventory.MapData;
+import org.neptunepowered.vanilla.inventory.NeptuneEnchantment;
 
 public class NeptuneItemFactory implements ItemFactory {
 
@@ -92,12 +95,12 @@ public class NeptuneItemFactory implements ItemFactory {
 
     @Override
     public Enchantment newEnchantment(short id, short level) {
-        return null;
+        return this.newEnchantment(Enchantment.Type.fromId(id), level);
     }
 
     @Override
     public Enchantment newEnchantment(Enchantment.Type type, short level) {
-        return null;
+        return nullable(type, () -> new NeptuneEnchantment(type, level));
     }
 
     @Override
