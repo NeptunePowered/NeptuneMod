@@ -49,19 +49,23 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
         super(null, null, null);
     }
 
-    @Inject(method = "startServer", at = @At(value = "INVOKE",
+    @Inject(method = "startServer", at = @At(
+            value = "INVOKE",
             target = "Lnet/minecraft/server/dedicated/DedicatedServer;loadAllWorlds(Ljava/lang/String;"
-                    + "Ljava/lang/String;JLnet/minecraft/world/WorldType;Ljava/lang/String;)V"))
-    public void onStartServer(CallbackInfoReturnable<Boolean> ci) throws IOException {
+                    + "Ljava/lang/String;JLnet/minecraft/world/WorldType;Ljava/lang/String;)V"
+    ))
+    private void onStartServer(CallbackInfoReturnable<Boolean> ci) throws IOException {
         Canary.enableEarlyPlugins();
         ((Neptune) Canary.instance()).lateInitialisation();
         Canary.enableLatePlugins();
     }
 
-    @Redirect(method = "startServer", at = @At(value = "INVOKE",
+    @Redirect(method = "startServer", at = @At(
+            value = "INVOKE",
             target = "Lnet/minecraft/server/dedicated/PropertyManager;"
-                    + "getStringProperty(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"))
-    public String handleStringProperties(PropertyManager propertyManager, String key, String defaultValue) {
+                    + "getStringProperty(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"
+    ))
+    private String handleStringProperties(PropertyManager propertyManager, String key, String defaultValue) {
         if ("server-ip".equals(key)) {
             return Configuration.getServerConfig().getBindIp();
         } else if ("motd".equals(key)) {
@@ -79,10 +83,11 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
         }
     }
 
-    @Redirect(method = "startServer", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/server/dedicated/PropertyManager;"
-                    + "getBooleanProperty(Ljava/lang/String;Z)Z"))
-    public boolean handleBooleanProperties(PropertyManager propertyManager, String key, boolean defaultValue) {
+    @Redirect(method = "startServer", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/dedicated/PropertyManager;getBooleanProperty(Ljava/lang/String;Z)Z"
+    ))
+    private boolean handleBooleanProperties(PropertyManager propertyManager, String key, boolean defaultValue) {
         if ("online-mode".equals(key)) {
             return Configuration.getServerConfig().isOnlineMode();
         } else {

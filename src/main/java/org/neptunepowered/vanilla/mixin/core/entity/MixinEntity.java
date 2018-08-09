@@ -104,18 +104,16 @@ public abstract class MixinEntity implements Entity {
         throw new RuntimeException("noop");
     }
 
-    @Shadow public int ticksExisted;
-
-    @Inject(method = "Lnet/minecraft/entity/Entity;writeToNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("HEAD"))
-    public void onWriteToNBT(NBTTagCompound tagCompound, CallbackInfo ci) {
+    @Inject(method = "writeToNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("HEAD"))
+    private void onWriteToNBT(NBTTagCompound tagCompound, CallbackInfo ci) {
         if (tagCompound.hasKey(NbtConstants.BUKKIT_TAG)) {
             this.bukkitData = tagCompound.getCompoundTag(NbtConstants.BUKKIT_TAG);
         }
         this.writeCanaryNBT(tagCompound);
     }
 
-    @Inject(method = "Lnet/minecraft/entity/Entity;readFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("RETURN"))
-    public void onReadFromNBT(NBTTagCompound tagCompound, CallbackInfo ci) {
+    @Inject(method = "readFromNBT(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("RETURN"))
+    private void onReadFromNBT(NBTTagCompound tagCompound, CallbackInfo ci) {
         this.readCanaryNBT(tagCompound);
     }
 

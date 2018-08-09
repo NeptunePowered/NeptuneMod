@@ -152,10 +152,12 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
         return statisticsFile;
     }
 
-    @Redirect(method = "playerLoggedOut",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/ServerConfigurationManager;"
-                    + "sendPacketToAllPlayers(Lnet/minecraft/network/Packet;)V"))
-    public void firePlayerListData(ServerConfigurationManager manager, net.minecraft.network.Packet packetIn, EntityPlayerMP playerIn) {
+    @Redirect(method = "playerLoggedOut", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/management/ServerConfigurationManager;"
+                    + "sendPacketToAllPlayers(Lnet/minecraft/network/Packet;)V"
+    ))
+    private void firePlayerListData(ServerConfigurationManager manager, net.minecraft.network.Packet packetIn, EntityPlayerMP playerIn) {
         PlayerListData playerListData = ((Player) playerIn).getPlayerListData(PlayerListAction.REMOVE_PLAYER);
         for (EntityPlayerMP playerMP : manager.playerEntityList) {
             PlayerListHook playerListHook = new PlayerListHook(playerListData.copy(), (Player) playerMP);
@@ -174,14 +176,16 @@ public abstract class MixinServerConfigurationManager implements ConfigurationMa
     }
 
     @Inject(method = "initializeConnectionToPlayer", at = @At("RETURN"))
-    public void sendMOTD(NetworkManager netManager, EntityPlayerMP playerIn, CallbackInfo info) {
+    private void sendMOTD(NetworkManager netManager, EntityPlayerMP playerIn, CallbackInfo info) {
         Canary.motd().sendMOTD((MessageReceiver) playerIn);
     }
 
-    @Redirect(method = "initializeConnectionToPlayer",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/ServerConfigurationManager;"
-                    + "sendChatMsg(Lnet/minecraft/util/IChatComponent;)V"))
-    public void fireConnectionHook(ServerConfigurationManager manager, IChatComponent component, NetworkManager netManager, EntityPlayerMP playerIn) {
+    @Redirect(method = "initializeConnectionToPlayer", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/server/management/ServerConfigurationManager;"
+                    + "sendChatMsg(Lnet/minecraft/util/IChatComponent;)V"
+    ))
+    private void fireConnectionHook(ServerConfigurationManager manager, IChatComponent component, NetworkManager netManager, EntityPlayerMP playerIn) {
         ConnectionHook hook = (ConnectionHook)
                 new ConnectionHook(
                         (Player) playerIn, component.getUnformattedTextForChat(), false // TODO: check first time

@@ -162,11 +162,10 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
         });
     }
 
-    @Redirect(method = "travelToDimension",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/network/NetHandlerPlayServer;setPlayerLocation(DDDFF)V"
-            ))
+    @Redirect(method = "travelToDimension", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/network/NetHandlerPlayServer;setPlayerLocation(DDDFF)V"
+    ))
     private void handleSpawnRotation(NetHandlerPlayServer netHandlerPlayServer, double x, double y, double z, float yaw, float pitch) {
         final Location location = this.getWorld().getSpawnLocation();
         netHandlerPlayServer.setPlayerLocation(location.getX(), location.getY(), location.getZ(), location.getPitch(), location.getRotation());

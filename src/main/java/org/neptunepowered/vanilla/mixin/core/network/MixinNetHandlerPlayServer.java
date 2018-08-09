@@ -73,9 +73,11 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
 
     @Shadow public abstract void sendPacket(final net.minecraft.network.Packet packetIn);
 
-    @Redirect(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/NetHandlerPlayServer;"
-            + "kickPlayerFromServer(Ljava/lang/String;)V"))
-    public void handlePlayerIdleHook(NetHandlerPlayServer playServer, String reason) {
+    @Redirect(method = "update", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/network/NetHandlerPlayServer;kickPlayerFromServer(Ljava/lang/String;)V"
+    ))
+    private void handlePlayerIdleHook(NetHandlerPlayServer playServer, String reason) {
         final long timeIdle = MinecraftServer.getCurrentTimeMillis() - playServer.playerEntity.getLastActiveTime();
         if (!((Player) playServer.playerEntity).canIgnoreRestrictions()) {
             PlayerIdleHook idleHook = (PlayerIdleHook) new PlayerIdleHook((Player) playServer.playerEntity, timeIdle).call();

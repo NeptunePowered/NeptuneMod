@@ -32,13 +32,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(C00Handshake.class)
 public abstract class MixinC00Handshake_Bungee {
 
-    @Redirect(
-            method = "readPacketData",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/network/PacketBuffer;readStringFromBuffer(I)Ljava/lang/String;"
-            )
-    )
+    @Redirect(method = "readPacketData", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/network/PacketBuffer;readStringFromBuffer(I)Ljava/lang/String;"
+    ))
     private String onReadPacketData(PacketBuffer buf, int value) {
         return buf.readStringFromBuffer(Short.MAX_VALUE);
     }

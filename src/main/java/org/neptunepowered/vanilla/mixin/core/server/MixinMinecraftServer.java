@@ -144,12 +144,15 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     @Shadow public abstract void updateTimeLightAndEntities();
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    public void onConstruction(File workDir, Proxy proxy, File profileCacheDir, CallbackInfo info) {
+    private void onConstruction(File workDir, Proxy proxy, File profileCacheDir, CallbackInfo info) {
         Canary.setServer(this);
     }
     
-    @Redirect(method = "<init>", at = @At(value = "NEW", args = "class=net/minecraft/world/chunk/storage/AnvilSaveConverter"))
-    public AnvilSaveConverter createSaveConverter(File dir) {
+    @Redirect(method = "<init>", at = @At(
+            value = "NEW",
+            args = "class=net/minecraft/world/chunk/storage/AnvilSaveConverter"
+    ))
+    private AnvilSaveConverter createSaveConverter(File dir) {
         return new AnvilSaveConverter(NeptuneWorldManager.WORLDS_DIR);
     }
 
@@ -229,19 +232,13 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         this.theProfiler.endSection();
     }
 
-    @Inject(
-            method = "updateTimeLightAndEntities",
-            at = @At("HEAD")
-    )
+    @Inject(method = "updateTimeLightAndEntities", at = @At("HEAD"))
     private void onUpdateTimeLightAndEntities(final CallbackInfo ci) {
         new ServerTickHook(this.previousTick).call();
         this.curTrack = System.nanoTime();
     }
 
-    @Inject(
-            method = "updateTimeLightAndEntities",
-            at = @At("RETURN")
-    )
+    @Inject(method = "updateTimeLightAndEntities", at = @At("RETURN"))
     private void afterUpdateTimeLightAndEntities(final CallbackInfo ci) {
         this.previousTick = System.nanoTime() - curTrack;
     }
