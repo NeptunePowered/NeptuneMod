@@ -24,9 +24,18 @@
 package org.neptunepowered.vanilla.interfaces.core.world.storage;
 
 import net.canarymod.api.world.DimensionType;
+import net.canarymod.api.world.position.Location;
 
 public interface IMixinWorldInfo {
 
     void setDimensionType(DimensionType dimensionType);
+
+    float getRotX();
+
+    float getRotY();
+
+    Location getSpawn();
+
+    void setSpawn(Location spawn);
 
 }

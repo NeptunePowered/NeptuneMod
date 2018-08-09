@@ -54,6 +54,8 @@ public final class NbtConstants {
     public static final String DAMAGE_ENTITIES = "DamageEntities";
     public static final String DAMAGE_WORLD = "DamageWorld";
     public static final String POWER = "Power";
+    public static final String SPAWN_ROT_X = "SpawnRotX";
+    public static final String SPAWN_ROT_Y = "SpawnRotY";
 
     // Bukkit tags
     public static final String BUKKIT_TAG = "bukkit";

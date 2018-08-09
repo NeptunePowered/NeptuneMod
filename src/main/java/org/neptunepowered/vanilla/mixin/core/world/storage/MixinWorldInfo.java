@@ -24,19 +24,86 @@
 package org.neptunepowered.vanilla.mixin.core.world.storage;
 
 import net.canarymod.api.world.DimensionType;
+import net.canarymod.api.world.position.Location;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.WorldInfo;
 import org.neptunepowered.vanilla.interfaces.core.world.storage.IMixinWorldInfo;
+import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldInfo.class)
 public abstract class MixinWorldInfo implements IMixinWorldInfo {
 
     @Shadow private int dimension;
+    @Shadow private int spawnX;
+    @Shadow private int spawnY;
+    @Shadow private int spawnZ;
+    @Shadow private String levelName;
+
+    // Neptune: Save the spawn rotation
+    private float rotX = 0.0F;
+    private float rotY = 0.0F;
+
+    @Inject(method = "<init>(Lnet/minecraft/nbt/NBTTagCompound;)V", at = @At("RETURN"))
+    private void onNbtConstruction(NBTTagCompound tag, CallbackInfo ci) {
+        if (tag.hasKey(NbtConstants.SPAWN_ROT_X)) {
+            this.rotX = tag.getFloat(NbtConstants.SPAWN_ROT_X);
+        }
+        if (tag.hasKey(NbtConstants.SPAWN_ROT_Y)) {
+            this.rotY = tag.getFloat(NbtConstants.SPAWN_ROT_Y);
+        }
+    }
+
+    @Inject(method = "<init>(Lnet/minecraft/world/storage/WorldInfo;)V", at = @At("RETURN"))
+    private void onInfoConstruction(WorldInfo info, CallbackInfo ci) {
+        this.rotX = ((IMixinWorldInfo) info).getRotX();
+        this.rotY = ((IMixinWorldInfo) info).getRotY();
+    }
+
+    @Inject(method = "updateTagCompound", at = @At("RETURN"))
+    private void onUpdateTagCompound(NBTTagCompound tag, NBTTagCompound playerTag, CallbackInfo ci) {
+        tag.setFloat(NbtConstants.SPAWN_ROT_X, this.rotX);
+        tag.setFloat(NbtConstants.SPAWN_ROT_Y, this.rotY);
+    }
 
     @Override
     public void setDimensionType(DimensionType dimensionType) {
         this.dimension = dimensionType.getId();
+    }
+
+    @Override
+    public float getRotX() {
+        return this.rotX;
+    }
+
+    @Override
+    public float getRotY() {
+        return this.rotY;
+    }
+
+    @Override
+    public Location getSpawn() {
+        final Location spawn = new Location(this.spawnX, this.spawnY, this.spawnZ);
+        spawn.setPitch(this.rotX);
+        spawn.setRotation(this.rotY);
+        spawn.setType(DimensionType.fromId(this.dimension));
+        spawn.setWorldName(this.levelName);
+        return spawn;
+    }
+
+    @Override
+    public void setSpawn(Location spawn) {
+        this.spawnX = spawn.getBlockX();
+        this.spawnY = spawn.getBlockY();
+        this.spawnZ = spawn.getBlockZ();
+        this.rotX = spawn.getPitch();
+        this.rotY = spawn.getRotation();
+        this.dimension = spawn.getType().getId();
+        this.levelName = spawn.getWorldName();
     }
 
 }

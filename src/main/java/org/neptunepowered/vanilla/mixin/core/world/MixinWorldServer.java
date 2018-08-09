@@ -78,6 +78,7 @@ import net.minecraft.world.gen.feature.WorldGenTaiga2;
 import net.minecraft.world.gen.feature.WorldGenTrees;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.neptunepowered.vanilla.interfaces.core.world.IMixinWorldProvider;
+import org.neptunepowered.vanilla.interfaces.core.world.storage.IMixinWorldInfo;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.neptunepowered.vanilla.util.converter.PositionConverter;
 import org.spongepowered.asm.mixin.Final;
@@ -205,7 +206,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World, Task
 
     @Override
     public Location getSpawnLocation() {
-        return new Location(this.getWorldInfo().getSpawnX(), this.getWorldInfo().getSpawnY(), this.getWorldInfo().getSpawnZ());
+        return ((IMixinWorldInfo) this.worldInfo).getSpawn();
     }
 
     @Override

@@ -100,6 +100,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
@@ -135,17 +136,27 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Shadow public abstract String getPlayerIP();
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    public void onConstruction(MinecraftServer server, WorldServer worldIn, GameProfile profile, ItemInWorldManager interactionManager,
+    private void onConstruction(MinecraftServer server, WorldServer worldIn, GameProfile profile, ItemInWorldManager interactionManager,
             CallbackInfo info) {
         this.initPlayerData();
     }
 
     @Inject(method = "markPlayerActive", at = @At("INVOKE"))
-    public void onMarkPlayerActive(CallbackInfo info) {
+    private void onMarkPlayerActive(CallbackInfo info) {
         final long idleTime = MinecraftServer.getCurrentTimeMillis() - this.playerLastActiveTime;
         if (idleTime > 10000) {
             new ReturnFromIdleHook(this, idleTime).call();
         }
+    }
+
+    @Redirect(method = "travelToDimension",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/network/NetHandlerPlayServer;setPlayerLocation(DDDFF)V"
+            ))
+    private void handleSpawnRotation(NetHandlerPlayServer netHandlerPlayServer, double x, double y, double z, float yaw, float pitch) {
+        final Location location = this.getWorld().getSpawnLocation();
+        netHandlerPlayServer.setPlayerLocation(location.getX(), location.getY(), location.getZ(), location.getPitch(), location.getRotation());
     }
 
     /**
