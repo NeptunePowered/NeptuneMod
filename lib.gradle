@@ -42,12 +42,12 @@ dependencies {
     compile 'com.mojang:authlib:1.5.21'
     compile 'com.googlecode.json-simple:json-simple:1.1.1'
     compile 'org.mcstats.standalone:metrics:R7'
-    compile 'co.aikar:fastutil-lite:1.0'
     runtime 'org.xerial:sqlite-jdbc:3.8.7'
     runtime 'mysql:mysql-connector-java:5.1.34'
     testCompile 'junit:junit:4.12'
 
     // Neptune: start
+    compile 'co.aikar:fastutil-lite:1.0'
     compile 'com.github.ben-manes.caffeine:caffeine:2.3.5'
     compile 'net.minecraft:launchwrapper:1.11'
     // Neptune: end

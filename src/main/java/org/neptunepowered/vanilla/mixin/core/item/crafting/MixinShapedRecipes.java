@@ -34,9 +34,9 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ShapedRecipes.class)
 public abstract class MixinShapedRecipes implements ShapedRecipe {
 
-    @Shadow @Final public int recipeWidth;
-    @Shadow @Final public int recipeHeight;
-    @Shadow @Final public ItemStack[] recipeItems;
+    @Shadow @Final private int recipeWidth;
+    @Shadow @Final private int recipeHeight;
+    @Shadow @Final private ItemStack[] recipeItems;
 
     @Override
     public int getWidth() {

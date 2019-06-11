@@ -36,11 +36,16 @@ import java.util.List;
 @Mixin(ShapelessRecipes.class)
 public abstract class MixinShapelessRecipes implements ShapelessRecipe {
 
-    @Shadow @Final public List<ItemStack> recipeItems;
+    @Shadow @Final private List<ItemStack> recipeItems;
 
     @Override
     public List<Item> getRecipeItems() {
         return (List) this.recipeItems;
+    }
+
+    @Override
+    public boolean isShapeless() {
+        return true;
     }
 
 }

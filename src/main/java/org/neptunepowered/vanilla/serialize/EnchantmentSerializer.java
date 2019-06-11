@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 public class EnchantmentSerializer extends NeptuneSerializer<NeptuneEnchantment> {
 
     public static final Serializer<NeptuneEnchantment> INSTANCE = new EnchantmentSerializer();
+
     private static final Pattern FIELD_PATTERN = Pattern.compile(";", Pattern.LITERAL);
 
     @Override

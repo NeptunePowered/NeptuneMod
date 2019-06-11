@@ -23,6 +23,7 @@
  */
 package org.neptunepowered.vanilla.util;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class ExtraObjects {
@@ -30,6 +31,11 @@ public final class ExtraObjects {
     public static <R> R nullable(final Object obj, final Supplier<R> function) {
         if (obj == null) return null;
         return function.get();
+    }
+
+    public static <R> void nullable(final R obj, final Consumer<R> function) {
+        if (obj == null) return;
+        function.accept(obj);
     }
 
     public static void nullable(final Object obj, final Runnable runnable) {
@@ -43,6 +49,11 @@ public final class ExtraObjects {
 
     public static void ifttt(final Supplier<Boolean> condition, final Runnable runnable) {
         if (condition.get()) runnable.run();
+    }
+
+    public static <R> R conditionNull(final boolean condition, final Supplier<R> function) {
+        if (condition) return function.get();
+        return null;
     }
 
     private ExtraObjects() {
