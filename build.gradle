@@ -63,7 +63,7 @@ dependencies {
         exclude module: 'guava'
         exclude module: 'authlib'
     }
-    compile('org.spongepowered:mixin:0.7-SNAPSHOT') {
+    compile('org.spongepowered:mixin:0.7.11-SNAPSHOT') {
         exclude module: 'launchwrapper'
         exclude module: 'guava'
     }

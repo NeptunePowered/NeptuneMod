@@ -26,7 +26,7 @@ package org.neptunepowered.vanilla.mixin.core.server.network;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.server.network.NetHandlerHandshakeTCP;
-import org.neptunepowered.vanilla.interfaces.core.network.IMixinNetworkManager;
+import org.neptunepowered.vanilla.mixin.core.network.AccessorNetworkManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,7 +41,7 @@ public abstract class MixinNetHandlerHandshakeTCP {
 
     @Inject(method = "processHandshake", at = @At(value = "HEAD"))
     private void onProcessHandshake(C00Handshake packetIn, CallbackInfo ci) {
-        final IMixinNetworkManager info = (IMixinNetworkManager) this.networkManager;
+        final AccessorNetworkManager info = (AccessorNetworkManager) this.networkManager;
         info.setProtocolVersion(packetIn.getProtocolVersion());
         info.setHostnamePinged(packetIn.ip);
         info.setPortPinged(packetIn.port);

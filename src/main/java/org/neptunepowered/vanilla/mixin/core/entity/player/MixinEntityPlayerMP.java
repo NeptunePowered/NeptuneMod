@@ -90,7 +90,7 @@ import net.minecraft.world.WorldSettings;
 import net.visualillusionsent.utils.DateUtils;
 import net.visualillusionsent.utils.StringUtils;
 import org.neptunepowered.vanilla.interfaces.core.network.IMixinNetHandlerPlayServer;
-import org.neptunepowered.vanilla.interfaces.core.util.IMixinFoodStats;
+import org.neptunepowered.vanilla.mixin.core.util.AccessorFoodStats;
 import org.neptunepowered.vanilla.util.NbtConstants;
 import org.neptunepowered.vanilla.util.PermissionConstants;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
@@ -754,27 +754,27 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void addExhaustion(float exhaustion) {
-        ((IMixinFoodStats) this.foodStats).setExhaustionLevel(this.getExhaustionLevel() + exhaustion);
+        ((AccessorFoodStats) this.foodStats).setExhaustionLevel(this.getExhaustionLevel() + exhaustion);
     }
 
     @Override
     public void setExhaustion(float exhaustion) {
-        ((IMixinFoodStats) this.foodStats).setExhaustionLevel(exhaustion);
+        ((AccessorFoodStats) this.foodStats).setExhaustionLevel(exhaustion);
     }
 
     @Override
     public float getExhaustionLevel() {
-        return ((IMixinFoodStats) this.foodStats).getExhaustionLevel();
+        return ((AccessorFoodStats) this.foodStats).getExhaustionLevel();
     }
 
     @Override
     public void addSaturation(float saturation) {
-        ((IMixinFoodStats) this.foodStats).setSaturationLevel(this.getSaturationLevel() + saturation);
+        ((AccessorFoodStats) this.foodStats).setSaturationLevel(this.getSaturationLevel() + saturation);
     }
 
     @Override
     public void setSaturation(float saturation) {
-        ((IMixinFoodStats) this.foodStats).setSaturationLevel(saturation);
+        ((AccessorFoodStats) this.foodStats).setSaturationLevel(saturation);
     }
 
     @Override

@@ -89,7 +89,7 @@ public class ItemSerializer extends NeptuneSerializer<ItemStack> {
                 .map(NeptuneEnchantment::createEnchantmentData)
                 .forEach(enchantmentData -> stack.addEnchantment(enchantmentData.enchantmentobj, enchantmentData.enchantmentLevel)));
 
-        return null;
+        return stack;
     }
 
     @Override

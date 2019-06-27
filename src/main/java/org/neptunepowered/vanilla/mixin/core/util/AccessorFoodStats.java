@@ -24,29 +24,14 @@
 package org.neptunepowered.vanilla.mixin.core.util;
 
 import net.minecraft.util.FoodStats;
-import org.neptunepowered.vanilla.interfaces.core.util.IMixinFoodStats;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(FoodStats.class)
-public class MixinFoodStats implements IMixinFoodStats {
+public interface AccessorFoodStats {
 
-    @Shadow private float foodExhaustionLevel;
-    @Shadow private float foodSaturationLevel;
-
-    @Override
-    public float getExhaustionLevel() {
-        return this.foodExhaustionLevel;
-    }
-
-    @Override
-    public void setExhaustionLevel(float level) {
-        this.foodExhaustionLevel = level;
-    }
-
-    @Override
-    public void setSaturationLevel(float saturationLevel) {
-        this.foodSaturationLevel = saturationLevel;
-    }
+    @Accessor("foodExhaustionLevel") float getExhaustionLevel();
+    @Accessor("foodExhaustionLevel") void setExhaustionLevel(final float level);
+    @Accessor("foodSaturationLevel") void setSaturationLevel(final float saturationLevel);
 
 }

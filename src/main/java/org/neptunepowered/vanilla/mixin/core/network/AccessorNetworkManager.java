@@ -21,14 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.util;
+package org.neptunepowered.vanilla.mixin.core.network;
 
-public interface IMixinFoodStats {
+import net.canarymod.hook.system.ServerListPingHook;
+import net.minecraft.network.NetworkManager;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-    float getExhaustionLevel();
+/**
+ * Accessor Mixin, exposing methods for {@link ServerListPingHook}.
+ */
+@Mixin(NetworkManager.class)
+public interface AccessorNetworkManager {
 
-    void setExhaustionLevel(float level);
+    @Accessor("protocolVersion") int getProtocolVersion();
+    @Accessor("protocolVersion") void setProtocolVersion(final int version);
 
-    void setSaturationLevel(float saturationLevel);
+    @Accessor("hostnamePinged") String getHostnamePinged();
+    @Accessor("hostnamePinged") void setHostnamePinged(final String hostname);
+
+    @Accessor("portPinged") int getPortPinged();
+    @Accessor("portPinged") void setPortPinged(final int port);
 
 }

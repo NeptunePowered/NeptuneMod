@@ -42,7 +42,7 @@ public abstract class MixinEntityHorse extends MixinEntityAnimal {
     @Shadow public abstract int getHorseType();
 
     @Inject(method = "initHorseChest", at = @At("RETURN"))
-    public void onInitHorseChest(CallbackInfo ci) {
+    private void onInitHorseChest(final CallbackInfo ci) {
         ((IMixinAnimalChest) this.horseChest).setOwner((EntityHorse) (Object) this);
     }
 
