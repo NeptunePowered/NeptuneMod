@@ -32,6 +32,10 @@ import org.neptunepowered.vanilla.inventory.NeptuneEnchantment;
 import org.neptunepowered.vanilla.serialize.EnchantmentSerializer;
 import org.neptunepowered.vanilla.serialize.ItemSerializer;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public final class NeptuneMain {
 
     public static void main(String[] args) throws Exception {
@@ -42,8 +46,12 @@ public final class NeptuneMain {
         // Initialise the sqlite jdbc driver
         try {
             Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException ignored) {
+        } catch (final ClassNotFoundException ignored) {
         }
+
+        // Ensure config directory exists
+        final Path config = Paths.get("config");
+        if (Files.notExists(config)) Files.createDirectory(config);
 
         // Now lets initialise Neptune / Canary
         initNeptune();
