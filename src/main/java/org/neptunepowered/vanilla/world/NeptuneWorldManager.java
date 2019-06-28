@@ -44,8 +44,8 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import org.neptunepowered.vanilla.interfaces.core.server.IMixinMinecraftServer;
-import org.neptunepowered.vanilla.interfaces.core.world.IMixinWorld;
 import org.neptunepowered.vanilla.interfaces.core.world.storage.IMixinWorldInfo;
+import org.neptunepowered.vanilla.mixin.core.world.AccessorWorld;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 
 import java.io.File;
@@ -210,7 +210,7 @@ public class NeptuneWorldManager implements WorldManager {
         } else {
             worldServer = new WorldServerMulti(minecraftServer, saveHandler, dimensionType.getId(),
                     (WorldServer) this.getWorld(worldName, DimensionType.NORMAL, true), minecraftServer.theProfiler);
-            ((IMixinWorld) worldServer).setWorldInfo(worldInfo);
+            ((AccessorWorld) worldServer).setWorldInfo(worldInfo);
         }
 
         worldServer.initialize(worldSettings);

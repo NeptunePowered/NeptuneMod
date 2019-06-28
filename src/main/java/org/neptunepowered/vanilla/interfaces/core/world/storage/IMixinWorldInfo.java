@@ -28,7 +28,7 @@ import net.canarymod.api.world.position.Location;
 
 public interface IMixinWorldInfo {
 
-    void setDimensionType(DimensionType dimensionType);
+    void setDimensionType(final DimensionType dimensionType);
 
     float getRotX();
 
@@ -36,6 +36,6 @@ public interface IMixinWorldInfo {
 
     Location getSpawn();
 
-    void setSpawn(Location spawn);
+    void setSpawn(final Location spawn);
 
 }

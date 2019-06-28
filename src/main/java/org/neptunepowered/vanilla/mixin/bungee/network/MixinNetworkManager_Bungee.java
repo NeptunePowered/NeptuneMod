@@ -27,23 +27,14 @@ import com.mojang.authlib.properties.Property;
 import net.minecraft.network.NetworkManager;
 import org.neptunepowered.vanilla.interfaces.bungee.network.IMixinNetworkManager_Bungee;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 
-import java.net.SocketAddress;
 import java.util.UUID;
 
 @Mixin(NetworkManager.class)
 public abstract class MixinNetworkManager_Bungee implements IMixinNetworkManager_Bungee {
 
-    @Shadow private SocketAddress socketAddress;
-
     private Property[] spoofedProfile;
     private UUID spoofedUUID;
-
-    @Override
-    public void setRemoteAddress(SocketAddress socketAddress) {
-        this.socketAddress = socketAddress;
-    }
 
     @Override
     public Property[] getSpoofedProfile() {
@@ -51,7 +42,7 @@ public abstract class MixinNetworkManager_Bungee implements IMixinNetworkManager
     }
 
     @Override
-    public void setSpoofedProfile(Property[] spoofedProfile) {
+    public void setSpoofedProfile(final Property[] spoofedProfile) {
         this.spoofedProfile = spoofedProfile;
     }
 
@@ -61,7 +52,7 @@ public abstract class MixinNetworkManager_Bungee implements IMixinNetworkManager
     }
 
     @Override
-    public void setSpoofedUUID(UUID uuid) {
+    public void setSpoofedUUID(final UUID uuid) {
         this.spoofedUUID = uuid;
     }
 

@@ -33,6 +33,7 @@ import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.server.network.NetHandlerHandshakeTCP;
 import net.minecraft.util.ChatComponentText;
 import org.neptunepowered.vanilla.interfaces.bungee.network.IMixinNetworkManager_Bungee;
+import org.neptunepowered.vanilla.mixin.bungee.network.AccessorNetworkManager_Bungee;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -56,7 +57,7 @@ public abstract class MixinNetHandlerHandshakeTCP_Bungee {
 
             if (split.length >= 3) {
                 packetIn.ip = split[0];
-                ((IMixinNetworkManager_Bungee) this.networkManager).setRemoteAddress(new InetSocketAddress(split[1],
+                ((AccessorNetworkManager_Bungee) this.networkManager).setRemoteAddress(new InetSocketAddress(split[1],
                                 ((InetSocketAddress) this.networkManager.getRemoteAddress()).getPort()));
                 ((IMixinNetworkManager_Bungee) this.networkManager).setSpoofedUUID(UUIDTypeAdapter.fromString(split[2]));
 

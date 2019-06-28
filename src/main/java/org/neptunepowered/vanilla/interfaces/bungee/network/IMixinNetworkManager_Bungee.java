@@ -25,19 +25,19 @@ package org.neptunepowered.vanilla.interfaces.bungee.network;
 
 import com.mojang.authlib.properties.Property;
 
-import java.net.SocketAddress;
 import java.util.UUID;
 
+/**
+ * Additions to Minecraft's NetworkManager for Bungeecord support.
+ */
 public interface IMixinNetworkManager_Bungee {
-
-    void setRemoteAddress(SocketAddress socketAddress);
 
     Property[] getSpoofedProfile();
 
-    void setSpoofedProfile(Property[] spoofedProfile);
+    void setSpoofedProfile(final Property[] spoofedProfile);
 
     UUID getSpoofedUUID();
 
-    void setSpoofedUUID(UUID uuid);
+    void setSpoofedUUID(final UUID uuid);
 
 }

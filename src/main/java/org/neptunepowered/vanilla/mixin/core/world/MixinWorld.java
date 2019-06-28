@@ -30,7 +30,6 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.WorldInfo;
-import org.neptunepowered.vanilla.interfaces.core.world.IMixinWorld;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,7 +38,7 @@ import java.util.List;
 import java.util.Random;
 
 @Mixin(World.class)
-public abstract class MixinWorld implements IMixinWorld {
+public abstract class MixinWorld {
 
     @Shadow @Final public List<EntityPlayer> playerEntities;
     @Shadow @Final public WorldProvider provider;
@@ -51,10 +50,5 @@ public abstract class MixinWorld implements IMixinWorld {
     @Shadow public abstract WorldInfo getWorldInfo();
     @Shadow public abstract EnumDifficulty shadow$getDifficulty();
     @Shadow public abstract WorldType shadow$getWorldType();
-
-    @Override
-    public void setWorldInfo(WorldInfo worldInfo) {
-        this.worldInfo = worldInfo;
-    }
 
 }

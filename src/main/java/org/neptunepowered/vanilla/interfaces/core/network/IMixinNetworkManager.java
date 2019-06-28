@@ -21,17 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.world.chunk;
+package org.neptunepowered.vanilla.interfaces.core.network;
 
-import net.canarymod.api.entity.Entity;
-import net.canarymod.api.world.blocks.TileEntity;
+import net.canarymod.hook.system.ServerListPingHook;
 
-import java.util.Set;
+/**
+ * Extensions for {@link ServerListPingHook}.
+ */
+public interface IMixinNetworkManager {
 
-public interface IMixinChunk {
+    int getProtocolVersion();
+    void setProtocolVersion(final int version);
 
-    Set<Entity> getEntities();
+    String getHostnamePinged();
+    void setHostnamePinged(final String hostname);
 
-    Set<TileEntity> getTileEntities();
+    int getPortPinged();
+    void setPortPinged(final int port);
 
 }

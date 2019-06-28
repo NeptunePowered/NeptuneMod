@@ -29,6 +29,6 @@ import java.util.UUID;
 
 public interface IMixinSaveHandler {
 
-    NBTTagCompound readPlayerData(UUID uuid);
+    NBTTagCompound readPlayerData(final UUID uuid);
 
 }

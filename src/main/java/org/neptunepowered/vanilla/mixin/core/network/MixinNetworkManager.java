@@ -21,12 +21,47 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.inventory;
+package org.neptunepowered.vanilla.mixin.core.network;
 
-import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.network.NetworkManager;
+import org.neptunepowered.vanilla.interfaces.core.network.IMixinNetworkManager;
+import org.spongepowered.asm.mixin.Mixin;
 
-public interface IMixinAnimalChest {
+@Mixin(NetworkManager.class)
+public class MixinNetworkManager implements IMixinNetworkManager {
 
-    void setOwner(final EntityHorse horse);
+    private int protocolVersion;
+    private String hostnamePinged;
+    private int portPinged;
+
+    @Override
+    public int getProtocolVersion() {
+        return this.protocolVersion;
+    }
+
+    @Override
+    public void setProtocolVersion(final int version) {
+        this.protocolVersion = version;
+    }
+
+    @Override
+    public String getHostnamePinged() {
+        return this.hostnamePinged;
+    }
+
+    @Override
+    public void setHostnamePinged(final String hostname) {
+        this.hostnamePinged = hostname;
+    }
+
+    @Override
+    public int getPortPinged() {
+        return this.portPinged;
+    }
+
+    @Override
+    public void setPortPinged(final int port) {
+        this.portPinged = port;
+    }
 
 }

@@ -21,26 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.core.network;
+package org.neptunepowered.vanilla.mixin.bungee.network;
 
-import net.canarymod.hook.system.ServerListPingHook;
 import net.minecraft.network.NetworkManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-/**
- * Accessor Mixin, exposing methods for {@link ServerListPingHook}.
- */
+import java.net.SocketAddress;
+
 @Mixin(NetworkManager.class)
-public interface AccessorNetworkManager {
+public interface AccessorNetworkManager_Bungee {
 
-    @Accessor("protocolVersion") int getProtocolVersion();
-    @Accessor("protocolVersion") void setProtocolVersion(final int version);
-
-    @Accessor("hostnamePinged") String getHostnamePinged();
-    @Accessor("hostnamePinged") void setHostnamePinged(final String hostname);
-
-    @Accessor("portPinged") int getPortPinged();
-    @Accessor("portPinged") void setPortPinged(final int port);
+    @Accessor("socketAddress") void setRemoteAddress(final SocketAddress socketAddress);
 
 }

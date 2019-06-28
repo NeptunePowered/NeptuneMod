@@ -6,6 +6,7 @@
     "compatibilityLevel": "JAVA_8",
     "mixins": [
         "network.handshake.client.MixinC00Handshake_Bungee",
+        "network.AccessorNetworkManager_Bungee",
         "network.MixinNetworkManager_Bungee",
         "server.network.MixinNetHandlerHandshakeTCP_Bungee",
         "server.network.MixinNetHandlerLoginServer_Bungee"

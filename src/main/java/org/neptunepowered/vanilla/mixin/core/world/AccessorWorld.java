@@ -21,12 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.world;
+package org.neptunepowered.vanilla.mixin.core.world;
 
+import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-public interface IMixinWorld {
+@Mixin(World.class)
+public interface AccessorWorld {
 
-    void setWorldInfo(WorldInfo worldInfo);
+    @Accessor("worldInfo") void setWorldInfo(final WorldInfo info);
 
 }

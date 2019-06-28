@@ -27,6 +27,6 @@ import net.minecraft.world.WorldServer;
 
 public interface IMixinMinecraftServer {
 
-    void prepareSpawnArea(WorldServer world);
+    void prepareSpawnArea(final WorldServer world);
 
 }

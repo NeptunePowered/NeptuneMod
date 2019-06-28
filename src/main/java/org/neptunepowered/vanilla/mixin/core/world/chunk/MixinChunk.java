@@ -24,7 +24,6 @@
 package org.neptunepowered.vanilla.mixin.core.world.chunk;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import net.canarymod.api.entity.Entity;
 import net.canarymod.api.world.Biome;
 import net.canarymod.api.world.BiomeType;
@@ -32,11 +31,9 @@ import net.canarymod.api.world.World;
 import net.canarymod.api.world.blocks.TileEntity;
 import net.canarymod.api.world.position.Position;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.core.world.chunk.IMixinChunk;
 import org.neptunepowered.vanilla.util.converter.PositionConverter;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Implements;
@@ -45,17 +42,13 @@ import org.spongepowered.asm.mixin.Intrinsic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Mixin(Chunk.class)
 @Implements(@Interface(iface = net.canarymod.api.world.Chunk.class, prefix = "chunk$"))
-public abstract class MixinChunk implements net.canarymod.api.world.Chunk, IMixinChunk {
+public abstract class MixinChunk implements net.canarymod.api.world.Chunk {
 
-    @Shadow @Final private Map<BlockPos, net.minecraft.tileentity.TileEntity> chunkTileEntityMap;
-    @Shadow @Final private ClassInheritanceMultiMap<net.minecraft.entity.Entity>[] entityLists;
     @Shadow @Final public int xPosition;
     @Shadow @Final public int zPosition;
     @Shadow @Final private int[] precipitationHeightMap;
@@ -64,7 +57,7 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk, IMixi
     @Shadow private boolean isTerrainPopulated;
     @Shadow private boolean hasEntities;
     @Shadow private long lastSaveTime;
-    @Shadow public byte[] blockBiomeArray;
+    @Shadow private byte[] blockBiomeArray;
 
     @Shadow public abstract BiomeGenBase getBiome(BlockPos pos, WorldChunkManager chunkManager);
     @Shadow public abstract void generateSkylightMap();
@@ -212,20 +205,6 @@ public abstract class MixinChunk implements net.canarymod.api.world.Chunk, IMixi
     @Intrinsic
     public void chunk$relightBlock(int x, int y, int z) {
         this.relightBlock(x, y, z);
-    }
-
-    @Override
-    public Set<Entity> getEntities() {
-        final Set<Entity> entities = Sets.newHashSet();
-        for (ClassInheritanceMultiMap entityList : this.entityLists) {
-            entities.addAll(entityList);
-        }
-        return entities;
-    }
-
-    @Override
-    public Set<TileEntity> getTileEntities() {
-        return Sets.newHashSet((Collection) this.chunkTileEntityMap.values());
     }
 
 }

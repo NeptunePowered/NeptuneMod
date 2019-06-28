@@ -27,6 +27,6 @@ import net.minecraft.entity.player.EntityPlayer;
 
 public interface IMixinInventoryEnderChest {
 
-    void setOwner(EntityPlayer player);
+    void setOwner(final EntityPlayer player);
 
 }

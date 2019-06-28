@@ -135,8 +135,8 @@
         "nbt.MixinNBTTagShort",
         "nbt.MixinNBTTagString",
         "network.play.server.MixinS23PacketBlockChange",
-        "network.AccessorNetworkManager",
         "network.MixinNetHandlerPlayServer",
+        "network.MixinNetworkManager",
         "network.MixinPacket",
         "pathfinding.MixinPathNavigate",
         "potion.MixinPotion",
@@ -186,6 +186,7 @@
         "world.gen.MixinChunkProviderServer",
         "world.storage.MixinSaveHandler",
         "world.storage.MixinWorldInfo",
+        "world.AccessorWorld",
         "world.MixinWorld",
         "world.MixinWorldProvider",
         "world.MixinWorldServer"

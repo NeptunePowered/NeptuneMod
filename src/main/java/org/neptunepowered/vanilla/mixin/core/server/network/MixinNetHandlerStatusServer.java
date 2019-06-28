@@ -33,7 +33,7 @@ import net.minecraft.network.status.server.S00PacketServerInfo;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.NetHandlerStatusServer;
 import net.minecraft.util.IChatComponent;
-import org.neptunepowered.vanilla.mixin.core.network.AccessorNetworkManager;
+import org.neptunepowered.vanilla.interfaces.core.network.IMixinNetworkManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -56,9 +56,9 @@ public class MixinNetHandlerStatusServer {
     private void handleSeverListPingHook(NetworkManager networkManager, Packet packetIn) {
         ServerListPingHook hook =
                 (ServerListPingHook) new ServerListPingHook((InetSocketAddress) networkManager.getRemoteAddress(),
-                        ((AccessorNetworkManager) networkManager).getProtocolVersion(),
-                        ((AccessorNetworkManager) networkManager).getHostnamePinged(),
-                        ((AccessorNetworkManager) networkManager).getPortPinged(),
+                        ((IMixinNetworkManager) networkManager).getProtocolVersion(),
+                        ((IMixinNetworkManager) networkManager).getHostnamePinged(),
+                        ((IMixinNetworkManager) networkManager).getPortPinged(),
                         (ChatComponent) this.server.getServerStatusResponse().getServerDescription(),
                         this.server.getServerStatusResponse().getPlayerCountData().getOnlinePlayerCount(),
                         this.server.getServerStatusResponse().getPlayerCountData().getMaxPlayers(),
