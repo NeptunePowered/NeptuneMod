@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.perf.world;
+package org.neptunepowered.vanilla.bridge.core.world;
 
 import net.canarymod.config.WorldConfiguration;
 
-public interface IMixinWorldServer_Performance {
+public interface BridgeWorldServer {
 
-    WorldConfiguration getWorldConfig();
+    WorldConfiguration bridge$getWorldConfig();
 
 }

@@ -21,21 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.world.storage;
+package org.neptunepowered.vanilla.bridge.core.network;
 
-import net.canarymod.api.world.DimensionType;
-import net.canarymod.api.world.position.Location;
+public interface BridgeNetHandlerPlayServer {
 
-public interface IMixinWorldInfo {
-
-    void setDimensionType(final DimensionType dimensionType);
-
-    float getRotX();
-
-    float getRotY();
-
-    Location getSpawn();
-
-    void setSpawn(final Location spawn);
+    void bridge$kickPlayerFromServerWithoutHook(final String reason);
 
 }

@@ -21,23 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.bungee.network;
+package org.neptunepowered.vanilla.bridge.core.world.storage;
 
-import com.mojang.authlib.properties.Property;
+import net.canarymod.api.world.DimensionType;
+import net.canarymod.api.world.position.Location;
 
-import java.util.UUID;
+public interface BridgeWorldInfo {
 
-/**
- * Additions to Minecraft's NetworkManager for Bungeecord support.
- */
-public interface IMixinNetworkManager_Bungee {
+    void bridge$setDimensionType(final DimensionType dimensionType);
 
-    Property[] getSpoofedProfile();
+    float bridge$getRotX();
 
-    void setSpoofedProfile(final Property[] spoofedProfile);
+    float bridge$getRotY();
 
-    UUID getSpoofedUUID();
+    Location bridge$getSpawn();
 
-    void setSpoofedUUID(final UUID uuid);
+    void bridge$setSpawn(final Location spawn);
 
 }

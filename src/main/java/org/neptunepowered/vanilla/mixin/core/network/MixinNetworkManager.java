@@ -24,43 +24,43 @@
 package org.neptunepowered.vanilla.mixin.core.network;
 
 import net.minecraft.network.NetworkManager;
-import org.neptunepowered.vanilla.interfaces.core.network.IMixinNetworkManager;
+import org.neptunepowered.vanilla.bridge.core.network.BridgeNetworkManager;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(NetworkManager.class)
-public class MixinNetworkManager implements IMixinNetworkManager {
+public class MixinNetworkManager implements BridgeNetworkManager {
 
     private int protocolVersion;
     private String hostnamePinged;
     private int portPinged;
 
     @Override
-    public int getProtocolVersion() {
+    public int bridge$getProtocolVersion() {
         return this.protocolVersion;
     }
 
     @Override
-    public void setProtocolVersion(final int version) {
+    public void bridge$setProtocolVersion(final int version) {
         this.protocolVersion = version;
     }
 
     @Override
-    public String getHostnamePinged() {
+    public String bridge$getHostnamePinged() {
         return this.hostnamePinged;
     }
 
     @Override
-    public void setHostnamePinged(final String hostname) {
+    public void bridge$setHostnamePinged(final String hostname) {
         this.hostnamePinged = hostname;
     }
 
     @Override
-    public int getPortPinged() {
+    public int bridge$getPortPinged() {
         return this.portPinged;
     }
 
     @Override
-    public void setPortPinged(final int port) {
+    public void bridge$setPortPinged(final int port) {
         this.portPinged = port;
     }
 

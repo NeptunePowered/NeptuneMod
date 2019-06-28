@@ -21,22 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.network;
+package org.neptunepowered.vanilla.bridge.bungee.network;
 
-import net.canarymod.hook.system.ServerListPingHook;
+import com.mojang.authlib.properties.Property;
+
+import java.util.UUID;
 
 /**
- * Extensions for {@link ServerListPingHook}.
+ * Additions to Minecraft's NetworkManager for Bungeecord support.
  */
-public interface IMixinNetworkManager {
+public interface BridgeNetworkManager_Bungee {
 
-    int getProtocolVersion();
-    void setProtocolVersion(final int version);
+    Property[] bungeeBridge$getSpoofedProfile();
 
-    String getHostnamePinged();
-    void setHostnamePinged(final String hostname);
+    void bungeeBridge$setSpoofedProfile(final Property[] spoofedProfile);
 
-    int getPortPinged();
-    void setPortPinged(final int port);
+    UUID bungeeBridge$getSpoofedUUID();
+
+    void bungeeBridge$setSpoofedUUID(final UUID uuid);
 
 }

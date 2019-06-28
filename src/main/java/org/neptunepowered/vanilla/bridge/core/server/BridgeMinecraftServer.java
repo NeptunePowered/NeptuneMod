@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.inventory;
+package org.neptunepowered.vanilla.bridge.core.server;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.WorldServer;
 
-public interface IMixinInventoryEnderChest {
+public interface BridgeMinecraftServer {
 
-    void setOwner(final EntityPlayer player);
+    void bridge$prepareSpawnArea(final WorldServer world);
 
 }

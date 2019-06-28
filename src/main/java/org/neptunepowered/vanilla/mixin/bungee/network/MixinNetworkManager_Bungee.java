@@ -25,34 +25,34 @@ package org.neptunepowered.vanilla.mixin.bungee.network;
 
 import com.mojang.authlib.properties.Property;
 import net.minecraft.network.NetworkManager;
-import org.neptunepowered.vanilla.interfaces.bungee.network.IMixinNetworkManager_Bungee;
+import org.neptunepowered.vanilla.bridge.bungee.network.BridgeNetworkManager_Bungee;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.UUID;
 
 @Mixin(NetworkManager.class)
-public abstract class MixinNetworkManager_Bungee implements IMixinNetworkManager_Bungee {
+public abstract class MixinNetworkManager_Bungee implements BridgeNetworkManager_Bungee {
 
     private Property[] spoofedProfile;
     private UUID spoofedUUID;
 
     @Override
-    public Property[] getSpoofedProfile() {
+    public Property[] bungeeBridge$getSpoofedProfile() {
         return this.spoofedProfile;
     }
 
     @Override
-    public void setSpoofedProfile(final Property[] spoofedProfile) {
+    public void bungeeBridge$setSpoofedProfile(final Property[] spoofedProfile) {
         this.spoofedProfile = spoofedProfile;
     }
 
     @Override
-    public UUID getSpoofedUUID() {
+    public UUID bungeeBridge$getSpoofedUUID() {
         return this.spoofedUUID;
     }
 
     @Override
-    public void setSpoofedUUID(final UUID uuid) {
+    public void bungeeBridge$setSpoofedUUID(final UUID uuid) {
         this.spoofedUUID = uuid;
     }
 

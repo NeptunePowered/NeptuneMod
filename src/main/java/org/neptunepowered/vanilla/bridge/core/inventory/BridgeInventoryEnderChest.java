@@ -21,34 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.mixin.core.inventory;
+package org.neptunepowered.vanilla.bridge.core.inventory;
 
-import net.canarymod.api.entity.living.humanoid.Human;
-import net.canarymod.api.inventory.EnderChestInventory;
-import net.canarymod.api.inventory.InventoryType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.InventoryEnderChest;
-import org.neptunepowered.vanilla.bridge.core.inventory.BridgeInventoryEnderChest;
-import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(InventoryEnderChest.class)
-public abstract class MixinInventoryEnderChest implements EnderChestInventory, BridgeInventoryEnderChest {
+public interface BridgeInventoryEnderChest {
 
-    private EntityPlayer player;
-
-    @Override
-    public Human getInventoryOwner() {
-        return (Human) this.player;
-    }
-
-    @Override
-    public InventoryType getInventoryType() {
-        return InventoryType.CHEST;
-    }
-
-    @Override
-    public void bridge$setOwner(EntityPlayer player) {
-        this.player = player;
-    }
+    void bridge$setOwner(final EntityPlayer player);
 
 }

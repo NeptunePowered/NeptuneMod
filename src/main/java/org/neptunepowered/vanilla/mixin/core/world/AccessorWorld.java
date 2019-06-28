@@ -31,6 +31,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(World.class)
 public interface AccessorWorld {
 
-    @Accessor("worldInfo") void setWorldInfo(final WorldInfo info);
+    @Accessor("worldInfo") void accessor$setWorldInfo(final WorldInfo info);
 
 }

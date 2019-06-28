@@ -54,6 +54,8 @@ import net.canarymod.api.world.effects.Particle;
 import net.canarymod.api.world.effects.SoundEffect;
 import net.canarymod.api.world.position.Location;
 import net.canarymod.api.world.position.Position;
+import net.canarymod.config.Configuration;
+import net.canarymod.config.WorldConfiguration;
 import net.canarymod.tasks.TaskOwner;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockOldLeaf;
@@ -61,6 +63,8 @@ import net.minecraft.block.BlockOldLog;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.ChunkProviderServer;
@@ -77,8 +81,11 @@ import net.minecraft.world.gen.feature.WorldGenTaiga1;
 import net.minecraft.world.gen.feature.WorldGenTaiga2;
 import net.minecraft.world.gen.feature.WorldGenTrees;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import org.neptunepowered.vanilla.interfaces.core.world.IMixinWorldProvider;
-import org.neptunepowered.vanilla.interfaces.core.world.storage.IMixinWorldInfo;
+import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.WorldInfo;
+import org.neptunepowered.vanilla.bridge.core.world.BridgeWorldProvider;
+import org.neptunepowered.vanilla.bridge.core.world.BridgeWorldServer;
+import org.neptunepowered.vanilla.bridge.core.world.storage.BridgeWorldInfo;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 import org.neptunepowered.vanilla.util.converter.PositionConverter;
 import org.spongepowered.asm.mixin.Final;
@@ -86,12 +93,17 @@ import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
 @Mixin(WorldServer.class)
 @Implements(@Interface(iface = World.class, prefix = "world$"))
-public abstract class MixinWorldServer extends MixinWorld implements World, TaskOwner {
+public abstract class MixinWorldServer extends MixinWorld implements World, TaskOwner, BridgeWorldServer {
+
+    private WorldConfiguration worldConfig;
 
     private static final IBlockState JUNGLE_LOG = Blocks.log.getDefaultState()
             .withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
@@ -103,6 +115,18 @@ public abstract class MixinWorldServer extends MixinWorld implements World, Task
     @Shadow @Final private net.minecraft.server.management.PlayerManager thePlayerManager;
     @Shadow @Final private net.minecraft.entity.EntityTracker theEntityTracker;
     @Shadow public ChunkProviderServer theChunkProviderServer;
+
+    @Inject(method = "<init>*", at = @At("RETURN"))
+    private void onConstruction(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn,
+                                CallbackInfo ci) {
+        // Get the world configuration
+        this.worldConfig = Configuration.getWorldConfig(this.getFqName());
+    }
+
+    @Override
+    public WorldConfiguration bridge$getWorldConfig() {
+        return this.worldConfig;
+    }
 
     @Override
     public void setNanoTick(int i, long l) {
@@ -121,7 +145,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World, Task
 
     @Override
     public DimensionType getType() {
-        return ((IMixinWorldProvider) this.provider).getDimensionType();
+        return ((BridgeWorldProvider) this.provider).bridge$getDimensionType();
     }
 
     @Override
@@ -206,7 +230,7 @@ public abstract class MixinWorldServer extends MixinWorld implements World, Task
 
     @Override
     public Location getSpawnLocation() {
-        return ((IMixinWorldInfo) this.worldInfo).getSpawn();
+        return ((BridgeWorldInfo) this.worldInfo).bridge$getSpawn();
     }
 
     @Override

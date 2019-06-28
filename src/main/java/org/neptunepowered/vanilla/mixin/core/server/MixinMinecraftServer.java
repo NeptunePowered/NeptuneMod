@@ -74,8 +74,8 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.SaveHandler;
 import org.apache.logging.log4j.Logger;
 import org.neptunepowered.vanilla.NeptuneOfflinePlayer;
-import org.neptunepowered.vanilla.interfaces.core.server.IMixinMinecraftServer;
-import org.neptunepowered.vanilla.interfaces.core.world.storage.IMixinSaveHandler;
+import org.neptunepowered.vanilla.bridge.core.server.BridgeMinecraftServer;
+import org.neptunepowered.vanilla.bridge.core.world.storage.BridgeSaveHandler;
 import org.neptunepowered.vanilla.server.ServerTimerManager;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.spongepowered.asm.mixin.Final;
@@ -104,7 +104,7 @@ import java.util.concurrent.FutureTask;
 
 @Mixin(MinecraftServer.class)
 @Implements(@Interface(iface = Server.class, prefix = "server$"))
-public abstract class MixinMinecraftServer implements Server, IMixinMinecraftServer {
+public abstract class MixinMinecraftServer implements Server, BridgeMinecraftServer {
 
     @Shadow @Final private static Logger logger;
     @Shadow @Final public Profiler theProfiler;
@@ -162,7 +162,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
      */
     @Overwrite
     public String getServerModName() {
-        return "NeptuneVanilla";
+        return "NeptuneMod";
     }
 
     /**
@@ -416,7 +416,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
         final ISaveHandler saveHandler = MinecraftServer.getServer().getEntityWorld().getSaveHandler();
 
         if (saveHandler instanceof SaveHandler) {
-            final NBTTagCompound tagCompound = ((IMixinSaveHandler) saveHandler).readPlayerData(uuid);
+            final NBTTagCompound tagCompound = ((BridgeSaveHandler) saveHandler).bridge$readPlayerData(uuid);
 
             if (tagCompound != null) {
                 final GameProfile profile = getPlayerProfileCache().getProfileByUUID(uuid);
@@ -681,7 +681,7 @@ public abstract class MixinMinecraftServer implements Server, IMixinMinecraftSer
     }
 
     @Override
-    public void prepareSpawnArea(WorldServer worldServer) {
+    public void bridge$prepareSpawnArea(WorldServer worldServer) {
         int i1 = 0;
         this.setUserMessage("menu.generatingTerrain");
         logger.info("Preparing start region for level " + ((World) worldServer).getFqName() + " (" + worldServer.provider.getDimensionId() + ")");

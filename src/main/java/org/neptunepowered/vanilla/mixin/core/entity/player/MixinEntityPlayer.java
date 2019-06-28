@@ -47,7 +47,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
-import org.neptunepowered.vanilla.interfaces.core.inventory.IMixinInventoryEnderChest;
+import org.neptunepowered.vanilla.bridge.core.inventory.BridgeInventoryEnderChest;
 import org.neptunepowered.vanilla.mixin.core.entity.MixinEntityLivingBase;
 import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Implements;
@@ -88,7 +88,7 @@ public abstract class MixinEntityPlayer extends MixinEntityLivingBase implements
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void onConstruction(World worldIn, GameProfile gameProfileIn, CallbackInfo info) {
-        ((IMixinInventoryEnderChest) this.theInventoryEnderChest).setOwner((EntityPlayer) (Object) this);
+        ((BridgeInventoryEnderChest) this.theInventoryEnderChest).bridge$setOwner((EntityPlayer) (Object) this);
     }
 
     @Inject(method = "trySleep", at = @At(value = "INVOKE"))

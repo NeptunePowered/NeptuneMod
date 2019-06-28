@@ -28,11 +28,11 @@ import net.canarymod.api.inventory.AnimalInventory;
 import net.canarymod.api.inventory.InventoryType;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.inventory.AnimalChest;
-import org.neptunepowered.vanilla.interfaces.core.inventory.IMixinAnimalChest;
+import org.neptunepowered.vanilla.bridge.core.inventory.BridgeAnimalChest;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(AnimalChest.class)
-public abstract class MixinAnimalChest implements AnimalInventory, IMixinAnimalChest {
+public abstract class MixinAnimalChest implements AnimalInventory, BridgeAnimalChest {
 
     private EntityHorse owner;
 
@@ -47,7 +47,7 @@ public abstract class MixinAnimalChest implements AnimalInventory, IMixinAnimalC
     }
 
     @Override
-    public void setOwner(EntityHorse horse) {
+    public void bridge$setOwner(EntityHorse horse) {
         this.owner = horse;
     }
 

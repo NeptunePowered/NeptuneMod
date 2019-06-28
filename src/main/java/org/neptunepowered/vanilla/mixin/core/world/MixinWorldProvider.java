@@ -32,7 +32,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderDebug;
 import net.minecraft.world.gen.ChunkProviderFlat;
 import net.minecraft.world.gen.ChunkProviderGenerate;
-import org.neptunepowered.vanilla.interfaces.core.world.IMixinWorldProvider;
+import org.neptunepowered.vanilla.bridge.core.world.BridgeWorldProvider;
 import org.neptunepowered.vanilla.world.NeptuneChunkProviderCustom;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -42,7 +42,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldProvider.class)
-public abstract class MixinWorldProvider implements IMixinWorldProvider {
+public abstract class MixinWorldProvider implements BridgeWorldProvider {
 
     @Shadow protected World worldObj;
     @Shadow private WorldType terrainType;
@@ -83,7 +83,7 @@ public abstract class MixinWorldProvider implements IMixinWorldProvider {
     }
 
     @Override
-    public DimensionType getDimensionType() {
+    public DimensionType bridge$getDimensionType() {
         return this.dimensionType;
     }
 

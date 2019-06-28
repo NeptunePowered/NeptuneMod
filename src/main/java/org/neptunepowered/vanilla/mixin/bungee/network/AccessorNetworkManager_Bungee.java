@@ -32,6 +32,6 @@ import java.net.SocketAddress;
 @Mixin(NetworkManager.class)
 public interface AccessorNetworkManager_Bungee {
 
-    @Accessor("socketAddress") void setRemoteAddress(final SocketAddress socketAddress);
+    @Accessor("socketAddress") void accessor$setRemoteAddress(final SocketAddress socketAddress);
 
 }

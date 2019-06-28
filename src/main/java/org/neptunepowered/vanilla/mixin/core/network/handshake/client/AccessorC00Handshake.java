@@ -21,10 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.network;
+package org.neptunepowered.vanilla.mixin.core.network.handshake.client;
 
-public interface IMixinNetHandlerPlayServer {
+import net.minecraft.network.handshake.client.C00Handshake;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-    void kickPlayerFromServerWithoutHook(final String reason);
+@Mixin(C00Handshake.class)
+public interface AccessorC00Handshake {
+
+    @Accessor("ip") String accessor$getIp();
+    @Accessor("ip") void accessor$setIp(final String ip);
+
+    @Accessor("port") int accessor$getPort();
 
 }

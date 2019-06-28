@@ -25,8 +25,6 @@ package org.neptunepowered.vanilla.mixin.perf.world;
 
 import net.canarymod.Canary;
 import net.canarymod.api.world.World;
-import net.canarymod.config.Configuration;
-import net.canarymod.config.WorldConfiguration;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IProgressUpdate;
@@ -35,7 +33,6 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import org.neptunepowered.vanilla.chunk.ChunkGCTask;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,18 +41,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldServer.class)
-public abstract class MixinWorldServer_Performance extends MixinWorld_Performance implements World, IMixinWorldServer_Performance {
-
-    private WorldConfiguration worldConfig;
+public abstract class MixinWorldServer_Performance extends MixinWorld_Performance implements World {
 
     @Shadow protected abstract void saveLevel() throws MinecraftException;
 
     @Inject(method = "<init>*", at = @At("RETURN"))
     private void onConstruction(MinecraftServer server, ISaveHandler saveHandlerIn, WorldInfo info, int dimensionId, Profiler profilerIn,
             CallbackInfo ci) {
-        // Get the world configuration
-        this.worldConfig = Configuration.getWorldConfig(this.getFqName());
-
         // Register ths ChunkGC task
         Canary.getServer().addSynchronousTask(new ChunkGCTask((WorldServer) (Object) this));
     }
@@ -87,11 +79,6 @@ public abstract class MixinWorldServer_Performance extends MixinWorld_Performanc
             // }
             // Neptune - end
         }
-    }
-
-    @Override
-    public WorldConfiguration getWorldConfig() {
-        return this.worldConfig;
     }
 
 }

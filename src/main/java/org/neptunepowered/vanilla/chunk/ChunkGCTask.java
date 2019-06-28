@@ -28,7 +28,7 @@ import net.canarymod.tasks.ServerTask;
 import net.canarymod.tasks.TaskOwner;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import org.neptunepowered.vanilla.interfaces.perf.world.IMixinWorldServer_Performance;
+import org.neptunepowered.vanilla.bridge.core.world.BridgeWorldServer;
 
 /**
  * A {@link ServerTask} for performing garbage collection on a {@link WorldServer}'s chunks.
@@ -38,7 +38,7 @@ public final class ChunkGCTask extends ServerTask {
     private final WorldServer world;
 
     public ChunkGCTask(WorldServer world) {
-        super((TaskOwner) world, ((IMixinWorldServer_Performance) world).getWorldConfig().getTickInterval(), true);
+        super((TaskOwner) world, ((BridgeWorldServer) world).bridge$getWorldConfig().getTickInterval(), true);
         this.world = world;
     }
 

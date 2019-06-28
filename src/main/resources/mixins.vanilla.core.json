@@ -134,6 +134,7 @@
         "nbt.MixinNBTTagLong",
         "nbt.MixinNBTTagShort",
         "nbt.MixinNBTTagString",
+        "network.handshake.client.AccessorC00Handshake",
         "network.play.server.MixinS23PacketBlockChange",
         "network.MixinNetHandlerPlayServer",
         "network.MixinNetworkManager",

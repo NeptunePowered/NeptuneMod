@@ -32,8 +32,9 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.server.network.NetHandlerHandshakeTCP;
 import net.minecraft.util.ChatComponentText;
-import org.neptunepowered.vanilla.interfaces.bungee.network.IMixinNetworkManager_Bungee;
+import org.neptunepowered.vanilla.bridge.bungee.network.BridgeNetworkManager_Bungee;
 import org.neptunepowered.vanilla.mixin.bungee.network.AccessorNetworkManager_Bungee;
+import org.neptunepowered.vanilla.mixin.core.network.handshake.client.AccessorC00Handshake;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -53,16 +54,16 @@ public abstract class MixinNetHandlerHandshakeTCP_Bungee {
     @Inject(method = "processHandshake", at = @At(value = "HEAD"), cancellable = true)
     private void onProcessHandshake(C00Handshake packetIn, CallbackInfo ci) {
         if (packetIn.getRequestedState().equals(EnumConnectionState.LOGIN)) {
-            final String[] split = packetIn.ip.split("\00");
+            final String[] split = ((AccessorC00Handshake) packetIn).accessor$getIp().split("\00");
 
             if (split.length >= 3) {
-                packetIn.ip = split[0];
-                ((AccessorNetworkManager_Bungee) this.networkManager).setRemoteAddress(new InetSocketAddress(split[1],
+                ((AccessorC00Handshake) packetIn).accessor$setIp(split[0]);
+                ((AccessorNetworkManager_Bungee) this.networkManager).accessor$setRemoteAddress(new InetSocketAddress(split[1],
                                 ((InetSocketAddress) this.networkManager.getRemoteAddress()).getPort()));
-                ((IMixinNetworkManager_Bungee) this.networkManager).setSpoofedUUID(UUIDTypeAdapter.fromString(split[2]));
+                ((BridgeNetworkManager_Bungee) this.networkManager).bungeeBridge$setSpoofedUUID(UUIDTypeAdapter.fromString(split[2]));
 
                 if (split.length == 4) {
-                    ((IMixinNetworkManager_Bungee) this.networkManager).setSpoofedProfile(GSON.fromJson(split[3], Property[].class));
+                    ((BridgeNetworkManager_Bungee) this.networkManager).bungeeBridge$setSpoofedProfile(GSON.fromJson(split[3], Property[].class));
                 }
             } else {
                 final ChatComponentText chatcomponenttext =

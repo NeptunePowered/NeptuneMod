@@ -28,7 +28,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.network.NetHandlerLoginServer;
-import org.neptunepowered.vanilla.interfaces.bungee.network.IMixinNetworkManager_Bungee;
+import org.neptunepowered.vanilla.bridge.bungee.network.BridgeNetworkManager_Bungee;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -48,16 +48,16 @@ public class MixinNetHandlerLoginServer_Bungee {
     @Overwrite
     protected GameProfile getOfflineProfile(GameProfile original) {
         final UUID uuid;
-        if (((IMixinNetworkManager_Bungee) this.networkManager).getSpoofedUUID() != null) {
-            uuid = ((IMixinNetworkManager_Bungee) this.networkManager).getSpoofedUUID();
+        if (((BridgeNetworkManager_Bungee) this.networkManager).bungeeBridge$getSpoofedUUID() != null) {
+            uuid = ((BridgeNetworkManager_Bungee) this.networkManager).bungeeBridge$getSpoofedUUID();
         } else {
             uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + original.getName()).getBytes(Charsets.UTF_8));
         }
 
         original = new GameProfile(uuid, original.getName());
 
-        if (((IMixinNetworkManager_Bungee) this.networkManager).getSpoofedProfile() != null) {
-            for (final Property property : ((IMixinNetworkManager_Bungee) this.networkManager).getSpoofedProfile()) {
+        if (((BridgeNetworkManager_Bungee) this.networkManager).bungeeBridge$getSpoofedProfile() != null) {
+            for (final Property property : ((BridgeNetworkManager_Bungee) this.networkManager).bungeeBridge$getSpoofedProfile()) {
                 original.getProperties().put(property.getName(), property);
             }
         }

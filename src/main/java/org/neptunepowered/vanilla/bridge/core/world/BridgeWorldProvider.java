@@ -21,12 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.server;
+package org.neptunepowered.vanilla.bridge.core.world;
 
-import net.minecraft.world.WorldServer;
+import net.canarymod.api.world.DimensionType;
 
-public interface IMixinMinecraftServer {
+public interface BridgeWorldProvider {
 
-    void prepareSpawnArea(final WorldServer world);
+    DimensionType bridge$getDimensionType();
 
 }

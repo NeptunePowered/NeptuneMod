@@ -43,8 +43,8 @@ import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-import org.neptunepowered.vanilla.interfaces.core.server.IMixinMinecraftServer;
-import org.neptunepowered.vanilla.interfaces.core.world.storage.IMixinWorldInfo;
+import org.neptunepowered.vanilla.bridge.core.server.BridgeMinecraftServer;
+import org.neptunepowered.vanilla.bridge.core.world.storage.BridgeWorldInfo;
 import org.neptunepowered.vanilla.mixin.core.world.AccessorWorld;
 import org.neptunepowered.vanilla.util.converter.GameModeConverter;
 
@@ -201,7 +201,7 @@ public class NeptuneWorldManager implements WorldManager {
                 false,
                 net.minecraft.world.WorldType.parseWorldType(worldConfiguration.getWorldType().toString()));
         final WorldInfo worldInfo = new WorldInfo(worldSettings, worldName);
-        ((IMixinWorldInfo) worldInfo).setDimensionType(dimensionType);
+        ((BridgeWorldInfo) worldInfo).bridge$setDimensionType(dimensionType);
 
         final WorldServer worldServer;
         if (dimensionType == DimensionType.NORMAL) {
@@ -210,7 +210,7 @@ public class NeptuneWorldManager implements WorldManager {
         } else {
             worldServer = new WorldServerMulti(minecraftServer, saveHandler, dimensionType.getId(),
                     (WorldServer) this.getWorld(worldName, DimensionType.NORMAL, true), minecraftServer.theProfiler);
-            ((AccessorWorld) worldServer).setWorldInfo(worldInfo);
+            ((AccessorWorld) worldServer).accessor$setWorldInfo(worldInfo);
         }
 
         worldServer.initialize(worldSettings);
@@ -219,7 +219,7 @@ public class NeptuneWorldManager implements WorldManager {
         minecraftServer.getConfigurationManager().setPlayerManager(new WorldServer[] { worldServer });
         worldServer.getWorldInfo().setDifficulty(EnumDifficulty.getDifficultyEnum(worldConfiguration.getDifficulty().getId()));
 
-        ((IMixinMinecraftServer) minecraftServer).prepareSpawnArea(worldServer);
+        ((BridgeMinecraftServer) minecraftServer).bridge$prepareSpawnArea(worldServer);
 
         this.existingWorlds.add(worldName + "_" + dimensionType.getName());
         this.addWorld(worldServer);

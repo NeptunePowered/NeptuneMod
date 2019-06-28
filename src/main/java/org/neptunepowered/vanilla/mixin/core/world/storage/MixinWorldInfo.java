@@ -27,7 +27,7 @@ import net.canarymod.api.world.DimensionType;
 import net.canarymod.api.world.position.Location;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.WorldInfo;
-import org.neptunepowered.vanilla.interfaces.core.world.storage.IMixinWorldInfo;
+import org.neptunepowered.vanilla.bridge.core.world.storage.BridgeWorldInfo;
 import org.neptunepowered.vanilla.util.NbtConstants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,7 +36,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldInfo.class)
-public abstract class MixinWorldInfo implements IMixinWorldInfo {
+public abstract class MixinWorldInfo implements BridgeWorldInfo {
 
     @Shadow private int dimension;
     @Shadow private int spawnX;
@@ -60,8 +60,8 @@ public abstract class MixinWorldInfo implements IMixinWorldInfo {
 
     @Inject(method = "<init>(Lnet/minecraft/world/storage/WorldInfo;)V", at = @At("RETURN"))
     private void onInfoConstruction(WorldInfo info, CallbackInfo ci) {
-        this.rotX = ((IMixinWorldInfo) info).getRotX();
-        this.rotY = ((IMixinWorldInfo) info).getRotY();
+        this.rotX = ((BridgeWorldInfo) info).bridge$getRotX();
+        this.rotY = ((BridgeWorldInfo) info).bridge$getRotY();
     }
 
     @Inject(method = "updateTagCompound", at = @At("RETURN"))
@@ -71,22 +71,22 @@ public abstract class MixinWorldInfo implements IMixinWorldInfo {
     }
 
     @Override
-    public void setDimensionType(DimensionType dimensionType) {
+    public void bridge$setDimensionType(DimensionType dimensionType) {
         this.dimension = dimensionType.getId();
     }
 
     @Override
-    public float getRotX() {
+    public float bridge$getRotX() {
         return this.rotX;
     }
 
     @Override
-    public float getRotY() {
+    public float bridge$getRotY() {
         return this.rotY;
     }
 
     @Override
-    public Location getSpawn() {
+    public Location bridge$getSpawn() {
         final Location spawn = new Location(this.spawnX, this.spawnY, this.spawnZ);
         spawn.setPitch(this.rotX);
         spawn.setRotation(this.rotY);
@@ -96,7 +96,7 @@ public abstract class MixinWorldInfo implements IMixinWorldInfo {
     }
 
     @Override
-    public void setSpawn(Location spawn) {
+    public void bridge$setSpawn(Location spawn) {
         this.spawnX = spawn.getBlockX();
         this.spawnY = spawn.getBlockY();
         this.spawnZ = spawn.getBlockZ();

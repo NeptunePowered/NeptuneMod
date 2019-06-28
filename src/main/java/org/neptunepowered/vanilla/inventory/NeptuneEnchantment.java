@@ -31,6 +31,9 @@ import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.item.ItemStack;
 import org.neptunepowered.vanilla.util.Wrapper;
 
+/**
+ * Wrapper implementation of {@link Enchantment}.
+ */
 public class NeptuneEnchantment
         extends Wrapper<net.minecraft.enchantment.Enchantment>
         implements Enchantment {
@@ -77,24 +80,24 @@ public class NeptuneEnchantment
     }
 
     @Override
-    public int getDamageModifier(DamageSource source) {
+    public int getDamageModifier(final DamageSource source) {
         return this.getHandle().calcModifierDamage(this.level, (net.minecraft.util.DamageSource) source);
     }
 
     @Override
-    public float getDamageModifier(EntityLiving entity) {
+    public float getDamageModifier(final EntityLiving entity) {
         // Note: This is matching the implementation in CanaryMod
         //       It was assumed that this method was removed in 1.8
         return 0;
     }
 
     @Override
-    public boolean canStack(Enchantment other) {
+    public boolean canStack(final Enchantment other) {
         return this.getHandle().canApplyTogether(((NeptuneEnchantment) other).getHandle());
     }
 
     @Override
-    public boolean canEnchantItem(Item item) {
+    public boolean canEnchantItem(final Item item) {
         return this.getHandle().canApply((ItemStack) item);
     }
 
@@ -109,7 +112,7 @@ public class NeptuneEnchantment
     }
 
     @Override
-    public void setLevel(short level) {
+    public void setLevel(final short level) {
         this.level = level;
     }
 

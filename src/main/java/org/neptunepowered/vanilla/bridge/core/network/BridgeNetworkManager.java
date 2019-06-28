@@ -21,12 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.world;
+package org.neptunepowered.vanilla.bridge.core.network;
 
-import net.canarymod.api.world.DimensionType;
+import net.canarymod.hook.system.ServerListPingHook;
 
-public interface IMixinWorldProvider {
+/**
+ * Extensions for {@link ServerListPingHook}.
+ */
+public interface BridgeNetworkManager {
 
-    DimensionType getDimensionType();
+    int bridge$getProtocolVersion();
+    void bridge$setProtocolVersion(final int version);
+
+    String bridge$getHostnamePinged();
+    void bridge$setHostnamePinged(final String hostname);
+
+    int bridge$getPortPinged();
+    void bridge$setPortPinged(final int port);
 
 }

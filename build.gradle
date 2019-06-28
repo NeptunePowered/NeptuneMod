@@ -73,6 +73,9 @@ dependencies {
 
     shadow 'org.ow2.asm:asm-all:5.1'
     shadow 'net.sf.jopt-simple:jopt-simple:4.6'
+
+    // Mixin decomp tool
+    runtime "net.minecraftforge:forgeflower:1.5.380.23"
 }
 
 license {

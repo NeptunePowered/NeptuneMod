@@ -47,7 +47,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.visualillusionsent.utils.DateUtils;
 import org.apache.logging.log4j.Logger;
-import org.neptunepowered.vanilla.interfaces.core.network.IMixinNetHandlerPlayServer;
+import org.neptunepowered.vanilla.bridge.core.network.BridgeNetHandlerPlayServer;
 import org.neptunepowered.vanilla.util.NbtConstants;
 import org.neptunepowered.vanilla.util.helper.NetHandlerPlayServerHelper;
 import org.spongepowered.asm.mixin.Final;
@@ -60,7 +60,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.net.SocketAddress;
 
 @Mixin(NetHandlerPlayServer.class)
-public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMixinNetHandlerPlayServer {
+public abstract class MixinNetHandlerPlayServer implements NetServerHandler, BridgeNetHandlerPlayServer {
 
     @Shadow @Final private static Logger logger;
 
@@ -97,7 +97,7 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
         new KickHook((Player) this.playerEntity, Canary.getServer(), reason).call();
 
         // Kick player
-        this.kickPlayerFromServerWithoutHook(reason);
+        this.bridge$kickPlayerFromServerWithoutHook(reason);
     }
 
     /**
@@ -214,7 +214,7 @@ public abstract class MixinNetHandlerPlayServer implements NetServerHandler, IMi
     }
 
     @Override
-    public void kickPlayerFromServerWithoutHook(String reason) {
+    public void bridge$kickPlayerFromServerWithoutHook(String reason) {
         NetHandlerPlayServerHelper.kickPlayerFromServer(this.playerEntity, reason);
     }
 

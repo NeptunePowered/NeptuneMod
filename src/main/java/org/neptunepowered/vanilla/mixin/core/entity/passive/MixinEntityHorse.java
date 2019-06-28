@@ -27,7 +27,7 @@ import net.canarymod.api.entity.EntityType;
 import net.canarymod.api.entity.living.animal.Horse;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.inventory.AnimalChest;
-import org.neptunepowered.vanilla.interfaces.core.inventory.IMixinAnimalChest;
+import org.neptunepowered.vanilla.bridge.core.inventory.BridgeAnimalChest;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,7 +43,7 @@ public abstract class MixinEntityHorse extends MixinEntityAnimal {
 
     @Inject(method = "initHorseChest", at = @At("RETURN"))
     private void onInitHorseChest(final CallbackInfo ci) {
-        ((IMixinAnimalChest) this.horseChest).setOwner((EntityHorse) (Object) this);
+        ((BridgeAnimalChest) this.horseChest).bridge$setOwner((EntityHorse) (Object) this);
     }
 
     @Override

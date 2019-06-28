@@ -28,7 +28,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.SaveHandler;
 import org.apache.logging.log4j.Logger;
-import org.neptunepowered.vanilla.interfaces.core.world.storage.IMixinSaveHandler;
+import org.neptunepowered.vanilla.bridge.core.world.storage.BridgeSaveHandler;
 import org.neptunepowered.vanilla.world.NeptuneWorldManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,7 +44,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Mixin(SaveHandler.class)
-public abstract class MixinSaveHandler implements IMixinSaveHandler {
+public abstract class MixinSaveHandler implements BridgeSaveHandler {
 
     @Shadow @Final private static Logger logger;
     @Shadow @Final private File playersDirectory;
@@ -82,7 +82,7 @@ public abstract class MixinSaveHandler implements IMixinSaveHandler {
      */
     @Overwrite
     public NBTTagCompound readPlayerData(EntityPlayer player) {
-        final NBTTagCompound nbttagcompound = this.readPlayerData(player.getUniqueID());
+        final NBTTagCompound nbttagcompound = this.bridge$readPlayerData(player.getUniqueID());
 
         if (nbttagcompound != null) {
             player.readFromNBT(nbttagcompound);
@@ -104,7 +104,7 @@ public abstract class MixinSaveHandler implements IMixinSaveHandler {
     }
 
     @Override
-    public NBTTagCompound readPlayerData(UUID id) {
+    public NBTTagCompound bridge$readPlayerData(UUID id) {
         NBTTagCompound nbttagcompound = null;
 
         try {

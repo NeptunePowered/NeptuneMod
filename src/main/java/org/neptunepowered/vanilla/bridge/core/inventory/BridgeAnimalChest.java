@@ -21,14 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.neptunepowered.vanilla.interfaces.core.world.storage;
+package org.neptunepowered.vanilla.bridge.core.inventory;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.passive.EntityHorse;
 
-import java.util.UUID;
+public interface BridgeAnimalChest {
 
-public interface IMixinSaveHandler {
-
-    NBTTagCompound readPlayerData(final UUID uuid);
+    void bridge$setOwner(final EntityHorse horse);
 
 }

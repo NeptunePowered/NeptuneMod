@@ -89,7 +89,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.visualillusionsent.utils.DateUtils;
 import net.visualillusionsent.utils.StringUtils;
-import org.neptunepowered.vanilla.interfaces.core.network.IMixinNetHandlerPlayServer;
+import org.neptunepowered.vanilla.bridge.core.network.BridgeNetHandlerPlayServer;
 import org.neptunepowered.vanilla.mixin.core.util.AccessorFoodStats;
 import org.neptunepowered.vanilla.util.NbtConstants;
 import org.neptunepowered.vanilla.util.PermissionConstants;
@@ -176,6 +176,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
      * @reason Overwrite to use Canary's {@link Configuration} rather than the original server.properties
      *         and fire the {@link PlayerDeathHook}.
      */
+    // TODO: inject and redirect
     @Overwrite
     public void onDeath(DamageSource cause) {
         // Neptune - PlayerDeathHook start
@@ -360,7 +361,7 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void kickNoHook(String reason) {
-        ((IMixinNetHandlerPlayServer) this.playerNetServerHandler).kickPlayerFromServerWithoutHook(reason);
+        ((BridgeNetHandlerPlayServer) this.playerNetServerHandler).bridge$kickPlayerFromServerWithoutHook(reason);
     }
 
     @Override
@@ -754,27 +755,27 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
 
     @Override
     public void addExhaustion(float exhaustion) {
-        ((AccessorFoodStats) this.foodStats).setExhaustionLevel(this.getExhaustionLevel() + exhaustion);
+        ((AccessorFoodStats) this.foodStats).accessor$setExhaustionLevel(this.getExhaustionLevel() + exhaustion);
     }
 
     @Override
     public void setExhaustion(float exhaustion) {
-        ((AccessorFoodStats) this.foodStats).setExhaustionLevel(exhaustion);
+        ((AccessorFoodStats) this.foodStats).accessor$setExhaustionLevel(exhaustion);
     }
 
     @Override
     public float getExhaustionLevel() {
-        return ((AccessorFoodStats) this.foodStats).getExhaustionLevel();
+        return ((AccessorFoodStats) this.foodStats).accessor$getExhaustionLevel();
     }
 
     @Override
     public void addSaturation(float saturation) {
-        ((AccessorFoodStats) this.foodStats).setSaturationLevel(this.getSaturationLevel() + saturation);
+        ((AccessorFoodStats) this.foodStats).accessor$setSaturationLevel(this.getSaturationLevel() + saturation);
     }
 
     @Override
     public void setSaturation(float saturation) {
-        ((AccessorFoodStats) this.foodStats).setSaturationLevel(saturation);
+        ((AccessorFoodStats) this.foodStats).accessor$setSaturationLevel(saturation);
     }
 
     @Override
